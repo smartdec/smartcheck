@@ -103,6 +103,17 @@
                             </mainClass>
                         </configuration>
                     </execution>
+                    <execution>
+                        <id>xml</id>
+                        <goals>
+                            <goal>java</goal>
+                        </goals>
+                        <configuration>
+                            <mainClass>
+                                ru.smartdec.soliditycheck.app.cli.XmlView
+                            </mainClass>
+                        </configuration>
+                    </execution>
                 </executions>
             </plugin>
         </plugins>
