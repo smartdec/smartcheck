@@ -11,7 +11,6 @@ import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
@@ -37,12 +36,10 @@ public final class XmlView {
                 arguments
                         .value("-s", "-source")
                         .map(Paths::get)
-                        .filter(Files::isRegularFile)
                         .orElseThrow(IllegalArgumentException::new),
                 arguments
                         .value("-t", "-target")
                         .map(Paths::get)
-                        .filter(Files::isRegularFile)
                         .orElseThrow(IllegalArgumentException::new)
         )
                 .run();

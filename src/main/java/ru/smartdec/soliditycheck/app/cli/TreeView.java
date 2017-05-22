@@ -5,7 +5,6 @@ import ru.smartdec.soliditycheck.ParseTreeBasic;
 import ru.smartdec.soliditycheck.SolidityParser;
 import ru.smartdec.soliditycheck.SourceFile;
 
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
@@ -24,7 +23,6 @@ public final class TreeView {
                 new ArgumentsDefault(args)
                         .value("-p", "-path")
                         .map(Paths::get)
-                        .filter(Files::isRegularFile)
                         .orElseThrow(IllegalArgumentException::new)
         )
                 .run();
