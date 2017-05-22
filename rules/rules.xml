@@ -1,7 +1,12 @@
 ﻿<?xml version="1.0" encoding="UTF-8"?>
 <Rules xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="./rules.xsd">
+<!--
     <Rule id="SOLIDITY_EXAMPLE_RULE">
         <Pattern id="ca5323" severity="1">//contractDefinition</Pattern>
         <Pattern id="e0827f" severity="2">//functionDefinition</Pattern>
+    </Rule>
+    -->
+    <Rule id="SOLIDITY_TX_ORIGIN">
+     <Pattern id="5508c4" severity="2">//expression[expression/primaryExpression[text()="tx"]][text()=".origin"]</Pattern> 
     </Rule>
 </Rules>
