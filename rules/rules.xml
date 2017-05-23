@@ -7,11 +7,11 @@
     </Rule>
     -->
     <Rule id="SOLIDITY_TX_ORIGIN">
-     <Pattern id="5508c4" severity="2">//expression[expression/primaryExpression[text()="tx"]][text()=".origin"]</Pattern> 
+     <Pattern id="5508c4" severity="2">//expression[expression[1]/primaryExpression/text()[1]="tx"][text()[1]=".origin"]</Pattern> 
     </Rule>
     <Rule id="SOLIDITY_UNCHECKED_SEND">
       <Pattern id="19e999" severity="3">
-        //simpleStatement[expressionStatement/expression/functionCall[matches(text()[1],"\.send")]]
+        //simpleStatement[expressionStatement/expression/functionCall[matches(text()[1],"^.+\.send\($")]]
       </Pattern>
     </Rule>
 </Rules>
