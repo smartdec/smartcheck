@@ -14,4 +14,9 @@
         //simpleStatement[expressionStatement/expression/functionCall[matches(text()[1],"^.+\.send\($")]]
       </Pattern>
     </Rule>
+    <Rule id="SOLIDITY_CALL_VALUE">
+      <Pattern id="f68a3a" severity="3">
+        //functionCall[matches(text()[1],"^.+\.call\.value\($")]
+      </Pattern>
+    </Rule>
 </Rules>
