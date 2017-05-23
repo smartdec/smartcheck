@@ -19,4 +19,9 @@
         //functionCall[matches(text()[1],"^.+\.call\.value\($")]
       </Pattern>
     </Rule>
+    <Rule id="SOLIDITY_BALANCE_EQUALITY">
+      <Pattern id="7a3b44" severity="2">
+        //expression[expression[expression/primaryExpression[text()[1]="this"]][text()[1]=".balance"]][text()[1]="=="]
+      </Pattern>
+    </Rule>
 </Rules>
