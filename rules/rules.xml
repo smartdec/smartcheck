@@ -24,4 +24,12 @@
         //expression[expression[expression/primaryExpression[text()[1]="this"]][text()[1]=".balance"]][text()[1]="=="]
       </Pattern>
     </Rule>
+    <Rule id="SOLIDITY_STYLE_GUIDE_VIOLATION">
+      <Pattern id="67c4ca" severity="1">
+        //eventDefinition[matches(text()[1],"^event[a-z].*$")]
+      </Pattern>
+      <Pattern id="4fc198" severity="1">
+        //functionDefinition[matches(text()[1],"^function[A-Z].*$")]
+      </Pattern>
+    </Rule>
 </Rules>
