@@ -60,7 +60,7 @@ public final class RulesXml implements Rules {
      * @param consumer safeness
      */
     public RulesXml(
-            final Source src,
+            final RulesXml.Source src,
             final XPath xp,
             final Consumer<Exception> consumer) {
         this.source = src;

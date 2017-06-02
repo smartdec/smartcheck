@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<Rules>
-    <Rule id="SOLIDITY_EXAMPLE_RULE">
-        <Pattern id="ca5323" severity="1">//contractDefinition</Pattern>
-        <Pattern id="e0827f" severity="2">//functionDefinition</Pattern>
-    </Rule>
-</Rules>
