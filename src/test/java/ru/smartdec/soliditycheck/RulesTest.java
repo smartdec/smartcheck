@@ -22,17 +22,11 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-public class RulesTest {
-
-    private static final String EXTENSION = ".sol";
-
-    private static String rule(final Path source) {
-        final String name = source.getFileName().toString();
-        return name.substring(0, name.length() - RulesTest.EXTENSION.length());
-    }
+public final class RulesTest {
 
     private DocumentBuilder builder;
     private Rules rules;
+    private FileExtension extension;
     private Collection<Path> sources;
 
     @Before
@@ -47,6 +41,7 @@ public class RulesTest {
                         Throwable::printStackTrace
                 )
         );
+        this.extension = new FileExtension(".sol");
         this.sources = Files
                 .walk(
                         Paths.get(
@@ -55,7 +50,7 @@ public class RulesTest {
                         1
                 )
                 .filter(Files::isRegularFile)
-                .filter(path -> path.toString().endsWith(RulesTest.EXTENSION))
+                .filter(this.extension)
                 .collect(Collectors.toList());
     }
 
@@ -92,7 +87,7 @@ public class RulesTest {
         final Map<String, Set<String>> result = new LinkedHashMap<>();
         for (final Path source : this.sources) {
             result.put(
-                    RulesTest.rule(source),
+                    this.extension.apply(source),
                     this.coverageActual(Files.readAllLines(source))
             );
         }
@@ -118,7 +113,7 @@ public class RulesTest {
         final Map<String, Set<LinePattern>> result = new LinkedHashMap<>();
         for (final Path source : this.sources) {
             result.put(
-                    RulesTest.rule(source),
+                    this.extension.apply(source),
                     this.patternsExpected(Files.readAllLines(source))
             );
         }
@@ -149,9 +144,9 @@ public class RulesTest {
         final Map<String, Set<LinePattern>> result = new LinkedHashMap<>();
         for (final Path source : this.sources) {
             result.put(
-                    RulesTest.rule(source),
+                    this.extension.apply(source),
                     this.patternsActual(
-                            this.tree(source), RulesTest.rule(source)
+                            this.tree(source), this.extension.apply(source)
                     )
             );
         }
