@@ -13,8 +13,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Collection;
-import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -74,17 +73,13 @@ public final class RulesTest {
                                 rule -> rule
                                         .patterns()
                                         .map(Pattern::id)
-                                        .collect(Collectors.toSet()),
-                                (rule1, rule2) -> {
-                                    throw new IllegalStateException();
-                                },
-                                LinkedHashMap::new
+                                        .collect(Collectors.toSet())
                         )
                 );
     }
 
     private Map<String, Set<String>> coverageActual() throws Exception {
-        final Map<String, Set<String>> result = new LinkedHashMap<>();
+        final Map<String, Set<String>> result = new HashMap<>();
         for (final Path source : this.sources) {
             result.put(
                     this.extension.apply(source),
@@ -110,7 +105,7 @@ public final class RulesTest {
     }
 
     private Map<String, Set<LinePattern>> patternsExpected() throws Exception {
-        final Map<String, Set<LinePattern>> result = new LinkedHashMap<>();
+        final Map<String, Set<LinePattern>> result = new HashMap<>();
         for (final Path source : this.sources) {
             result.put(
                     this.extension.apply(source),
@@ -137,11 +132,11 @@ public final class RulesTest {
                 )
                 .filter(Optional::isPresent)
                 .map(Optional::get)
-                .collect(Collectors.toCollection(LinkedHashSet::new));
+                .collect(Collectors.toSet());
     }
 
     private Map<String, Set<LinePattern>> patternsActual() throws Exception {
-        final Map<String, Set<LinePattern>> result = new LinkedHashMap<>();
+        final Map<String, Set<LinePattern>> result = new HashMap<>();
         for (final Path source : this.sources) {
             result.put(
                     this.extension.apply(source),
@@ -172,7 +167,7 @@ public final class RulesTest {
                                         )
                                 )
                 )
-                .collect(Collectors.toCollection(LinkedHashSet::new));
+                .collect(Collectors.toSet());
     }
 
     private SearchableTree tree(final Path file) {

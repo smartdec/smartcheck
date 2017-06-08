@@ -1,3 +1,4 @@
+pragma solidity ^0.4.5;
 contract SolidityExampleRule {//ca5323
 
     string str;
