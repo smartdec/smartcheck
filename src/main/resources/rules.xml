@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<Rules>
+<Rules xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="./rules.xsd">
     <VersionDefinition>//pragmaDirective[pragmaName='solidity']/pragmaValue/version/versionConstraint/text()</VersionDefinition>
     <Rule id="BAD_PRAGMA_EXAMPLE">
         <VersionPattern id="pragma" severity="1" max="0.4.10"/>
@@ -7,5 +7,31 @@
     <Rule id="SOLIDITY_EXAMPLE_RULE">
         <Pattern id="ca5323" severity="1">//contractDefinition</Pattern>
         <Pattern id="e0827f" severity="2" max="0.4.6">//functionDefinition</Pattern>
+    </Rule>
+    <Rule id="SOLIDITY_TX_ORIGIN">
+        <Pattern id="5508c4" severity="2">//expression[expression[1]/primaryExpression/text()[1]="tx"][text()[1]=".origin"]</Pattern>
+    </Rule>
+    <Rule id="SOLIDITY_UNCHECKED_SEND">
+        <Pattern id="19e999" severity="3">
+            //simpleStatement[expressionStatement/expression/functionCall[matches(text()[1],"^.+\.send\($")]]
+        </Pattern>
+    </Rule>
+    <Rule id="SOLIDITY_CALL_VALUE">
+        <Pattern id="f68a3a" severity="3">
+            //functionCall[matches(text()[1],"^.+\.call\.value\($")]
+        </Pattern>
+    </Rule>
+    <Rule id="SOLIDITY_BALANCE_EQUALITY">
+        <Pattern id="7a3b44" severity="2">
+            //expression[expression[expression/primaryExpression[text()[1]="this"]][text()[1]=".balance"]][text()[1]="=="]
+        </Pattern>
+    </Rule>
+    <Rule id="SOLIDITY_STYLE_GUIDE_VIOLATION">
+        <Pattern id="67c4ca" severity="1">
+            //eventDefinition[matches(text()[1],"^event[a-z].*$")]
+        </Pattern>
+        <Pattern id="4fc198" severity="1">
+            //functionDefinition[matches(text()[1],"^function[A-Z].*$")]
+        </Pattern>
     </Rule>
 </Rules>
