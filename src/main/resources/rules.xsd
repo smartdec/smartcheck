@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<xs:schema version="1.0" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+
+  <xs:element name="Rules" type="rulesContext"/>
+
+  <xs:complexType name="rulesContext" final="extension restriction">
+    <xs:sequence>
+      <xs:element name="VersionDefinition" type="xs:string"/>
+      <xs:element name="Rule" type="ruleContext" minOccurs="0" maxOccurs="unbounded"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="ruleContext" final="extension restriction">
+    <xs:sequence>
+      <xs:element name="Pattern" type="patternContext" minOccurs="0" maxOccurs="unbounded"/>
+      <xs:element name="VersionPattern" type="versionPatternContext" minOccurs="0" maxOccurs="unbounded"/>
+    </xs:sequence>
+    <xs:attribute name="id" type="xs:string" use="required"/>
+  </xs:complexType>
+
+  <xs:complexType name="patternContext" final="extension restriction">
+    <xs:simpleContent>
+      <xs:extension base="xs:string">
+        <xs:attribute name="id" type="xs:string" use="required"/>
+        <xs:attribute name="severity" type="xs:int" use="required"/>
+        <xs:attribute name="min" type="xs:string"/>
+        <xs:attribute name="max" type="xs:string"/>
+      </xs:extension>
+    </xs:simpleContent>
+  </xs:complexType>
+
+  <xs:complexType name="versionPatternContext" final="extension restriction">
+    <xs:sequence/>
+    <xs:attribute name="id" type="xs:string" use="required"/>
+    <xs:attribute name="severity" type="xs:int" use="required"/>
+    <xs:attribute name="min" type="xs:string"/>
+    <xs:attribute name="max" type="xs:string"/>
+  </xs:complexType>
+</xs:schema>
+

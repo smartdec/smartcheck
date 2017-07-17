@@ -19,7 +19,9 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Optional;
 import java.util.function.Consumer;
+import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
@@ -60,7 +62,7 @@ public final class RulesXml implements Rules {
      * @param consumer safeness
      */
     public RulesXml(
-            final Source src,
+            final RulesXml.Source src,
             final XPath xp,
             final Consumer<Exception> consumer) {
         this.source = src;
@@ -96,28 +98,54 @@ public final class RulesXml implements Rules {
         );
     }
 
-
     @Override
     public Stream<Rule> stream() throws Exception {
         final Unmarshaller unmarshaller = JAXBContext
-                .newInstance(RulesResource.class)
+                .newInstance(RulesXml.RulesContext.class)
                 .createUnmarshaller();
-        unmarshaller.setAdapter(new PatternAdapter(this.safeness));
         unmarshaller.setAdapter(new RulesXml.XpathAdapter(this.xpath));
-        return RulesResource
+        final PatternAdapter common = new RulesXml.PatternAdapter(
+                this.safeness
+        );
+        unmarshaller.setAdapter(common);
+        final VersionPatternAdapter versioned = new VersionPatternAdapter(
+                this.safeness
+        );
+        unmarshaller.setAdapter(versioned);
+        unmarshaller.setListener(new Unmarshaller.Listener() {
+            @Override
+            public void afterUnmarshal(
+                    final Object target, final Object parent) {
+                if (target instanceof RulesContext) {
+                    final XPathExpression version = RulesContext
+                            .class
+                            .cast(target)
+                            .version;
+                    common.version = version;
+                    versioned.version = version;
+                }
+            }
+        });
+        return RulesXml
+                .RulesContext
                 .class
                 .cast(unmarshaller.unmarshal(this.source.path().toFile()))
                 .rules
                 .stream();
     }
 
-
     /**
      *
      */
     @XmlRootElement(name = "Rules")
-    private static final class RulesResource {
+    private static final class RulesContext {
 
+        /**
+         *
+         */
+        @XmlElement(name = "VersionDefinition", required = true)
+        @XmlJavaTypeAdapter(RulesXml.XpathAdapter.class)
+        private XPathExpression version;
         /**
          *
          */
@@ -129,7 +157,7 @@ public final class RulesXml implements Rules {
     /**
      *
      */
-    private static final class RuleResource {
+    private static final class RuleContext {
 
         /**
          *
@@ -141,13 +169,19 @@ public final class RulesXml implements Rules {
          */
         @XmlElement(name = "Pattern")
         @XmlJavaTypeAdapter(RulesXml.PatternAdapter.class)
-        private Collection<Pattern> patterns = new ArrayList<>();
+        private Collection<Pattern> common = new ArrayList<>();
+        /**
+         *
+         */
+        @XmlElement(name = "VersionPattern")
+        @XmlJavaTypeAdapter(RulesXml.VersionPatternAdapter.class)
+        private Collection<Pattern> versioned = new ArrayList<>();
     }
 
     /**
      *
      */
-    private static final class PatternResource {
+    private static final class VersionPatternContext {
 
         /**
          *
@@ -162,6 +196,47 @@ public final class RulesXml implements Rules {
         /**
          *
          */
+        @XmlAttribute
+        @XmlJavaTypeAdapter(RulesXml.VersionAdapter.class)
+        private Version min = new Version(0);
+        /**
+         *
+         */
+        @XmlAttribute
+        @XmlJavaTypeAdapter(RulesXml.VersionAdapter.class)
+        private Version max = new Version(Integer.MAX_VALUE);
+    }
+
+    /**
+     *
+     */
+    private static final class PatternContext {
+
+        /**
+         *
+         */
+        @XmlAttribute(required = true)
+        private String id;
+        /**
+         *
+         */
+        @XmlAttribute(required = true)
+        private int severity;
+        /**
+         *
+         */
+        @XmlAttribute
+        @XmlJavaTypeAdapter(RulesXml.VersionAdapter.class)
+        private Version min = new Version(0);
+        /**
+         *
+         */
+        @XmlAttribute
+        @XmlJavaTypeAdapter(RulesXml.VersionAdapter.class)
+        private Version max = new Version(Integer.MAX_VALUE);
+        /**
+         *
+         */
         @XmlValue
         @XmlJavaTypeAdapter(RulesXml.XpathAdapter.class)
         private XPathExpression expression;
@@ -170,22 +245,41 @@ public final class RulesXml implements Rules {
     /**
      *
      */
-    private static final class RuleAdapter
-            extends RulesXml.Parser<RuleResource, Rule> {
+    private static final class VersionAdapter
+            extends RulesXml.Parser<String, Version> {
 
         @Override
-        public Rule unmarshal(final RulesXml.RuleResource resource)
+        public Version unmarshal(final String value) {
+            return new Version(
+                    Stream
+                            .of(value.split("\\."))
+                            .map(Integer::parseInt)
+                            .collect(Collectors.toList())
+            );
+        }
+    }
+
+    /**
+     *
+     */
+    private static final class RuleAdapter
+            extends RulesXml.Parser<RuleContext, Rule> {
+
+        @Override
+        public Rule unmarshal(final RuleContext value)
                 throws Exception {
             return new Rule() {
 
                 @Override
                 public String id() {
-                    return resource.id;
+                    return value.id;
                 }
 
                 @Override
                 public Stream<Pattern> patterns() {
-                    return resource.patterns.stream();
+                    return Stream.concat(
+                            value.common.stream(), value.versioned.stream()
+                    );
                 }
             };
         }
@@ -195,8 +289,12 @@ public final class RulesXml implements Rules {
      *
      */
     private static final class PatternAdapter
-            extends RulesXml.Parser<PatternResource, Pattern> {
+            extends RulesXml.Parser<RulesXml.PatternContext, Pattern> {
 
+        /**
+         *
+         */
+        private XPathExpression version;
         /**
          *
          */
@@ -210,37 +308,109 @@ public final class RulesXml implements Rules {
         }
 
         @Override
-        public Pattern unmarshal(final RulesXml.PatternResource resource)
+        public Pattern unmarshal(final RulesXml.PatternContext value)
                 throws Exception {
             return new Pattern() {
 
                 @Override
                 public Stream<Node> nodes(final Node node) {
-                    Stream<Node> nodes;
+                    Stream<Node> result = Stream.empty();
                     try {
-                        final NodeList list = NodeList.class.cast(
-                                resource.expression.evaluate(
-                                        node, XPathConstants.NODESET
-                                )
-                        );
-                        nodes = IntStream
-                                .range(0, list.getLength())
-                                .mapToObj(list::item);
+                        final Optional<Version> pragma = Optional
+                                .of(PatternAdapter.this.version.evaluate(node))
+                                .filter(string -> !string.isEmpty())
+                                .map(new VersionAdapter()::unmarshal);
+                        final boolean matched = pragma
+                                .filter(ver -> value.min.compareTo(ver) <= 0)
+                                .filter(ver -> value.max.compareTo(ver) >= 0)
+                                .isPresent();
+                        if (!pragma.isPresent() || matched) {
+                            final NodeList list = NodeList.class.cast(
+                                    value.expression.evaluate(
+                                            node, XPathConstants.NODESET
+                                    )
+                            );
+                            result = IntStream
+                                    .range(0, list.getLength())
+                                    .mapToObj(list::item);
+                        }
                     } catch (XPathExpressionException ex) {
                         PatternAdapter.this.safeness.accept(ex);
-                        nodes = Stream.empty();
                     }
-                    return nodes;
+                    return result;
                 }
 
                 @Override
                 public String id() {
-                    return resource.id;
+                    return value.id;
                 }
 
                 @Override
                 public int severity() {
-                    return resource.severity;
+                    return value.severity;
+                }
+            };
+        }
+    }
+
+    /**
+     *
+     */
+    private static final class VersionPatternAdapter
+            extends RulesXml.Parser<RulesXml.VersionPatternContext, Pattern> {
+
+        /**
+         *
+         */
+        private XPathExpression version;
+        /**
+         *
+         */
+        private final Consumer<Exception> safeness;
+
+        /**
+         * @param consumer safeness
+         */
+        VersionPatternAdapter(final Consumer<Exception> consumer) {
+            this.safeness = consumer;
+        }
+
+        @Override
+        public Pattern unmarshal(final RulesXml.VersionPatternContext value)
+                throws Exception {
+            return new Pattern() {
+
+                @Override
+                public String id() {
+                    return value.id;
+                }
+
+                @Override
+                public int severity() {
+                    return value.severity;
+                }
+
+                @Override
+                public Stream<Node> nodes(final Node node) {
+                    Stream<Node> result = Stream.empty();
+                    try {
+                        result = Optional
+                                .of(
+                                        VersionPatternAdapter
+                                                .this
+                                                .version
+                                                .evaluate(node)
+                                )
+                                .filter(string -> !string.isEmpty())
+                                .map(new VersionAdapter()::unmarshal)
+                                .filter(ver -> value.min.compareTo(ver) <= 0)
+                                .filter(ver -> value.max.compareTo(ver) >= 0)
+                                .map(ver -> Stream.of(node))
+                                .orElse(result);
+                    } catch (XPathExpressionException ex) {
+                        VersionPatternAdapter.this.safeness.accept(ex);
+                    }
+                    return result;
                 }
             };
         }

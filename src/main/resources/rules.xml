@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Rules>
+    <VersionDefinition>//pragmaDirective[pragmaName='solidity']/pragmaValue/version/versionConstraint/text()</VersionDefinition>
+    <Rule id="BAD_PRAGMA_EXAMPLE">
+        <VersionPattern id="pragma" severity="1" max="0.4.10"/>
+    </Rule>
+    <Rule id="SOLIDITY_EXAMPLE_RULE">
+        <Pattern id="ca5323" severity="1">//contractDefinition</Pattern>
+        <Pattern id="e0827f" severity="2" max="0.4.6">//functionDefinition</Pattern>
+    </Rule>
+</Rules>

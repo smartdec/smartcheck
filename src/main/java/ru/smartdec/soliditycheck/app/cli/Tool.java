@@ -1,5 +1,6 @@
 package ru.smartdec.soliditycheck.app.cli;
 
+import ru.smartdec.soliditycheck.RulesCached;
 import ru.smartdec.soliditycheck.RulesXml;
 import ru.smartdec.soliditycheck.app.DirectoryAnalysisDefault;
 import ru.smartdec.soliditycheck.app.ReportDefault;
@@ -39,7 +40,15 @@ public final class Tool {
                         .value("-r", "-rules")
                         .map(Paths::get)
                         .filter(Files::isRegularFile)
-                        .orElseThrow(IllegalArgumentException::new)
+                        .<RulesXml.Source>map(path -> () -> path)
+                        .orElseGet(
+                                () -> () -> Paths.get(
+                                        RulesXml
+                                                .class
+                                                .getResource("/rules.xml")
+                                                .toURI()
+                                )
+                        )
         )
                 .run();
     }
@@ -51,15 +60,15 @@ public final class Tool {
     /**
      *
      */
-    private final Path rules;
+    private final RulesXml.Source rules;
 
     /**
      * @param src source
-     * @param rl  rules
+     * @param rs  rules
      */
-    public Tool(final Path src, final Path rl) {
+    public Tool(final Path src, final RulesXml.Source rs) {
         this.source = src;
-        this.rules = rl;
+        this.rules = rs;
     }
 
     /**
@@ -74,10 +83,12 @@ public final class Tool {
                                         .newInstance()
                                         .newDocumentBuilder()
                         ),
-                        new RulesXml(
-                                this.rules,
-                                XPathFactory.newInstance().newXPath(),
-                                Throwable::printStackTrace
+                        new RulesCached(
+                                new RulesXml(
+                                        this.rules,
+                                        XPathFactory.newInstance().newXPath(),
+                                        Throwable::printStackTrace
+                                )
                         )
                 ),
                 info -> {
