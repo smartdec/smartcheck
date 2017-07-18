@@ -5,6 +5,8 @@ import org.w3c.dom.NodeList;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.Unmarshaller;
+import javax.xml.bind.ValidationEvent;
+import javax.xml.bind.ValidationEventHandler;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -103,6 +105,7 @@ public final class RulesXml implements Rules {
         final Unmarshaller unmarshaller = JAXBContext
                 .newInstance(RulesXml.RulesContext.class)
                 .createUnmarshaller();
+        unmarshaller.setEventHandler(event -> false);
         unmarshaller.setAdapter(new RulesXml.XpathAdapter(this.xpath));
         final PatternAdapter common = new RulesXml.PatternAdapter(
                 this.safeness
