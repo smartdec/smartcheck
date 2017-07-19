@@ -4,7 +4,7 @@ contract SolidityUncheckedSend {
     
     address owner;
     
-    function SolidityUncheckedSend() {
+    function SolidityUncheckedSend() {//4fc198
         owner = msg.sender;
     }
     
@@ -20,4 +20,16 @@ contract SolidityUncheckedSend {
             return false;
         return true;
     }
+
+    function unseatKing(address a, uint w) {
+        a.call.value(w);//f68a3a
+    }
+    function () {
+        throw;
+    }
+    function delegatecallSetN(address _e, uint _n) {
+        _e.delegatecall(bytes4(sha3("setN(uint256)")), _n); //19dele
+    }
 }
+
+

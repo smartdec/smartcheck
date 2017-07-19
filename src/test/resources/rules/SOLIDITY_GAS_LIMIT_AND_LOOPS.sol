@@ -13,4 +13,11 @@ yesVotes += voteWeight[yesVotes[i]];
 if (yesVotes > requiredWeight)
 beneficiary.send(amount);
 }
+function tallyVotes1() {
+uint yesVotes;
+for (uint i = 0; i < 100; ++i)//нет ошибки
+yesVotes += voteWeight[yesVotes[i]];
+if (yesVotes > requiredWeight)
+beneficiary.send(amount);
+}
 }
