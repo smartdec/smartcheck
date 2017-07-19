@@ -10,7 +10,7 @@ contract SolidityUncheckedSend {
     
     function dangerousSend(address _to) returns (bool) {
         if (msg.sender != owner) throw;
-        _to.send(this.balance);
+        _to.send(this.balance);//19e999
         return true;
     }
     

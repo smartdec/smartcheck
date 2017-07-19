@@ -11,7 +11,7 @@ contract SoliditySendValue {
     function veryDangerousSend(address _to) returns (bool) {
         if (msg.sender != owner) throw;
         // unsafe against re-entrancy AND doesn't check for result
-        _to.call.value(42)();
+        _to.call.value(42)();//f68a3a
         return true;
     }
     
@@ -19,7 +19,7 @@ contract SoliditySendValue {
         if (msg.sender != owner) throw;
         // checks for result, but still bad (re-entrancy)
         // forwards all gas and triggers external execution
-        if (!_to.call.value(42)())
+        if (!_to.call.value(42)())//f68a3a
             return false;
         return true;
     }
