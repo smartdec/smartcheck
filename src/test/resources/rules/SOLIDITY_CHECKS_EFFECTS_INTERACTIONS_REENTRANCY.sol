@@ -4,13 +4,13 @@ contract Bob {
     function ping(address c) {
         if (!sent) {
             c.call.value(2)();
-            sent = true;
+            sent = true;//8a1600
         }
     }
 //not bad
     function ping(address c) {
         if (!sent) {
-            sent = true;
+            sent = true;//нет ошибки
             c.call.value(2)();
         }
     }
