@@ -5,6 +5,7 @@ contract Bob {
         if (!sent) {
             c.call.value(2)();
             sent = true;//8a1600
+            c(2)();
         }
     }
 //not bad
