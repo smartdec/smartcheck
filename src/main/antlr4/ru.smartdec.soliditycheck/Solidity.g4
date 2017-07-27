@@ -70,7 +70,7 @@ structDefinition : 'struct' Identifier '{'(variableDeclaration ';'?)* '}' ;
 modifierDefinition : 'modifier' Identifier parameterList? blockDef ;
 
 functionDefinition
-    : 'function' Identifier variableDeclarationList
+    : 'function' Identifier '('? variableDeclarationList ')'?
       ( functionCall | Identifier | 'constant' | 'payable' | 'external' | 'public' | 'internal' | 'private' )*
       ( 'returns' parameterList )? ( ';' | blockDef ) ;
 
@@ -101,7 +101,7 @@ parameter : typeName identifier?;
 typeNameList :         '(' ( typeName (',' typeName )* )? ')' ;
 
 variableDeclaration : typeName storageLocation? identifier ( '=' expression )? ;
-variableDeclarationList:(variableDeclaration ','?)+;
+variableDeclarationList:(variableDeclaration ','?)*;
 typeName
     : elementaryTypeName
     | userDefinedTypeName
@@ -154,7 +154,7 @@ variableDeclarationStatement : ( 'var' identifierList | variableDeclaration ) ;
 identifierList
   : '(' ( identifier? ',' )* identifier? ')' ;
 identifier
-    : Identifier | elementaryTypeName;
+    : Identifier | elementaryTypeName|'value';
 /*specialFunctions:'value'|'assert'| 'require'| 'revert'|'break'| 'return'|'throw'|'while'|'do'|'for'|'var'|'assembly'|'send'|'call'|
                              'callcode'|'delegatecode'|'balance'|'transfer';*/
 Identifier
@@ -265,10 +265,11 @@ expression
   | expression '||' expression
   | expression '?' expression ':' expression
   | expression ('=' | '|=' | '^=' | '&=' | '<<=' | '>>=' | '+=' | '-=' | '*=' | '/=' | '%=') expression
+  | primaryExpression+
   | functionCall
   //| expression '.' identifier
   | expression '(' functionCallArguments ')'
-  | primaryExpression+;
+  ;
 
 binaryOperator: '=' | '|=' | '^=' | '&=' | '<<=' | '>>=' | '+=' | '-=' | '*=' | '/=' | '%='|'||'|'&&'|'==' | '!='|'<' | '>' | '<=' | '>='
                 |'|'|'^'|'&'|'<<' | '>>'|'+' | '-'|'*' | '/' | '%'|'**' ;
@@ -314,11 +315,15 @@ newExpression : 'new' typeName ;
 
 inlineAssemblyBlock : '{' assemblyItem* '}' ;
 
-assemblyItem : Identifier | functionalAssemblyExpression | inlineAssemblyBlock | assemblyLocalBinding | assemblyAssignment | numberLiteral | StringLiteral | HexLiteral ;
-assemblyLocalBinding : 'let' Identifier ':=' functionalAssemblyExpression ;
-assemblyAssignment : Identifier ':=' functionalAssemblyExpression | '=:' Identifier ;
-functionalAssemblyExpression : Identifier '(' assemblyItem? ( ',' assemblyItem )* ')' ;
-
+assemblyItem : Identifier| assemblyItemCase|assemblyItemSwitch|assemblyItemDefault | functionalAssemblyExpression | inlineAssemblyBlock | assemblyLocalBinding| assemblyFunction | assemblyAssignment | assemblerFor | numberLiteral | StringLiteral | HexLiteral ;
+assemblyItemCase: 'case' primaryExpression inlineAssemblyBlock;
+assemblyItemDefault:'default' inlineAssemblyBlock;
+assemblyItemSwitch: 'switch' (primaryExpression|functionalAssemblyExpression);
+assemblyLocalBinding : 'let' Identifier ':=' (functionalAssemblyExpression|primaryExpression );
+assemblyAssignment : Identifier ':=' (functionalAssemblyExpression|primaryExpression ) | '=:' Identifier ;
+assemblerFor: 'for' '{'assemblyLocalBinding'}' functionalAssemblyExpression inlineAssemblyBlock*;
+functionalAssemblyExpression : Identifier ('(' assemblyItem? ( ',' assemblyItem )* ')')? ('=:' Identifier)?;
+assemblyFunction: 'function' identifier '(' (assemblyItem ','?)* ')' '->' identifier inlineAssemblyBlock;
 arrayLiteral : '[' expression? ( ',' expression )* ']' ;
 elementaryTypeNameExpression : elementaryTypeName ;
 numberLiteral : (DecimalNumber | HexNumber) NumberUnit? ;
