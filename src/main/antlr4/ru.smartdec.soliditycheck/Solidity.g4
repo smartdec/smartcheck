@@ -70,7 +70,7 @@ structDefinition : 'struct' Identifier '{'(variableDeclaration ';'?)* '}' ;
 modifierDefinition : 'modifier' Identifier parameterList? blockDef ;
 
 functionDefinition
-    : 'function' Identifier '('? variableDeclarationList ')'?
+    : 'function' identifier '('? variableDeclarationList? ')'?
       ( functionCall | Identifier | 'constant' | 'payable' | 'external' | 'public' | 'internal' | 'private' )*
       ( 'returns' parameterList )? ( ';' | blockDef ) ;
 
@@ -101,7 +101,7 @@ parameter : typeName identifier?;
 typeNameList :         '(' ( typeName (',' typeName )* )? ')' ;
 
 variableDeclaration : typeName storageLocation? identifier ( '=' expression )? ;
-variableDeclarationList:(variableDeclaration ','?)*;
+variableDeclarationList:(variableDeclaration ','?)+;
 typeName
     : elementaryTypeName
     | userDefinedTypeName
@@ -136,11 +136,12 @@ statement
     | creatingContractViaNewStatement ';'?
     | simpleStatement ';'?
     ;
-expressionStatement : expression  ';' ;
-ifStatement : 'if' '(' functionCall? comparison? expression? ')' statement ( 'else' statement )? ;
+expressionStatement : expression+  ';' ;
+ifStatement : 'if' '(' ifCondition ')' statement ( 'else' statement )? ;
+ifCondition:  (functionCall|expression) comparison? (functionCall|expression)?;
 whileStatement : 'while' '(' expression ')' statement ;
 placeholderStatement : '_' ;
-simpleStatement : variableDeclarationStatement
+simpleStatement : variableDeclarationStatement expressionStatement?
                 | expressionStatement
                 ;
 forStatement : 'for' '(' simpleStatement? ( expression ';' )? (expression)? ')' statement ;
@@ -154,11 +155,11 @@ variableDeclarationStatement : ( 'var' identifierList | variableDeclaration ) ;
 identifierList
   : '(' ( identifier? ',' )* identifier? ')' ;
 identifier
-    : Identifier | elementaryTypeName|'value';
+    : Identifier | elementaryTypeName|'value'|'from';
 /*specialFunctions:'value'|'assert'| 'require'| 'revert'|'break'| 'return'|'throw'|'while'|'do'|'for'|'var'|'assembly'|'send'|'call'|
                              'callcode'|'delegatecode'|'balance'|'transfer';*/
 Identifier
-  : (IdentifierStart IdentifierPart* | 'from') ;
+  : IdentifierStart IdentifierPart* ;
 //___SPECIAL___FUNCTION___
 /*errorHanflingFunctions:assertStatement|requireStatement|revertStatement;
 assertStatement: 'assert' '(' expression ')';
@@ -265,6 +266,7 @@ expression
   | expression '||' expression
   | expression '?' expression ':' expression
   | expression ('=' | '|=' | '^=' | '&=' | '<<=' | '>>=' | '+=' | '-=' | '*=' | '/=' | '%=') expression
+  | variableDeclaration
   | primaryExpression+
   | functionCall
   //| expression '.' identifier
@@ -366,6 +368,7 @@ ReservedKeyword
   | 'type'
   | 'typeof'
   | 'view'
+  | 'from'
   ;
 
 fragment
