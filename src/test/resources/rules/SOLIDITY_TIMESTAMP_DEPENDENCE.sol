@@ -9,7 +9,7 @@ contract SolidityStyleGuideViolation {
     event OkEvent();
 
     function doSomething() {
-        if (now > startTime + week) {//8a1044
+        if (now > startTime + week) {//8a1518
         badlyNamedEvent();
         }
     }

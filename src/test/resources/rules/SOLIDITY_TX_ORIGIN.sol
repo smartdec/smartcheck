@@ -5,13 +5,13 @@ contract SolidityTxOrigin {
     address owner;
     uint price;
     
-    function SolidityTxOrigin() {
+    function SolidityTxOrigin() {//4fc198
         owner = msg.sender;
         price = tx.gasprice;
     }
     
     function dangerousWithdraw() returns (bool) {
-        if (tx.origin == owner) {//5508c4
+        if (tx.origin == owner) {//1336a7
             return true;
         }
         return false;

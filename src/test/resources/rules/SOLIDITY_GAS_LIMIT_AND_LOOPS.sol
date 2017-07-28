@@ -1,14 +1,8 @@
 pragma solidity ^0.4.5;
 contract Voting {
-    mapping(address => uint) voteWeight;
-    address[] yesVotes;
-    uint requiredWeight;
-    address beneficiary;
-    uint amount;-
-function voteYes() { yesVotes.push(msg.sender); }
-function findBidder(bytes32 bidderId) constant returns (uint8 err, uint groupIndex, uint bidderIndex) {
-    for(bidderIndex = 0; bidderIndex < 34; bidderIndex++) {//нет уязвимости
-        if (Utils.equal(groups[groupIndex].bidders[bidderIndex].bidderId, bidderId) == true) {
+    function findBidder(bytes32 bidderId) constant returns (uint8 err, uint groupIndex, uint bidderIndex) {
+      for(bidderIndex = 0; bidderIndex < 34; bidderIndex++) {//нет уязвимости
+            if (Utils.equal(groups[groupIndex].bidders[bidderIndex].bidderId, bidderId) == true) {
             return (0, groupIndex, bidderIndex);
         }
     }
@@ -42,7 +36,7 @@ function refundLosingGroups(address crowdsaleAddr) {
     uint winnerGroupIndex = CS.winnerGroupIndex();
 
     // Loop all groups
-    for (uint groupIndex = 0; groupIndex < groupsCount; groupIndex++) {//8a1809
+    for (uint groupIndex = 0; groupIndex < groupsCount; groupIndex++) {//8a1552
         uint biddersCount;
         bool hasReceivedTokensBack;
         ( , , biddersCount, , hasReceivedTokensBack) = CS.getGroup(groupIndex);
@@ -50,7 +44,7 @@ function refundLosingGroups(address crowdsaleAddr) {
         // Check if group is not winner group and has not already been refunded
         if (groupIndex != winnerGroupIndex && hasReceivedTokensBack == false) {
         // Loop all bidders
-        for (uint bidderIndex = 0; bidderIndex < biddersCount; bidderIndex++) {//8a1809
+        for (uint bidderIndex = 0; bidderIndex < biddersCount; bidderIndex++) {//8a1552
             bytes32 bidderId;
             uint bidAmount;
             bool bidderHasReceivedTokensBack;

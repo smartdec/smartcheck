@@ -10,25 +10,25 @@ contract SolidityUncheckedSend {
     
     function dangerousSend(address _to) returns (bool) {
         if (msg.sender != owner) throw;
-        _to.send(this.balance);//19e999
+        _to.send(this.balance);//1337b7
         return true;
     }
     
     function safeSend(address _to) returns (bool) {
         if (msg.sender != owner) throw;
-        if (!_to.send(this.balance))
+        if (!_to.send(this.balance))//1337b7
             return false;
         return true;
     }
 
     function unseatKing(address a, uint w) {
-        a.call.value(w);//f68a3a
+        a.call.value(w);//1337b7
     }
     function () {
         throw;
     }
     function delegatecallSetN(address _e, uint _n) {
-        _e.delegatecall(bytes4(sha3("setN(uint256)")), _n); //19dele
+        _e.delegatecall(bytes4(sha3("setN(uint256)")), _n); //1337b7
     }
 }
 
