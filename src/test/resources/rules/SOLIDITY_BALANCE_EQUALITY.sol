@@ -16,7 +16,7 @@ contract SoliditySendValue {
             return true;
         }
         
-        if (_amount == this.balance) return false;//1444c7
+        if (_amount == this.balance) return false;//1338c7
         
         if (this.balance > 100 wei) throw;  // this is ok
         
