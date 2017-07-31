@@ -55,29 +55,30 @@ contractPartDefinition
     : usingForDeclaration
     | structDefinition
     | modifierDefinition
+    //| stateVariableDeclaration
     | functionDefinition
     | functionFallBackDefinition
-    | stateVariableDeclaration
+    //| stateVariableDeclaration
     | eventDefinition
     | enumDefinition
     ;
-stateVariableDeclaration : typeName ( 'public' | 'internal' | 'private' | 'constant' )* identifier ('=' expression)? ';' ;
+stateVariableDeclaration : typeName ( 'public' | 'internal' | 'private' | 'constant' )* identifier ('=' expression|(identifier'(' expression ')'))? ';' ;
 
 usingForDeclaration : 'using' Identifier 'for' ('*' | typeName) ';' ;
 
 structDefinition : 'struct' Identifier '{'(variableDeclaration ';'?)* '}' ;
 
-modifierDefinition : 'modifier' Identifier parameterList? blockDef ;
+modifierDefinition : 'modifier' Identifier parameterList? block ;
 
 functionDefinition
     : 'function' identifier '('? variableDeclarationList? ')'?
       ( functionCall | Identifier | 'constant' | 'payable' | 'external' | 'public' | 'internal' | 'private' )*
-      ( 'returns' parameterList )? ( ';' | blockDef ) ;
+      ( 'returns' parameterList )? ( ';' | block ) ;
 
 functionFallBackDefinition
     : 'function' parameterList
       ( functionCall | Identifier | 'constant' | 'payable' | 'external' | 'public' | 'internal' | 'private' )*
-      ( 'returns' parameterList )? ( blockDef ) ;
+      ( 'returns' parameterList )? ( block ) ;
 
 functionFallBackCall
     : 'function' parameterList
@@ -100,8 +101,8 @@ parameter : typeName identifier?;
 
 typeNameList :         '(' ( typeName (',' typeName )* )? ')' ;
 
-variableDeclaration : typeName storageLocation? identifier ( '=' expression )? ;
-variableDeclarationList:(variableDeclaration ','?)+;
+variableDeclaration : typeName storageLocation? identifier ( '='(identifier '(')? expression ')'?)? ;
+variableDeclarationList:((variableDeclaration|stateVariableDeclaration) ','?)+;
 typeName
     : elementaryTypeName
     | userDefinedTypeName
@@ -117,10 +118,10 @@ functionTypeName : 'function' typeNameList ( 'internal' | 'external' | 'constant
                    ( 'returns' typeNameList )? ;
 storageLocation : 'memory' | 'storage' ;
 blockCall : '{' (statement|functionCall)* '}' ;
-blockDef: '{' (statement)* '}' ;
 block: '{' (statement)* '}' ;
 statement
-    : ifStatement ';'?
+    : simpleStatement ';'?
+    | ifStatement ';'?
     | whileStatement ';'?
     | forStatement ';'?
     | block ';'?
@@ -131,14 +132,13 @@ statement
     | breakStatement ';'?
     | returnStatement ';'?
     | throwStatement ';'?
-    | functionCallStatement ';'?
+    | functionCallStatement
     | functionFallBackCall ';'?
     | creatingContractViaNewStatement ';'?
-    | simpleStatement ';'?
-    ;
+      ;
 expressionStatement : expression+  ';' ;
 ifStatement : 'if' '(' ifCondition ')' statement ( 'else' statement )? ;
-ifCondition:  (functionCall|expression) comparison? (functionCall|expression)?;
+ifCondition:  (expression|functionCall) comparison? (expression|functionCall)?;
 whileStatement : 'while' '(' expression ')' statement ;
 placeholderStatement : '_' ;
 simpleStatement : variableDeclarationStatement expressionStatement?
@@ -155,7 +155,7 @@ variableDeclarationStatement : ( 'var' identifierList | variableDeclaration ) ;
 identifierList
   : '(' ( identifier? ',' )* identifier? ')' ;
 identifier
-    : Identifier | elementaryTypeName|'value'|'from';
+    : Identifier |'value'|'from';
 /*specialFunctions:'value'|'assert'| 'require'| 'revert'|'break'| 'return'|'throw'|'while'|'do'|'for'|'var'|'assembly'|'send'|'call'|
                              'callcode'|'delegatecode'|'balance'|'transfer';*/
 Identifier
@@ -267,10 +267,10 @@ expression
   | expression '?' expression ':' expression
   | expression ('=' | '|=' | '^=' | '&=' | '<<=' | '>>=' | '+=' | '-=' | '*=' | '/=' | '%=') expression
   | variableDeclaration
-  | primaryExpression+
   | functionCall
   //| expression '.' identifier
   | expression '(' functionCallArguments ')'
+  | primaryExpression+
   ;
 
 binaryOperator: '=' | '|=' | '^=' | '&=' | '<<=' | '>>=' | '+=' | '-=' | '*=' | '/=' | '%='|'||'|'&&'|'==' | '!='|'<' | '>' | '<=' | '>='
@@ -300,13 +300,13 @@ internalFunctionCall:functionName functionCallArguments;
 externalFunctionCall:externalFunctionCallThis|externalFunctionCallNotThis;
 externalFunctionCallThis:'this' ('.' functionName)+ functionCallArguments? block?;
 externalFunctionCallNotThis:
-                    callObject  ('.' functionName)* ('.' 'value' ('(' argument ')')?)? ('.' 'gas' '(' argument ')')? functionCallArguments? block?;
+                    callObject '.' ('.'? functionName)* ('.'? 'value' ('(' argument ')')?)? ('.'? 'gas' '(' argument ')')? functionCallArguments? block?;
 callObject: '(' 'new' callObject ')' callObject?
           |  identifier arrayLiteral?
           | (identifier arrayLiteral? '(')* identifier arrayLiteral? ')'* (')')?
           | functionName functionCallArguments
           ;
-functionCallStatement : functionCall ;
+functionCallStatement : functionCall ';'? ;
 functionCallArguments:(  functionCallArgument )+;
 functionName:((identifier) arrayLiteral?)| newExpression /*|elementaryFunctions*/;
 functionCallArgument
