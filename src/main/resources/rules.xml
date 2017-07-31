@@ -14,14 +14,15 @@
             [matches(text()[1],".")]
             [matches(text()[1],"origin")]</Pattern>
     </Rule>
-    <Rule id="SOLIDITY_UNCHECKED_SEND">
-        <Pattern id="19e999" severity="3">
+    <Rule id="SOLIDITY_EXCEPTION_DISORDER">
+        <Pattern id="19send" severity="3">
             //simpleStatement[expressionStatement/expression/functionCall[matches(text()[1],"^.+\.send\($")]]
         </Pattern>
-    </Rule>
-    <Rule id="SOLIDITY_CALL_VALUE">
-        <Pattern id="f68a3a" severity="3">
-            //functionCall[matches(text()[1],"^.+\.call\.value\($")]
+        <Pattern id="19call" severity="3">
+            //simpleStatement[expressionStatement/expression/functionCall[matches(text()[1],"^.+\.call\($")]]
+        </Pattern>
+        <Pattern id="19dele" severity="3">
+            //simpleStatement[expressionStatement/expression/functionCall[matches(text()[1],"^.+\.delegatecall\($")]]
         </Pattern>
     </Rule>
     <Rule id="SOLIDITY_BALANCE_EQUALITY">
@@ -42,20 +43,29 @@
             //forStatement/simpleStatement/variableDeclarationStatement[variableDeclaration//elementaryTypeName[matches(text()[1],"var")]][expression//numberLiteral[matches(text()[1],"0")]]
         </Pattern>
     </Rule>
-    <!--<Rule id="SOLIDITY_CHECKS_EFFECTS_INTERACTIONS_REENTRANCY">
+    <Rule id="SOLIDITY_CHECKS_EFFECTS_INTERACTIONS_REENTRANCY">
         <Pattern id="8a1600" severity="2">
-            //block/following-sibling::statement[//functionCall]/simpleStatement//primaryExpression
-        </Pattern>
-    </Rule>-->
-    <Rule id="SOLIDITY_GAS_LIMIT_AND_LOOPS">
-        <Pattern id="8a1809" severity="2">
-            //forStatement/expression[1]/expression[2]/expression/primaryExpression
+            //functionCall/following-sibling::statement
         </Pattern>
     </Rule>
-   <!-- <Rule id="SOLIDITY_ TIMESTAMP_DEPENDENCE">
-        <Pattern id="8a1044" severity="2">
-            //expression/primaryExpression[matches(text()[1],"now")]
+    <Rule id="SOLIDITY_GAS_LIMIT_AND_LOOPS">
+        <Pattern id="8a1809" severity="2">
+            //forStatement/expression[1]/expression[2]//expression[1]/argument/identifier
         </Pattern>
-    </Rule>-->
+        <Pattern id="8a1641" severity="2">
+            //forStatement/expression[1]/expression[2]/argument/identifier
+        </Pattern>
+    </Rule>
+
+    <Rule id="SOLIDITY_DOS_WITH_THROW">
+        <Pattern id="8a1139" severity="2">
+            //forStatement/statement//throwStatement
+        </Pattern>
+    </Rule>
+    <Rule id="SOLIDITY_BYTES_BYTE">
+        <Pattern id="8a1648" severity="2">
+            //typeName[typeName/elementaryTypeName[matches(text()[1],"byte")]][matches(text()[1],"\[")][matches(text()[1],"\]")]
+        </Pattern>
+    </Rule>
 
 </Rules>
