@@ -55,15 +55,15 @@ contractPartDefinition
     : usingForDeclaration
     | structDefinition
     | modifierDefinition
-    //| stateVariableDeclaration
+    | stateVariableDeclaration
     | functionDefinition
     | functionFallBackDefinition
     //| stateVariableDeclaration
     | eventDefinition
     | enumDefinition
     ;
-stateVariableDeclaration : typeName ( 'public' | 'internal' | 'private' | 'constant' )* identifier ('=' expression|(identifier'(' expression ')'))? ';' ;
-
+stateVariableDeclaration : typeName ( visibleType | 'constant' )* identifier ('='? expression|(identifier'(' expression ')'))? ';' ;
+visibleType:'public' | 'internal' | 'external' | 'private';
 usingForDeclaration : 'using' Identifier 'for' ('*' | typeName) ';' ;
 
 structDefinition : 'struct' Identifier '{'(variableDeclaration ';'?)* '}' ;
@@ -72,7 +72,7 @@ modifierDefinition : 'modifier' Identifier parameterList? block ;
 
 functionDefinition
     : 'function' identifier '('? variableDeclarationList? ')'?
-      ( functionCall | Identifier | 'constant' | 'payable' | 'external' | 'public' | 'internal' | 'private' )*
+      ( functionCall | Identifier | 'constant' | 'payable' |visibleType )*
       ( 'returns' parameterList )? ( ';' | block ) ;
 
 functionFallBackDefinition
@@ -86,10 +86,10 @@ functionFallBackCall
       ( 'returns' parameterList )? ';'? ;
 
 eventDefinition
-    : 'event' Identifier indexedParameterList 'anonymous'? ';' ;
+    : 'event' identifier indexedParameterList 'anonymous'? ';' ;
 
 enumDefinition
-    : 'enum' Identifier '{' enumValue? (',' enumValue)* '}' ;
+    : 'enum' identifier '{' enumValue? (',' enumValue)* '}' ;
 
 enumValue : Identifier ;
 
