@@ -86,7 +86,7 @@ functionFallBackCall
       ( 'returns' parameterList )? ';'? ;
 
 eventDefinition
-    : 'event' identifier indexedParameterList 'anonymous'? ';' ;
+    : 'event' identifier indexedParameterList 'anonymous'? ';'? ;
 
 enumDefinition
     : 'enum' identifier '{' enumValue? (',' enumValue)* '}' ;
