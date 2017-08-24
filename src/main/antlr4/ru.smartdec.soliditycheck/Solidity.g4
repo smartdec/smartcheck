@@ -134,7 +134,7 @@ expressionStatement : expression+  ';' ;
 
 ifStatement : 'if' '(' ifCondition ')' statement ( 'else' statement )? ;
 
-ifCondition:  (expression|functionCall) comparison? (expression|functionCall)?;
+ifCondition:  (expression|functionCall) identifier? comparison? (expression|functionCall)? identifier?;
 
 whileStatement : 'while' '(' expression ')' statement ;
 
@@ -287,7 +287,7 @@ nameValueList : Identifier ':' expression (',' Identifier ':' expression)* ;
 functionCall:internalFunctionCall|externalFunctionCall;
 internalFunctionCall:functionName functionCallArguments;
 externalFunctionCall:externalFunctionCallThis|externalFunctionCallNotThis;
-externalFunctionCallThis:'this' ('.' functionName)+ functionCallArguments block?;
+externalFunctionCallThis:'this' ('.' functionName)+ functionCallArguments* block?;
 externalFunctionCallNotThis:
                     callObject '.' ('.'? functionName)* ('.'? 'value' ('(' argument ')')?)? ('.'? 'gas' '(' argument ')')? functionCallArguments* block?;
 callObject: '(' 'new' callObject ')' callObject?
