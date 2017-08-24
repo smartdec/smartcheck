@@ -28,7 +28,7 @@ contract SolidityUncheckedSend {
         throw;
     }
     function delegatecallSetN(address _e, uint _n) {
-        _e.delegatecall(bytes4(sha3("setN(uint256)")), _n); //1337b7
+        _e.delegatecall(bytes(sha3("setN(uint256)"), u)); //1337b7
     }
 }
 

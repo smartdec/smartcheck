@@ -4,6 +4,6 @@ contract PullPayment {
     function withdrawPayments() {
         address payee = msg.sender;
         uint256 payment = payments[payee];
-        assert(payee.call.value(payment));//!!!
+        assert(payee.call.value());//!!!
     }
 }
