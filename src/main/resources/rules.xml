@@ -24,10 +24,8 @@
         </Pattern>
     </Rule>
     <Rule id="SOLIDITY_TX_ORIGIN">
-        <Pattern id="5508c4" severity="2">//expression
-            [expression/primaryExpression[matches(text()[1],"tx")]]
-            [matches(text()[1],".")]
-            [matches(text()[1],"origin")]
+        <Pattern id="5508c4" severity="2">
+            //externalFunctionCallNotThis[callObject/identifier[matches(text()[1],"tx")]][matches(text()[1],".")][functionName/identifier[matches(text()[1],"origin")]]
         </Pattern>
     </Rule>
     <Rule id="SOLIDITY_EXCEPTION_DISORDER"><!--еще доделать так, чтобы была проверка "не было проверки возвр. значения"-->
@@ -97,6 +95,16 @@
         </Pattern>
         <Pattern id="8a1601" severity="2">
             //forStatement[expression[1]/expression[2]/primaryExpression/identifier]
+        </Pattern>
+    </Rule>
+    <Rule id="SOLIDITY_GAS_LIMIT_AND_LOOPS_WHILE">
+        <Pattern id="8a1631" severity="2">
+            //whileStatement[expression/descendant::*[functionCall]]
+        </Pattern>
+    </Rule>
+    <Rule id="SOLIDITY_BALANCE_EQUALITY">
+        <Pattern id="8a1631" severity="2">
+            //expression[expression/descendant::*[//externalFunctionCallThis/functionName/identifier[matches(text()[1],"^balance$")]]][matches(text()[1],"==")]
         </Pattern>
     </Rule>
     <Rule id="SOLIDITY_BYTES_BYTE">
