@@ -1,18 +1,3 @@
-// Copyright 2016-2017 Federico Bond <federicobond@gmail.com>
-//
-// This program is free software: you can redistribute it and/or modify
-// it under the terms of the GNU General Public License as published by
-// the Free Software Foundation, either version 3 of the License, or
-// (at your option) any later version.
-//
-// This program is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-// GNU General Public License for more details.
-//
-// You should have received a copy of the GNU General Public License
-// along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
 grammar Solidity;
 
 sourceUnit
@@ -30,13 +15,13 @@ version : versionConstraint versionConstraint? ;
 versionOperator : '^' | '>=' | '>' | '<' | '<=' ;
 versionConstraint : versionOperator? VersionLiteral ;
 
-importDeclaration : Identifier ('as' Identifier)? ;
-
 importDirective
     : 'import' StringLiteral ('as' Identifier)? ';'
     | 'import' ('*' | Identifier) ('as' Identifier)? 'from' StringLiteral ';'
     | 'import' '{' importDeclaration ( ',' importDeclaration )* '}' 'from' StringLiteral ';'
     ;
+
+importDeclaration : Identifier ('as' Identifier)? ;
 
 contractDefinition
     : ( 'contract' | 'library' ) Identifier
@@ -62,8 +47,11 @@ contractPartDefinition
     | eventDefinition
     | enumDefinition
     ;
+
 stateVariableDeclaration : typeName ( visibleType | 'constant' )* identifier ('='? expression|(identifier'(' expression ')'))? ';' ;
+
 visibleType:'public' | 'internal' | 'external' | 'private';
+
 usingForDeclaration : 'using' Identifier 'for' ('*' | typeName) ';' ;
 
 structDefinition : 'struct' Identifier '{'(variableDeclaration ';'?)* '}' ;
@@ -102,7 +90,9 @@ parameter : typeName identifier?;
 typeNameList :         '(' ( typeName (',' typeName )* )? ')' ;
 
 variableDeclaration : typeName storageLocation? identifier ( '='(identifier '(')? expression ')'?)? ;
+
 variableDeclarationList:((variableDeclaration|stateVariableDeclaration) ','?)+;
+
 typeName
     : elementaryTypeName
     | userDefinedTypeName
@@ -114,11 +104,14 @@ typeName
 userDefinedTypeName : identifier ( '.' identifier )* ;
 
 mappingSt : 'mapping' '(' elementaryTypeName '=>' typeName ')' ;
+
 functionTypeName : 'function' typeNameList ( 'internal' | 'external' | 'constant' | 'payable' )*
                    ( 'returns' typeNameList )? ;
+
 storageLocation : 'memory' | 'storage' ;
-blockCall : '{' (statement|functionCall)* '}' ;
+
 block: '{' (statement)* '}' ;
+
 statement
     : simpleStatement ';'?
     | ifStatement ';'?
@@ -136,52 +129,46 @@ statement
     | functionFallBackCall ';'?
     | creatingContractViaNewStatement ';'?
       ;
+
 expressionStatement : expression+  ';' ;
+
 ifStatement : 'if' '(' ifCondition ')' statement ( 'else' statement )? ;
+
 ifCondition:  (expression|functionCall) comparison? (expression|functionCall)?;
+
 whileStatement : 'while' '(' expression ')' statement ;
+
 placeholderStatement : '_' ;
+
 simpleStatement : variableDeclarationStatement expressionStatement?
                 | expressionStatement
                 ;
+
 forStatement : 'for' '(' simpleStatement? ( expression ';' )? (expression)? ')' statement ;
+
 inlineAssemblyStatement : 'assembly' inlineAssemblyBlock ;
+
 doWhileStatement : 'do' statement 'while' '(' expression ')';
+
 continueStatement : 'continue' ;
+
 breakStatement : 'break' ;
+
 returnStatement : 'return' '('? (expression ','?)* ')'? ;
+
 throwStatement : 'throw' ;
+
 variableDeclarationStatement : ( 'var' identifierList | variableDeclaration ) ;
+
 identifierList
   : '(' ( identifier? ',' )* identifier? ')' ;
+
 identifier
     : Identifier |'value'|'from';
-/*specialFunctions:'value'|'assert'| 'require'| 'revert'|'break'| 'return'|'throw'|'while'|'do'|'for'|'var'|'assembly'|'send'|'call'|
-                             'callcode'|'delegatecode'|'balance'|'transfer';*/
+
 Identifier
   : IdentifierStart IdentifierPart* ;
-//___SPECIAL___FUNCTION___
-/*errorHanflingFunctions:assertStatement|requireStatement|revertStatement;
-assertStatement: 'assert' '(' expression ')';
-requireStatement: 'require' '(' expression ')';
-revertStatement:'revert' '(' ')';
-//___adressRelatedFunctions___
-adressRelatedFunctions:balanceStatement
-                | transferStatement
-                | sendStatement
-                | callStatement
-                | callcodeStatement
-                | delegatecallStatement;
-balanceStatement: expression '.' 'balance' '(' parameter ')' ;
-transferStatement: expression '.' 'transfer' '(' parameter ')' ;
-sendStatement:expression '.' 'send' '(' parameter ')' ('(' 'return' parameter ')')?;
-callStatement: expression '.' 'call' '(' (parameter ','?)* ')' ('(' 'return' parameter ')')?;
-callcodeStatement:expression '.' 'callcode' '(' (parameter ','?)* ')' ('(' 'return' parameter ')')?;
-delegatecallStatement:expression '.' 'delegatecode' '(' (parameter ','?)* ')' ('(' 'return' parameter ')')?;
-//___contractRelatedFunctions____
-contractRelatedFunctions:'selfdestruct' '(' expression ')';
-*/
-//________________________
+
 elementaryTypeName
     : 'address' | 'bool' | 'string' | 'var'
     |'int' | 'int8' | 'int16' | 'int24' | 'int32' | 'int40' | 'int48' | 'int56' | 'int64' | 'int72'
@@ -242,7 +229,9 @@ elementaryTypeName
     | 'fixed112x104' | 'fixed112x112' | 'fixed112x120' | 'fixed112x128' | 'fixed112x136' | 'fixed112x144' | 'fixed120x8' | 'fixed120x16'
     | 'fixed120x24' | 'fixed120x32' | 'fixed120x40' | 'fixed120x48' | 'fixed120x56' | 'fixed120x64' | 'fixed120x72' | 'fixed120x80' | 'fixed120x88' | 'fixed120x96' | 'fixed120x104' | 'fixed120x112' | 'fixed120x120' | 'fixed120x128' | 'fixed120x136' | 'fixed128x8' | 'fixed128x16' | 'fixed128x24' | 'fixed128x32' | 'fixed128x40' | 'fixed128x48' | 'fixed128x56' | 'fixed128x64' | 'fixed128x72' | 'fixed128x80' | 'fixed128x88' | 'fixed128x96' | 'fixed128x104' | 'fixed128x112' | 'fixed128x120' | 'fixed128x128' | 'fixed136x8' | 'fixed136x16' | 'fixed136x24' | 'fixed136x32' | 'fixed136x40' | 'fixed136x48' | 'fixed136x56' | 'fixed136x64' | 'fixed136x72' | 'fixed136x80' | 'fixed136x88' | 'fixed136x96' | 'fixed136x104' | 'fixed136x112' | 'fixed136x120' | 'fixed144x8' | 'fixed144x16' | 'fixed144x24' | 'fixed144x32' | 'fixed144x40' | 'fixed144x48' | 'fixed144x56' | 'fixed144x64' | 'fixed144x72' | 'fixed144x80' | 'fixed144x88' | 'fixed144x96' | 'fixed144x104' | 'fixed144x112' | 'fixed152x8' | 'fixed152x16' | 'fixed152x24' | 'fixed152x32' | 'fixed152x40' | 'fixed152x48' | 'fixed152x56' | 'fixed152x64' | 'fixed152x72' | 'fixed152x80' | 'fixed152x88' | 'fixed152x96' | 'fixed152x104' | 'fixed160x8' | 'fixed160x16' | 'fixed160x24' | 'fixed160x32' | 'fixed160x40' | 'fixed160x48' | 'fixed160x56' | 'fixed160x64' | 'fixed160x72' | 'fixed160x80' | 'fixed160x88' | 'fixed160x96' | 'fixed168x8' | 'fixed168x16' | 'fixed168x24' | 'fixed168x32' | 'fixed168x40' | 'fixed168x48' | 'fixed168x56' | 'fixed168x64' | 'fixed168x72' | 'fixed168x80' | 'fixed168x88' | 'fixed176x8' | 'fixed176x16' | 'fixed176x24' | 'fixed176x32' | 'fixed176x40' | 'fixed176x48' | 'fixed176x56' | 'fixed176x64' | 'fixed176x72' | 'fixed176x80' | 'fixed184x8' | 'fixed184x16' | 'fixed184x24' | 'fixed184x32' | 'fixed184x40' | 'fixed184x48' | 'fixed184x56' | 'fixed184x64' | 'fixed184x72' | 'fixed192x8' | 'fixed192x16' | 'fixed192x24' | 'fixed192x32' | 'fixed192x40' | 'fixed192x48' | 'fixed192x56' | 'fixed192x64' | 'fixed200x8' | 'fixed200x16' | 'fixed200x24' | 'fixed200x32' | 'fixed200x40' | 'fixed200x48' | 'fixed200x56' | 'fixed208x8' | 'fixed208x16' | 'fixed208x24' | 'fixed208x32' | 'fixed208x40' | 'fixed208x48' | 'fixed216x8' | 'fixed216x16' | 'fixed216x24' | 'fixed216x32' | 'fixed216x40' | 'fixed224x8' | 'fixed224x16' | 'fixed224x24' | 'fixed224x32' | 'fixed232x8' | 'fixed232x16' | 'fixed232x24' | 'fixed240x8' | 'fixed240x16' | 'fixed248x8'
     | 'ufixed' | 'ufixed0x8' | 'ufixed0x16' | 'ufixed0x24' | 'ufixed0x32' | 'ufixed0x40' | 'ufixed0x48' | 'ufixed0x56' | 'ufixed0x64' | 'ufixed0x72' | 'ufixed0x80' | 'ufixed0x88' | 'ufixed0x96' | 'ufixed0x104' | 'ufixed0x112' | 'ufixed0x120' | 'ufixed0x128' | 'ufixed0x136' | 'ufixed0x144' | 'ufixed0x152' | 'ufixed0x160' | 'ufixed0x168' | 'ufixed0x176' | 'ufixed0x184' | 'ufixed0x192' | 'ufixed0x200' | 'ufixed0x208' | 'ufixed0x216' | 'ufixed0x224' | 'ufixed0x232' | 'ufixed0x240' | 'ufixed0x248' | 'ufixed0x256' | 'ufixed8x8' | 'ufixed8x16' | 'ufixed8x24' | 'ufixed8x32' | 'ufixed8x40' | 'ufixed8x48' | 'ufixed8x56' | 'ufixed8x64' | 'ufixed8x72' | 'ufixed8x80' | 'ufixed8x88' | 'ufixed8x96' | 'ufixed8x104' | 'ufixed8x112' | 'ufixed8x120' | 'ufixed8x128' | 'ufixed8x136' | 'ufixed8x144' | 'ufixed8x152' | 'ufixed8x160' | 'ufixed8x168' | 'ufixed8x176' | 'ufixed8x184' | 'ufixed8x192' | 'ufixed8x200' | 'ufixed8x208' | 'ufixed8x216' | 'ufixed8x224' | 'ufixed8x232' | 'ufixed8x240' | 'ufixed8x248' | 'ufixed16x8' | 'ufixed16x16' | 'ufixed16x24' | 'ufixed16x32' | 'ufixed16x40' | 'ufixed16x48' | 'ufixed16x56' | 'ufixed16x64' | 'ufixed16x72' | 'ufixed16x80' | 'ufixed16x88' | 'ufixed16x96' | 'ufixed16x104' | 'ufixed16x112' | 'ufixed16x120' | 'ufixed16x128' | 'ufixed16x136' | 'ufixed16x144' | 'ufixed16x152' | 'ufixed16x160' | 'ufixed16x168' | 'ufixed16x176' | 'ufixed16x184' | 'ufixed16x192' | 'ufixed16x200' | 'ufixed16x208' | 'ufixed16x216' | 'ufixed16x224' | 'ufixed16x232' | 'ufixed16x240' | 'ufixed24x8' | 'ufixed24x16' | 'ufixed24x24' | 'ufixed24x32' | 'ufixed24x40' | 'ufixed24x48' | 'ufixed24x56' | 'ufixed24x64' | 'ufixed24x72' | 'ufixed24x80' | 'ufixed24x88' | 'ufixed24x96' | 'ufixed24x104' | 'ufixed24x112' | 'ufixed24x120' | 'ufixed24x128' | 'ufixed24x136' | 'ufixed24x144' | 'ufixed24x152' | 'ufixed24x160' | 'ufixed24x168' | 'ufixed24x176' | 'ufixed24x184' | 'ufixed24x192' | 'ufixed24x200' | 'ufixed24x208' | 'ufixed24x216' | 'ufixed24x224' | 'ufixed24x232' | 'ufixed32x8' | 'ufixed32x16' | 'ufixed32x24' | 'ufixed32x32' | 'ufixed32x40' | 'ufixed32x48' | 'ufixed32x56' | 'ufixed32x64' | 'ufixed32x72' | 'ufixed32x80' | 'ufixed32x88' | 'ufixed32x96' | 'ufixed32x104' | 'ufixed32x112' | 'ufixed32x120' | 'ufixed32x128' | 'ufixed32x136' | 'ufixed32x144' | 'ufixed32x152' | 'ufixed32x160' | 'ufixed32x168' | 'ufixed32x176' | 'ufixed32x184' | 'ufixed32x192' | 'ufixed32x200' | 'ufixed32x208' | 'ufixed32x216' | 'ufixed32x224' | 'ufixed40x8' | 'ufixed40x16' | 'ufixed40x24' | 'ufixed40x32' | 'ufixed40x40' | 'ufixed40x48' | 'ufixed40x56' | 'ufixed40x64' | 'ufixed40x72' | 'ufixed40x80' | 'ufixed40x88' | 'ufixed40x96' | 'ufixed40x104' | 'ufixed40x112' | 'ufixed40x120' | 'ufixed40x128' | 'ufixed40x136' | 'ufixed40x144' | 'ufixed40x152' | 'ufixed40x160' | 'ufixed40x168' | 'ufixed40x176' | 'ufixed40x184' | 'ufixed40x192' | 'ufixed40x200' | 'ufixed40x208' | 'ufixed40x216' | 'ufixed48x8' | 'ufixed48x16' | 'ufixed48x24' | 'ufixed48x32' | 'ufixed48x40' | 'ufixed48x48' | 'ufixed48x56' | 'ufixed48x64' | 'ufixed48x72' | 'ufixed48x80' | 'ufixed48x88' | 'ufixed48x96' | 'ufixed48x104' | 'ufixed48x112' | 'ufixed48x120' | 'ufixed48x128' | 'ufixed48x136' | 'ufixed48x144' | 'ufixed48x152' | 'ufixed48x160' | 'ufixed48x168' | 'ufixed48x176' | 'ufixed48x184' | 'ufixed48x192' | 'ufixed48x200' | 'ufixed48x208' | 'ufixed56x8' | 'ufixed56x16' | 'ufixed56x24' | 'ufixed56x32' | 'ufixed56x40' | 'ufixed56x48' | 'ufixed56x56' | 'ufixed56x64' | 'ufixed56x72' | 'ufixed56x80' | 'ufixed56x88' | 'ufixed56x96' | 'ufixed56x104' | 'ufixed56x112' | 'ufixed56x120' | 'ufixed56x128' | 'ufixed56x136' | 'ufixed56x144' | 'ufixed56x152' | 'ufixed56x160' | 'ufixed56x168' | 'ufixed56x176' | 'ufixed56x184' | 'ufixed56x192' | 'ufixed56x200' | 'ufixed64x8' | 'ufixed64x16' | 'ufixed64x24' | 'ufixed64x32' | 'ufixed64x40' | 'ufixed64x48' | 'ufixed64x56' | 'ufixed64x64' | 'ufixed64x72' | 'ufixed64x80' | 'ufixed64x88' | 'ufixed64x96' | 'ufixed64x104' | 'ufixed64x112' | 'ufixed64x120' | 'ufixed64x128' | 'ufixed64x136' | 'ufixed64x144' | 'ufixed64x152' | 'ufixed64x160' | 'ufixed64x168' | 'ufixed64x176' | 'ufixed64x184' | 'ufixed64x192' | 'ufixed72x8' | 'ufixed72x16' | 'ufixed72x24' | 'ufixed72x32' | 'ufixed72x40' | 'ufixed72x48' | 'ufixed72x56' | 'ufixed72x64' | 'ufixed72x72' | 'ufixed72x80' | 'ufixed72x88' | 'ufixed72x96' | 'ufixed72x104' | 'ufixed72x112' | 'ufixed72x120' | 'ufixed72x128' | 'ufixed72x136' | 'ufixed72x144' | 'ufixed72x152' | 'ufixed72x160' | 'ufixed72x168' | 'ufixed72x176' | 'ufixed72x184' | 'ufixed80x8' | 'ufixed80x16' | 'ufixed80x24' | 'ufixed80x32' | 'ufixed80x40' | 'ufixed80x48' | 'ufixed80x56' | 'ufixed80x64' | 'ufixed80x72' | 'ufixed80x80' | 'ufixed80x88' | 'ufixed80x96' | 'ufixed80x104' | 'ufixed80x112' | 'ufixed80x120' | 'ufixed80x128' | 'ufixed80x136' | 'ufixed80x144' | 'ufixed80x152' | 'ufixed80x160' | 'ufixed80x168' | 'ufixed80x176' | 'ufixed88x8' | 'ufixed88x16' | 'ufixed88x24' | 'ufixed88x32' | 'ufixed88x40' | 'ufixed88x48' | 'ufixed88x56' | 'ufixed88x64' | 'ufixed88x72' | 'ufixed88x80' | 'ufixed88x88' | 'ufixed88x96' | 'ufixed88x104' | 'ufixed88x112' | 'ufixed88x120' | 'ufixed88x128' | 'ufixed88x136' | 'ufixed88x144' | 'ufixed88x152' | 'ufixed88x160' | 'ufixed88x168' | 'ufixed96x8' | 'ufixed96x16' | 'ufixed96x24' | 'ufixed96x32' | 'ufixed96x40' | 'ufixed96x48' | 'ufixed96x56' | 'ufixed96x64' | 'ufixed96x72' | 'ufixed96x80' | 'ufixed96x88' | 'ufixed96x96' | 'ufixed96x104' | 'ufixed96x112' | 'ufixed96x120' | 'ufixed96x128' | 'ufixed96x136' | 'ufixed96x144' | 'ufixed96x152' | 'ufixed96x160' | 'ufixed104x8' | 'ufixed104x16' | 'ufixed104x24' | 'ufixed104x32' | 'ufixed104x40' | 'ufixed104x48' | 'ufixed104x56' | 'ufixed104x64' | 'ufixed104x72' | 'ufixed104x80' | 'ufixed104x88' | 'ufixed104x96' | 'ufixed104x104' | 'ufixed104x112' | 'ufixed104x120' | 'ufixed104x128' | 'ufixed104x136' | 'ufixed104x144' | 'ufixed104x152' | 'ufixed112x8' | 'ufixed112x16' | 'ufixed112x24' | 'ufixed112x32' | 'ufixed112x40' | 'ufixed112x48' | 'ufixed112x56' | 'ufixed112x64' | 'ufixed112x72' | 'ufixed112x80' | 'ufixed112x88' | 'ufixed112x96' | 'ufixed112x104' | 'ufixed112x112' | 'ufixed112x120' | 'ufixed112x128' | 'ufixed112x136' | 'ufixed112x144' | 'ufixed120x8' | 'ufixed120x16' | 'ufixed120x24' | 'ufixed120x32' | 'ufixed120x40' | 'ufixed120x48' | 'ufixed120x56' | 'ufixed120x64' | 'ufixed120x72' | 'ufixed120x80' | 'ufixed120x88' | 'ufixed120x96' | 'ufixed120x104' | 'ufixed120x112' | 'ufixed120x120' | 'ufixed120x128' | 'ufixed120x136' | 'ufixed128x8' | 'ufixed128x16' | 'ufixed128x24' | 'ufixed128x32' | 'ufixed128x40' | 'ufixed128x48' | 'ufixed128x56' | 'ufixed128x64' | 'ufixed128x72' | 'ufixed128x80' | 'ufixed128x88' | 'ufixed128x96' | 'ufixed128x104' | 'ufixed128x112' | 'ufixed128x120' | 'ufixed128x128' | 'ufixed136x8' | 'ufixed136x16' | 'ufixed136x24' | 'ufixed136x32' | 'ufixed136x40' | 'ufixed136x48' | 'ufixed136x56' | 'ufixed136x64' | 'ufixed136x72' | 'ufixed136x80' | 'ufixed136x88' | 'ufixed136x96' | 'ufixed136x104' | 'ufixed136x112' | 'ufixed136x120' | 'ufixed144x8' | 'ufixed144x16' | 'ufixed144x24' | 'ufixed144x32' | 'ufixed144x40' | 'ufixed144x48' | 'ufixed144x56' | 'ufixed144x64' | 'ufixed144x72' | 'ufixed144x80' | 'ufixed144x88' | 'ufixed144x96' | 'ufixed144x104' | 'ufixed144x112' | 'ufixed152x8' | 'ufixed152x16' | 'ufixed152x24' | 'ufixed152x32' | 'ufixed152x40' | 'ufixed152x48' | 'ufixed152x56' | 'ufixed152x64' | 'ufixed152x72' | 'ufixed152x80' | 'ufixed152x88' | 'ufixed152x96' | 'ufixed152x104' | 'ufixed160x8' | 'ufixed160x16' | 'ufixed160x24' | 'ufixed160x32' | 'ufixed160x40' | 'ufixed160x48' | 'ufixed160x56' | 'ufixed160x64' | 'ufixed160x72' | 'ufixed160x80' | 'ufixed160x88' | 'ufixed160x96' | 'ufixed168x8' | 'ufixed168x16' | 'ufixed168x24' | 'ufixed168x32' | 'ufixed168x40' | 'ufixed168x48' | 'ufixed168x56' | 'ufixed168x64' | 'ufixed168x72' | 'ufixed168x80' | 'ufixed168x88' | 'ufixed176x8' | 'ufixed176x16' | 'ufixed176x24' | 'ufixed176x32' | 'ufixed176x40' | 'ufixed176x48' | 'ufixed176x56' | 'ufixed176x64' | 'ufixed176x72' | 'ufixed176x80' | 'ufixed184x8' | 'ufixed184x16' | 'ufixed184x24' | 'ufixed184x32' | 'ufixed184x40' | 'ufixed184x48' | 'ufixed184x56' | 'ufixed184x64' | 'ufixed184x72' | 'ufixed192x8' | 'ufixed192x16' | 'ufixed192x24' | 'ufixed192x32' | 'ufixed192x40' | 'ufixed192x48' | 'ufixed192x56' | 'ufixed192x64' | 'ufixed200x8' | 'ufixed200x16' | 'ufixed200x24' | 'ufixed200x32' | 'ufixed200x40' | 'ufixed200x48' | 'ufixed200x56' | 'ufixed208x8' | 'ufixed208x16' | 'ufixed208x24' | 'ufixed208x32' | 'ufixed208x40' | 'ufixed208x48' | 'ufixed216x8' | 'ufixed216x16' | 'ufixed216x24' | 'ufixed216x32' | 'ufixed216x40' | 'ufixed224x8' | 'ufixed224x16' | 'ufixed224x24' | 'ufixed224x32' | 'ufixed232x8' | 'ufixed232x16' | 'ufixed232x24' | 'ufixed240x8' | 'ufixed240x16' | 'ufixed248x8' ;
+
 creatingContractViaNewStatement: identifier arrayLiteral? '=' 'new' identifier arrayLiteral? ('(' (expression ','?)* ')')? ';'?;
+
 expression
   : expression ('++' | '--')
   | 'new' typeName //('(' (expression ','?)* ')')?
@@ -273,9 +262,8 @@ expression
   | primaryExpression+
   ;
 
-binaryOperator: '=' | '|=' | '^=' | '&=' | '<<=' | '>>=' | '+=' | '-=' | '*=' | '/=' | '%='|'||'|'&&'|'==' | '!='|'<' | '>' | '<=' | '>='
-                |'|'|'^'|'&'|'<<' | '>>'|'+' | '-'|'*' | '/' | '%'|'**' ;
 comparison:'==' | '!=';
+
 primaryExpression
     : arrayLiteral
     | booleanLit
@@ -286,12 +274,13 @@ primaryExpression
     | elementaryTypeNameExpression
     | numberLiteral
     ;
+
 tupleExpression
   : '(' ( expression? ( ',' expression? )+ )? ')'
   | '[' ( expression? ( ',' expression? )+ )? ']' ;
-  
-//: 'value' ;//|'transfer'|'balance';
+
 expressionList : expression (',' expression)* |identifier arrayLiteral? (',' identifier arrayLiteral?)*;
+
 nameValueList : Identifier ':' expression (',' Identifier ':' expression)* ;
 
 //___functionCall___
@@ -307,39 +296,59 @@ callObject: '(' 'new' callObject ')' callObject?
           | functionName functionCallArguments
           ;
 functionCallStatement : functionCall ';'? ;
-functionCallArguments:(  functionCallArgument )+;
-functionName:((identifier) arrayLiteral?)| newExpression /*|elementaryFunctions*/;
+functionCallArguments:'('(functionCallArgument ','?)*')';
+functionName:(identifier arrayLiteral?)| newExpression|elementaryTypeName;
 functionCallArgument
-    : '(' ('{' nameValueList? '}' | expressionList|functionCall)?')'
+    :  (functionCall|'{' nameValueList? '}' | expressionList)
     ;
 
 newExpression : 'new' typeName ;
 
 inlineAssemblyBlock : '{' assemblyItem* '}' ;
 
-assemblyItem : Identifier| assemblyItemCase|assemblyItemSwitch|assemblyItemDefault | functionalAssemblyExpression | inlineAssemblyBlock | assemblyLocalBinding| assemblyFunction | assemblyAssignment | assemblerFor | numberLiteral | StringLiteral | HexLiteral ;
+assemblyItem : Identifier| assemblyItemCase|assemblyItemSwitch|assemblyItemDefault | functionalAssemblyExpression
+             | inlineAssemblyBlock | assemblyLocalBinding| assemblyFunction | assemblyAssignment | assemblerFor
+             | numberLiteral | StringLiteral | HexLiteral ;
+
 assemblyItemCase: 'case' primaryExpression inlineAssemblyBlock;
+
 assemblyItemDefault:'default' inlineAssemblyBlock;
+
 assemblyItemSwitch: 'switch' (primaryExpression|functionalAssemblyExpression);
+
 assemblyLocalBinding : 'let' Identifier ':=' (functionalAssemblyExpression|primaryExpression );
+
 assemblyAssignment : Identifier ':=' (functionalAssemblyExpression|primaryExpression ) | '=:' Identifier ;
+
 assemblerFor: 'for' '{'assemblyLocalBinding'}' functionalAssemblyExpression inlineAssemblyBlock*;
+
 functionalAssemblyExpression : Identifier ('(' assemblyItem? ( ',' assemblyItem )* ')')? ('=:' Identifier)?;
+
 assemblyFunction: 'function' identifier '(' (assemblyItem ','?)* ')' '->' identifier inlineAssemblyBlock;
+
 arrayLiteral : '[' expression? ( ',' expression )* ']' ;
+
 elementaryTypeNameExpression : elementaryTypeName ;
+
 numberLiteral : (DecimalNumber | HexNumber) NumberUnit? ;
 
 VersionLiteral : [0-9]+ '.' [0-9]+ '.' [0-9]+ ;
 
 BooleanLiteral : 'true' | 'false' ;
+
 booleanLit:BooleanLiteral;
+
 DecimalNumber : [0-9]+ ;
+
 HexNumber : '0x' HexCharacter+ ;
+
 NumberUnit : 'wei' | 'szabo' | 'finney' | 'ether'
            | 'seconds' | 'minutes' | 'hours' | 'days' | 'weeks' | 'years' ;
+
 HexLiteral : 'hex' ('"' HexPair* '"' | '\'' HexPair* '\'') ;
+
 hexLiteral:HexLiteral;
+
 fragment
 HexPair : HexCharacter HexCharacter ;
 
@@ -373,7 +382,9 @@ ReservedKeyword
 
 fragment
 IdentifierStart : [a-zA-Z$_] ;
+
 argument: identifier|numberLiteral|stringLiteral;
+
 fragment
 IdentifierPart : [a-zA-Z0-9$_] ;
 
@@ -381,7 +392,9 @@ StringLiteral
     : '"' DoubleQuotedStringCharacter* '"'
     | '\'' SingleQuotedStringCharacter* '\''
     ;
+
 stringLiteral:StringLiteral;
+
 fragment
 DoubleQuotedStringCharacter : ~["\r\n\\] | ('\\' .) ;
 
