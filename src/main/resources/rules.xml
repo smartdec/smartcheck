@@ -41,20 +41,20 @@
     </Rule>
     <Rule id="SOLIDITY_BALANCE_EQUALITY">
         <Pattern id="7a3b44" severity="2">
-            //expression[expression[expression/primaryExpression[text()[1]="this"]][text()[1]=".balance"]][text()[1]="=="]
+            //expression[expression[expression/primaryExpression[text()[1]="this"]][text()[1]="balance"]][text()[1]="=="]
         </Pattern>
     </Rule>
     <Rule id="SOLIDITY_STYLE_GUIDE_VIOLATION">
         <Pattern id="67c4ca" severity="1">
-            //eventDefinition[matches(text()[1],"^event[a-z].*$")]
+            //eventDefinition/identifier[matches(text()[1],"^[a-z]")]
         </Pattern>
         <Pattern id="4fc198" severity="1">
-            //functionDefinition[matches(text()[1],"^function[A-Z].*$")]
+            //functionDefinition/identifier[matches(text()[1],"^[A-Z]")]
         </Pattern>
     </Rule>
     <Rule id="SOLIDITY_VAR_ZERO">
         <Pattern id="8a1549" severity="2">
-            //forStatement/simpleStatement/variableDeclarationStatement[variableDeclaration//elementaryTypeName[matches(text()[1],"var")]][expression//numberLiteral[matches(text()[1],"0")]]
+            //forStatement/simpleStatement//variableDeclaration[typeName/elementaryTypeName[matches(text()[1],"var")]][expression//numberLiteral[matches(text()[1],"0")]]
         </Pattern>
     </Rule>
     <Rule id="SOLIDITY_CHECKS_EFFECTS_INTERACTIONS_REENTRANCY">
@@ -110,6 +110,14 @@
     <Rule id="SOLIDITY_BYTES_BYTE">
         <Pattern id="8a1648" severity="2">
             //typeName[typeName/elementaryTypeName[matches(text()[1],"byte")]][matches(text()[1],"\[")][matches(text()[1],"\]")]
+        </Pattern>
+    </Rule>
+    <Rule id="SOLIDITY_VISIBILITY">
+        <Pattern id="8a1725" severity="2">
+            //functionDefinition[not(visibleType)]
+        </Pattern>
+        <Pattern id="8a1726" severity="2">
+            //stateVariableDeclaration[not(visibleType)]
         </Pattern>
     </Rule>
 
