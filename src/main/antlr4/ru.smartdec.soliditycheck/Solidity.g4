@@ -287,16 +287,16 @@ nameValueList : Identifier ':' expression (',' Identifier ':' expression)* ;
 functionCall:internalFunctionCall|externalFunctionCall;
 internalFunctionCall:functionName functionCallArguments;
 externalFunctionCall:externalFunctionCallThis|externalFunctionCallNotThis;
-externalFunctionCallThis:'this' ('.' functionName)+ functionCallArguments? block?;
+externalFunctionCallThis:'this' ('.' functionName)+ functionCallArguments block?;
 externalFunctionCallNotThis:
-                    callObject '.' ('.'? functionName)* ('.'? 'value' ('(' argument ')')?)? ('.'? 'gas' '(' argument ')')? functionCallArguments? block?;
+                    callObject '.' ('.'? functionName)* ('.'? 'value' ('(' argument ')')?)? ('.'? 'gas' '(' argument ')')? functionCallArguments* block?;
 callObject: '(' 'new' callObject ')' callObject?
           |  identifier arrayLiteral?
           | (identifier arrayLiteral? '(')* identifier arrayLiteral? ')'* (')')?
           | functionName functionCallArguments
           ;
 functionCallStatement : functionCall ';'? ;
-functionCallArguments:'('(functionCallArgument ','?)*')';
+functionCallArguments:'('functionCallArgument?(functionCallArgument ','?)*')';
 functionName:(identifier arrayLiteral?)| newExpression|elementaryTypeName;
 functionCallArgument
     :  (functionCall|'{' nameValueList? '}' | expressionList)
