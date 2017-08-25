@@ -10,11 +10,14 @@
             ]
         </Pattern>
     </Rule>
-    <Rule id="SOLIDITY_REENTRANCY_EXTERNAL_CALL"><!--пока не работает-->
+    <!--
+    <Rule id="SOLIDITY_REENTRANCY_EXTERNAL_CALL">
         <Pattern id="1330c4" severity="2">
-            //block/statement[//functionCall/externalFunctionCall]/following-sibling::*[//statement//functionCall/externalFunctionCall]
+            //functionDefinition/block//statement[//functionCall/externalFunctionCall]/following::*[//statement//functionCall/externalFunctionCall]
         </Pattern>
     </Rule>
+    -->
+    <!--
     <Rule id="SOLIDITY_RECOMENDATION_SEND_CALL">
         <Pattern id="1427c4" severity="2">
             //externalFunctionCallNotThis[functionName/identifier[matches(text()[1],"^call$")]]
@@ -23,22 +26,26 @@
             ]
         </Pattern>
     </Rule>
+    -->
     <Rule id="SOLIDITY_TX_ORIGIN">
         <Pattern id="5508c4" severity="2">
             //externalFunctionCallNotThis[callObject/identifier[matches(text()[1],"tx")]][matches(text()[1],".")][functionName/identifier[matches(text()[1],"origin")]]
         </Pattern>
     </Rule>
-    <Rule id="SOLIDITY_EXCEPTION_DISORDER"><!--еще доделать так, чтобы была проверка "не было проверки возвр. значения"-->
+    <Rule id="SOLIDITY_EXCEPTION_DISORDER">
         <Pattern id="ce0826" severity="3">
-            //externalFunctionCallNotThis/functionName/identifier[matches(text()[1],"^send$")]
+            //externalFunctionCallNotThis[functionName/identifier[matches(text()[1],"^send$")]]/ancestor::*[not(ifCondition)]
         </Pattern>
-        <Pattern id="ca0826" severity="3">
+       <!-- <Pattern id="ca0826" severity="3">
             //externalFunctionCallNotThis/functionName/identifier[matches(text()[1],"^call$")]
         </Pattern>
         <Pattern id="19cea2" severity="3">
             //externalFunctionCallNotThis/functionName/identifier[matches(text()[1],"^delegatecall")]
         </Pattern>
+        -->
     </Rule>
+
+    <!--
     <Rule id="SOLIDITY_BALANCE_EQUALITY">
         <Pattern id="7a3b44" severity="2">
             //expression[expression[expression/primaryExpression[text()[1]="this"]][text()[1]="balance"]][text()[1]="=="]
@@ -120,5 +127,20 @@
             //stateVariableDeclaration[not(visibleType)]
         </Pattern>
     </Rule>
-
+    <Rule id="SOLIDITY_PRAGMAS_VERSION">
+        <Pattern id="5a1037" severity="2">
+            //pragmaDirective/pragmaValue//versionOperator
+        </Pattern>
+    </Rule>
+    <Rule id="SOLIDITY_RECOMENDATION_SEND_TRANSFER">
+        <Pattern id="5a1041" severity="2">
+            //functionName/identifier[matches(text()[1],"^send$")]
+        </Pattern>
+    </Rule>
+    <Rule id="SOLIDITY_USING_VAR">
+        <Pattern id="5a1044" severity="2">
+            //typeName/elementaryTypeName[matches(text()[1],"^var$")]
+        </Pattern>
+    </Rule>
+    -->
 </Rules>
