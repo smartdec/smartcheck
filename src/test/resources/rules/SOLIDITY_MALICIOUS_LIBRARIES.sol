@@ -1,12 +1,8 @@
-library Library{
-uint add(uint x, uint y) returns(uint);
+library x{
+    function foo();
 }
-contract MyContract{
-
-address library;
-MyContract(address lib){
-library = lib;
-x = Library(lib).add(1,1);
-}
-
+contract Ballot {
+    function y(){
+        x(0).foo();
+    }
 }

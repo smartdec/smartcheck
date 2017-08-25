@@ -7,7 +7,7 @@ contract Bob {
             a = 2;
             a = 3;
             a = 4;
-            c.call.value(2)();//8a1600, 1337b7
+            c.call.value(f(7))();//8a1600, 1337b7
             c.call.value(2)();//8a1600, 1337b7
             c.call.value(2)();//8a1600, 1337b7
             a = 5;
