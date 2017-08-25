@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Rules xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="./rules.xsd">
     <VersionDefinition>//pragmaDirective[pragmaName='solidity']/pragmaValue/version/versionConstraint/text()</VersionDefinition>
+    <!--
     <Rule id="SOLIDITY_CALL_VALUE">
         <Pattern id="8a1602" severity="2">
             //externalFunctionCallNotThis[functionName/identifier[matches(text()[1],"^call$")]]
@@ -10,13 +11,13 @@
             ]
         </Pattern>
     </Rule>
-
-    <Rule id="SOLIDITY_REENTRANCY_EXTERNAL_CALL"><!--пока не работает-->
+-->
+    <Rule id="SOLIDITY_REENTRANCY_EXTERNAL_CALL">
         <Pattern id="1330c4" severity="2">
-            //functionDefinition/block//statement[//functionCall/externalFunctionCall]/following::*[//statement//functionCall/externalFunctionCall]
+            //statement[simpleStatement/expressionStatement/expression/functionCall/externalFunctionCall][following-sibling::*[simpleStatement/expressionStatement/expression[not (functionCall/externalFunctionCall)]]]
         </Pattern>
     </Rule>
-
+<!--
 
     <Rule id="SOLIDITY_RECOMENDATION_SEND_CALL">
         <Pattern id="1427c4" severity="2">
@@ -31,17 +32,19 @@
             //externalFunctionCallNotThis[callObject/identifier[matches(text()[1],"tx")]][matches(text()[1],".")][functionName/identifier[matches(text()[1],"origin")]]
         </Pattern>
     </Rule>
+    -->
     <Rule id="SOLIDITY_EXCEPTION_DISORDER"><!--пока не работает-->
         <Pattern id="ce0826" severity="3">
-            //functionCall[externalFunctionCallNotThis/functionName/identifier[matches(text()[1],"^send$")]]/ancestor::*[not(//ifCondition)]
+            //identifier[matches(text()[1],"^send$")][not (ancestor::ifStatement)]
         </Pattern>
         <Pattern id="ca0826" severity="3">
-            //externalFunctionCallNotThis/functionName/identifier[matches(text()[1],"^call$")]
+            //identifier[matches(text()[1],"^call$")][not (ancestor::ifStatement)]
         </Pattern>
         <Pattern id="19cea2" severity="3">
-            //externalFunctionCallNotThis/functionName/identifier[matches(text()[1],"^delegatecall")]
+            //identifier[matches(text()[1],"^delegatecall$")][not (ancestor::ifStatement)]
         </Pattern>
     </Rule>
+    <!--
     <Rule id="SOLIDITY_BALANCE_EQUALITY">
         <Pattern id="7a3b44" severity="2">
             //expression[expression[expression/primaryExpression[text()[1]="this"]][text()[1]="balance"]][text()[1]="=="]
@@ -136,6 +139,37 @@
     <Rule id="SOLIDITY_USING_VAR">
         <Pattern id="5a1044" severity="2">
             //typeName/elementaryTypeName[matches(text()[1],"^var$")]
+        </Pattern>
+    </Rule>
+    -->
+    <Rule id="SOLIDITY_RECOMENDATION_INTEGER_DIVISION">
+        <Pattern id="5a1534" severity="2">
+            //expression[expression[1]//numberLiteral][matches(text()[1],"^/$")][expression[2]//numberLiteral]
+        </Pattern>
+    </Rule>
+    <Rule id="SOLIDITY_MALICIOUS_LIBRARIES">
+        <Pattern id="5a1547" severity="2">
+            //contractDefinition[matches(text()[1],"^library")]
+        </Pattern>
+    </Rule>
+
+    <Rule id="SOLIDITY_LOCKED_MONEY">
+        <Pattern id="5a1547" severity="2">
+            //contractDefinition[not(contractPart/contractPartDefinition//functionName/identifier[matches(text()[1],"^suicide$")])
+            and contractPart/contractPartDefinition//functionName/identifier[matches(text()[1],"transfer")]
+            ]
+        </Pattern>
+    </Rule>
+
+    <Rule id="SOLIDITY_UNCHECKED_MATH">
+        <Pattern id="5a1623" severity="2">
+            //expression[matches(text()[1],"\*")]
+        </Pattern>
+        <Pattern id="5a1633" severity="2">
+            //expression[matches(text()[1],"\+")]
+        </Pattern>
+        <Pattern id="5a1643" severity="2">
+            //expression[matches(text()[1],"\-")]
         </Pattern>
     </Rule>
 </Rules>
