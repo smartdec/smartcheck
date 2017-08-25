@@ -10,14 +10,14 @@
             ]
         </Pattern>
     </Rule>
-    <!--
-    <Rule id="SOLIDITY_REENTRANCY_EXTERNAL_CALL">
+
+    <Rule id="SOLIDITY_REENTRANCY_EXTERNAL_CALL"><!--пока не работает-->
         <Pattern id="1330c4" severity="2">
             //functionDefinition/block//statement[//functionCall/externalFunctionCall]/following::*[//statement//functionCall/externalFunctionCall]
         </Pattern>
     </Rule>
-    -->
-    <!--
+
+
     <Rule id="SOLIDITY_RECOMENDATION_SEND_CALL">
         <Pattern id="1427c4" severity="2">
             //externalFunctionCallNotThis[functionName/identifier[matches(text()[1],"^call$")]]
@@ -26,26 +26,23 @@
             ]
         </Pattern>
     </Rule>
-    -->
     <Rule id="SOLIDITY_TX_ORIGIN">
         <Pattern id="5508c4" severity="2">
             //externalFunctionCallNotThis[callObject/identifier[matches(text()[1],"tx")]][matches(text()[1],".")][functionName/identifier[matches(text()[1],"origin")]]
         </Pattern>
     </Rule>
-    <Rule id="SOLIDITY_EXCEPTION_DISORDER">
+    <Rule id="SOLIDITY_EXCEPTION_DISORDER"><!--пока не работает-->
         <Pattern id="ce0826" severity="3">
-            //externalFunctionCallNotThis[functionName/identifier[matches(text()[1],"^send$")]]/ancestor::*[not(ifCondition)]
+            //functionCall[externalFunctionCallNotThis/functionName/identifier[matches(text()[1],"^send$")]]/ancestor::*[not(//ifCondition)]
         </Pattern>
-       <!-- <Pattern id="ca0826" severity="3">
+        <Pattern id="ca0826" severity="3">
             //externalFunctionCallNotThis/functionName/identifier[matches(text()[1],"^call$")]
         </Pattern>
         <Pattern id="19cea2" severity="3">
             //externalFunctionCallNotThis/functionName/identifier[matches(text()[1],"^delegatecall")]
         </Pattern>
-        -->
     </Rule>
 
-    <!--
     <Rule id="SOLIDITY_BALANCE_EQUALITY">
         <Pattern id="7a3b44" severity="2">
             //expression[expression[expression/primaryExpression[text()[1]="this"]][text()[1]="balance"]][text()[1]="=="]
@@ -142,5 +139,4 @@
             //typeName/elementaryTypeName[matches(text()[1],"^var$")]
         </Pattern>
     </Rule>
-    -->
 </Rules>
