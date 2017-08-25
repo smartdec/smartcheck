@@ -42,7 +42,6 @@
             //externalFunctionCallNotThis/functionName/identifier[matches(text()[1],"^delegatecall")]
         </Pattern>
     </Rule>
-
     <Rule id="SOLIDITY_BALANCE_EQUALITY">
         <Pattern id="7a3b44" severity="2">
             //expression[expression[expression/primaryExpression[text()[1]="this"]][text()[1]="balance"]][text()[1]="=="]
