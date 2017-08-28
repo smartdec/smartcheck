@@ -1,26 +1,26 @@
-pragma solidity ^0.4.11;//1a1832
+pragma solidity ^0.4.11;//
 
 contract SolidityStyleGuideViolation {
-    function refundAll1() public {
-        while ( x > refundAddresses.length) { //2a1347
+    function refundAll1() public {//8a1725
+        while ( x > refundAddresses.length) { //8a1631
 
             }
         }
-    function refundAll1() public {
-        while ( x < refundAddresses.length) {//2a1347
+    function refundAll1() public {//8a1725
+        while ( x < refundAddresses.length) {//8a1631
 
             }
         }
-    function refundAll1() public {
-        while (refundAddresses.length <x < refundAddresses.length) { //2a1347
+    function refundAll1() public {//8a1725
+        while (refundAddresses.length <x < refundAddresses.length) { //8a1631
 
             }
         }
-    function refundAll1() public {
-        while (refundAddresses.length<x < 3) { //2a1347
+    function refundAll1() public {//8a1725
+        while (refundAddresses.length<x < 3) { //8a1631
         }
     }
-    function refundAll1() public {
+    function refundAll1() public {//8a1725
         while (3<x < 3) {
 
         }

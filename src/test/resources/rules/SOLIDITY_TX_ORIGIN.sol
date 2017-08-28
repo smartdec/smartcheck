@@ -1,17 +1,17 @@
-pragma solidity ^0.4.11;
+pragma solidity ^0.4.11;//5a1037
 
-contract SolidityTxOrigin {
+contract SolidityTxOrigin {//5a1547
     
     address owner;
     uint price;
     
-    function SolidityTxOrigin() {//4fc198
+    function SolidityTxOrigin() {//4fc198, 8a1725
         owner = msg.sender;
         price = tx.gasprice;
     }
     
-    function dangerousWithdraw() returns (bool) {
-        if (tx.origin == owner) {//1336a7
+    function dangerousWithdraw() returns (bool) {//8a1725
+        if (tx.origin == owner) {//5508c4
             return true;
         }
         return false;

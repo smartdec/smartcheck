@@ -1,6 +1,3 @@
-// bad
-pragma solidity ^0.4.4;
+pragma solidity ^0.4.4;//5a1037
 
-
-// good
 pragma solidity 0.4.4;

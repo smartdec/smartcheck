@@ -1,4 +1,4 @@
-//BAD
+
 contract SimpleBank {
     mapping(address => uint) balances;
 
@@ -7,7 +7,7 @@ contract SimpleBank {
         msg.sender.transfer(amount);
     }
 }
-//GOOD
+
 contract SimpleBank {
     mapping(address => uint) balances;
 

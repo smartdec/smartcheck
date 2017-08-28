@@ -1,19 +1,19 @@
-pragma solidity ^0.4.11;
+pragma solidity ^0.4.11;//5a1037
 
-contract SolidityUncheckedSend {
-    // bad
-    uint x; //01a1723
-    function transfer() { //01a1818
-        // public code
+contract SolidityUncheckedSend {//5a1547
+
+    uint x;
+    function transfer() { //8a1725
+
     }
 
-    // good
-    uint private y;
-    function transfer() external {
-        // public code
+
+    uint private y;//8b1404
+    function transfer() external {//8a1725
+
     }
 
-    function internalAction() internal {
-        // internal code
+    function internalAction() internal {//8a1725
+
     }
 }

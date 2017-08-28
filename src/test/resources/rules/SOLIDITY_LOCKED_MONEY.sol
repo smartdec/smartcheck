@@ -1,50 +1,45 @@
-//GOOD
+
 contract MarketPlace {
-    function someComp() {
+    function someComp() {//8a1725
         if (x.balance < 10 && myAddress.balance >= 10) x.transfer(10);
     }
 
-    function kill() public {
+    function kill() public {//8a1725
         suicide(msg.sender);
     }
 }
-//GOOD
+
 contract MarketPlace {
-    function someComp() {
-        if (x.balance < 10 && myAddress.balance >= 10) x.send(10);
+    function someComp() {//8a1725
+        if (x.balance < 10 && myAddress.balance >= 10) x.send(10);//5a1041
     }
 
-    function kill() public {
+    function kill() public {//8a1725
         suicide(msg.sender);
     }
 }
-//GOOD
+
 contract MarketPlace {
-    function someComp() {
-        if (x.balance < 10 && myAddress.balance >= 10) x.send(10);
+    function someComp() {//8a1725
+        if (x.balance < 10 && myAddress.balance >= 10) x.send(10);//5a1041
     }
 }
-//GOOD
+
 contract MarketPlace {
-    function kill() public {
+    function kill() public {//8a1725
         suicide(msg.sender);
     }
 }
-//GOOD
+
 contract MarketPlace {
-    function someComp() {
+    function someComp() {//8a1725
         if (x.balance < 10 && myAddress.balance >= 10) x.transfer(10);
     }
 }
-//Bad
-contract MarketPlace {
-    function kill() public {
-        suicide(msg.sender);
-    }
-}
-//Bad
-contract MarketPlace {
-    function someComp() {
-        if (x.balance < 10 && myAddress.balance >= 10) x.transfer(10);
+
+
+contract MarketPlace {//5a1547
+    function someComp() {//8a1725
+        if (x.balance < 10 && myAddress.balance >= 10) x.call(10);
     }
 }

@@ -1,11 +1,11 @@
-pragma solidity ^0.4.11;//1a1832
+pragma solidity ^0.4.11;//5a1037
 
 contract SolidityStyleGuideViolation {
 
-    function payOut() {//01a1818
-        while (i < payees.length && msg.gas > 200000) {
-        payees[i].addr.send(payees[i].value);//1a1901,1337b7
-        i++;
+    function payOut() {//8a1725
+        while (i < payees.length && msg.gas > 200000) {//8a1631
+        payees[i].addr.send(payees[i].value);//1330c4, ce0826, 8a1553, 5a1041
+        i++;//5a1633
         }
         nextPayeeIndex = i;
     }
