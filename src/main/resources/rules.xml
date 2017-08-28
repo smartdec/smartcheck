@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Rules xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="./rules.xsd">
     <VersionDefinition>//pragmaDirective[pragmaName='solidity']/pragmaValue/version/versionConstraint/text()</VersionDefinition>
-    <!--
+
     <Rule id="SOLIDITY_CALL_VALUE">
         <Pattern id="8a1602" severity="2">
             //externalFunctionCallNotThis[functionName/identifier[matches(text()[1],"^call$")]]
@@ -11,13 +11,12 @@
             ]
         </Pattern>
     </Rule>
--->
+
     <Rule id="SOLIDITY_REENTRANCY_EXTERNAL_CALL">
         <Pattern id="1330c4" severity="2">
             //statement[simpleStatement/expressionStatement/expression/functionCall/externalFunctionCall][following-sibling::*[simpleStatement/expressionStatement/expression[not (functionCall/externalFunctionCall)]]]
         </Pattern>
     </Rule>
-<!--
 
     <Rule id="SOLIDITY_RECOMENDATION_SEND_CALL">
         <Pattern id="1427c4" severity="2">
@@ -32,8 +31,8 @@
             //externalFunctionCallNotThis[callObject/identifier[matches(text()[1],"tx")]][matches(text()[1],".")][functionName/identifier[matches(text()[1],"origin")]]
         </Pattern>
     </Rule>
-    -->
-    <Rule id="SOLIDITY_EXCEPTION_DISORDER"><!--пока не работает-->
+
+    <Rule id="SOLIDITY_EXCEPTION_DISORDER">
         <Pattern id="ce0826" severity="3">
             //identifier[matches(text()[1],"^send$")][not (ancestor::ifStatement)]
         </Pattern>
@@ -42,12 +41,6 @@
         </Pattern>
         <Pattern id="19cea2" severity="3">
             //identifier[matches(text()[1],"^delegatecall$")][not (ancestor::ifStatement)]
-        </Pattern>
-    </Rule>
-    <!--
-    <Rule id="SOLIDITY_BALANCE_EQUALITY">
-        <Pattern id="7a3b44" severity="2">
-            //expression[expression[expression/primaryExpression[text()[1]="this"]][text()[1]="balance"]][text()[1]="=="]
         </Pattern>
     </Rule>
     <Rule id="SOLIDITY_STYLE_GUIDE_VIOLATION">
@@ -113,6 +106,7 @@
             //expression[expression/descendant::*[//externalFunctionCallThis/functionName/identifier[matches(text()[1],"^balance$")]]][matches(text()[1],"==")]
         </Pattern>
     </Rule>
+
     <Rule id="SOLIDITY_BYTES_BYTE">
         <Pattern id="8a1648" severity="2">
             //typeName[typeName/elementaryTypeName[matches(text()[1],"byte")]][matches(text()[1],"\[")][matches(text()[1],"\]")]
@@ -120,10 +114,10 @@
     </Rule>
     <Rule id="SOLIDITY_VISIBILITY">
         <Pattern id="8a1725" severity="2">
-            //functionDefinition[not(visibleType)]
+            //functionDefinition[not(functionType/visibleType)]
         </Pattern>
         <Pattern id="8a1726" severity="2">
-            //stateVariableDeclaration[not(visibleType)]
+            //contractPartDefinition/stateVariableDeclaration[not(visibleType)]
         </Pattern>
     </Rule>
     <Rule id="SOLIDITY_PRAGMAS_VERSION">
@@ -141,7 +135,7 @@
             //typeName/elementaryTypeName[matches(text()[1],"^var$")]
         </Pattern>
     </Rule>
-    -->
+
     <Rule id="SOLIDITY_RECOMENDATION_INTEGER_DIVISION">
         <Pattern id="5a1534" severity="2">
             //expression[expression[1]//numberLiteral][matches(text()[1],"^/$")][expression[2]//numberLiteral]
@@ -171,4 +165,16 @@
             //expression[matches(text()[1],"\-")]
         </Pattern>
     </Rule>
+    <Rule id="SOLIDITY_FALLBACK_REJECT">
+        <Pattern id="8b1329" severity="2">
+            //sourceUnit[//contractDefinition[contractPart/contractPartDefinition/functionFallBackDefinition[not(functionType/payableType[matches(text()[1],"payable")])]]
+            and //pragmaDirective/pragmaValue/version/versionConstraint[versionLiteral &gt;= "0.4.0"]]
+        </Pattern>
+    </Rule>
+    <Rule id="SOLIDITY_KEEPING_SECRETS">
+        <Pattern id="8b1404" severity="2">
+            //visibleType[matches(text()[1],"^private$")]
+        </Pattern>
+    </Rule>
+
 </Rules>
