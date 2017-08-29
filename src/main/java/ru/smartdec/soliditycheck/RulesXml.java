@@ -15,6 +15,8 @@ import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpression;
 import javax.xml.xpath.XPathExpressionException;
+import java.io.InputStream;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -127,12 +129,10 @@ public final class RulesXml implements Rules {
                 }
             }
         });
-        return RulesXml
-                .RulesContext
-                .class
-                .cast(unmarshaller.unmarshal(this.source.path().toFile()))
-                .rules
-                .stream();
+
+        InputStream inputStream = Files.newInputStream(this.source.path());
+        Object context = unmarshaller.unmarshal(inputStream);
+        return ((RulesXml.RulesContext) context).rules.stream();
     }
 
     /**
