@@ -1,22 +1,22 @@
-contract Victim {//5a1547
-    mapping (address => uint) userbalances;//8a1726
+contract Victim {
+    mapping (address => uint) userbalances;
 
-    function withdraw() {//8a1725
-        if (msg.sender.call.value()()) {//8a1602, 1427c4
+    function withdraw() {
+        if (msg.sender.call.value()()) {//a91606
             userbalances[msg.sender] = 0;
         }
     }
-    function withdraw() {//8a1725
-        if (msg.sender.call.value(3)()) {//1427c4
+    function withdraw() {
+        if (msg.sender.call.value(3)()) {
             userbalances[msg.sender] = 0;
         }
     }
-    function withdraw() {//8a1725
-        if (msg.sender.call.value()(2)) {//1427c4
+    function withdraw() {
+        if (msg.sender.call.value()(2)) {
             userbalances[msg.sender] = 0;
         }
     }
     function() {
-        userbalances[msg.sender] += msg.value;//5a1633
+        userbalances[msg.sender] += msg.value;
     }
 }

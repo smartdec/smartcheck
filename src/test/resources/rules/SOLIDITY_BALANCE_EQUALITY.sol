@@ -1,25 +1,25 @@
-pragma solidity ^0.4.11;//5a1037
+pragma solidity ^0.4.11;
 
-contract SoliditySendValue {//5a1547
+contract SoliditySendValue {
     
-    address owner;
+    address owner;//
     
-    function SoliditySendValue() {//4fc198, 8a1725
+    function SoliditySendValue() {
         owner = msg.sender;
     }
     
-    function doSomething() {}//8a1725
-    
-    function comparingBalances(uint _amount) returns (bool) {//8a1725
-        if (this.balance == 1543 wei) {//8a1631
+    function doSomething() {}
+
+    function comparingBalances(uint _amount) returns (bool) {
+        if (this.balance == 1543 wei) {//a91627
             doSomething();
             return true;
         }
         
-        if (_amount == this.balance) return false;//8a1631
-        if (this.balance ==_amount) return false;//8a1631
+        if (_amount == this.balance) return false;//a91627
+        if (this.balance ==_amount) return false;//a91627
 
-        if (this.balance > 100 wei) throw;  //8a1139
+        if (this.balance > 100 wei) throw;
         
         return true;
     }

@@ -1,16 +1,16 @@
-pragma solidity ^0.4.11;//5a1037
+pragma solidity ^0.4.11;
 
-contract SolidityStyleGuideViolation {//5a1547
+contract SolidityStyleGuideViolation {
     
-    event badlyNamedEvent();//67c4ca
-    function BadlyNamedFunction() returns (bool) {//4fc198, 8a1725
+    event badlyNamedEvent();//a91613
+    function BadlyNamedFunction() returns (bool) {//a91614
         return true;
     }
     
-    function okFunction() {}//8a1725
+    function okFunction() {}
     event OkEvent();
     
-    function doSomething() {//8a1725
+    function doSomething() {
         if (BadlyNamedFunction()) {
             badlyNamedEvent();
         }

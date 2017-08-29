@@ -1,8 +1,8 @@
-library x{//5a1547, 5a1547
-    function foo();//8a1725
+library x{//a91635
+    function foo();
 }
-contract Ballot {//5a1547
-    function y(){//8a1725
+contract Ballot {
+    function y(){
         x(0).foo();
     }
 }

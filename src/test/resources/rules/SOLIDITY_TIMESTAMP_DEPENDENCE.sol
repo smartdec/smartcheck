@@ -1,15 +1,15 @@
-contract SolidityStyleGuideViolation {//5a1547
+contract SolidityStyleGuideViolation {
 
-    event badlyNamedEvent();//67c4ca
-    function BadlyNamedFunction() returns (bool) {//4fc198
+    event badlyNamedEvent();
+    function BadlyNamedFunction() returns (bool) {
         return true;
     }
 
-    function okFunction() {}//8a1725
+    function okFunction() {}
     event OkEvent();
 
-    function doSomething() {//8a1725
-        if (now > startTime + week) {//8a1556, 5a1633
+    function doSomething() {
+        if (now > startTime + week) {//a91623
         badlyNamedEvent();
         }
     }

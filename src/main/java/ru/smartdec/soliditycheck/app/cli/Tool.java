@@ -44,6 +44,7 @@ public final class Tool {
                     .class
                     .getResource("/rules.xml")
                     .toURI();
+            System.out.print(uri);
 
             // initialize a new ZipFilesystem
             HashMap<String, String> env = new HashMap<>();

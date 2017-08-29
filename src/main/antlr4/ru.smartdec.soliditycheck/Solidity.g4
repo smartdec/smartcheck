@@ -13,8 +13,8 @@ pragmaValue : version | expression ;
 
 version : versionConstraint versionConstraint? ;
 versionOperator : '^' | '>=' | '>' | '<' | '<=' ;
-versionConstraint : versionOperator? VersionLiteral ;
-
+versionConstraint : versionOperator? versionLiteral ;
+versionLiteral:VersionLiteral;
 importDirective
     : 'import' StringLiteral ('as' Identifier)? ';'
     | 'import' ('*' | Identifier) ('as' Identifier)? 'from' StringLiteral ';'

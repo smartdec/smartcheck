@@ -3,7 +3,7 @@
     <VersionDefinition>//pragmaDirective[pragmaName='solidity']/pragmaValue/version/versionConstraint/text()</VersionDefinition>
 
     <Rule id="SOLIDITY_CALL_VALUE">
-        <Pattern id="8a1602" severity="2">
+        <Pattern id="a91606" severity="2">
             //externalFunctionCallNotThis[functionName/identifier[matches(text()[1],"^call$")]]
             [functionName/identifier[matches(text()[1],"^value$")]]
             [functionCallArguments[1][matches(text()[1],"\(")][matches(text()[1],"\)")]
@@ -13,13 +13,13 @@
     </Rule>
 
     <Rule id="SOLIDITY_REENTRANCY_EXTERNAL_CALL">
-        <Pattern id="1330c4" severity="2">
+        <Pattern id="a91607" severity="2">
             //statement[simpleStatement/expressionStatement/expression/functionCall/externalFunctionCall][following-sibling::*[simpleStatement/expressionStatement/expression[not (functionCall/externalFunctionCall)]]]
         </Pattern>
     </Rule>
 
     <Rule id="SOLIDITY_RECOMENDATION_SEND_CALL">
-        <Pattern id="1427c4" severity="2">
+        <Pattern id="a91608" severity="2">
             //externalFunctionCallNotThis[functionName/identifier[matches(text()[1],"^call$")]]
             [functionName/identifier[matches(text()[1],"^value$")]]
             [functionCallArguments[matches(text()[1],"\(")][matches(text()[1],"\)")]
@@ -27,152 +27,139 @@
         </Pattern>
     </Rule>
     <Rule id="SOLIDITY_TX_ORIGIN">
-        <Pattern id="5508c4" severity="2">
+        <Pattern id="a91609" severity="2">
             //externalFunctionCallNotThis[callObject/identifier[matches(text()[1],"tx")]][matches(text()[1],".")][functionName/identifier[matches(text()[1],"origin")]]
         </Pattern>
     </Rule>
 
     <Rule id="SOLIDITY_EXCEPTION_DISORDER">
-        <Pattern id="ce0826" severity="3">
+        <Pattern id="a91610" severity="3">
             //identifier[matches(text()[1],"^send$")][not (ancestor::ifStatement)]
         </Pattern>
-        <Pattern id="ca0826" severity="3">
+        <Pattern id="a91611" severity="3">
             //identifier[matches(text()[1],"^call$")][not (ancestor::ifStatement)]
         </Pattern>
-        <Pattern id="19cea2" severity="3">
+        <Pattern id="a91612" severity="3">
             //identifier[matches(text()[1],"^delegatecall$")][not (ancestor::ifStatement)]
         </Pattern>
     </Rule>
     <Rule id="SOLIDITY_STYLE_GUIDE_VIOLATION">
-        <Pattern id="67c4ca" severity="1">
+        <Pattern id="a91613" severity="1">
             //eventDefinition/identifier[matches(text()[1],"^[a-z]")]
         </Pattern>
-        <Pattern id="4fc198" severity="1">
+        <Pattern id="a91614" severity="1">
             //functionDefinition/identifier[matches(text()[1],"^[A-Z]")]
         </Pattern>
     </Rule>
     <Rule id="SOLIDITY_VAR_ZERO">
-        <Pattern id="8a1549" severity="2">
+        <Pattern id="a91615" severity="2">
             //forStatement/simpleStatement//variableDeclaration[typeName/elementaryTypeName[matches(text()[1],"var")]][expression//numberLiteral[matches(text()[1],"0")]]
-        </Pattern>
-    </Rule>
-    <Rule id="SOLIDITY_CHECKS_EFFECTS_INTERACTIONS_REENTRANCY">
-        <Pattern id="8a1600" severity="2">
-            //functionCall/following-sibling::statement
-        </Pattern>
-    </Rule>
-    <Rule id="SOLIDITY_GAS_LIMIT_AND_LOOPS">
-        <Pattern id="8a1809" severity="2">
-            //forStatement/expression[1]/expression[2]//expression[1]/argument/identifier
-        </Pattern>
-        <Pattern id="8a1641" severity="2">
-            //forStatement/expression[1]/expression[2]/argument/identifier
         </Pattern>
     </Rule>
 
     <Rule id="SOLIDITY_DOS_WITH_THROW">
-        <Pattern id="8a1139" severity="2">
+        <Pattern id="a91620" severity="2">
             //ifStatement[ifCondition//externalFunctionCall][statement//throwStatement]
         </Pattern>
     </Rule>
     <Rule id="SOLIDITY_DOS_WITH_THROW_LOOP">
-        <Pattern id="8a1532" severity="2">
+        <Pattern id="a91621" severity="2">
             //forStatement/statement//externalFunctionCall
         </Pattern>
-        <Pattern id="8a1553" severity="2">
+        <Pattern id="a91622" severity="2">
             //whileStatement/statement//externalFunctionCall
         </Pattern>
     </Rule>
     <Rule id="SOLIDITY_TIMESTAMP_DEPENDENCE">
-        <Pattern id="8a1556" severity="2">
+        <Pattern id="a91623" severity="2">
             //identifier[matches(text()[1],"^now$")]
         </Pattern>
     </Rule>
     <Rule id="SOLIDITY_GAS_LIMIT_AND_LOOPS_FOR">
-        <Pattern id="8a1600" severity="2">
+        <Pattern id="a91624" severity="2">
             //forStatement/expression[1]/expression[2]/functionCall
         </Pattern>
-        <Pattern id="8a1601" severity="2">
+        <Pattern id="a91625" severity="2">
             //forStatement[expression[1]/expression[2]/primaryExpression/identifier]
         </Pattern>
     </Rule>
     <Rule id="SOLIDITY_GAS_LIMIT_AND_LOOPS_WHILE">
-        <Pattern id="8a1631" severity="2">
+        <Pattern id="a91626" severity="2">
             //whileStatement[expression/descendant::*[functionCall]]
         </Pattern>
     </Rule>
     <Rule id="SOLIDITY_BALANCE_EQUALITY">
-        <Pattern id="8a1631" severity="2">
+        <Pattern id="a91627" severity="2">
             //expression[expression/descendant::*[//externalFunctionCallThis/functionName/identifier[matches(text()[1],"^balance$")]]][matches(text()[1],"==")]
         </Pattern>
     </Rule>
 
     <Rule id="SOLIDITY_BYTES_BYTE">
-        <Pattern id="8a1648" severity="2">
+        <Pattern id="a91628" severity="2">
             //typeName[typeName/elementaryTypeName[matches(text()[1],"byte")]][matches(text()[1],"\[")][matches(text()[1],"\]")]
         </Pattern>
     </Rule>
     <Rule id="SOLIDITY_VISIBILITY">
-        <Pattern id="8a1725" severity="2">
-            //functionDefinition[not(functionType/visibleType)]
+        <Pattern id="a91629" severity="2">
+            //contractPart/contractPartDefinition/functionDefinition[not(visibleType)]
         </Pattern>
-        <Pattern id="8a1726" severity="2">
+        <Pattern id="a91630" severity="2">
             //contractPartDefinition/stateVariableDeclaration[not(visibleType)]
         </Pattern>
     </Rule>
     <Rule id="SOLIDITY_PRAGMAS_VERSION">
-        <Pattern id="5a1037" severity="2">
+        <Pattern id="a91631" severity="2">
             //pragmaDirective/pragmaValue//versionOperator
         </Pattern>
     </Rule>
     <Rule id="SOLIDITY_RECOMENDATION_SEND_TRANSFER">
-        <Pattern id="5a1041" severity="2">
+        <Pattern id="a91632" severity="2">
             //functionName/identifier[matches(text()[1],"^send$")]
         </Pattern>
     </Rule>
     <Rule id="SOLIDITY_USING_VAR">
-        <Pattern id="5a1044" severity="2">
+        <Pattern id="a91633" severity="2">
             //typeName/elementaryTypeName[matches(text()[1],"^var$")]
         </Pattern>
     </Rule>
 
     <Rule id="SOLIDITY_RECOMENDATION_INTEGER_DIVISION">
-        <Pattern id="5a1534" severity="2">
+        <Pattern id="a91634" severity="2">
             //expression[expression[1]//numberLiteral][matches(text()[1],"^/$")][expression[2]//numberLiteral]
         </Pattern>
     </Rule>
     <Rule id="SOLIDITY_MALICIOUS_LIBRARIES">
-        <Pattern id="5a1547" severity="2">
+        <Pattern id="a91635" severity="2">
             //contractDefinition[matches(text()[1],"^library")]
         </Pattern>
     </Rule>
 
     <Rule id="SOLIDITY_LOCKED_MONEY">
-        <Pattern id="5a1547" severity="2">
+        <Pattern id="a91636" severity="2">
             //contractDefinition[not(contractPart/contractPartDefinition/functionDefinition//functionCall/internalFunctionCall/functionName/identifier[matches(text()[1],"^suicide$")])
             and (not(contractPart/contractPartDefinition/functionDefinition//externalFunctionCallNotThis/functionName/identifier[matches(text()[1],"^transfer$")])
             and not(contractPart/contractPartDefinition/functionDefinition//externalFunctionCallNotThis/functionName/identifier[matches(text()[1],"^send$")]))]        </Pattern>
     </Rule>
 
     <Rule id="SOLIDITY_UNCHECKED_MATH">
-        <Pattern id="5a1623" severity="2">
+        <Pattern id="a91637" severity="2">
             //expression[matches(text()[1],"\*")]
         </Pattern>
-        <Pattern id="5a1633" severity="2">
+        <Pattern id="a91638" severity="2">
             //expression[matches(text()[1],"\+")]
         </Pattern>
-        <Pattern id="5a1643" severity="2">
+        <Pattern id="a91639" severity="2">
             //expression[matches(text()[1],"\-")]
         </Pattern>
     </Rule>
     <Rule id="SOLIDITY_FALLBACK_REJECT">
-        <Pattern id="8b1329" severity="2">
+        <Pattern id="a91640" severity="2">
             //sourceUnit[//contractDefinition[contractPart/contractPartDefinition/functionFallBackDefinition[not(functionType/payableType[matches(text()[1],"payable")])]]
             and //pragmaDirective/pragmaValue/version/versionConstraint[versionLiteral &gt;= "0.4.0"]]
         </Pattern>
     </Rule>
     <Rule id="SOLIDITY_KEEPING_SECRETS">
-        <Pattern id="8b1404" severity="2">
+        <Pattern id="a91641" severity="2">
             //visibleType[matches(text()[1],"^private$")]
         </Pattern>
     </Rule>

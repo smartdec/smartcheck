@@ -1,14 +1,14 @@
-pragma solidity ^0.4.11;//5a1037
+pragma solidity ^0.4.11;
 
-contract SolidityUncheckedSend {//5a1547
+contract SolidityUncheckedSend {
 
-    uint x;//8a1726
-    function transfer() { //8a1725
+    uint x;//a91630
+    function transfer() {//a91629
 
     }
 
 
-    uint private y;//8b1404
+    uint private y;
     function transfer() external {
 
     }

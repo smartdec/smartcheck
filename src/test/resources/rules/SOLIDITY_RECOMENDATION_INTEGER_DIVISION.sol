@@ -1,8 +1,8 @@
-pragma solidity ^0.4.11;//5a1037
+pragma solidity ^0.4.11;
 
-contract SolidityUncheckedSend {//5a1547
-    function withdrawBalance() {//8a1725
+contract SolidityUncheckedSend {
+    function withdrawBalance() {
 
-        uint x = 5 / 2; //5a1534
+        uint x = 5 / 2; //a91634
     }
 }

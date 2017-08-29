@@ -1,13 +1,13 @@
-pragma solidity ^0.4.5;//5a1037
+pragma solidity ^0.4.5;
 
 contract Auction {
-    address currentLeader;//8a1726
-    uint highestBid;//8a1726
+    address currentLeader;
+    uint highestBid;
 
-    function bid() payable {//8a1725
-        if (msg.value <= highestBid) { throw; }//8a1139
+    function bid() payable {
+        if (msg.value <= highestBid) { throw; }//a91620
 
-        if (!currentLeader.send(highestBid)) { throw; } //8a1139, 5a1041
+        if (!currentLeader.send(highestBid)) { throw; } //a91620
 
         currentLeader = msg.sender;
         highestBid = msg.value;
