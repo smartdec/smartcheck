@@ -74,6 +74,9 @@
         <Pattern id="a91623" severity="2">
             //identifier[matches(text()[1],"^now$")]
         </Pattern>
+        <Pattern id="a01623" severity="2">
+            //expression[matches(text()[1],"^==$")][expression/functionCall/externalFunctionCall/externalFunctionCallNotThis[callObject/identifier[matches(text()[1],"^block$")]][functionName/identifier[matches(text()[1],"^timestamp$")]]]
+        </Pattern>
     </Rule>
     <Rule id="SOLIDITY_GAS_LIMIT_AND_LOOPS_FOR">
         <Pattern id="a91624" severity="2">

@@ -13,5 +13,9 @@ contract SolidityStyleGuideViolation {
         badlyNamedEvent();
         }
     }
-
+    function doSomething() {
+        if ( startTime + week == block.timestamp) {//a01623
+            badlyNamedEvent();
+        }
+    }
 }
