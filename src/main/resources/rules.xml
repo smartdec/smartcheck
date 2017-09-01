@@ -163,7 +163,7 @@
     </Rule>
     <Rule id="SOLIDITY_KEEPING_SECRETS">
         <Pattern id="a91641" severity="2">
-            //visibleType[matches(text()[1],"^private$")]
+            //stateVariableDeclaration/visibleType[matches(text()[1],"^private$")]
         </Pattern>
     </Rule>
 
