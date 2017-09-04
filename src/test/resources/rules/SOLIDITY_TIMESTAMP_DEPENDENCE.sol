@@ -24,7 +24,7 @@ contract SolidityStyleGuideViolation {
         }
     }
     function doSomething() {
-        if ( startTime + week <= block.timestamp) {//a01623
+        if ( startTime + week <= block.timestamp) {
             badlyNamedEvent();
         }
     }
