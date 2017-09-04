@@ -79,7 +79,7 @@ return (executedTokens + executed20 + executed10, remainingCents);
 function buyOptions(address buyer, uint usdCents, string txHash) icoOnly {
 require(usdCents > 0);
 
-var remainUsdCents = buyIfAvailable(buyer, usdCents, txHash, gvOptionToken30, 0, option30perCent);//?есть ли проверка на действительность адреса
+var remainUsdCents = buyIfAvailable(buyer, usdCents, txHash, gvOptionToken30, 0, option30perCent);
 if (remainUsdCents == 0) {
 return;
 }
