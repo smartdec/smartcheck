@@ -18,3 +18,6 @@ contract SolidityStyleGuideViolation {
     }
     
 }
+contract SolidityStyleGuideViolation {
+    function DoSomething() {}//a91614
+}

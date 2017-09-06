@@ -144,7 +144,7 @@
             and not(contractPart/contractPartDefinition/functionDefinition//externalFunctionCallNotThis/functionName/identifier[matches(text()[1],"^send$")]))]
         </Pattern>
     </Rule>
-
+<!--
     <Rule id="SOLIDITY_UNCHECKED_MATH">
         <Pattern id="b91637" severity="2">
             //simpleStatement[descendant::*[matches(text()[1],"\+") or matches(text()[1],"\*") or matches(text()[1],"\-")]]
@@ -162,6 +162,7 @@
             //doWhileStatement/(expression or statement)[descendant::*[matches(text()[1],"\+") or matches(text()[1],"\*") or matches(text()[1],"\-")]]
         </Pattern>
     </Rule>
+    -->
     <Rule id="SOLIDITY_FALLBACK_REJECT">
         <Pattern id="a91640" severity="2">
             //sourceUnit[//contractDefinition[contractPart/contractPartDefinition/functionFallBackDefinition[not(functionType/payableType[matches(text()[1],"payable")])]]
