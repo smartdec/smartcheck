@@ -8,6 +8,7 @@ contract SolidityStyleGuideViolation {
     }
     
     function okFunction() {}
+    function SolidityStyleGuideViolation() {}
     event OkEvent();
     
     function doSomething() {

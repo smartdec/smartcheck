@@ -24,12 +24,11 @@ importDirective
 importDeclaration : Identifier ('as' Identifier)? ;
 
 contractDefinition
-    : ( 'contract' | 'library' ) Identifier
+    : ( 'contract' | 'library' |'interface') identifier
       ( 'is' inheritanceSpecifier (',' inheritanceSpecifier )* )?
       '{' (contractPart )* '}'
     //| (identifier arrayLiteral?) identifier '=' externalFunctionCall
     ;
-
 inheritanceSpecifier : userDefinedTypeName ( '(' expression ( ',' expression )* ')' )? ;
 
 contractPart
@@ -136,8 +135,8 @@ ifStatement : 'if' '(' ifCondition ')' statement ( 'else' statement )? ;
 
 ifCondition:  (expression|functionCall) identifier? comparison? (expression|functionCall)? identifier?;
 
-whileStatement : 'while' '(' expression ')' statement ;
-
+whileStatement : 'while' '(' whileCondition ')' statement ;
+whileCondition: expression;
 placeholderStatement : '_' ;
 
 simpleStatement : variableDeclarationStatement expressionStatement?

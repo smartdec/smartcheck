@@ -48,7 +48,7 @@
             //eventDefinition/identifier[matches(text()[1],"^[a-z]")]
         </Pattern>
         <Pattern id="a91614" severity="1">
-            //functionDefinition/identifier[matches(text()[1],"^[A-Z]")]
+            //functionDefinition[identifier[matches(text()[1],"^[A-Z]")]][not(identifier =//ancestor::*/contractDefinition/identifier)]
         </Pattern>
     </Rule>
     <Rule id="SOLIDITY_VAR_ZERO">
@@ -141,18 +141,25 @@
         <Pattern id="a91636" severity="2">
             //contractDefinition[not(contractPart/contractPartDefinition/functionDefinition//functionCall/internalFunctionCall/functionName/identifier[matches(text()[1],"^suicide$")])
             and (not(contractPart/contractPartDefinition/functionDefinition//externalFunctionCallNotThis/functionName/identifier[matches(text()[1],"^transfer$")])
-            and not(contractPart/contractPartDefinition/functionDefinition//externalFunctionCallNotThis/functionName/identifier[matches(text()[1],"^send$")]))]        </Pattern>
+            and not(contractPart/contractPartDefinition/functionDefinition//externalFunctionCallNotThis/functionName/identifier[matches(text()[1],"^send$")]))]
+        </Pattern>
     </Rule>
 
     <Rule id="SOLIDITY_UNCHECKED_MATH">
-        <Pattern id="a91637" severity="2">
-            //expression[matches(text()[1],"\*")]
+        <Pattern id="b91637" severity="2">
+            //simpleStatement[descendant::*[matches(text()[1],"\+") or matches(text()[1],"\*") or matches(text()[1],"\-")]]
         </Pattern>
-        <Pattern id="a91638" severity="2">
-            //expression[matches(text()[1],"\+")]
+        <Pattern id="c91637" severity="2">
+            //ifCondition[descendant::*[matches(text()[1],"\+") or matches(text()[1],"\*") or matches(text()[1],"\-")]]
         </Pattern>
-        <Pattern id="a91639" severity="2">
-            //expression[matches(text()[1],"\-")]
+        <Pattern id="d91637" severity="2">
+            //whileCondition[descendant::*[matches(text()[1],"\+") or matches(text()[1],"\*") or matches(text()[1],"\-")]]
+        </Pattern>
+        <Pattern id="e91637" severity="2">
+            //forStatement/expression[descendant::*[matches(text()[1],"\+") or matches(text()[1],"\*") or matches(text()[1],"\-")]]
+        </Pattern>
+        <Pattern id="e18237" severity="2">
+            //doWhileStatement/(expression or statement)[descendant::*[matches(text()[1],"\+") or matches(text()[1],"\*") or matches(text()[1],"\-")]]
         </Pattern>
     </Rule>
     <Rule id="SOLIDITY_FALLBACK_REJECT">
