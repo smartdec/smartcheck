@@ -6,15 +6,15 @@ mapping (address => uint) public refunds;
 
 
 function refundAll() public {
-    for(uint x; x < refundAddresses.length; x++) {
-    if(refundAddresses[x].send(refunds[refundAddresses[x]])) {//a91621
+    for(uint x; x < refundAddresses.length; x++) {//a91621
+    if(refundAddresses[x].send(refunds[refundAddresses[x]])) {
         throw;
     }
 }
 }
 function refundAll1() public {
-    while ( x > refundAddresses.length) {
-        if(refundAddresses[x].send(refunds[refundAddresses[x]])) {//a91622
+    while ( x > refundAddresses.length) {//a91622
+        if(refundAddresses[x].send(refunds[refundAddresses[x]])) {
             throw;
         }
     }
