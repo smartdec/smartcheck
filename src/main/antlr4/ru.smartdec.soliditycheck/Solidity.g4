@@ -288,7 +288,7 @@ internalFunctionCall:functionName callArguments;
 externalFunctionCall:externalFunctionCallThis|externalFunctionCallNotThis;
 externalFunctionCallThis:'this' ('.' functionName)+ callArguments* block?;
 externalFunctionCallNotThis:
-                    callObject '.' ('.'? functionName)* ('.'? 'value' ('(' argument ')')?)? ('.'? 'gas' '(' argument ')')? callArguments* block?;
+                    callObject '.' ('.'? functionName)* (('.'? 'value' ('(' argument ')')?)| ('.'? 'gas' '(' argument ')'))* callArguments* block?;
 callObject: '(' 'new' callObject ')' callObject?
           | identifier
           | (identifier? arrayLiteral)+
