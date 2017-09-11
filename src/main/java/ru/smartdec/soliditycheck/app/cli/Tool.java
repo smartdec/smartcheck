@@ -8,9 +8,12 @@ import ru.smartdec.soliditycheck.app.TreeFactoryDefault;
 
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.xpath.XPathFactory;
+import java.net.URI;
+import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.HashMap;
 
 /**
  *
@@ -30,27 +33,35 @@ public final class Tool {
      * @throws Exception exception
      */
     public static void main(final Arguments arguments) throws Exception {
-        new Tool(
-                arguments
-                        .value("-p", "-path")
-                        .map(Paths::get)
-                        .filter(Files::exists)
-                        .orElseThrow(IllegalArgumentException::new),
-                arguments
-                        .value("-r", "-rules")
-                        .map(Paths::get)
-                        .filter(Files::isRegularFile)
-                        .<RulesXml.Source>map(path -> () -> path)
-                        .orElseGet(
-                                () -> () -> Paths.get(
-                                        RulesXml
-                                                .class
-                                                .getResource("/rules.xml")
-                                                .toURI()
-                                )
-                        )
-        )
-                .run();
+        Path src = arguments
+                .value("-p", "-path")
+                .map(Paths::get)
+                .filter(Files::exists)
+                .orElseThrow(IllegalArgumentException::new);
+
+        RulesXml.Source defaultRules = () -> {
+            URI uri = RulesXml
+                    .class
+                    .getResource("/rules.xml")
+                    .toURI();
+            System.out.print(uri);
+
+            // initialize a new ZipFilesystem
+            HashMap<String, String> env = new HashMap<>();
+            env.put("create", "true");
+            FileSystems.newFileSystem(uri, env);
+
+            return Paths.get(uri);
+        };
+
+        RulesXml.Source rules = arguments
+                .value("-r", "-rules")
+                .map(Paths::get)
+                .filter(Files::isRegularFile)
+                .<RulesXml.Source>map(path -> () -> path)
+                .orElseGet(() -> defaultRules);
+
+        new Tool(src, rules).run();
     }
 
     /**

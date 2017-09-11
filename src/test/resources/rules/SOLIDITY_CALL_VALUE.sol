@@ -1,26 +1,22 @@
-pragma solidity ^0.4.11;
+contract Victim {
+    mapping (address => uint) userbalances;
 
-contract SoliditySendValue {
-    
-    address owner;
-    
-    function SoliditySendValue() {
-        owner = msg.sender;
+    function withdraw() {
+        if (msg.sender.call.value()()) {//a91606
+            userbalances[msg.sender] = 0;
+        }
     }
-    
-    function veryDangerousSend(address _to) returns (bool) {
-        if (msg.sender != owner) throw;
-        // unsafe against re-entrancy AND doesn't check for result
-        _to.call.value(42)();
-        return true;
+    function withdraw() {
+        if (msg.sender.call.value(3)()) {
+            userbalances[msg.sender] = 0;
+        }
     }
-    
-    function dangerousSend(address _to) returns (bool) {
-        if (msg.sender != owner) throw;
-        // checks for result, but still bad (re-entrancy)
-        // forwards all gas and triggers external execution
-        if (!_to.call.value(42)())
-            return false;
-        return true;
+    function withdraw() {
+        if (msg.sender.call.value()(2)) {
+            userbalances[msg.sender] = 0;
+        }
+    }
+    function() {
+        userbalances[msg.sender] += msg.value;
     }
 }

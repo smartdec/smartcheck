@@ -11,7 +11,7 @@ contract SolidityTxOrigin {
     }
     
     function dangerousWithdraw() returns (bool) {
-        if (tx.origin == owner) {
+        if (tx.origin == owner) {//a91609
             return true;
         }
         return false;
