@@ -28,7 +28,7 @@
     </Rule>
     <Rule id="SOLIDITY_TX_ORIGIN">
         <Pattern id="a91609" severity="2">
-            //externalFunctionCallNotThis[callObject/identifier[matches(text()[1],"tx")]][matches(text()[1],".")][functionName/identifier[matches(text()[1],"origin")]]
+            //externalFunctionCallNotThis[callObject/identifier[matches(text()[1],"^tx$")]][matches(text()[1],".")][functionName/identifier[matches(text()[1],"^origin$")]]
         </Pattern>
     </Rule>
 
