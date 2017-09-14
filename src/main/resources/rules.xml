@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Rules xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="./rules.xsd">
     <VersionDefinition>//pragmaDirective[pragmaName='solidity']/pragmaValue/version/versionConstraint/text()</VersionDefinition>
-
     <Rule id="SOLIDITY_CALL_VALUE">
         <Pattern id="a91606" severity="2">
             //externalFunctionCallNotThis[functionName/identifier[matches(text()[1],"^call$")]]
@@ -28,7 +27,7 @@
     </Rule>
     <Rule id="SOLIDITY_TX_ORIGIN">
         <Pattern id="a91609" severity="2">
-            //externalFunctionCallNotThis[callObject/identifier[matches(text()[1],"tx")]][matches(text()[1],".")][functionName/identifier[matches(text()[1],"origin")]]
+            //externalFunctionCallNotThis[callObject/identifier[matches(text()[1],"^tx$")]][matches(text()[1],".")][functionName/identifier[matches(text()[1],"^origin$")]]
         </Pattern>
     </Rule>
 
@@ -152,15 +151,14 @@
     </Rule>
 
     <Rule id="SOLIDITY_FALLBACK_REJECT">
-        <Pattern id="a91640" severity="2">
-            //sourceUnit[//contractDefinition[contractPart/contractPartDefinition/functionFallBackDefinition[not(functionType/payableType[matches(text()[1],"payable")])]]
-            and //pragmaDirective/pragmaValue/version/versionConstraint[versionLiteral &gt;= "0.4.0"]]
-        </Pattern>
+        <Pattern id="a91640" severity="1">
+            //sourceUnit[pragmaDirective/pragmaValue/version/versionConstraint[versionLiteral &gt;= "0.4.0"]]/contractDefinition/contractPart/contractPartDefinition/functionFallBackDefinition[matches(text()[2],"payable")][block/statement[1]/throwStatement]
+        </Pattern>        
     </Rule>
+    
     <Rule id="SOLIDITY_KEEPING_SECRETS">
         <Pattern id="a91641" severity="2">
             //stateVariableDeclaration/visibleType[matches(text()[1],"^private$")]
         </Pattern>
     </Rule>
-
 </Rules>
