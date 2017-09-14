@@ -2,7 +2,6 @@ package ru.smartdec.soliditycheck;
 
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -20,6 +19,11 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
+
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.everyItem;
+import static org.hamcrest.Matchers.isIn;
 
 public final class RulesTest {
 
@@ -55,12 +59,20 @@ public final class RulesTest {
 
     @Test
     public void coverage() throws Exception {
-        Assert.assertEquals(this.coverageExpected(), this.coverageActual());
+        assertThat(
+                "coverage",
+                this.coverageActual(),
+                equalTo(this.coverageExpected())
+        );
     }
 
     @Test
     public void patterns() throws Exception {
-        Assert.assertEquals(this.patternsExpected(), this.patternsActual());
+        assertThat(
+                "patterns",
+                this.patternsActual().entrySet(),
+                everyItem(isIn(this.patternsExpected().entrySet()))
+        );
     }
 
     private Map<String, Set<String>> coverageExpected() throws Exception {
