@@ -58,9 +58,7 @@
         <Pattern id="a91620" severity="2">
             //ifStatement[ifCondition//externalFunctionCall][statement//throwStatement]
         </Pattern>
-    </Rule>
-    <Rule id="SOLIDITY_DOS_WITH_THROW_LOOP">
-        <Pattern id="a91621" severity="2">
+        <Pattern id="a91621" severity="2"><!--SOLIDITY_DOS_WITH_THROW_LOOP-->
             //forStatement/expression//externalFunctionCall
         </Pattern>
         <Pattern id="a91622" severity="2">
