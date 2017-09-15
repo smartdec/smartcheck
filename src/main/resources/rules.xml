@@ -108,18 +108,18 @@
             //pragmaDirective/pragmaValue//versionOperator
         </Pattern>
     </Rule>
-    <Rule id="SOLIDITY_RECOMENDATION_SEND_TRANSFER">
+    <Rule id="SOLIDITY_SEND">
         <Pattern id="a91632" severity="2">
             //functionName/identifier[matches(text()[1],"^send$")]
         </Pattern>
     </Rule>
-    <Rule id="SOLIDITY_USING_VAR">
+    <Rule id="SOLIDITY_VAR">
         <Pattern id="a91633" severity="2">
             //typeName/elementaryTypeName[matches(text()[1],"^var$")]
         </Pattern>
     </Rule>
 
-    <Rule id="SOLIDITY_RECOMENDATION_INTEGER_DIVISION">
+    <Rule id="SOLIDITY_INTEGER_DIVISION">
         <Pattern id="a91634" severity="2">
             //expression[expression[1]//numberLiteral][matches(text()[1],"^/$")][expression[2]//numberLiteral]
         </Pattern>
@@ -144,13 +144,13 @@
         </Pattern>
     </Rule>
 
-    <Rule id="SOLIDITY_FALLBACK_REJECT">
+    <Rule id="SOLIDITY_RECOMENDATION_FALLBACK_REJECT">
         <Pattern id="a91640" severity="1">
             //sourceUnit[pragmaDirective/pragmaValue/version/versionConstraint[versionLiteral &gt;= "0.4.0"]]/contractDefinition/contractPart/contractPartDefinition/functionFallBackDefinition[matches(text()[2],"payable")][block/statement[1]/throwStatement]
         </Pattern>        
     </Rule>
     
-    <Rule id="SOLIDITY_KEEPING_SECRETS">
+    <Rule id="SOLIDITY_PRIVATE_MODIFIER">
         <Pattern id="a91641" severity="2">
             //stateVariableDeclaration/visibleType[matches(text()[1],"^private$")]
         </Pattern>
