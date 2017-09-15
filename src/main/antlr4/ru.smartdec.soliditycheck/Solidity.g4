@@ -61,18 +61,18 @@ modifierDefinition : 'modifier' Identifier parameterList? block ;
 
 functionDefinition
     : 'function' identifier '('? variableDeclarationList? ')'?
-      ( functionCall | Identifier | constantType | payableType |visibleType )*
+      ( functionCall | Identifier | 'constant' | payableType |visibleType )*
       ( 'returns' parameterList )? ( ';' | block ) ;
 payableType:'payable';
 
 functionFallBackDefinition
     : 'function' parameterList
-      ( functionCall | Identifier | constantType| payableType |visibleType )*
+      ( functionCall | Identifier | 'constant' | payableType |visibleType )*
       ( 'returns' parameterList )? ( block ) ;
 
 functionFallBackCall
     : 'function' parameterList
-      ( functionCall | Identifier | constantType | payableType | visibleType )*
+      ( functionCall | Identifier | 'constant' | payableType | visibleType )*
       ( 'returns' parameterList )? ';'? ;
 
 eventDefinition
@@ -107,7 +107,7 @@ userDefinedTypeName : identifier ( '.' identifier )* ;
 
 mappingSt : 'mapping' '(' elementaryTypeName '=>' typeName ')' ;
 
-functionTypeName : 'function' typeNameList ( visibleType | constantType | payableType )*
+functionTypeName : 'function' typeNameList ( visibleType | 'constant' | payableType )*
                    ( 'returns' typeNameList )? ;
 
 storageLocation : 'memory' | 'storage' ;
@@ -298,9 +298,11 @@ callObject: '(' 'new' callObject ')' callObject?
           | (identifier? arrayLiteral? '(')* identifier arrayLiteral? ')'* (')')?
           | functionName callArguments
           | identifier '[' identifier ']'
+          | addressContract
           //| primaryExpression+
 
           ;
+addressContract:(DecimalNumber | HexNumber) NumberUnit? ;
 functionCallStatement : functionCall ';'? ;
 callArguments:'('(callArgument ','?)*')';
 functionName:(identifier arrayLiteral?)| newExpression|elementaryTypeName;
