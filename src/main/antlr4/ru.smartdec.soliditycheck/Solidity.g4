@@ -47,9 +47,11 @@ contractPartDefinition
     | enumDefinition
     ;
 
-stateVariableDeclaration : typeName ( visibleType | 'constant' )* identifier ('='? expression|(identifier'(' expression ')'))? ';' ;
+stateVariableDeclaration : typeName ( visibleType | constantType )* identifier ('='? expression|(identifier'(' expression ')'))? ';' ;
 
 visibleType:'public' | 'internal' | 'external' | 'private';
+
+constantType:'constant';
 
 usingForDeclaration : 'using' Identifier 'for' ('*' | typeName) ';' ;
 
@@ -59,17 +61,18 @@ modifierDefinition : 'modifier' Identifier parameterList? block ;
 
 functionDefinition
     : 'function' identifier '('? variableDeclarationList? ')'?
-      ( functionCall | Identifier | 'constant' | 'payable' |visibleType )*
+      ( functionCall | Identifier | constantType | payableType |visibleType )*
       ( 'returns' parameterList )? ( ';' | block ) ;
+payableType:'payable';
 
 functionFallBackDefinition
     : 'function' parameterList
-      ( functionCall | Identifier | 'constant' | 'payable' | 'external' | 'public' | 'internal' | 'private' )*
+      ( functionCall | Identifier | constantType| payableType |visibleType )*
       ( 'returns' parameterList )? ( block ) ;
 
 functionFallBackCall
     : 'function' parameterList
-      ( functionCall | Identifier | 'constant' | 'payable' | 'external' | 'public' | 'internal' | 'private' )*
+      ( functionCall | Identifier | constantType | payableType | visibleType )*
       ( 'returns' parameterList )? ';'? ;
 
 eventDefinition
@@ -104,7 +107,7 @@ userDefinedTypeName : identifier ( '.' identifier )* ;
 
 mappingSt : 'mapping' '(' elementaryTypeName '=>' typeName ')' ;
 
-functionTypeName : 'function' typeNameList ( 'internal' | 'external' | 'constant' | 'payable' )*
+functionTypeName : 'function' typeNameList ( visibleType | constantType | payableType )*
                    ( 'returns' typeNameList )? ;
 
 storageLocation : 'memory' | 'storage' ;
