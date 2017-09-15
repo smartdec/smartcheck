@@ -6,8 +6,6 @@ contract SolidityUncheckedSend {
     function transfer() {//a91629
 
     }
-
-
     uint private y;
     function transfer() external {
 

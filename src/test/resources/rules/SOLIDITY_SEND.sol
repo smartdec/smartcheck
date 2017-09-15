@@ -7,6 +7,5 @@ contract SolidityStyleGuideViolation {
         payees[i].addr.send(payees[i].value);//a91632
         i++;
         }
-        nextPayeeIndex = i;
     }
 }

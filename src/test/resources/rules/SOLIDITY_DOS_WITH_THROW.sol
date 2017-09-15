@@ -3,8 +3,6 @@ contract Auction {
     function bid() payable {
         if (msg.value <= highestBid) { throw; }//a91620
         if (!currentLeader.send(highestBid)) { throw; } //a91620
-        currentLeader = msg.sender;
-        highestBid = msg.value;
     }
 }
 contract SolidityStyleGuideViolation {

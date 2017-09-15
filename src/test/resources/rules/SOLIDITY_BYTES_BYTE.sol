@@ -4,8 +4,4 @@ contract C {
     byte[] someVariable1;//a91628
     bytes someVariable2;
     uint[] data;
-    function f() {
-        uint[] x = data;
-        x.push(2);
-    }
 }
