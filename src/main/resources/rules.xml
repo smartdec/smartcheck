@@ -9,6 +9,12 @@
             ][callArguments[2][matches(text()[1],"\(")][matches(text()[1],"\)")]
             ]
         </Pattern>
+        <Pattern id="a91608" severity="2"> <!--рекомендация SOLIDITY_RECOMENDATION_SEND_CALL-->
+            //externalFunctionCallNotThis[functionName/identifier[matches(text()[1],"^call$")]]
+            [functionName/identifier[matches(text()[1],"^value$")]]
+            [callArguments[matches(text()[1],"\(")][matches(text()[1],"\)")]
+            ]
+        </Pattern>
     </Rule>
 
     <Rule id="SOLIDITY_REENTRANCY_EXTERNAL_CALL">
@@ -17,14 +23,6 @@
         </Pattern>
     </Rule>
 
-    <Rule id="SOLIDITY_RECOMENDATION_SEND_CALL">
-        <Pattern id="a91608" severity="2">
-            //externalFunctionCallNotThis[functionName/identifier[matches(text()[1],"^call$")]]
-            [functionName/identifier[matches(text()[1],"^value$")]]
-            [callArguments[matches(text()[1],"\(")][matches(text()[1],"\)")]
-            ]
-        </Pattern>
-    </Rule>
     <Rule id="SOLIDITY_TX_ORIGIN">
         <Pattern id="a91609" severity="2">
             //externalFunctionCallNotThis[callObject/identifier[matches(text()[1],"^tx$")]][matches(text()[1],".")][functionName/identifier[matches(text()[1],"^origin$")]]

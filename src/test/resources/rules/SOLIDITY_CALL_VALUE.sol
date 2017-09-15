@@ -1,22 +1,16 @@
 contract Victim {
-    mapping (address => uint) userbalances;
 
     function withdraw() {
-        if (msg.sender.call.value()()) {//a91606
-            userbalances[msg.sender] = 0;
+        if (msg.sender.call.value()()) {//a91606, a91608
         }
     }
     function withdraw() {
-        if (msg.sender.call.value(3)()) {
-            userbalances[msg.sender] = 0;
+        if (msg.sender.call.value(3)()) {//a91608
         }
     }
     function withdraw() {
-        if (msg.sender.call.value()(2)) {
-            userbalances[msg.sender] = 0;
+        if (msg.sender.call.value()(2)) {//a91608
+            assert(payee.call.value()); //a91608
         }
-    }
-    function() {
-        userbalances[msg.sender] += msg.value;
     }
 }

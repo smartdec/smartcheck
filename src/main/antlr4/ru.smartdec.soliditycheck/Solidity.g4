@@ -39,10 +39,9 @@ contractPartDefinition
     : usingForDeclaration
     | structDefinition
     | modifierDefinition
-    | stateVariableDeclaration
     | functionDefinition
+    | stateVariableDeclaration
     | functionFallBackDefinition
-    //| stateVariableDeclaration
     | eventDefinition
     | enumDefinition
     ;
