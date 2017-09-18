@@ -1,7 +1,7 @@
 contract SolidityStyleGuideViolation {
 
     function doSomething() {
-        if (now == startTime + week) {//a91623
+        if (now > startTime + week) {//a91623
         }
     }
 
