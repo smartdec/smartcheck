@@ -9,14 +9,15 @@
             ][callArguments[2][matches(text()[1],"\(")][matches(text()[1],"\)")]
             ]
         </Pattern>
-        <Pattern id="a91608" severity="2"> <!--рекомендация SOLIDITY_RECOMENDATION_SEND_CALL-->
+    </Rule>
+    <Rule id="SOLIDITY_RECOMENDATION_SEND_CALL">
+        <Pattern id="a91608" severity="2">
             //externalFunctionCallNotThis[functionName/identifier[matches(text()[1],"^call$")]]
             [functionName/identifier[matches(text()[1],"^value$")]]
             [callArguments[matches(text()[1],"\(")][matches(text()[1],"\)")]
             ]
         </Pattern>
     </Rule>
-
     <Rule id="SOLIDITY_REENTRANCY_EXTERNAL_CALL">
         <Pattern id="a91607" severity="2">
             //statement[simpleStatement/expressionStatement/expression/functionCall/externalFunctionCall][following-sibling::*[simpleStatement/expressionStatement/expression[not (functionCall/externalFunctionCall)]]]
@@ -29,17 +30,6 @@
         </Pattern>
     </Rule>
 
-    <Rule id="SOLIDITY_EXCEPTION_DISORDER">
-        <Pattern id="a91610" severity="3">
-            //identifier[matches(text()[1],"^send$")][not (ancestor::ifStatement)]
-        </Pattern>
-        <Pattern id="a91611" severity="3">
-            //identifier[matches(text()[1],"^call$")][not (ancestor::ifStatement)]
-        </Pattern>
-        <Pattern id="a91612" severity="3">
-            //identifier[matches(text()[1],"^delegatecall$")][not (ancestor::ifStatement)]
-        </Pattern>
-    </Rule>
     <Rule id="SOLIDITY_STYLE_GUIDE_VIOLATION">
         <Pattern id="a91613" severity="1">
             //eventDefinition/identifier[matches(text()[1],"^[a-z]")]
@@ -143,12 +133,12 @@
             //statement[descendant::*[matches(text()[1],"\+") or matches(text()[1],"\*") or matches(text()[1],"\-")]][not(ancestor::statement)]
         </Pattern>
     </Rule>
-
     <Rule id="SOLIDITY_RECOMENDATION_FALLBACK_REJECT">
         <Pattern id="a91640" severity="1">
-            //sourceUnit[pragmaDirective/pragmaValue/version/versionConstraint[versionLiteral &gt;= "0.4.0"]]/contractDefinition/contractPart/contractPartDefinition/functionFallBackDefinition[matches(text()[2],"payable")][block/statement[1]/throwStatement]
-        </Pattern>        
+            //sourceUnit[pragmaDirective/pragmaValue/version/versionConstraint[versionLiteral &gt;= "0.4.0"]]/contractDefinition/contractPart/contractPartDefinition/functionFallBackDefinition[payableType[matches(text()[1],"^payable$")]][block/statement/throwStatement]
+        </Pattern>
     </Rule>
+
     
     <Rule id="SOLIDITY_PRIVATE_MODIFIER">
         <Pattern id="a91641" severity="2">
