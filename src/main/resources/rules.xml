@@ -2,19 +2,10 @@
 <Rules xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="./rules.xsd">
     <VersionDefinition>//pragmaDirective[pragmaName='solidity']/pragmaValue/version/versionConstraint/text()</VersionDefinition>
     <Rule id="SOLIDITY_CALL_VALUE">
-        <Pattern id="a91606" severity="2">
-            //externalFunctionCallNotThis[functionName/identifier[matches(text()[1],"^call$")]]
-            [functionName/identifier[matches(text()[1],"^value$")]]
-            [callArguments[1][matches(text()[1],"\(")][matches(text()[1],"\)")]
-            ][callArguments[2][matches(text()[1],"\(")][matches(text()[1],"\)")]
-            ]
-        </Pattern>
-    </Rule>
-    <Rule id="SOLIDITY_RECOMENDATION_SEND_CALL">
         <Pattern id="a91608" severity="2">
             //externalFunctionCallNotThis[functionName/identifier[matches(text()[1],"^call$")]]
             [functionName/identifier[matches(text()[1],"^value$")]]
-            [callArguments[matches(text()[1],"\(")][matches(text()[1],"\)")]
+            [callArguments[matches(text()[1],"^\(\)$")]
             ]
         </Pattern>
     </Rule>
