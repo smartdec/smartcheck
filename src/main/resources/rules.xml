@@ -155,4 +155,15 @@
             //stateVariableDeclaration/visibleType[matches(text()[1],"^private$")]
         </Pattern>
     </Rule>
+    <Rule id="SOLIDITY_UNCHECKED_CALL">
+         <Pattern id="a91611" severity="2">
+             //externalFunctionCall[externalFunctionCallNotThis/functionName/identifier[matches(text()[1],"^call$")]][not(ancestor::ifCondition)]
+         </Pattern>
+        <Pattern id="a91610" severity="2">
+            //externalFunctionCall[externalFunctionCallNotThis/functionName/identifier[matches(text()[1],"^send$")]][not(ancestor::ifCondition)]
+        </Pattern>
+        <Pattern id="a91612" severity="2">
+            //externalFunctionCall[externalFunctionCallNotThis/functionName/identifier[matches(text()[1],"^delegatecall$")]][not(ancestor::ifCondition)]
+        </Pattern>
+    </Rule>
 </Rules>

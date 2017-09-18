@@ -1,7 +1,7 @@
 contract Victim {
 
     function withdraw() {
-        if (msg.sender.call.value()()) {//a91606, a91608
+        if (msg.sender.call.value()()) {//a91606 //a91608
         }
     }
     function withdraw() {
