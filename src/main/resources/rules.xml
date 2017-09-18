@@ -133,7 +133,7 @@
             //statement[descendant::*[matches(text()[1],"\+") or matches(text()[1],"\*") or matches(text()[1],"\-")]][not(ancestor::statement)]
         </Pattern>
     </Rule>
-    <Rule id="SOLIDITY_RECOMENDATION_FALLBACK_REJECT">
+    <Rule id="SOLIDITY_REDUNDANT_FALLBACK_REJECT">
         <Pattern id="a91640" severity="1">
             //sourceUnit[pragmaDirective/pragmaValue/version/versionConstraint[versionLiteral &gt;= "0.4.0"]]/contractDefinition/contractPart/contractPartDefinition/functionFallBackDefinition[payableType[matches(text()[1],"^payable$")]][block/statement/throwStatement]
         </Pattern>
