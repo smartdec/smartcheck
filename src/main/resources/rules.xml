@@ -115,7 +115,7 @@
 
     <Rule id="SOLIDITY_LOCKED_MONEY">
         <Pattern id="a91636" severity="2">
-            //contractDefinition[not(contractPart/contractPartDefinition/functionDefinition//functionCall/internalFunctionCall/functionName/identifier[text()[1]="suicide"]) and not(contractPart/contractPartDefinition/functionDefinition//externalFunctionCallNotThis/functionName/identifier[matches(text()[1],"^transfer|send$")])]
+            //contractDefinition[contractPart/contractPartDefinition/functionDefinition/payableType[text()[1]="payable"] and not(contractPart/contractPartDefinition/functionDefinition//functionCall/internalFunctionCall/functionName/identifier[text()[1]="suicide"]) and not(contractPart/contractPartDefinition/functionDefinition//externalFunctionCallNotThis/functionName/identifier[matches(text()[1],"^transfer|send$")])]
         </Pattern>
     </Rule>
 

@@ -1,4 +1,3 @@
-
 contract GoodMarketPlace1 {
     function kill() public {
         suicide(msg.sender);
@@ -11,6 +10,16 @@ contract GoodMarketPlace2 {
     }
 }
 
+contract GoodMarketPlace3 {
+    function deposit() payable {}
+    function foo() {a.transfer();}
+}
+
+contract GoodMarketPlace4 {
+    function foo() {}
+}
+
 contract BadMarketPlace {//a91636
+    function deposit() payable {}
     function foo() {}
 }
