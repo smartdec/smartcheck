@@ -96,12 +96,6 @@
             //functionName/identifier[matches(text()[1],"^send$")]
         </Pattern>
     </Rule>
-    <Rule id="SOLIDITY_VAR">
-        <Pattern id="a91633" severity="2">
-            //typeName/elementaryTypeName[matches(text()[1],"^var$")]
-        </Pattern>
-    </Rule>
-
     <Rule id="SOLIDITY_INTEGER_DIVISION">
         <Pattern id="a91634" severity="2">
             //expression[expression[1]//numberLiteral][matches(text()[1],"^/$")][expression[2]//numberLiteral]
