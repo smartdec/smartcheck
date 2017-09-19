@@ -1,6 +1,4 @@
 contract Bob {
-    bool sent = false;
-
     function ping(address c) {
         if (!sent) {
             a = 4;

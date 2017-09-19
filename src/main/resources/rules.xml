@@ -31,10 +31,9 @@
     </Rule>
     <Rule id="SOLIDITY_VAR_ZERO">
         <Pattern id="a91615" severity="2">
-            //forStatement/simpleStatement//variableDeclaration[typeName/elementaryTypeName[matches(text()[1],"var")]][expression//numberLiteral[matches(text()[1],"0")]]
+            //forStatement/simpleStatement//variableDeclaration[typeName/elementaryTypeName[matches(text()[1],"^var$")]][expression//numberLiteral[matches(text()[1],"0")]]
         </Pattern>
     </Rule>
-
     <Rule id="SOLIDITY_DOS_WITH_THROW">
         <Pattern id="a91620" severity="2">
             //ifStatement[ifCondition//externalFunctionCall][statement//throwStatement]
@@ -144,7 +143,7 @@
             //externalFunctionCall[externalFunctionCallNotThis/functionName/identifier[matches(text()[1],"^send$")]][not(ancestor::ifCondition)]
         </Pattern>
         <Pattern id="a91612" severity="2">
-            //externalFunctionCall[externalFunctionCallNotThis/functionName/identifier[matches(text()[1],"^delegatecall$")]][not(ancestor::ifCondition)]
+            //externalFunctionCallNotThis[functionName/identifier[matches(text()[1],"^delegatecall$")]][not(ancestor::ifCondition)]
         </Pattern>
     </Rule>
 </Rules>

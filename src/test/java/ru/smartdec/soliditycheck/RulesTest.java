@@ -61,8 +61,8 @@ public final class RulesTest {
     public void coverage() throws Exception {
         assertThat(
                 "coverage",
-                this.coverageActual(),
-                equalTo(this.coverageExpected())
+                this.coverageExpected().entrySet(),
+                everyItem(isIn(this.coverageActual().entrySet()))
         );
     }
 

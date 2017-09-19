@@ -88,7 +88,7 @@ parameterList : '(' (parameter','?)*')' ;
 
 parameter : typeName identifier?;
 
-typeNameList :         '(' ( typeName (',' typeName )* )? ')' ;
+typeNameList :         '(' ( typeName  (',' typeName )* )? ')' ;
 
 variableDeclaration : typeName storageLocation? identifier ( '='(identifier '(')? expression ')'?)? ;
 
@@ -96,9 +96,11 @@ variableDeclarationList:((variableDeclaration|stateVariableDeclaration) ','?)+;
 
 typeName
     : elementaryTypeName
+    | functionCall
     | userDefinedTypeName
     | mappingSt
     | typeName '[' expression? ']'
+    | typeName '(' expression? ')'
     | functionTypeName
     ;
 
@@ -115,7 +117,6 @@ block: '{' (statement)* '}' ;
 
 statement
     : creatingContractViaNewStatement ';'?
-    | simpleStatement ';'?
     | ifStatement ';'?
     | whileStatement ';'?
     | forStatement ';'?
@@ -127,6 +128,7 @@ statement
     | breakStatement ';'?
     | returnStatement ';'?
     | throwStatement ';'?
+    | simpleStatement ';'?
     | functionCallStatement
     | functionFallBackCall ';'?
       ;
@@ -234,7 +236,8 @@ elementaryTypeName
 creatingContractViaNewStatement: identifier arrayLiteral? '=' 'new' identifier arrayLiteral? callArguments ';'?;
 
 expression
-  : expression ('++' | '--')
+  : functionCall
+  | expression ('++' | '--')
   | 'new' typeName //('(' (expression ','?)* ')')?
   | expression '[' expression ']'
   | '(' expression ')'
@@ -257,7 +260,6 @@ expression
   | expression '?' expression ':' expression
   | expression ('=' | '|=' | '^=' | '&=' | '<<=' | '>>=' | '+=' | '-=' | '*=' | '/=' | '%=') expression
   | variableDeclaration
-  | functionCall
   //| expression '.' identifier
   | expression '(' callArguments ')'
   | primaryExpression+
@@ -290,7 +292,7 @@ internalFunctionCall:functionName callArguments;
 externalFunctionCall:externalFunctionCallThis|externalFunctionCallNotThis;
 externalFunctionCallThis:'this' ('.' functionName)+ callArguments* block?;
 externalFunctionCallNotThis:
-                    callObject '.' ('.'? functionName)* (('.'? 'value' ('(' argument ')')?)| ('.'? 'gas' '(' argument ')'))* callArguments* block?;
+                    callObject  ('.' functionName callArguments*|'.' 'value' ('(' callArguments* ')')?| '.' 'gas' ('(' callArguments* ')')?)+ callArguments* block?;
 callObject: '(' 'new' callObject ')' callObject?
           | identifier
           | (identifier? arrayLiteral)+
