@@ -5,6 +5,6 @@ contract SolidityUncheckedSend {
         for (var i = 0; i < a.length; i ++) { a[i] = i; }//a91615
     }
     function veryDangerousSend(address _to) returns (bool) {
-        for (var i = 1; i < a.length; i ++) { a[i] = i; }
+        for (uint16 i = 0; i < a.length; i ++) { a[i] = i; }
     }
 }

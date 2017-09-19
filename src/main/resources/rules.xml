@@ -31,7 +31,7 @@
     </Rule>
     <Rule id="SOLIDITY_VAR_ZERO">
         <Pattern id="a91615" severity="2">
-            //forStatement/simpleStatement//variableDeclaration[typeName/elementaryTypeName[matches(text()[1],"^var$")]][expression//numberLiteral[matches(text()[1],"0")]]
+            //forStatement/simpleStatement//variableDeclaration[typeName/elementaryTypeName[matches(text()[1],"^var$")]][expression//numberLiteral[matches(text()[1],"^[0-9]+$")]]
         </Pattern>
     </Rule>
     <Rule id="SOLIDITY_DOS_WITH_THROW">
