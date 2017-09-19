@@ -38,6 +38,9 @@
         <Pattern id="a91620" severity="2">
             //ifStatement[ifCondition//externalFunctionCall][statement//throwStatement]
         </Pattern>
+        <Pattern id="637fdc" severity="2">
+            //ifStatement[ifCondition//externalFunctionCall][statement//simpleStatement/expressionStatement/expression/primaryExpression/identifier[text()[1]="revert"]]
+        </Pattern>
         <Pattern id="a91621" severity="2"><!--SOLIDITY_DOS_WITH_THROW_LOOP-->
             //forStatement/expression//externalFunctionCall
         </Pattern>
