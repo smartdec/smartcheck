@@ -39,17 +39,18 @@ contractPartDefinition
     : usingForDeclaration
     | structDefinition
     | modifierDefinition
-    | stateVariableDeclaration
     | functionDefinition
+    | stateVariableDeclaration
     | functionFallBackDefinition
-    //| stateVariableDeclaration
     | eventDefinition
     | enumDefinition
     ;
 
-stateVariableDeclaration : typeName ( visibleType | 'constant' )* identifier ('='? expression|(identifier'(' expression ')'))? ';' ;
+stateVariableDeclaration : typeName ( visibleType | constantType )* identifier ('='? expression|(identifier'(' expression ')'))? ';' ;
 
 visibleType:'public' | 'internal' | 'external' | 'private';
+
+constantType:'constant';
 
 usingForDeclaration : 'using' Identifier 'for' ('*' | typeName) ';' ;
 
@@ -59,17 +60,18 @@ modifierDefinition : 'modifier' Identifier parameterList? block ;
 
 functionDefinition
     : 'function' identifier '('? variableDeclarationList? ')'?
-      ( functionCall | Identifier | 'constant' | 'payable' |visibleType )*
+      ( functionCall | Identifier | 'constant' | payableType |visibleType )*
       ( 'returns' parameterList )? ( ';' | block ) ;
+payableType:'payable';
 
 functionFallBackDefinition
     : 'function' parameterList
-      ( functionCall | Identifier | 'constant' | 'payable' | 'external' | 'public' | 'internal' | 'private' )*
+      ( functionCall | Identifier | 'constant' | payableType |visibleType )*
       ( 'returns' parameterList )? ( block ) ;
 
 functionFallBackCall
     : 'function' parameterList
-      ( functionCall | Identifier | 'constant' | 'payable' | 'external' | 'public' | 'internal' | 'private' )*
+      ( functionCall | Identifier | 'constant' | payableType | visibleType )*
       ( 'returns' parameterList )? ';'? ;
 
 eventDefinition
@@ -86,7 +88,7 @@ parameterList : '(' (parameter','?)*')' ;
 
 parameter : typeName identifier?;
 
-typeNameList :         '(' ( typeName (',' typeName )* )? ')' ;
+typeNameList :         '(' ( typeName  (',' typeName )* )? ')' ;
 
 variableDeclaration : typeName storageLocation? identifier ( '='(identifier '(')? expression ')'?)? ;
 
@@ -94,9 +96,11 @@ variableDeclarationList:((variableDeclaration|stateVariableDeclaration) ','?)+;
 
 typeName
     : elementaryTypeName
+    | functionCall
     | userDefinedTypeName
     | mappingSt
     | typeName '[' expression? ']'
+    | typeName '(' expression? ')'
     | functionTypeName
     ;
 
@@ -104,7 +108,7 @@ userDefinedTypeName : identifier ( '.' identifier )* ;
 
 mappingSt : 'mapping' '(' elementaryTypeName '=>' typeName ')' ;
 
-functionTypeName : 'function' typeNameList ( 'internal' | 'external' | 'constant' | 'payable' )*
+functionTypeName : 'function' typeNameList ( visibleType | 'constant' | payableType )*
                    ( 'returns' typeNameList )? ;
 
 storageLocation : 'memory' | 'storage' ;
@@ -113,7 +117,6 @@ block: '{' (statement)* '}' ;
 
 statement
     : creatingContractViaNewStatement ';'?
-    | simpleStatement ';'?
     | ifStatement ';'?
     | whileStatement ';'?
     | forStatement ';'?
@@ -125,6 +128,7 @@ statement
     | breakStatement ';'?
     | returnStatement ';'?
     | throwStatement ';'?
+    | simpleStatement ';'?
     | functionCallStatement
     | functionFallBackCall ';'?
       ;
@@ -232,7 +236,8 @@ elementaryTypeName
 creatingContractViaNewStatement: identifier arrayLiteral? '=' 'new' identifier arrayLiteral? callArguments ';'?;
 
 expression
-  : expression ('++' | '--')
+  : functionCall
+  | expression ('++' | '--')
   | 'new' typeName //('(' (expression ','?)* ')')?
   | expression '[' expression ']'
   | '(' expression ')'
@@ -255,7 +260,6 @@ expression
   | expression '?' expression ':' expression
   | expression ('=' | '|=' | '^=' | '&=' | '<<=' | '>>=' | '+=' | '-=' | '*=' | '/=' | '%=') expression
   | variableDeclaration
-  | functionCall
   //| expression '.' identifier
   | expression '(' callArguments ')'
   | primaryExpression+
@@ -288,16 +292,18 @@ internalFunctionCall:functionName callArguments;
 externalFunctionCall:externalFunctionCallThis|externalFunctionCallNotThis;
 externalFunctionCallThis:'this' ('.' functionName)+ callArguments* block?;
 externalFunctionCallNotThis:
-                    callObject '.' ('.'? functionName)* (('.'? 'value' ('(' argument ')')?)| ('.'? 'gas' '(' argument ')'))* callArguments* block?;
+                    callObject  ('.' functionName callArguments*|'.' 'value' ('(' callArguments* ')')?| '.' 'gas' ('(' callArguments* ')')?)+ callArguments* block?;
 callObject: '(' 'new' callObject ')' callObject?
           | identifier
           | (identifier? arrayLiteral)+
           | (identifier? arrayLiteral? '(')* identifier arrayLiteral? ')'* (')')?
           | functionName callArguments
           | identifier '[' identifier ']'
+          | addressContract
           //| primaryExpression+
 
           ;
+addressContract:(DecimalNumber | HexNumber) NumberUnit? ;
 functionCallStatement : functionCall ';'? ;
 callArguments:'('(callArgument ','?)*')';
 functionName:(identifier arrayLiteral?)| newExpression|elementaryTypeName;

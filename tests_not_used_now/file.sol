@@ -1,6 +1,7 @@
 contract Test {
-    function withdraw() {
-        nameReg.call.gas(1000000).value(1 ether)("register", "MyName");
-        }
+    event ReturnFromExternal();
+    function foo() {
+        0x123456.call.value()();
+        ReturnFromExternal();    // despite re-entrancy, this is safe: not changing internal state
     }
-
+}

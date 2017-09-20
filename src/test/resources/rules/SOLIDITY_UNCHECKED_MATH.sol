@@ -5,7 +5,8 @@ contract MarketPlace {
         uint b=2*x;//b91637
         a=x-1+8+s(0);//b91637
         a=f(v+1-9);//b91637
-    a.send(f+1);//b91637
+        a.send(f+1);//b91637
+        a += 10;//b91637
         if (x.balance < 10+a && myAddress.balance >= 10) x.send(10+9);//b91637
         while (3+1<x < 3) {//b91637
             a=x-1+8+s(0);
