@@ -58,11 +58,8 @@
         </Pattern>
     </Rule>
     <Rule id="SOLIDITY_GAS_LIMIT_AND_LOOPS">
-        <Pattern id="a91624" severity="2">
-            //forStatement/expression[1]/expression[2]/functionCall
-        </Pattern>
         <Pattern id="a91625" severity="2">
-            //forStatement[expression[1]/expression[2]/primaryExpression/identifier]
+            //forStatement[expression[1]/expression[2][functionCall or primaryExpression/identifier]]
         </Pattern>
         <Pattern id="a91626" severity="2">
             //whileStatement[whileCondition/descendant::*[functionCall]]
