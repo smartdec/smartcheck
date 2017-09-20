@@ -27,6 +27,11 @@
             //whileStatement/whileCondition//externalFunctionCall
         </Pattern>
     </Rule>
+    <Rule id="SOLIDITY_ERC20_API_VIOLATION">
+        <Pattern id="550a42" severity="1">
+            //contractDefinition[inheritanceSpecifier//identifier[matches(text()[1],"token","i")]]//functionDefinition[identifier[matches(text()[1],"^approve|transfer(From)?$")]][.//functionCall/internalFunctionCall/functionName/identifier[text()[1]="require"] or .//throwStatement or .//primaryExpression/identifier[text()[1]="revert"]]
+        </Pattern>
+    </Rule>
     <Rule id="SOLIDITY_GAS_LIMIT_AND_LOOPS">
         <Pattern id="f6f853" severity="2">
             //forStatement[expression[1]/expression[2][functionCall or primaryExpression/identifier]]
