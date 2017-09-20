@@ -1,13 +1,12 @@
 contract SolidityStyleGuideViolation {
 
     function doSomething() {
-        if (now > startTime + week) {//a91623
+        if (now > startTime + week) {//1955d9
         }
     }
 
     function doSomething() {
-        if ( startTime + week == block.timestamp) {//a01623
-        }
+        if ( startTime + week == block.timestamp) {//da0c53
     }
 
 }
