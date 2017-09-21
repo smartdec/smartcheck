@@ -2,8 +2,8 @@ pragma solidity ^0.4.11;
 
 contract SolidityUncheckedSend {
 
-    uint x;//a91630
-    function transfer() {//a91629
+    uint x;//b51ce0
+    function transfer() {//910067
 
     }
     uint private y;

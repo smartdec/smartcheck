@@ -19,7 +19,7 @@ contract GoodMarketPlace4 {
     function foo() {}
 }
 
-contract BadMarketPlace {//a91636
+contract BadMarketPlace {//30281d
     function deposit() payable {}
     function foo() {}
 }

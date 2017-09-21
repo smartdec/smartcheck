@@ -1,4 +1,4 @@
-library x{//a91635
+library x{//a0298c
     function foo();
 }
 contract Ballot {

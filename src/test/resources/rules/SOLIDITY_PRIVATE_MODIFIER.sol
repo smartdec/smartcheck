@@ -1,5 +1,5 @@
 contract MarketPlace {
-    uint private data;//a91641
+    uint private data;//5616b2
     uint data;
     function someComp() {
         if (x.balance < 10 && myAddress.balance >= 10) x.transfer(10);
