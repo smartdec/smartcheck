@@ -4,7 +4,7 @@ contract SolidityStyleGuideViolation {
 
     function payOut() {
         while (i < payees.length && msg.gas > 200000) {
-        payees[i].addr.send(payees[i].value);//a91632
+        payees[i].addr.send(payees[i].value);//430636
         i++;
         }
     }

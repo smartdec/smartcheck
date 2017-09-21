@@ -1,45 +1,25 @@
-
-contract MarketPlace {
-    function someComp() {
-        if (x.balance < 10 && myAddress.balance >= 10) x.transfer(10);
-    }
-
+contract GoodMarketPlace1 {
     function kill() public {
         suicide(msg.sender);
     }
 }
 
-contract MarketPlace {
-    function someComp() {
-        if (x.balance < 10 && myAddress.balance >= 10) x.send(10);
-    }
-
-    function kill() public {
-        suicide(msg.sender);
-    }
-}
-
-contract MarketPlace {
+contract GoodMarketPlace2 {
     function someComp() {
         if (x.balance < 10 && myAddress.balance >= 10) x.send(10);
     }
 }
 
-contract MarketPlace {
-    function kill() public {
-        suicide(msg.sender);
-    }
+contract GoodMarketPlace3 {
+    function deposit() payable {}
+    function foo() {a.transfer();}
 }
 
-contract MarketPlace {
-    function someComp() {
-        if (x.balance < 10 && myAddress.balance >= 10) x.transfer(10);
-    }
+contract GoodMarketPlace4 {
+    function foo() {}
 }
 
-
-contract MarketPlace {//a91636
-    function someComp() {
-        if (x.balance < 10 && myAddress.balance >= 10) x.call(10);
-    }
+contract BadMarketPlace {//30281d
+    function deposit() payable {}
+    function foo() {}
 }
