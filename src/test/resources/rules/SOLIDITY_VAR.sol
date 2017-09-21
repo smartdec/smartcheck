@@ -10,5 +10,6 @@ contract SolidityVarZero {
     var minIdx = 0; /* inferred to uint8 */
     function foo3() {
     	for (var i = minIdx; i < a.length; i++) { a[i] = i; }//f77619
+
     }
 }
