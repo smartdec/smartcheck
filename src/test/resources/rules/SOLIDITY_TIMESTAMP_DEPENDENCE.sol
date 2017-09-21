@@ -6,7 +6,7 @@ contract SolidityStyleGuideViolation {
     }
 
     function doSomething() {
-        if ( startTime + week == block.timestamp) {//da0c53
+        if ( startTime + week == block.timestamp) {}//da0c53
     }
 
 }
