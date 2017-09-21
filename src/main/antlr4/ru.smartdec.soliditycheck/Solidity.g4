@@ -236,7 +236,8 @@ elementaryTypeName
 creatingContractViaNewStatement: identifier arrayLiteral? '=' 'new' identifier arrayLiteral? callArguments ';'?;
 
 expression
-  : functionCall
+  : environmental_variable
+  | functionCall
   | expression ('++' | '--')
   | 'new' typeName //('(' (expression ','?)* ')')?
   | expression '[' expression ']'
@@ -262,7 +263,7 @@ expression
   | variableDeclaration
   //| expression '.' identifier
   | expression '(' callArguments ')'
-  | primaryExpression+
+  | primaryExpression
   ;
 
 comparison:'==' | '!=';
@@ -276,6 +277,7 @@ primaryExpression
 	| tupleExpression
     | elementaryTypeNameExpression
     | numberLiteral
+    | environmental_variable
     ;
 
 tupleExpression
@@ -288,11 +290,12 @@ nameValueList : Identifier ':' expression (',' Identifier ':' expression)* ;
 
 //___functionCall___
 functionCall:internalFunctionCall|externalFunctionCall;
-internalFunctionCall:functionName callArguments;
+internalFunctionCall:functionName callArguments+;
 externalFunctionCall:externalFunctionCallThis|externalFunctionCallNotThis;
-externalFunctionCallThis:'this' ('.' functionName)+ callArguments* block?;
+externalFunctionCallThis:'this' ('.' functionName)+ callArguments+ block?;
 externalFunctionCallNotThis:
-                    callObject  ('.' functionName callArguments*|'.' 'value' ('(' callArguments* ')')?| '.' 'gas' ('(' callArguments* ')')?)+ callArguments* block?;
+                      callObject  ('.' functionName callArguments*|'.' 'value' ('(' callArguments* ')')?| '.' 'gas' ('(' callArguments* ')')?)* callArguments+ block?
+                    | callObject  ('.' functionName callArguments*|'.' 'value' ('(' callArguments* ')')?| '.' 'gas' ('(' callArguments* ')')?)+ callArguments* block?;
 callObject: '(' 'new' callObject ')' callObject?
           | identifier
           | (identifier? arrayLiteral)+
@@ -300,7 +303,7 @@ callObject: '(' 'new' callObject ')' callObject?
           | functionName callArguments
           | identifier '[' identifier ']'
           | addressContract
-          //| primaryExpression+
+          | primaryExpression+
 
           ;
 addressContract:(DecimalNumber | HexNumber) NumberUnit? ;
@@ -392,7 +395,15 @@ ReservedKeyword
 fragment
 IdentifierStart : [a-zA-Z$_] ;
 
-argument: identifier|numberLiteral|stringLiteral;
+argument: identifier|numberLiteral|stringLiteral|environmental_variable;
+environmental_variable:'this.balance'
+                      |'msg.value'
+                      |'msg.gas'
+                      |'msg.sender'
+                      |(identifier| identifier '[' identifier ']'|'.')+ '.' 'length'
+                      |(identifier| identifier '[' identifier ']'|'.')+ '.' 'balance'
+                      |'block.timestamp'
+                      |'tx.origin';
 
 fragment
 IdentifierPart : [a-zA-Z0-9$_] ;

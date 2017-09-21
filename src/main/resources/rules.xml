@@ -3,7 +3,7 @@
     <VersionDefinition>//pragmaDirective[pragmaName='solidity']/pragmaValue/version/versionConstraint/text()</VersionDefinition>
     <Rule id="SOLIDITY_BALANCE_EQUALITY">
         <Pattern id="5094ad" severity="2">
-            //expression[expression//externalFunctionCallThis/functionName/identifier[matches(text()[1],"^balance$")]][matches(text()[1],"^==$")]
+            //expression[expression//environmental_variable[matches(text()[1],"^this.balance$")]][matches(text()[1],"^==$")]
         </Pattern>
     </Rule>
     <Rule id="SOLIDITY_BYTES_BYTE">
@@ -93,12 +93,12 @@
             //identifier[text()[1]="now"]
         </Pattern>
         <Pattern id="da0c53" severity="2">
-            //externalFunctionCall/externalFunctionCallNotThis[callObject/identifier[text()[1]="block"]][functionName/identifier[text()[1]="timestamp"]]
+            //environmental_variable[matches(text()[1],"^block.timestamp$")]
         </Pattern>
     </Rule>    
     <Rule id="SOLIDITY_TX_ORIGIN">
         <Pattern id="12e802" severity="2">
-            //externalFunctionCallNotThis[callObject/identifier[text()[1]="tx"]][text()[1]="."][functionName/identifier[text()[1]="origin"]]
+            //environmental_variable[matches(text()[1],"^tx.origin$")]
         </Pattern>
     </Rule>
     <Rule id="SOLIDITY_UNCHECKED_CALL">
