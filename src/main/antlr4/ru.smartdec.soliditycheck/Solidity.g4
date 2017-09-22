@@ -367,31 +367,6 @@ HexPair : HexCharacter HexCharacter ;
 fragment
 HexCharacter : [0-9A-Fa-f] ;
 
-ReservedKeyword
-  : 'abstract'
-  | 'after'
-  | 'case'
-  | 'catch'
-  | 'default'
-  | 'final'
-  | 'in'
-  | 'inline'
-  | 'interface'
-  | 'let'
-  | 'match'
-  | 'null'
-  | 'of'
-  | 'pure'
-  | 'relocatable'
-  | 'static'
-  | 'switch'
-  | 'try'
-  | 'type'
-  | 'typeof'
-  | 'view'
-  | 'from'
-  ;
-
 fragment
 IdentifierStart : [a-zA-Z$_] ;
 
@@ -403,7 +378,19 @@ environmental_variable:'this.balance'
                       |(identifier| identifier '[' identifier ']'|'.')+ '.' 'length'
                       |(identifier| identifier '[' identifier ']'|'.')+ '.' 'balance'
                       |'block.timestamp'
-                      |'tx.origin';
+                      |'tx.origin'
+                      | 'block.blockhash'
+                      | 'block.coinbase'
+                      | 'block.difficulty'
+                      | 'block.gaslimit'
+                      | 'block.number'
+                      | 'block.blockhash' '(' argument ')'
+                      | 'block.coinbase' '(' argument ')'
+                      | 'msg.data'
+                      | 'msg.sig'
+                      | 'now'
+                      | 'tx.gasprice'
+                      ;
 
 fragment
 IdentifierPart : [a-zA-Z0-9$_] ;

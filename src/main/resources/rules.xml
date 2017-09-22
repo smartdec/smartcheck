@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Rules xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="./rules.xsd">
-    <VersionDefinition>//pragmaDirective[pragmaName='solidity']/pragmaValue/version/versionConstraint/text()</VersionDefinition>
+    <VersionDefinition>
+        //pragmaDirective[pragmaName='solidity']/pragmaValue/version/versionConstraint/text()
+    </VersionDefinition>
     <Rule id="SOLIDITY_BALANCE_EQUALITY">
         <Pattern id="5094ad" severity="2">
             //expression[expression//environmental_variable[matches(text()[1],"^this.balance$")]][matches(text()[1],"^==$")]
@@ -90,7 +92,7 @@
     </Rule>
     <Rule id="SOLIDITY_TIMESTAMP_DEPENDENCE">
         <Pattern id="1955d9" severity="2">
-            //identifier[text()[1]="now"]
+            //environmental_variable[text()[1]="now"]
         </Pattern>
         <Pattern id="da0c53" severity="2">
             //environmental_variable[matches(text()[1],"^block.timestamp$")]
