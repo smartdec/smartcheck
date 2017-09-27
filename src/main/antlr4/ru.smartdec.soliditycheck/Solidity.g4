@@ -167,7 +167,7 @@ identifierList
   : '(' ( identifier? ',' )* identifier? ')' ;
 
 identifier
-    : Identifier |'value'|'from'|'this';
+    : Identifier |'value'|'from'|'this'|'balance';
 
 Identifier
   : IdentifierStart IdentifierPart* ;
@@ -263,9 +263,11 @@ expression
   | variableDeclaration
   //| expression '.' identifier
   | expression '(' callArguments ')'
+  | moneyExpression
+  | timeExpression
   | primaryExpression
   ;
-
+timeExpression:primaryExpression ('minutes'|'days');
 comparison:'==' | '!=';
 
 primaryExpression
@@ -279,7 +281,7 @@ primaryExpression
     | numberLiteral
     | environmental_variable
     ;
-
+moneyExpression:primaryExpression 'ether'|primaryExpression 'wei';
 tupleExpression
   : '(' ( expression? ( ',' expression? )+ )? ')'
   | '[' ( expression? ( ',' expression? )+ )? ']' ;
@@ -371,25 +373,25 @@ fragment
 IdentifierStart : [a-zA-Z$_] ;
 
 argument: identifier|numberLiteral|stringLiteral|environmental_variable;
-environmental_variable:'this.balance'
-                      |'msg.value'
-                      |'msg.gas'
-                      |'msg.sender'
-                      |(identifier| identifier '[' identifier ']'|'.')+ '.' 'length'
-                      |(identifier| identifier '[' identifier ']'|'.')+ '.' 'balance'
-                      |'block.timestamp'
-                      |'tx.origin'
-                      | 'block.blockhash'
-                      | 'block.coinbase'
-                      | 'block.difficulty'
-                      | 'block.gaslimit'
-                      | 'block.number'
-                      | 'block.blockhash' '(' argument ')'
-                      | 'block.coinbase' '(' argument ')'
-                      | 'msg.data'
-                      | 'msg.sig'
+environmental_variable:('this.balance'
+                      |'msg' '.' 'value'
+                      |'msg' '.' 'gas'
+                      |'msg' '.' 'sender'
+                      |(identifier| identifier '[' identifier ']'|'.')* '.' 'length'
+                      |(identifier| identifier '[' identifier ']'|'.')* '.' 'balance'
+                      |'block' '.' 'timestamp'
+                      |'tx' '.' 'origin'
+                      | 'block' '.' 'blockhash'
+                      | 'block' '.' 'coinbase'
+                      | 'block' '.' 'difficulty'
+                      | 'block' '.' 'gaslimit'
+                      | 'block' '.' 'number'
+                      | 'block' '.' 'blockhash' '(' argument ')'
+                      | 'block' '.' 'coinbase' '(' argument ')'
+                      | 'msg' '.' 'data'
+                      | 'msg' '.' 'sig'
                       | 'now'
-                      | 'tx.gasprice'
+                      | 'tx' '.' 'gasprice')+
                       ;
 
 fragment
