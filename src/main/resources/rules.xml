@@ -5,7 +5,7 @@
     </VersionDefinition>
     <Rule id="SOLIDITY_BALANCE_EQUALITY">
         <Pattern id="5094ad" severity="2">
-            //expression[expression//environmental_variable[matches(text()[1],"^this.balance$")]][matches(text()[1],"^==$")]
+            //expression[expression//environmental_variable[matches(text()[1],"^this.balance$")]][matches(text()[1],"^==|&lt;=|>=$")]
         </Pattern>
     </Rule>
     <Rule id="SOLIDITY_BYTES_BYTE">
