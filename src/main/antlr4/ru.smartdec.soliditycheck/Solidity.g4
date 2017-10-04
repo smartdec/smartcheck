@@ -268,7 +268,7 @@ expression
   | timeExpression
   | primaryExpression
   ;
-timeExpression:primaryExpression ('minutes'|'days'|'years');
+timeExpression:primaryExpression ('minutes'|'days'|'years'|'weeks');
 comparison:'==' | '!=';
 
 primaryExpression
@@ -282,7 +282,7 @@ primaryExpression
     | numberLiteral
     | environmental_variable
     ;
-moneyExpression:primaryExpression 'ether'|primaryExpression 'wei'|primaryExpression 'finney';
+moneyExpression:primaryExpression 'ether'|primaryExpression 'wei'|primaryExpression 'finney'|primaryExpression 'szabo';
 tupleExpression
   : '(' ( expression? ( ',' expression? )+ )? ')'
   | '[' ( expression? ( ',' expression? )+ )? ']' ;
