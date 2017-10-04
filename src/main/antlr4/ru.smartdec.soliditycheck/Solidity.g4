@@ -282,7 +282,7 @@ primaryExpression
     | numberLiteral
     | environmental_variable
     ;
-moneyExpression:primaryExpression 'ether'|primaryExpression 'wei';
+moneyExpression:primaryExpression 'ether'|primaryExpression 'wei'|primaryExpression 'finney';
 tupleExpression
   : '(' ( expression? ( ',' expression? )+ )? ')'
   | '[' ( expression? ( ',' expression? )+ )? ']' ;
