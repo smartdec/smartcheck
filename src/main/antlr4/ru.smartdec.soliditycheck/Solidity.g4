@@ -167,7 +167,8 @@ identifierList
   : '(' ( identifier? ',' )* identifier? ')' ;
 
 identifier
-    : Identifier |'value'|'from'|'this'|'balance';
+    : Identifier |'value'|'from'|'this'|'balance'|'sender'|'msg'|'gas'|'length'|'block'|'timestamp'|'tx'|'origin'|'blockhash'|'coinbase'
+    | 'difficulty'| 'gaslimit'|'number'|'data'|'sig'|'now'|'gasprice';
 
 Identifier
   : IdentifierStart IdentifierPart* ;
@@ -267,7 +268,7 @@ expression
   | timeExpression
   | primaryExpression
   ;
-timeExpression:primaryExpression ('minutes'|'days');
+timeExpression:primaryExpression ('minutes'|'days'|'years'|'weeks');
 comparison:'==' | '!=';
 
 primaryExpression
@@ -281,7 +282,7 @@ primaryExpression
     | numberLiteral
     | environmental_variable
     ;
-moneyExpression:primaryExpression 'ether'|primaryExpression 'wei';
+moneyExpression:primaryExpression 'ether'|primaryExpression 'wei'|primaryExpression 'finney'|primaryExpression 'szabo';
 tupleExpression
   : '(' ( expression? ( ',' expression? )+ )? ')'
   | '[' ( expression? ( ',' expression? )+ )? ']' ;
@@ -352,7 +353,7 @@ BooleanLiteral : 'true' | 'false' ;
 
 booleanLit:BooleanLiteral;
 
-DecimalNumber : [0-9]+ ;
+DecimalNumber : [0-9.e]+ ;
 
 HexNumber : '0x' HexCharacter+ ;
 
@@ -374,24 +375,24 @@ IdentifierStart : [a-zA-Z$_] ;
 
 argument: identifier|numberLiteral|stringLiteral|environmental_variable;
 environmental_variable:('this.balance'
-                      |'msg' '.' 'value'
-                      |'msg' '.' 'gas'
-                      |'msg' '.' 'sender'
+                      |'msg.value'
+                      |'msg.gas'
+                      |'msg.sender'
                       |(identifier| identifier '[' identifier ']'|'.')* '.' 'length'
                       |(identifier| identifier '[' identifier ']'|'.')* '.' 'balance'
-                      |'block' '.' 'timestamp'
-                      |'tx' '.' 'origin'
-                      | 'block' '.' 'blockhash'
-                      | 'block' '.' 'coinbase'
-                      | 'block' '.' 'difficulty'
-                      | 'block' '.' 'gaslimit'
-                      | 'block' '.' 'number'
-                      | 'block' '.' 'blockhash' '(' argument ')'
-                      | 'block' '.' 'coinbase' '(' argument ')'
-                      | 'msg' '.' 'data'
-                      | 'msg' '.' 'sig'
+                      |'block.timestamp'
+                      |'tx.origin'
+                      | 'block.blockhash'
+                      | 'block.coinbase'
+                      | 'block.difficulty'
+                      | 'block.gaslimit'
+                      | 'block.number'
+                      | 'block.blockhash' '(' argument ')'
+                      | 'block.coinbase' '(' argument ')'
+                      | 'msg.data'
+                      | 'msg.sig'
                       | 'now'
-                      | 'tx' '.' 'gasprice')+
+                      | 'tx.gasprice')+
                       ;
 
 fragment
