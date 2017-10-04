@@ -167,7 +167,8 @@ identifierList
   : '(' ( identifier? ',' )* identifier? ')' ;
 
 identifier
-    : Identifier |'value'|'from'|'this'|'balance';
+    : Identifier |'value'|'from'|'this'|'balance'|'sender'|'msg'|'gas'|'length'|'block'|'timestamp'|'tx'|'origin'|'blockhash'|'coinbase'
+    | 'difficulty'| 'gaslimit'|'number'|'data'|'sig'|'now'|'gasprice';
 
 Identifier
   : IdentifierStart IdentifierPart* ;
@@ -373,7 +374,7 @@ fragment
 IdentifierStart : [a-zA-Z$_] ;
 
 argument: identifier|numberLiteral|stringLiteral|environmental_variable;
-environmental_variable:('this.balance'
+environmental_variable:('this' '.' 'balance'
                       |'msg' '.' 'value'
                       |'msg' '.' 'gas'
                       |'msg' '.' 'sender'

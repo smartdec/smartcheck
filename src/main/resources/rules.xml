@@ -4,8 +4,8 @@
         //pragmaDirective[pragmaName='solidity']/pragmaValue/version/versionConstraint/text()
     </VersionDefinition>
     <Rule id="SOLIDITY_BALANCE_EQUALITY">
-        <Pattern id="5094ad" severity="2">
-            //expression[expression//environmental_variable[matches(text()[1],"^this.balance$")]][matches(text()[1],"^==|&lt;=|>=$")]
+      <Pattern id="5094ad" severity="2">
+            //expression[expression//environmental_variable[matches(text()[1],"^this.balance$")]][matches(text()[1],"^==$")]
         </Pattern>
     </Rule>
     <Rule id="SOLIDITY_BYTES_BYTE">
@@ -48,7 +48,7 @@
         </Pattern>
     </Rule>
     <Rule id="SOLIDITY_LOCKED_MONEY">
-        <Pattern id="30281d" severity="2">
+        <Pattern id="30281d" severity="1">
             //contractDefinition[contractPart/contractPartDefinition/functionDefinition/payableType[text()[1]="payable"] and not(contractPart/contractPartDefinition/functionDefinition//functionCall/internalFunctionCall/functionName/identifier[text()[1]="suicide"]) and not(contractPart/contractPartDefinition/functionDefinition//externalFunctionCallNotThis/functionName/identifier[matches(text()[1],"^transfer|send$")])]
         </Pattern>
     </Rule>
@@ -108,11 +108,13 @@
             //externalFunctionCallNotThis[functionName/identifier[matches(text()[1],"^call|delegatecall|send$")]][not(ancestor::ifCondition)]
         </Pattern>
     </Rule>
+    <!--
     <Rule id="SOLIDITY_UNCHECKED_MATH">
         <Pattern id="63d8f9" severity="1">
             //statement[descendant::*[matches(text()[1],"\+|\-|\*")]][not(ancestor::statement)]
         </Pattern>
     </Rule>
+    -->
     <Rule id="SOLIDITY_VAR">
         <Pattern id="d28aa7" severity="2">
             //variableDeclaration[typeName/elementaryTypeName[matches(text()[1],"^var$")]][expression//primaryExpression/numberLiteral[matches(text()[1],"^[0-9]+$")]]
