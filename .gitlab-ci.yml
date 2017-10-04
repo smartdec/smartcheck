@@ -21,7 +21,7 @@ cache:
 .verify: &verify
   stage: test
   script:
-    - 'mvn $MAVEN_CLI_OPTS verify site site:stage'
+    - 'mvn $MAVEN_CLI_OPTS verify'
   except:
     - master
 
