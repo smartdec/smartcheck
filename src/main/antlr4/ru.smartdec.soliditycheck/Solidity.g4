@@ -268,7 +268,7 @@ expression
   | timeExpression
   | primaryExpression
   ;
-timeExpression:primaryExpression ('minutes'|'days');
+timeExpression:primaryExpression ('minutes'|'days'|'years');
 comparison:'==' | '!=';
 
 primaryExpression
@@ -353,7 +353,7 @@ BooleanLiteral : 'true' | 'false' ;
 
 booleanLit:BooleanLiteral;
 
-DecimalNumber : [0-9]+ ;
+DecimalNumber : [0-9.e]+ ;
 
 HexNumber : '0x' HexCharacter+ ;
 
@@ -374,25 +374,25 @@ fragment
 IdentifierStart : [a-zA-Z$_] ;
 
 argument: identifier|numberLiteral|stringLiteral|environmental_variable;
-environmental_variable:('this' '.' 'balance'
-                      |'msg' '.' 'value'
-                      |'msg' '.' 'gas'
-                      |'msg' '.' 'sender'
+environmental_variable:('this.balance'
+                      |'msg.value'
+                      |'msg.gas'
+                      |'msg.sender'
                       |(identifier| identifier '[' identifier ']'|'.')* '.' 'length'
                       |(identifier| identifier '[' identifier ']'|'.')* '.' 'balance'
-                      |'block' '.' 'timestamp'
-                      |'tx' '.' 'origin'
-                      | 'block' '.' 'blockhash'
-                      | 'block' '.' 'coinbase'
-                      | 'block' '.' 'difficulty'
-                      | 'block' '.' 'gaslimit'
-                      | 'block' '.' 'number'
-                      | 'block' '.' 'blockhash' '(' argument ')'
-                      | 'block' '.' 'coinbase' '(' argument ')'
-                      | 'msg' '.' 'data'
-                      | 'msg' '.' 'sig'
+                      |'block.timestamp'
+                      |'tx.origin'
+                      | 'block.blockhash'
+                      | 'block.coinbase'
+                      | 'block.difficulty'
+                      | 'block.gaslimit'
+                      | 'block.number'
+                      | 'block.blockhash' '(' argument ')'
+                      | 'block.coinbase' '(' argument ')'
+                      | 'msg.data'
+                      | 'msg.sig'
                       | 'now'
-                      | 'tx' '.' 'gasprice')+
+                      | 'tx.gasprice')+
                       ;
 
 fragment
