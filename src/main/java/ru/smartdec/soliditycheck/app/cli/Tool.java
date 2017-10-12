@@ -14,6 +14,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.HashMap;
+import java.util.Map;
+import java.util.Optional;
 
 /**
  *
@@ -104,6 +106,7 @@ public final class Tool {
                 ),
                 info -> {
                     System.out.println(info.file());
+                    Map<String, Integer> result = new HashMap<>();
                     info.treeReport().streamUnchecked().forEach(
                             tree -> tree.contexts().forEach(
                                     context -> {
@@ -119,9 +122,17 @@ public final class Tool {
                                                        .getCharPositionInLine(),
                                                 context.getText()
                                         );
+                                        result.compute(
+                                                tree.rule().id(),
+                                                (k, v) -> Optional
+                                                        .ofNullable(v)
+                                                        .map(i -> i + 1)
+                                                        .orElse(1)
+                                        );
                                     }
                             )
                     );
+                    result.forEach((k, v) -> System.out.println(k + " :" + v));
                 }
         )
                 .print();

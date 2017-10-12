@@ -1,39 +1,34 @@
-pragma solidity ^0.4.8;
+pragma solidity ^0.4.10;
 
-contract AccessManager {
-    address public server; // Address, which the platform website uses.
-    address public guardian; // Address of the guardian, who confirms actions.
-    address public populous; // Address of the Populous bank contract.
+contract Token {
 
-    function AccessManager(address _server, address _guardian) {
-        server = _server;
-        guardian = _guardian;
+
+    function Token(string n, string a, uint256 totalSupplyToUse, bool isSecured, bool cMB, string physical, string crypto, uint256 txnTaxToUse, uint256 holdingTaxToUse, uint256 holdingTaxIntervalToUse, bool isPrivateToUse) {
+        name = n;
+        symbol = a;
+        totalSupply = totalSupplyToUse;
+        balanceOf[msg.sender] = totalSupplyToUse;
+        isSecured = isSecured;
+        physicalString = physical;
+        cryptoString = crypto;
+        canMintBurn = cMB;
+        owner = msg.sender;
+        txnTax = txnTaxToUse;
+        holdingTax = holdingTaxToUse;
+        holdingTaxInterval = holdingTaxIntervalToUse;
+        if(holdingTaxInterval!=0) {
+            lastHoldingTax = now;
+            while(getHour(lastHoldingTax)!=21) {
+                lastHoldingTax -= 1 hours;
+            }
+            while(getWeekday(lastHoldingTax)!=5) {
+                lastHoldingTax -= 1 days;
+            }
+            lastHoldingTax -= getMinute(lastHoldingTax) * (1 minutes) + getSecond(lastHoldingTax) * (1 seconds);
+        }
+        isPrivate = isPrivateToUse;
+
+        addAddress(owner);
+    }
     }
 
-    function isServer(address sender) public constant returns (bool) {
-        return sender == server;
-    }
-
-    function isGuardian(address sender) public constant returns (bool) {
-        return sender == guardian;
-    }
-
-    function isPopulous(address sender) public constant returns (bool) {
-        return sender == populous;
-    }
-
-    function changeServer(address _server) {
-        if (isGuardian(msg.sender) == false) { throw; }
-        server = _server;
-    }
-
-    function changeGuardian(address _guardian) {
-        if (isGuardian(msg.sender) == false) { throw; }
-        guardian = _guardian;
-    }
-
-    function changePopulous(address _populous) {
-        if (isGuardian(msg.sender) == false) { throw; }
-        populous = _populous;
-    }
-}
