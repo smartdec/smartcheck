@@ -136,24 +136,40 @@ functionCall:  internalFunctionCall |externalFunctionCall ;
 
 internalFunctionCall:functionName callArguments+;
 
-externalFunctionCall:(callObject|'this') functionNameAndArgs;
+externalFunctionCall:(callObjectExpression|'this') functionNameAndArgs;
 
 functionNameAndArgs:
                        ('.' functionName callArguments*|'.' 'value' ('(' callArguments* ')')?| '.' 'gas' ('(' callArguments* ')')?)+ callArguments*
                     ;
+callObjectExpression: callObject;
 
-callObject:environmentalVariableDefinition
+callObject: environmentalVariableDefinition
           |  '(' 'new' callObject ')' callObject?
           | identifier
           | (identifier? arrayLiteral)+
           | (identifier? arrayLiteral? '(')* identifier arrayLiteral? ')'* (')')?
-          | (callObjectExpression arrayLiteral? '.')+
-          | ('(' callObject ')'
           | identifier '[' identifier ']'
           | addressContract
           | internalFunctionCall
-          )+
           | functionNameAndArgs
+          | ('+' | '-') expression
+          | callObject ('*' | '/' | '%'|'**'|'+' | '-'|'<<' | '>>'|'&' |'^'|'|'|'<' | '>' | '<=' | '>='|'==' | '!=') callObject
+          | callObject ('&&'|'||') callObject
+          | '(' callObject ')'
+          | moneyExpression
+          | timeExpression
+          | primaryExpression
+          | callObject  ('++' | '--')
+          | ('++' | '--') expression
+          //| ('+' | '-') expression
+          | '!' callObject
+          | '~' callObject
+          | callObject '[' callObject ']'
+          //| callObject ('*' | '/' | '%'|'**'|'+' | '-'|'<<' | '>>'|'&' |'^'|'|'|'<' | '>' | '<=' | '>='|'==' | '!=') callObject
+          | '{'(identifier ':' callObject ','?)+'}'
+          | callObject '(' callArguments ')'
+          | callObject '?' callObject ':' callObject
+          | callObject ('=' | '|=' | '^=' | '&=' | '<<=' | '>>=' | '+=' | '-=' | '*=' | '/=' | '%=') callObject
           ;
 
 addressContract:(DecimalNumber | HexNumber) NumberUnit? ;
@@ -168,6 +184,7 @@ callArgument
 expression:    functionCall
               | expression ('++' | '--')
               | 'new' typeName //('(' (expression ','?)* ')')?
+              | '(' typeName ')' '(' expression ')'
               | expression '[' expression ']'
               | '(' expression ')'
               | ('++' | '--') expression
@@ -301,16 +318,6 @@ elementaryTypeNameAssemblyExpression : (elementaryTypeName) ('('  (assemblyItem 
 assemblyFunctionCall: 'function' identifier '(' (assemblyItem ','?)* ')' '->' identifier inlineAssemblyBlock;
 
 //___expressions___
-callObjectExpression: callObjectExpression ('&&'|'||') callObjectExpression
-                    | (primaryExpression) ('=='|'!='|'>'|'>='|'<'|'<=') primaryExpression (('+' | '-'|'*' | '/' | '%'|'**') primaryExpression)*
-                    | '(' callObjectExpression ')'
-                    | environmentalVariableDefinition
-                    | primaryExpression
-                    | (primaryExpression  '[' callObjectExpression ']' '.'?)+
-                    | moneyExpression
-                    | timeExpression
-                    | (identifier arrayLiteral?)| newExpression|elementaryTypeName
-                    ;
 
 timeExpression:primaryExpression ('seconds'|'minutes'|'hours'|'days'|'years'|'weeks');
 
