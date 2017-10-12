@@ -5,7 +5,7 @@
     </VersionDefinition>
     <Rule id="SOLIDITY_BALANCE_EQUALITY">
       <Pattern id="5094ad" severity="2">
-            //expression[expression//environmental_variable[matches(text()[1],"^this.balance$")]][matches(text()[1],"^==$")]
+            //expression[expression//environmentalVariableDefinition[matches(text()[1],"^this.balance$")]][matches(text()[1],"^==$")]
         </Pattern>
     </Rule>
     <Rule id="SOLIDITY_BYTES_BYTE">
@@ -15,12 +15,12 @@
     </Rule>
     <Rule id="SOLIDITY_CALL_VALUE">
         <Pattern id="cc2e04" severity="3">
-            //externalFunctionCallNotThis[functionName/identifier[text()[1]="call"]][functionName/identifier[text()[1]="value"]][callArguments[text()[1]="()"]]
+            //externalFunctionCall/functionNameAndArgs[functionName/identifier[matches(text()[1],"^call$")]][functionName/identifier[matches(text()[1],"^value$")]][not(callArguments/callArgument)]
         </Pattern>
     </Rule>
     <Rule id="SOLIDITY_DOS_WITH_THROW">
         <Pattern id="637fdc" severity="3">
-            //ifStatement[ifCondition//externalFunctionCall][statement//throwStatement or statement//simpleStatement/expressionStatement/expression/primaryExpression/identifier[text()[1]="revert"]]
+            //ifStatement[ifCondition//externalFunctionCall][block/statement//throwStatement or block/statement//simpleStatement/expressionStatement/expression/primaryExpression/identifier[text()[1]="revert"]]
         </Pattern>
         <Pattern id="efb788" severity="2">
             //forStatement/expression//externalFunctionCall
@@ -49,7 +49,7 @@
     </Rule>
     <Rule id="SOLIDITY_LOCKED_MONEY">
         <Pattern id="30281d" severity="1">
-            //contractDefinition[contractPart/contractPartDefinition/functionDefinition/payableType[text()[1]="payable"] and not(contractPart/contractPartDefinition/functionDefinition//functionCall/internalFunctionCall/functionName/identifier[text()[1]="suicide"]) and not(contractPart/contractPartDefinition/functionDefinition//externalFunctionCallNotThis/functionName/identifier[matches(text()[1],"^transfer|send$")])]
+            //contractDefinition[contractPartDefinition/functionDefinition/stateMutability/payableType[matches(text()[1],"^payable$")] and not(contractPartDefinition/functionDefinition//functionCall/internalFunctionCall/functionName/identifier[text()[1]="suicide"]) and not(contractPartDefinition/functionDefinition//externalFunctionCall/functionNameAndArgs/functionName/identifier[matches(text()[1],"^transfer|send$")])]
         </Pattern>
     </Rule>
     <Rule id="SOLIDITY_MALICIOUS_LIBRARIES">
@@ -69,7 +69,7 @@
     </Rule>
     <Rule id="SOLIDITY_REDUNDANT_FALLBACK_REJECT">
         <Pattern id="b85a32" severity="1">
-            //sourceUnit[pragmaDirective/pragmaValue/version/versionConstraint[versionLiteral &gt;= "0.4.0"]]/contractDefinition/contractPart/contractPartDefinition/functionFallBackDefinition[payableType[text()[1]="payable"]][block/statement/throwStatement]
+            //sourceUnit[pragmaDirective/pragmaValue/version/versionConstraint[versionLiteral &gt;= "0.4.0"]]/contractDefinition/contractPartDefinition/functionFallBackDefinition[stateMutability/payableType[text()[1]="payable"]][block/statement/throwStatement]
         </Pattern>
     </Rule>    
     <Rule id="SOLIDITY_REENTRANCY_EXTERNAL_CALL">
@@ -92,20 +92,20 @@
     </Rule>
     <Rule id="SOLIDITY_TIMESTAMP_DEPENDENCE">
         <Pattern id="1955d9" severity="2">
-            //environmental_variable[text()[1]="now"]
+            //environmentalVariableDefinition[text()[1]="now"]
         </Pattern>
         <Pattern id="da0c53" severity="2">
-            //environmental_variable[matches(text()[1],"^block.timestamp$")]
+            //environmentalVariableDefinition[matches(text()[1],"^block.timestamp$")]
         </Pattern>
     </Rule>    
     <Rule id="SOLIDITY_TX_ORIGIN">
         <Pattern id="12e802" severity="2">
-            //environmental_variable[matches(text()[1],"^tx.origin$")]
+            //environmentalVariableDefinition[matches(text()[1],"^tx.origin$")]
         </Pattern>
     </Rule>
     <Rule id="SOLIDITY_UNCHECKED_CALL">
         <Pattern id="f39eed" severity="3">
-            //externalFunctionCallNotThis[functionName/identifier[matches(text()[1],"^call|delegatecall|send$")]][not(ancestor::ifCondition)]
+            //externalFunctionCall[functionNameAndArgs/functionName/identifier[matches(text()[1],"^call|delegatecall|send$")]][not(ancestor::ifCondition)]
         </Pattern>
     </Rule>
     <!--
@@ -125,7 +125,7 @@
     </Rule>
     <Rule id="SOLIDITY_VISIBILITY">
         <Pattern id="910067" severity="1">
-            //contractPart/contractPartDefinition/functionDefinition[not(visibleType)]
+            //contractPartDefinition/functionDefinition[not(visibleType)]
         </Pattern>
         <Pattern id="b51ce0" severity="1">
             //contractPartDefinition/stateVariableDeclaration[not(visibleType)]
