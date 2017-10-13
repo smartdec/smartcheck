@@ -1,12 +1,14 @@
 contract SolidityStyleGuideViolation {
 
     function doSomething() {
-        if (now > startTime + week) {//1955d9
+        // <yes> <report> SOLIDITY_TIMESTAMP_DEPENDENCE 1955d9
+        if (now > startTime + week) {
         }
     }
 
     function doSomething() {
-        if ( startTime + week == block.timestamp) {}//da0c53
+        // <yes> <report> SOLIDITY_TIMESTAMP_DEPENDENCE da0c53
+        if ( startTime + week == block.timestamp) {}
     }
 
 }

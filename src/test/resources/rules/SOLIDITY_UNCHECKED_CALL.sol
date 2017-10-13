@@ -2,9 +2,12 @@ pragma solidity ^0.4.11;
 
 contract SolidityUncheckedSend {
     function unseatKing(address a, uint w) {
-        a.call.value(w);//f39eed
-        a.send(w);//f39eed
-        a.delegatecall(w);//f39eed
+        // <yes> <report> SOLIDITY_UNCHECKED_CALL f39eed
+        a.call.value(w);
+        // <yes> <report> SOLIDITY_UNCHECKED_CALL f39eed
+        a.send(w);
+        // <yes> <report> SOLIDITY_UNCHECKED_CALL f39eed
+        a.delegatecall(w);
     }
     function delegatecallSetN(address _e, uint _n) {
         if (!_e.delegatecall(bytes(sha3("setN(uint256)"), u))) throw;

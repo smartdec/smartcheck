@@ -2,8 +2,10 @@ pragma solidity ^0.4.11;
 
 contract SolidityUncheckedSend {
 
-    uint x;//b51ce0
-    function transfer() {//910067
+    // <yes> <report> SOLIDITY_VISIBILITY b51ce0
+    uint x;
+    // <yes> <report> SOLIDITY_VISIBILITY 910067
+    function transfer() {
 
     }
    function isServer(address sender) public constant returns (bool) {
@@ -20,11 +22,14 @@ contract SolidityUncheckedSend {
 }
     contract SolidityUncheckedSend {
 
-        uint x;//b51ce0
-        function transfer() {//910067
+        // <yes> <report> SOLIDITY_VISIBILITY b51ce0
+        uint x;
+        // <yes> <report> SOLIDITY_VISIBILITY 910067
+        function transfer() {
 
         }
-      function AccessManager(address _server, address _guardian) {//910067
+      // <yes> <report> SOLIDITY_VISIBILITY 910067
+      function AccessManager(address _server, address _guardian) {
             server = _server;
             guardian = _guardian;
         }

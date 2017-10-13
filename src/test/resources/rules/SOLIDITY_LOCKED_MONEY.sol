@@ -19,7 +19,8 @@ contract GoodMarketPlace4 {
     function foo() {}
 }
 
-contract BadMarketPlace {//30281d
+// <yes> <report> SOLIDITY_LOCKED_MONEY 30281d
+contract BadMarketPlace {
     function deposit() payable {}
     function foo() {}
 }

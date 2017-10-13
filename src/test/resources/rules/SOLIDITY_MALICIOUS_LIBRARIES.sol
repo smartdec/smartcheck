@@ -1,4 +1,5 @@
-library x{//a0298c
+// <yes> <report> SOLIDITY_MALICIOUS_LIBRARIES a0298c
+library x{
     function foo();
 }
 contract Ballot {

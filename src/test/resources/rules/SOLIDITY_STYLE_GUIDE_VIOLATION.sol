@@ -2,8 +2,10 @@ pragma solidity ^0.4.11;
 
 contract SolidityStyleGuideViolation {
     
-    event badlyNamedEvent();//343033
-    function BadlyNamedFunction() returns (bool) {//b0dbcd
+    // <yes> <report> SOLIDITY_STYLE_GUIDE_VIOLATION 343033
+    event badlyNamedEvent();
+    // <yes> <report> SOLIDITY_STYLE_GUIDE_VIOLATION b0dbcd
+    function BadlyNamedFunction() returns (bool) {
         return true;
     }
     
@@ -19,5 +21,6 @@ contract SolidityStyleGuideViolation {
     
 }
 contract SolidityStyleGuideViolation {
-    function DoSomething() {}//b0dbcd
+    // <yes> <report> SOLIDITY_STYLE_GUIDE_VIOLATION b0dbcd
+    function DoSomething() {}
 }

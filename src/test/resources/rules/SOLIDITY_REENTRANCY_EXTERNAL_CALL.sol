@@ -2,7 +2,8 @@ contract Bob {
     function ping(address c) {
         if (!sent) {
             a = 4;
-            c.call.value(f(7))();//de222d
+            // <yes> <report> SOLIDITY_REENTRANCY_EXTERNAL_CALL de222d
+            c.call.value(f(7))();
             a = 5;
         }
     }

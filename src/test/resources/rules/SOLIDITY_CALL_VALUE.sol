@@ -1,7 +1,8 @@
 contract Victim {
 
     function withdraw() {
-        if (msg.sender.call.value()()) {//cc2e04
+        // <yes> <report> SOLIDITY_CALL_VALUE cc2e04
+        if (msg.sender.call.value()()) {
         }
     }
     function withdraw() {

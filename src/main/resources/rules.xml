@@ -1,134 +1,292 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<Rules xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="./rules.xsd">
-    <VersionDefinition>
-        //pragmaDirective[pragmaName='solidity']/pragmaValue/version/versionConstraint/text()
-    </VersionDefinition>
-    <Rule id="SOLIDITY_BALANCE_EQUALITY">
-      <Pattern id="5094ad" severity="2">
-            //expression[expression//environmentalVariableDefinition[matches(text()[1],"^this.balance$")]][matches(text()[1],"^==$")]
-        </Pattern>
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<Rules xmlns="http://www.smartdec.ru/SmartCheck/Conditions" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.smartdec.ru/SmartCheck/Conditions rules-grammar-schema.xsd ">
+    <Rule>
+        <RuleId>SOLIDITY_BALANCE_EQUALITY</RuleId>
+        <Patterns>
+            <Pattern patternId="5094ad">
+                <Categories>
+                    <Category>Solidity</Category>
+                </Categories>
+                <Severity>2</Severity>
+                <XPath>//expression[expression//environmentalVariableDefinition[matches(text()[1],"^this.balance$")]][matches(text()[1],"^==$")]</XPath>
+            </Pattern>
+        </Patterns>
     </Rule>
-    <Rule id="SOLIDITY_BYTES_BYTE">
-        <Pattern id="f13a9f" severity="1">
-            //typeName[typeName/elementaryTypeName[text()[1]="byte"]][matches(text()[1],"^\[.*\]$")]
-        </Pattern>
+    <Rule>
+        <RuleId>SOLIDITY_BYTES_BYTE</RuleId>
+        <Patterns>
+            <Pattern patternId="f13a9f">
+                <Categories>
+                    <Category>Solidity</Category>
+                </Categories>
+                <Severity>1</Severity>
+                <XPath>//typeName[typeName/elementaryTypeName[text()[1]="byte"]][matches(text()[1],"^\[.*\]$")]</XPath>
+            </Pattern>
+        </Patterns>
     </Rule>
-    <Rule id="SOLIDITY_CALL_VALUE">
-        <Pattern id="cc2e04" severity="3">
-            //externalFunctionCall/functionNameAndArgs[functionName/identifier[matches(text()[1],"^call$")]][functionName/identifier[matches(text()[1],"^value$")]][not(callArguments/callArgument)]
-        </Pattern>
+    <Rule>
+        <RuleId>SOLIDITY_CALL_VALUE</RuleId>
+        <Patterns>
+            <Pattern patternId="cc2e04">
+                <Categories>
+                    <Category>Solidity</Category>
+                </Categories>
+                <Severity>3</Severity>
+                <XPath>//externalFunctionCall/functionNameAndArgs[functionName/identifier[matches(text()[1],"^call$")]][functionName/identifier[matches(text()[1],"^value$")]][not(callArguments/callArgument)]</XPath>
+            </Pattern>
+        </Patterns>
     </Rule>
-    <Rule id="SOLIDITY_DOS_WITH_THROW">
-        <Pattern id="637fdc" severity="3">
-            //ifStatement[ifCondition//externalFunctionCall][block/statement//throwStatement or block/statement//simpleStatement/expressionStatement/expression/primaryExpression/identifier[text()[1]="revert"]]
-        </Pattern>
-        <Pattern id="efb788" severity="2">
-            //forStatement/expression//externalFunctionCall
-        </Pattern>
-        <Pattern id="04242c" severity="2">
-            //whileStatement/whileCondition//externalFunctionCall
-        </Pattern>
+    <Rule>
+        <RuleId>SOLIDITY_DOS_WITH_THROW</RuleId>
+        <Patterns>
+            <Pattern patternId="637fdc">
+                <Categories>
+                    <Category>Solidity</Category>
+                </Categories>
+                <Severity>3</Severity>
+                <XPath>//ifStatement[ifCondition//externalFunctionCall][block/statement//throwStatement or block/statement//simpleStatement/expressionStatement/expression/primaryExpression/identifier[text()[1]="revert"]]</XPath>
+            </Pattern>
+            <Pattern patternId="efb788">
+                <Categories>
+                    <Category>Solidity</Category>
+                </Categories>
+                <Severity>2</Severity>
+                <XPath>//forStatement/expression//externalFunctionCall</XPath>
+            </Pattern>
+            <Pattern patternId="04242c">
+                <Categories>
+                    <Category>Solidity</Category>
+                </Categories>
+                <Severity>2</Severity>
+                <XPath>//whileStatement/whileCondition//externalFunctionCall</XPath>
+            </Pattern>
+        </Patterns>
     </Rule>
-    <Rule id="SOLIDITY_ERC20_API_VIOLATION">
-        <Pattern id="550a42" severity="1">
-            //contractDefinition[inheritanceSpecifier//identifier[matches(text()[1],"token","i")]]//functionDefinition[identifier[matches(text()[1],"^approve|transfer(From)?$")]][.//functionCall/internalFunctionCall/functionName/identifier[text()[1]="require"] or .//throwStatement or .//primaryExpression/identifier[text()[1]="revert"]]
-        </Pattern>
+    <Rule>
+        <RuleId>SOLIDITY_ERC20_API_VIOLATION</RuleId>
+        <Patterns>
+            <Pattern patternId="550a42">
+                <Categories>
+                    <Category>Solidity</Category>
+                </Categories>
+                <Severity>1</Severity>
+                <XPath>//contractDefinition[inheritanceSpecifier//identifier[matches(text()[1],"token","i")]]//functionDefinition[identifier[matches(text()[1],"^approve|transfer(From)?$")]][.//functionCall/internalFunctionCall/functionName/identifier[text()[1]="require"] or .//throwStatement or .//primaryExpression/identifier[text()[1]="revert"]]</XPath>
+            </Pattern>
+        </Patterns>
     </Rule>
-    <Rule id="SOLIDITY_GAS_LIMIT_AND_LOOPS">
-        <Pattern id="f6f853" severity="2">
-            //forStatement[expression[1][functionCall or expression[2]/primaryExpression/identifier]]
-        </Pattern>
-        <Pattern id="38f6c7" severity="2">
-            //whileStatement[whileCondition/descendant::*[functionCall]]
-        </Pattern>
+    <Rule>
+        <RuleId>SOLIDITY_GAS_LIMIT_AND_LOOPS</RuleId>
+        <Patterns>
+            <Pattern patternId="f6f853">
+                <Categories>
+                    <Category>Solidity</Category>
+                </Categories>
+                <Severity>2</Severity>
+                <XPath>//forStatement[expression[1][functionCall or expression[2]/primaryExpression/identifier]]</XPath>
+            </Pattern>
+            <Pattern patternId="38f6c7">
+                <Categories>
+                    <Category>Solidity</Category>
+                </Categories>
+                <Severity>2</Severity>
+                <XPath>//whileStatement[whileCondition/descendant::*[functionCall]]</XPath>
+            </Pattern>
+        </Patterns>
     </Rule>
-    <Rule id="SOLIDITY_INTEGER_DIVISION">
-        <Pattern id="8e0621" severity="1">
-            //expression[expression[1]//numberLiteral][text()[1]="/"][expression[2]//numberLiteral]
-        </Pattern>
+    <Rule>
+        <RuleId>SOLIDITY_INTEGER_DIVISION</RuleId>
+        <Patterns>
+            <Pattern patternId="8e0621">
+                <Categories>
+                    <Category>Solidity</Category>
+                </Categories>
+                <Severity>1</Severity>
+                <XPath>//expression[expression[1]//numberLiteral][text()[1]="/"][expression[2]//numberLiteral]</XPath>
+            </Pattern>
+        </Patterns>
     </Rule>
-    <Rule id="SOLIDITY_LOCKED_MONEY">
-        <Pattern id="30281d" severity="1">
-            //contractDefinition[contractPartDefinition/functionDefinition/stateMutability/payableType[matches(text()[1],"^payable$")] and not(contractPartDefinition/functionDefinition//functionCall/internalFunctionCall/functionName/identifier[text()[1]="suicide"]) and not(contractPartDefinition/functionDefinition//externalFunctionCall/functionNameAndArgs/functionName/identifier[matches(text()[1],"^transfer|send$")])]
-        </Pattern>
+    <Rule>
+        <RuleId>SOLIDITY_LOCKED_MONEY</RuleId>
+        <Patterns>
+            <Pattern patternId="30281d">
+                <Categories>
+                    <Category>Solidity</Category>
+                </Categories>
+                <Severity>1</Severity>
+                <XPath>//contractDefinition[contractPartDefinition/functionDefinition/stateMutability/payableType[matches(text()[1],"^payable$")] and not(contractPartDefinition/functionDefinition//functionCall/internalFunctionCall/functionName/identifier[text()[1]="suicide"]) and not(contractPartDefinition/functionDefinition//externalFunctionCall/functionNameAndArgs/functionName/identifier[matches(text()[1],"^transfer|send$")])]</XPath>
+            </Pattern>
+        </Patterns>
     </Rule>
-    <Rule id="SOLIDITY_MALICIOUS_LIBRARIES">
-        <Pattern id="a0298c" severity="1">
-            //contractDefinition[text()[1]="library"]
-        </Pattern>
+    <Rule>
+        <RuleId>SOLIDITY_MALICIOUS_LIBRARIES</RuleId>
+        <Patterns>
+            <Pattern patternId="a0298c">
+                <Categories>
+                    <Category>Solidity</Category>
+                </Categories>
+                <Severity>1</Severity>
+                <XPath>//contractDefinition[text()[1]="library"]</XPath>
+            </Pattern>
+        </Patterns>
     </Rule>
-    <Rule id="SOLIDITY_PRAGMAS_VERSION">
-        <Pattern id="23fc32" severity="1">
-            //pragmaDirective/pragmaValue//versionOperator
-        </Pattern>
+    <Rule>
+        <RuleId>SOLIDITY_PRAGMAS_VERSION</RuleId>
+        <Patterns>
+            <Pattern patternId="23fc32">
+                <Categories>
+                    <Category>Solidity</Category>
+                </Categories>
+                <Severity>1</Severity>
+                <XPath>//pragmaDirective/pragmaValue//versionOperator</XPath>
+            </Pattern>
+        </Patterns>
     </Rule>
-    <Rule id="SOLIDITY_PRIVATE_MODIFIER">
-        <Pattern id="5616b2" severity="1">
-            //stateVariableDeclaration/visibleType[text()[1]="private"]
-        </Pattern>
+    <Rule>
+        <RuleId>SOLIDITY_PRIVATE_MODIFIER</RuleId>
+        <Patterns>
+            <Pattern patternId="5616b2">
+                <Categories>
+                    <Category>Solidity</Category>
+                </Categories>
+                <Severity>1</Severity>
+                <XPath>//stateVariableDeclaration/visibleType[text()[1]="private"]</XPath>
+            </Pattern>
+        </Patterns>
     </Rule>
-    <Rule id="SOLIDITY_REDUNDANT_FALLBACK_REJECT">
-        <Pattern id="b85a32" severity="1">
-            //sourceUnit[pragmaDirective/pragmaValue/version/versionConstraint[versionLiteral &gt;= "0.4.0"]]/contractDefinition/contractPartDefinition/functionFallBackDefinition[stateMutability/payableType[text()[1]="payable"]][block/statement/throwStatement]
-        </Pattern>
-    </Rule>    
-    <Rule id="SOLIDITY_REENTRANCY_EXTERNAL_CALL">
-        <Pattern id="de222d" severity="3">
-            //statement[simpleStatement/expressionStatement/expression/functionCall/externalFunctionCall][following-sibling::*[simpleStatement/expressionStatement/expression[not (functionCall/externalFunctionCall)]]]
-        </Pattern>
+    <Rule>
+        <RuleId>SOLIDITY_REDUNDANT_FALLBACK_REJECT</RuleId>
+        <Patterns>
+            <Pattern patternId="b85a32">
+                <Categories>
+                    <Category>Solidity</Category>
+                </Categories>
+                <Severity>1</Severity>
+                <XPath>//sourceUnit[pragmaDirective/pragmaValue/version/versionConstraint[versionLiteral &gt;= "0.4.0"]]/contractDefinition/contractPartDefinition/functionFallBackDefinition[stateMutability/payableType[text()[1]="payable"]][block/statement/throwStatement]</XPath>
+            </Pattern>
+        </Patterns>
     </Rule>
-    <Rule id="SOLIDITY_SEND">
-        <Pattern id="430636" severity="2">
-            //functionName/identifier[text()[1]="send"]
-        </Pattern>
+    <Rule>
+        <RuleId>SOLIDITY_REENTRANCY_EXTERNAL_CALL</RuleId>
+        <Patterns>
+            <Pattern patternId="de222d">
+                <Categories>
+                    <Category>Solidity</Category>
+                </Categories>
+                <Severity>3</Severity>
+                <XPath>//statement[simpleStatement/expressionStatement/expression/functionCall/externalFunctionCall][following-sibling::*[simpleStatement/expressionStatement/expression[not (functionCall/externalFunctionCall)]]]</XPath>
+            </Pattern>
+        </Patterns>
     </Rule>
-    <Rule id="SOLIDITY_STYLE_GUIDE_VIOLATION">
-        <Pattern id="343033" severity="1">
-            //eventDefinition/identifier[matches(text()[1],"^[a-z]")]
-        </Pattern>
-        <Pattern id="b0dbcd" severity="1">
-            //functionDefinition[identifier[matches(text()[1],"^[A-Z]")]][not(identifier =//ancestor::*/contractDefinition/identifier)]
-        </Pattern>
+    <Rule>
+        <RuleId>SOLIDITY_SEND</RuleId>
+        <Patterns>
+            <Pattern patternId="430636">
+                <Categories>
+                    <Category>Solidity</Category>
+                </Categories>
+                <Severity>2</Severity>
+                <XPath>//functionName/identifier[text()[1]="send"]</XPath>
+            </Pattern>
+        </Patterns>
     </Rule>
-    <Rule id="SOLIDITY_TIMESTAMP_DEPENDENCE">
-        <Pattern id="1955d9" severity="2">
-            //environmentalVariableDefinition[text()[1]="now"]
-        </Pattern>
-        <Pattern id="da0c53" severity="2">
-            //environmentalVariableDefinition[matches(text()[1],"^block.timestamp$")]
-        </Pattern>
-    </Rule>    
-    <Rule id="SOLIDITY_TX_ORIGIN">
-        <Pattern id="12e802" severity="2">
-            //environmentalVariableDefinition[matches(text()[1],"^tx.origin$")]
-        </Pattern>
+    <Rule>
+        <RuleId>SOLIDITY_STYLE_GUIDE_VIOLATION</RuleId>
+        <Patterns>
+            <Pattern patternId="343033">
+                <Categories>
+                    <Category>Solidity</Category>
+                </Categories>
+                <Severity>1</Severity>
+                <XPath>//eventDefinition/identifier[matches(text()[1],"^[a-z]")]</XPath>
+            </Pattern>
+            <Pattern patternId="b0dbcd">
+                <Categories>
+                    <Category>Solidity</Category>
+                </Categories>
+                <Severity>1</Severity>
+                <XPath>//functionDefinition[identifier[matches(text()[1],"^[A-Z]")]][not(identifier =//ancestor::*/contractDefinition/identifier)]</XPath>
+            </Pattern>
+        </Patterns>
     </Rule>
-    <Rule id="SOLIDITY_UNCHECKED_CALL">
-        <Pattern id="f39eed" severity="3">
-            //externalFunctionCall[functionNameAndArgs/functionName/identifier[matches(text()[1],"^call|delegatecall|send$")]][not(ancestor::ifCondition)]
-        </Pattern>
+    <Rule>
+        <RuleId>SOLIDITY_TIMESTAMP_DEPENDENCE</RuleId>
+        <Patterns>
+            <Pattern patternId="1955d9">
+                <Categories>
+                    <Category>Solidity</Category>
+                </Categories>
+                <Severity>2</Severity>
+                <XPath>//environmentalVariableDefinition[text()[1]="now"]</XPath>
+            </Pattern>
+            <Pattern patternId="da0c53">
+                <Categories>
+                    <Category>Solidity</Category>
+                </Categories>
+                <Severity>2</Severity>
+                <XPath>//environmentalVariableDefinition[matches(text()[1],"^block.timestamp$")]</XPath>
+            </Pattern>
+        </Patterns>
     </Rule>
-    <!--
-    <Rule id="SOLIDITY_UNCHECKED_MATH">
-        <Pattern id="63d8f9" severity="1">
-            //statement[descendant::*[matches(text()[1],"\+|\-|\*")]][not(ancestor::statement)]
-        </Pattern>
+    <Rule>
+        <RuleId>SOLIDITY_TX_ORIGIN</RuleId>
+        <Patterns>
+            <Pattern patternId="12e802">
+                <Categories>
+                    <Category>Solidity</Category>
+                </Categories>
+                <Severity>2</Severity>
+                <XPath>//environmentalVariableDefinition[matches(text()[1],"^tx.origin$")]</XPath>
+            </Pattern>
+        </Patterns>
     </Rule>
-    -->
-    <Rule id="SOLIDITY_VAR">
-        <Pattern id="d28aa7" severity="2">
-            //variableDeclaration[typeName/elementaryTypeName[matches(text()[1],"^var$")]][expression//primaryExpression/numberLiteral[matches(text()[1],"^[0-9]+$")]]
-        </Pattern>
-        <Pattern id="f77619" severity="1">
-            //variableDeclaration[typeName/elementaryTypeName[matches(text()[1],"^var$")]][expression/primaryExpression/identifier]
-        </Pattern>
+    <Rule>
+        <RuleId>SOLIDITY_UNCHECKED_CALL</RuleId>
+        <Patterns>
+            <Pattern patternId="f39eed">
+                <Categories>
+                    <Category>Solidity</Category>
+                </Categories>
+                <Severity>3</Severity>
+                <XPath>//externalFunctionCall[functionNameAndArgs/functionName/identifier[matches(text()[1],"^call|delegatecall|send$")]][not(ancestor::ifCondition)]</XPath>
+            </Pattern>
+        </Patterns>
     </Rule>
-    <Rule id="SOLIDITY_VISIBILITY">
-        <Pattern id="910067" severity="1">
-            //contractPartDefinition/functionDefinition[not(visibleType)]
-        </Pattern>
-        <Pattern id="b51ce0" severity="1">
-            //contractPartDefinition/stateVariableDeclaration[not(visibleType)]
-        </Pattern>
+    <Rule>
+        <RuleId>SOLIDITY_VAR</RuleId>
+        <Patterns>
+            <Pattern patternId="d28aa7">
+                <Categories>
+                    <Category>Solidity</Category>
+                </Categories>
+                <Severity>2</Severity>
+                <XPath>//variableDeclaration[typeName/elementaryTypeName[matches(text()[1],"^var$")]][expression//primaryExpression/numberLiteral[matches(text()[1],"^[0-9]+$")]]</XPath>
+            </Pattern>
+            <Pattern patternId="f77619">
+                <Categories>
+                    <Category>Solidity</Category>
+                </Categories>
+                <Severity>1</Severity>
+                <XPath>//variableDeclaration[typeName/elementaryTypeName[matches(text()[1],"^var$")]][expression/primaryExpression/identifier]</XPath>
+            </Pattern>
+        </Patterns>
+    </Rule>
+    <Rule>
+        <RuleId>SOLIDITY_VISIBILITY</RuleId>
+        <Patterns>
+            <Pattern patternId="910067">
+                <Categories>
+                    <Category>Solidity</Category>
+                </Categories>
+                <Severity>1</Severity>
+                <XPath>//contractPartDefinition/functionDefinition[not(visibleType)]</XPath>
+            </Pattern>
+            <Pattern patternId="b51ce0">
+                <Categories>
+                    <Category>Solidity</Category>
+                </Categories>
+                <Severity>1</Severity>
+                <XPath>//contractPartDefinition/stateVariableDeclaration[not(visibleType)]</XPath>
+            </Pattern>
+        </Patterns>
     </Rule>
 </Rules>
