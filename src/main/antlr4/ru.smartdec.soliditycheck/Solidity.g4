@@ -136,7 +136,11 @@ functionCall:  internalFunctionCall |externalFunctionCall ;
 
 internalFunctionCall:functionName callArguments+;
 
-externalFunctionCall:(callObjectExpression|'this') functionNameAndArgs;
+externalFunctionCall:externalFunctionCallThis | externalFunctionCallNotThis;
+
+externalFunctionCallThis:'this' functionNameAndArgs;
+
+externalFunctionCallNotThis:callObjectExpression functionNameAndArgs;
 
 functionNameAndArgs:
                        ('.' functionName callArguments*|'.' 'value' ('(' callArguments* ')')?| '.' 'gas' ('(' callArguments* ')')?)+ callArguments*
