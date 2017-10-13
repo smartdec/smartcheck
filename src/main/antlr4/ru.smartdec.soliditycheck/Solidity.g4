@@ -1,4 +1,4 @@
-grammar Solidity;
+Solidity.g4grammar Solidity;
 
 sourceUnit
     : (pragmaDirective | importDirective | contractDefinition)* EOF
@@ -145,18 +145,22 @@ externalFunctionCallNotThis:callObjectExpression functionNameAndArgs;
 functionNameAndArgs:
                        ('.' functionName callArguments*|'.' 'value' ('(' callArguments* ')')?| '.' 'gas' ('(' callArguments* ')')?)+ callArguments*
                     ;
-callObjectExpression: callObject;
+callObjectExpression:callObjectExpressionSimple|callObjectExpressionComplicated;
+callObjectExpressionSimple: callObject;
+
+callObjectExpressionComplicated: '(' callObject ')'
+                               | internalFunctionCall
+                               | functionNameAndArgs
+                               ;
 
 callObject: environmentalVariableDefinition
           |  '(' 'new' callObject ')' callObject?
           | identifier
           | (identifier? arrayLiteral)+
-          | (identifier? arrayLiteral? '(')* identifier arrayLiteral? ')'* (')')?
+          | (identifier? arrayLiteral)+ '('+ identifier? arrayLiteral ')'* ')'
           | identifier '[' identifier ']'
           | addressContract
-          | internalFunctionCall
-          | functionNameAndArgs
-          | ('+' | '-') expression
+          | ('+' | '-') callObject
           | callObject ('*' | '/' | '%'|'**'|'+' | '-'|'<<' | '>>'|'&' |'^'|'|'|'<' | '>' | '<=' | '>='|'==' | '!=') callObject
           | callObject ('&&'|'||') callObject
           | '(' callObject ')'
@@ -165,15 +169,12 @@ callObject: environmentalVariableDefinition
           | primaryExpression
           | callObject  ('++' | '--')
           | ('++' | '--') expression
-          //| ('+' | '-') expression
           | '!' callObject
           | '~' callObject
           | callObject '[' callObject ']'
-          //| callObject ('*' | '/' | '%'|'**'|'+' | '-'|'<<' | '>>'|'&' |'^'|'|'|'<' | '>' | '<=' | '>='|'==' | '!=') callObject
           | '{'(identifier ':' callObject ','?)+'}'
           | callObject '(' callArguments ')'
           | callObject '?' callObject ':' callObject
-          | callObject ('=' | '|=' | '^=' | '&=' | '<<=' | '>>=' | '+=' | '-=' | '*=' | '/=' | '%=') callObject
           ;
 
 addressContract:(DecimalNumber | HexNumber) NumberUnit? ;
