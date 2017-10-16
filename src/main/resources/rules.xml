@@ -32,7 +32,7 @@
                     <Category>Solidity</Category>
                 </Categories>
                 <Severity>3</Severity>
-                <XPath>//externalFunctionCall/functionNameAndArgs[functionName/identifier[matches(text()[1],"^call$")]][functionName/identifier[matches(text()[1],"^value$")]][not(callArguments/callArgument)]</XPath>
+                <XPath>//externalFunctionCall/externalFunctionCallNotThis/functionNameAndArgs[functionName/identifier[matches(text()[1],"^call$")]][functionName/identifier[matches(text()[1],"^value$")]][not(callArguments/callArgument)]</XPath>
             </Pattern>
         </Patterns>
     </Rule>
@@ -113,7 +113,7 @@
                     <Category>Solidity</Category>
                 </Categories>
                 <Severity>1</Severity>
-                <XPath>//contractDefinition[contractPartDefinition/functionDefinition/stateMutability/payableType[matches(text()[1],"^payable$")] and not(contractPartDefinition/functionDefinition//functionCall/internalFunctionCall/functionName/identifier[text()[1]="suicide"]) and not(contractPartDefinition/functionDefinition//externalFunctionCall/functionNameAndArgs/functionName/identifier[matches(text()[1],"^transfer|send$")])]</XPath>
+                <XPath>//contractDefinition[contractPartDefinition/functionDefinition/stateMutability/payableType[matches(text()[1],"^payable$")] and not(contractPartDefinition/functionDefinition//functionCall/internalFunctionCall/functionName/identifier[text()[1]="suicide"]) and not(contractPartDefinition/functionDefinition//externalFunctionCall/externalFunctionCallNotThis/functionNameAndArgs/functionName/identifier[matches(text()[1],"^transfer|send$")])]</XPath>
             </Pattern>
         </Patterns>
     </Rule>
@@ -247,7 +247,7 @@
                     <Category>Solidity</Category>
                 </Categories>
                 <Severity>3</Severity>
-                <XPath>//externalFunctionCall[functionNameAndArgs/functionName/identifier[matches(text()[1],"^call|delegatecall|send$")]][not(ancestor::ifCondition)]</XPath>
+                <XPath>//externalFunctionCall/externalFunctionCallNotThis[functionNameAndArgs/functionName/identifier[matches(text()[1],"^call|delegatecall|send$")]][not(ancestor::ifCondition)]</XPath>
             </Pattern>
         </Patterns>
     </Rule>
