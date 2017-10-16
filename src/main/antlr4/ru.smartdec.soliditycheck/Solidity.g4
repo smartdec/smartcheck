@@ -1,4 +1,4 @@
-Solidity.g4grammar Solidity;
+grammar Solidity;
 
 sourceUnit
     : (pragmaDirective | importDirective | contractDefinition)* EOF
@@ -24,6 +24,7 @@ importDirective
     : 'import' StringLiteral ('as' identifier)? ';'
     | 'import' ('*' | identifier) ('as' identifier)? 'from' StringLiteral ';'
     | 'import' '{' importDeclaration ( ',' importDeclaration )* '}' 'from' StringLiteral ';'
+
     ;
 
 importDeclaration : identifier ('as' identifier)? ;
@@ -145,12 +146,10 @@ externalFunctionCallNotThis:callObjectExpression functionNameAndArgs;
 functionNameAndArgs:
                        ('.' functionName callArguments*|'.' 'value' ('(' callArguments* ')')?| '.' 'gas' ('(' callArguments* ')')?)+ callArguments*
                     ;
-callObjectExpression:callObjectExpressionSimple|callObjectExpressionComplicated;
+callObjectExpression:callObjectExpressionComplicated|callObjectExpressionSimple;
 callObjectExpressionSimple: callObject;
 
 callObjectExpressionComplicated: '(' callObject ')'
-                               | internalFunctionCall
-                               | functionNameAndArgs
                                ;
 
 callObject: environmentalVariableDefinition
@@ -163,7 +162,6 @@ callObject: environmentalVariableDefinition
           | ('+' | '-') callObject
           | callObject ('*' | '/' | '%'|'**'|'+' | '-'|'<<' | '>>'|'&' |'^'|'|'|'<' | '>' | '<=' | '>='|'==' | '!=') callObject
           | callObject ('&&'|'||') callObject
-          | '(' callObject ')'
           | moneyExpression
           | timeExpression
           | primaryExpression
@@ -175,6 +173,10 @@ callObject: environmentalVariableDefinition
           | '{'(identifier ':' callObject ','?)+'}'
           | callObject '(' callArguments ')'
           | callObject '?' callObject ':' callObject
+          | internalFunctionCall
+          | functionNameAndArgs
+          | '(' callObject ')'
+
           ;
 
 addressContract:(DecimalNumber | HexNumber) NumberUnit? ;
