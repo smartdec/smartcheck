@@ -15,7 +15,7 @@
     </Rule>
     <Rule id="SOLIDITY_CALL_VALUE">
         <Pattern id="cc2e04" severity="3">
-            //externalFunctionCall/functionNameAndArgs[functionName/identifier[matches(text()[1],"^call$")]][functionName/identifier[matches(text()[1],"^value$")]][not(callArguments/callArgument)]
+            //externalFunctionCall/externalFunctionCallNotThis/functionNameAndArgs[functionName/identifier[matches(text()[1],"^call$")]][functionName/identifier[matches(text()[1],"^value$")]][not(callArguments/callArgument)]
         </Pattern>
     </Rule>
     <Rule id="SOLIDITY_DOS_WITH_THROW">
@@ -49,7 +49,7 @@
     </Rule>
     <Rule id="SOLIDITY_LOCKED_MONEY">
         <Pattern id="30281d" severity="1">
-            //contractDefinition[contractPartDefinition/functionDefinition/stateMutability/payableType[matches(text()[1],"^payable$")] and not(contractPartDefinition/functionDefinition//functionCall/internalFunctionCall/functionName/identifier[text()[1]="suicide"]) and not(contractPartDefinition/functionDefinition//externalFunctionCall/functionNameAndArgs/functionName/identifier[matches(text()[1],"^transfer|send$")])]
+            //contractDefinition[contractPartDefinition/functionDefinition/stateMutability/payableType[matches(text()[1],"^payable$")] and not(contractPartDefinition/functionDefinition//functionCall/internalFunctionCall/functionName/identifier[text()[1]="suicide"]) and not(contractPartDefinition/functionDefinition//externalFunctionCall/externalFunctionCallNotThis/functionNameAndArgs/functionName/identifier[matches(text()[1],"^transfer|send$")])]
         </Pattern>
     </Rule>
     <Rule id="SOLIDITY_MALICIOUS_LIBRARIES">
@@ -105,7 +105,7 @@
     </Rule>
     <Rule id="SOLIDITY_UNCHECKED_CALL">
         <Pattern id="f39eed" severity="3">
-            //externalFunctionCall[functionNameAndArgs/functionName/identifier[matches(text()[1],"^call|delegatecall|send$")]][not(ancestor::ifCondition)]
+            //externalFunctionCall/externalFunctionCallNotThis[functionNameAndArgs/functionName/identifier[matches(text()[1],"^call|delegatecall|send$")]][not(ancestor::ifCondition)]
         </Pattern>
     </Rule>
     <!--
