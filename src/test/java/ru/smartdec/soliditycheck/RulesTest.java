@@ -11,16 +11,17 @@ import javax.xml.xpath.XPathFactory;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.everyItem;
 import static org.hamcrest.Matchers.isIn;
 
@@ -58,14 +59,11 @@ public final class RulesTest {
 
     @Test
     public void coverage() throws Exception {
-        // TODO: fix the problem with SOLIDITY_SHOULD_RETURN_STRUCT
-        /*
         assertThat(
                 "coverage",
                 this.coverageExpected().entrySet(),
                 everyItem(isIn(this.coverageActual().entrySet()))
         );
-        */
     }
 
     @Test
@@ -105,23 +103,17 @@ public final class RulesTest {
 
     private Set<String> coverageActual(
             final List<String> lines) throws Exception {
-
-        Set<String> res = new HashSet<>();
-
-        for (String line : lines) {
-            if (!line.contains("// <yes> <report>")) continue;
-
-            String[] patterns = line
-                    .split("//")[1]
-                    .split("<yes> <report>");
-            Arrays.stream(patterns)
-                    .map(String::trim)
-                    .filter(pattern -> !pattern.isEmpty())
-                    .map(pattern -> pattern.split("\\s+")[1])
-                    .forEach(res::add);
-        }
-
-        return res;
+        return lines
+                .stream()
+                .map(
+                        line -> Optional
+                                .of(line.split("//"))
+                                .filter(array -> array.length == 2)
+                                .map(array -> array[1])
+                )
+                .filter(Optional::isPresent)
+                .map(Optional::get)
+                .collect(Collectors.toSet());
     }
 
     private Map<String, Set<LinePattern>> patternsExpected() throws Exception {
@@ -137,26 +129,22 @@ public final class RulesTest {
 
     private Set<LinePattern> patternsExpected(
             final List<String> lines) throws Exception {
-
-        Set<LinePattern> res = new HashSet<>();
-
-        for (int lineNo = 0; lineNo < lines.size(); lineNo++) {
-            int lineNo2 = lineNo + 2;
-            String line = lines.get(lineNo);
-            if (!line.contains("// <yes> <report>")) continue;
-
-            String[] patterns = line
-                    .split("//")[1]
-                    .split("<yes> <report>");
-            Arrays.stream(patterns)
-                    .map(String::trim)
-                    .filter(pattern -> !pattern.isEmpty())
-                    .map(pattern -> pattern.split("\\s+")[1])
-                    .map(pattern -> new LinePattern(lineNo2, pattern))
-                    .forEach(res::add);
-        }
-
-        return res;
+        return IntStream
+                .range(0, lines.size())
+                .mapToObj(
+                        index -> Optional
+                                .of(lines.get(index).split("//"))
+                                .filter(array -> array.length == 2)
+                                .map(array -> array[1])
+                                .map(
+                                        pattern -> new LinePattern(
+                                                index + 1, pattern
+                                        )
+                                )
+                )
+                .filter(Optional::isPresent)
+                .map(Optional::get)
+                .collect(Collectors.toSet());
     }
 
     private Map<String, Set<LinePattern>> patternsActual() throws Exception {
