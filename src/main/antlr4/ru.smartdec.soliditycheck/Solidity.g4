@@ -50,6 +50,7 @@ contractPartDefinition
     ;
 
 //___Definitions_and_deckarations___
+
 usingForDeclaration : 'using' identifier 'for' ('*' | typeName) ';' ;
 
 structDefinition : 'struct' identifier '{'(variableDeclaration ';'?)* '}' ;

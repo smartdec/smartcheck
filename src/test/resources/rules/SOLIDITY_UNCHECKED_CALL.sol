@@ -26,6 +26,7 @@ contract SolidityUncheckedSend {
      // <yes> <report> SOLIDITY_UNCHECKED_CALL f39eed
         assert(_e.send(bytes(sha3("setN(uint256)"), u)));
     }
+
 }
 
 
