@@ -247,7 +247,19 @@
                     <Category>Solidity</Category>
                 </Categories>
                 <Severity>3</Severity>
-                <XPath>//externalFunctionCall/externalFunctionCallNotThis[functionNameAndArgs/functionName/identifier[matches(text()[1],"^call|delegatecall|send$")]][not(ancestor::ifCondition) or not(ancestor::internalFunctionCall[functionName/identifier[matches(text()[1],"^require|assert$")]])]</XPath>            </Pattern>
+                <XPath>//externalFunctionCall/externalFunctionCallNotThis[functionNameAndArgs/functionName/identifier[matches(text()[1],"^call|delegatecall|send$")]][not(ancestor::ifCondition) or not(ancestor::internalFunctionCall[functionName/identifier[matches(text()[1],"^require|assert$")]])]
+                </XPath>
+            </Pattern>
+
+            <Pattern patternId="a49egh">
+                <Categories>
+                    <Category>Solidity</Category>
+                </Categories>
+                <Severity>3</Severity>
+                <XPath>
+                    //statement[simpleStatement/expressionStatement/expression[//externalFunctionCall/externalFunctionCallNotThis/functionNameAndArgs/functionName/identifier[matches(text()[1],"^call|delegatecall|send$")]][matches(text()[1],"^=$")]]
+                </XPath>
+            </Pattern>
         </Patterns>
     </Rule>
     <Rule>
