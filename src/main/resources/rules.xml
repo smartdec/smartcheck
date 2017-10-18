@@ -300,4 +300,68 @@
             </Pattern>
         </Patterns>
     </Rule>
+    <Rule>
+        <RuleId>SOLIDITY_VIEW_FUNCTIONS</RuleId>
+        <Patterns>
+            <Pattern patternId="189abf">
+                <Categories>
+                    <Category>Solidity</Category>
+                </Categories>
+                <Severity>3</Severity>
+                <!--Writing to state variables - лучше сделать через флаги-->
+                <!--Emitting events - лучше сделать через флаги-->
+                <!--Creating other contracts - лучше сделать через флаги-->
+
+                <XPath>
+                    //functionDefinition[stateMutability/viewType][
+                <!--Using selfdestruct and it's alias suicide:-->
+                    block/statement//functionCall/internalFunctionCall/functionName/identifier[matches(text()[1],"^selfdestruct|suicide$")]
+                or
+                <!--Sending Ether via calls:-->
+                    block/statement//functionCall//externalFunctionCallNotThis/functionNameAndArgs/functionName/identifier[matches(text()[1],"^send|transfer$")]
+
+                 <!--Calling any function not marked view or pure:- лучше сделать через флаги-->
+
+                <!--Using low-level calls:-->
+                or
+                    block/statement//functionCall//externalFunctionCallNotThis/functionNameAndArgs/functionName/identifier[matches(text()[1],"^call|delegatecall|callcode$")]
+                or
+                <!--Using inline assembly that contains certain opcodes:-->
+                    block/statement//inlineAssemblyStatement]
+                </XPath>
+            </Pattern>
+        </Patterns>
+    </Rule>
+    <Rule>
+        <RuleId>SOLIDITY_IS_IT_VIEW_FUNCTIONS</RuleId>
+        <Patterns>
+            <Pattern patternId="ad1827">
+                <Categories>
+                    <Category>Solidity</Category>
+                </Categories>
+                <Severity>3</Severity>
+                <!--Writing to state variables - лучше сделать через флаги-->
+                <!--Emitting events - лучше сделать через флаги-->
+                <!--Creating other contracts - лучше сделать через флаги-->
+
+                <XPath>
+                    //functionDefinition[not(stateMutability/viewType)][
+                    <!--Using selfdestruct and it's alias suicide:-->
+                    not(block/statement//functionCall/internalFunctionCall/functionName/identifier[matches(text()[1],"^selfdestruct|suicide$")])
+                    and
+                    <!--Sending Ether via calls:-->
+                    not(block/statement//functionCall//externalFunctionCallNotThis/functionNameAndArgs/functionName/identifier[matches(text()[1],"^send|transfer$")])
+
+                    <!--Calling any function not marked view or pure:- лучше сделать через флаги-->
+
+                    <!--Using low-level calls:-->
+                    and
+                    not(block/statement//functionCall//externalFunctionCallNotThis/functionNameAndArgs/functionName/identifier[matches(text()[1],"^call|delegatecall|callcode$")])
+                    and
+                    <!--Using inline assembly that contains certain opcodes:-->
+                    not(block/statement//inlineAssemblyStatement)]
+                </XPath>
+            </Pattern>
+        </Patterns>
+    </Rule>
 </Rules>
