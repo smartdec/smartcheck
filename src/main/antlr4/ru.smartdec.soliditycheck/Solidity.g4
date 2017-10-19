@@ -69,6 +69,8 @@ variableDeclaration : typeName storageLocation? identifier ( '='(identifier '(')
 
 stateVariableDeclaration : typeName ( visibleType | constantType )* identifier ('='? expression|(identifier'(' expression ')'))? ';' ;
 
+addressDeclaration: 'address'  ( visibleType | constantType )* identifier ('='? (addressContract |expression|(identifier'(' expression ')')))? ';' ;
+
 functionFallBackDefinition
     : 'function' parameterList
       ( functionCall | identifier | stateMutability |visibleType )*
@@ -180,7 +182,9 @@ callObject: environmentalVariableDefinition
 
           ;
 
-addressContract:(DecimalNumber | HexNumber) NumberUnit? ;
+addressContract:addressNumber ;
+
+addressNumber: HexNumber;
 
 callArguments:'('(callArgument ','?)*')';
 
@@ -223,7 +227,7 @@ expression:    functionCall
 
              ;
 
-argument: identifier|numberLiteral|stringLiteral|environmentalVariableDefinition;
+argument: identifier|addressContract|numberLiteral|stringLiteral|environmentalVariableDefinition;
 
 //___Parameters_and_others__
 
@@ -242,7 +246,8 @@ storageLocation : 'memory' | 'storage' ;
 block: statement|'{' (statement)* '}' ;
 
 statement
-    : creatingContractViaNewStatement ';'?
+    : addressDeclaration
+    | creatingContractViaNewStatement ';'?
     | ifStatement ';'?
     | whileStatement ';'?
     | forStatement ';'?
@@ -304,7 +309,7 @@ variableDeclarationStatement : ( 'var' identifierList | variableDeclaration ) ;
 inlineAssemblyBlock : '{' assemblyItem* '}' ;
 
 assemblyItem : identifier| assemblyItemCase|assemblySwitchStatement|assemblyItemDefault | functionalAssemblyExpression
-             | inlineAssemblyBlock | assemblyLabels| assemblyFunctionCall | assemblerLocalVariables | assemblerLoopAndLocalVariables
+             | inlineAssemblyBlock | assemblyLabels| assemblyFunctionCall | assemblerLocalVariables | assemblerLoopAndLocalVariables | addressContract
              | numberLiteral | StringLiteral | HexLiteral| '(' assemblyItem ')';
 
 assemblyItemCase: 'case' primaryExpression inlineAssemblyBlock;
@@ -337,11 +342,15 @@ primaryExpression
     | identifier
 	| tupleExpression
     | elementaryTypeNameExpression
+    | addressContract
     | numberLiteral
     | environmentalVariableDefinition
     ;
 
-moneyExpression: primaryExpression 'ether'|primaryExpression 'wei'|primaryExpression 'finney'|primaryExpression 'szabo';
+moneyExpression: primaryExpression
+                (  'wei'| 'kwei' | 'ada' | 'femtoether' | 'mwei' | 'babbage' | 'picoether' | 'gwei' | 'shannon' | 'nanoether' | 'nano'
+                 | 'microether' | 'micro' | 'szabo' | 'finney' | 'milliether' | 'milli' | 'ether'| 'kether' | 'grand' | 'einstein'
+                 | 'mether' | 'gether' | 'tether');
 
 tupleExpression
   : '(' ( expression? ( ',' expression? )+ )? ')'
@@ -512,7 +521,7 @@ elementaryTypeName
 //___literals___
 arrayLiteral : ('[' expression? ( ',' expression )* ']')+ ;
 
-numberLiteral : (DecimalNumber | HexNumber) NumberUnit? ;
+numberLiteral : (DecimalNumber) NumberUnit? ;
 
 VersionLiteral : [0-9]+ '.' [0-9]+  '.' [0-9]+ ;
 

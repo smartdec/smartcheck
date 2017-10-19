@@ -431,4 +431,41 @@
             </Pattern>
         </Patterns>
     </Rule>
+    <Rule>
+        <RuleId>SOLIDITY_ADDRESS_HARDCODED</RuleId>
+            <Patterns>
+                <Pattern patternId="adc165">
+                    <Categories>
+                         <Category>Solidity</Category>
+                    </Categories>
+                    <Severity>3</Severity>
+                    <XPath>
+                        //addressContract[string-length(addressNumber)=42]
+                    </XPath>
+                </Pattern>
+                <Pattern patternId="b140cd">
+                    <Categories>
+                        <Category>Solidity</Category>
+                    </Categories>
+                    <Severity>3</Severity>
+                    <XPath>
+                        //addressContract[string-length(addressNumber) lt 42]
+                    </XPath>
+                </Pattern>
+            </Patterns>
+    </Rule>
+    <Rule>
+        <RuleId>SOLIDITY_RANDOMNESS</RuleId>
+        <Patterns>
+            <Pattern patternId="afb67a">
+                <Categories>
+                    <Category>Solidity</Category>
+                </Categories>
+                <Severity>3</Severity>
+                <XPath>
+                    //statement[//expression[matches(text()[1],"^=$")][//environmentalVariableDefinition[matches(text()[1],"^now$")]]]
+                </XPath>
+            </Pattern>
+        </Patterns>
+    </Rule>
 </Rules>
