@@ -216,14 +216,7 @@
                     <Category>Solidity</Category>
                 </Categories>
                 <Severity>2</Severity>
-                <XPath>//environmentalVariableDefinition[text()[1]="now"]</XPath>
-            </Pattern>
-            <Pattern patternId="da0c53">
-                <Categories>
-                    <Category>Solidity</Category>
-                </Categories>
-                <Severity>2</Severity>
-                <XPath>//environmentalVariableDefinition[matches(text()[1],"^block.timestamp$")]</XPath>
+                <XPath>//expression[matches(text()[1],"^==|!=$")][//environmentalVariableDefinition[matches(text()[1],"^block.timestamp|now$")]]</XPath>
             </Pattern>
         </Patterns>
     </Rule>
@@ -455,7 +448,7 @@
             </Patterns>
     </Rule>
     <Rule>
-        <RuleId>SOLIDITY_RANDOMNESS</RuleId>
+        <RuleId>SOLIDITY_RANDOMNESS_NOW</RuleId>
         <Patterns>
             <Pattern patternId="afb67a">
                 <Categories>
