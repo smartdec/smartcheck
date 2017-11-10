@@ -6,7 +6,7 @@ contract SolidityUncheckedSend {
         selfdestruct(address);
         }
 
-    // <yes> <report> SOLIDITY_VIEW_FUNCTIONS 189abf
+// <yes> <report> SOLIDITY_VIEW_FUNCTIONS 189abf
     function unseatKing(address a, uint w) view returns (uint){
         suicide(adress);
         }
