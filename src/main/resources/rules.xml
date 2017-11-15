@@ -71,7 +71,7 @@
                     <Category>Solidity</Category>
                 </Categories>
                 <Severity>1</Severity>
-                <XPath> //contractDefinition[identifier[matches(text()[1],"token|erc20","i")]]
+                <XPath> //contractDefinition[identifier[matches(text()[1],"token|erc20","i")] or inheritanceSpecifier/userDefinedTypeName/identifier[matches(text()[1],"token|erc20","i")]]
                     //functionDefinition[block/statement][identifier[matches(text()[1],"^transfer(From)?$","i")]][parameterList/parameter/typeName/elementaryTypeName[matches(text()[1],"bool")]]
                     [count(descendant-or-self::*[functionCall[internalFunctionCall/functionName/identifier
                     [matches(text()[1],"revert|require|assert")]]] | descendant-or-self::*[statement/throwStatement])=0]
@@ -87,7 +87,7 @@
                     <Category>Solidity</Category>
                 </Categories>
                 <Severity>1</Severity>
-                <XPath> //contractDefinition[identifier[matches(text()[1],"token|erc20","i")]]
+                <XPath> //contractDefinition[identifier[matches(text()[1],"token|erc20","i")] or inheritanceSpecifier/userDefinedTypeName/identifier[matches(text()[1],"token|erc20","i")]]
                     //functionDefinition[identifier[matches(text()[1],"^approve$","i")]]
                 </XPath>
             </Pattern>
@@ -102,7 +102,7 @@
                 </Categories>
                 <Severity>1</Severity>
             <XPath>
-                //contractDefinition[identifier[matches(text()[1],"token|erc20","i")]]
+                //contractDefinition[identifier[matches(text()[1],"token|erc20","i")]  or inheritanceSpecifier/userDefinedTypeName/identifier[matches(text()[1],"token|erc20","i")]]
                 //functionDefinition[block/statement][identifier[matches(text()[1],"^transfer(From)?$","i")]][parameterList/parameter/typeName/elementaryTypeName[matches(text()[1],"bool")]][count(descendant-or-self::*[returnStatement/expression/primaryExpression[booleanLiteral[matches(text()[1],"false")] or identifier]])=0]
             </XPath>
             </Pattern>
@@ -207,7 +207,7 @@
                     <Category>Solidity</Category>
                 </Categories>
                 <Severity>3</Severity>
-                <XPath>//functionDefinition//externalFunctionCall[ancestor::statement[1]/following-sibling::statement[descendant-or-self::*[not(functionCall/externalFunctionCall)]]]</XPath>
+                <XPath>//functionDefinition//externalFunctionCall[ancestor::statement[1]/following-sibling::statement[count(descendant-or-self::*[functionCall/externalFunctionCall])=0]]</XPath>
             </Pattern>
         </Patterns>
     </Rule>
@@ -379,7 +379,7 @@
                 <!--Creating other contracts - лучше сделать через флаги-->
 
                 <XPath>
-                    //functionDefinition[not(stateMutability/viewType) and not(stateMutability/constantType) and not(stateMutability/pureType)][block][
+                    //functionDefinition[not(identifier=//ancestor::*/contractDefinition/identifier)][not(stateMutability/viewType) and not(stateMutability/constantType) and not(stateMutability/pureType)][block][
                     <!--Using selfdestruct and it's alias suicide:-->
                     not(block/statement//functionCall/internalFunctionCall/functionName/identifier[matches(text()[1],"^selfdestruct|suicide$")])
                     and
@@ -440,7 +440,7 @@
                 </Categories>
                 <Severity>3</Severity>
                 <XPath>
-                    //functionDefinition[not(stateMutability/pureType) and not(stateMutability/constantType) and not(stateMutability/viewType)][block][
+                    //functionDefinition[not(identifier=//ancestor::*/contractDefinition/identifier)][not(stateMutability/pureType) and not(stateMutability/constantType) and not(stateMutability/viewType)][block][
                     <!--Accessing this.balance or <address>.balance: using .balance or this.balance-->
                     not(block/statement//functionCall//externalFunctionCallNotThis/functionNameAndArgs[matches(text()[1],"^.$")][functionName/identifier[matches(text()[1],"^balance$")]])
                     and not(block/statement//environmentalVariableDefinition[matches(text()[1],"^this.balance$")])
@@ -569,7 +569,7 @@
                 </Categories>
                 <Severity>3</Severity>
                 <XPath>
-                    //contractDefinition[identifier[not(matches(text()[1],"SafeMath","i"))]]//expression[last()][descendant-or-self::*[plusminusOperator or muldivOperator or twoPlusMinusOperator]]/ancestor-or-self::expression[last()][descendant-or-self::*[plusminusOperator or muldivOperator or twoPlusMinusOperator]]
+                    //contractDefinition//expression[last()][descendant-or-self::*[plusminusOperator or muldivOperator or twoPlusMinusOperator]]/ancestor-or-self::expression[last()][descendant-or-self::*[plusminusOperator or muldivOperator or twoPlusMinusOperator]]
                 </XPath>
             </Pattern>
         </Patterns>

@@ -154,24 +154,25 @@ externalFunctionCallThis:'this' functionNameAndArgs;
 externalFunctionCallNotThis:callObjectExpression functionNameAndArgs;
 
 functionNameAndArgs:
-                       ('.' functionName callArguments*|'.' 'value' ('(' callArguments* ')')?| '.' 'gas' ('(' callArguments* ')')?)+ callArguments*
+                       ('.' functionName callArguments*|'.' 'value' ('(' callArguments* ')')?| '.' 'gas' ('(' callArguments* ')')?|callArguments)+
                     ;
 callObjectExpression:callObjectExpressionComplicated|callObjectExpressionSimple;
 callObjectExpressionSimple: environmentalVariableDefinition
                           | addressCall
                           | '(' 'new' callObject ')' callObject?
+                          | internalFunctionCall
                           | identifier
                           | (identifier? arrayLiteral)+
                           | (identifier? arrayLiteral)+ '('+ identifier? arrayLiteral ')'* ')'
                           | identifier '[' identifier ']'
                           | addressContract
-                          | internalFunctionCall
                           ;
 
 callObjectExpressionComplicated: '(' callObject ')'
                                ;
 
-callObject: environmentalVariableDefinition
+callObject:callObjectExpressionSimple
+          | environmentalVariableDefinition
           | addressCall
           |  '(' 'new' callObject ')' callObject?
           | identifier
@@ -193,9 +194,9 @@ callObject: environmentalVariableDefinition
           | '{'(identifier ':' callObject ','?)+'}'
           | callObject '(' callArguments ')'
           | callObject '?' callObject ':' callObject
-          | internalFunctionCall
-          | functionNameAndArgs
           | '(' callObject ')'
+          | externalFunctionCall
+          | internalFunctionCall
           ;
 plusminusOperator:('+' | '-');
 
@@ -249,7 +250,6 @@ expression:   environmentalVariableDefinition
               | timeExpression
               | primaryExpression
               | '{'(identifier ':' expression ','?)+'}'
-
              ;
 
 argument: identifier|addressContract|numberLiteral|stringLiteral|environmentalVariableDefinition;
@@ -551,7 +551,7 @@ arrayElement: expression;
 
 numberLiteral : (DecimalNumber) NumberUnit? ;
 
-VersionLiteral : [0-9]+ '.' [0-9]+  '.' [0-9]+ ;
+VersionLiteral : [0-9]+ (' ')? '.' [0-9]+  (' ')?'.' [0-9]+ ;
 
 booleanLiteral : 'true' | 'false' ;
 

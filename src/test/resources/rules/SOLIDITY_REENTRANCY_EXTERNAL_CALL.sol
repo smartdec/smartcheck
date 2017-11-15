@@ -38,7 +38,6 @@ contract Bob {
                    currentLeader = msg.sender;
                    require(msg.value > highestBid);
                    highestBid = msg.value;
-
     }
     function bid() payable {
                    currentLeader = msg.sender;
@@ -47,12 +46,13 @@ contract Bob {
                    require(currentLeader.send(highestBid));
     }
     function transferFrom(address _from, address _to, uint _value) public returns (bool) {
+    // <yes> <report> SOLIDITY_REENTRANCY_EXTERNAL_CALL de222d
             bool result = super.transferFrom(_from, _to, _value);
             if (isObserver(_to)) {
                 ITokenObserver(_to).notifyTokensReceived(_from, _value);
             }
             return result;
-        }
+    }
     function bid() payable {
             require(currentLeader.send(highestBid));
             require(currentLeader.send(highestBid));
@@ -60,8 +60,6 @@ contract Bob {
     }
 function propose(address _proposedAddress) public only_owner only_at_stage(Stages.Deployed) {
         require(!isProposed(_proposedAddress));
-
-        // Add proposal
         Proposal storage p = proposals[_proposedAddress];
         p.createdTimestamp = now;
         p.index = proposalIndex.push(_proposedAddress) - 1;
