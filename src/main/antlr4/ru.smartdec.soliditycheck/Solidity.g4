@@ -238,7 +238,7 @@ expression:   environmentalVariableDefinition
               | expression '&' expression
               | expression '^' expression
               | expression '|' expression
-              | expression ('<' | '>' | '<=' | '>=') expression
+              | expression ('<' | '>' | '<=' | '>=') expression (plusminusOperator)?
               | expression ('==' | '!=') expression
               | expression '&&' expression
               | expression '||' expression

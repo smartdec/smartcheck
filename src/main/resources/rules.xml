@@ -316,6 +316,19 @@
         </Patterns>
     </Rule>
     <Rule>
+        <RuleId>SOLIDITY_VAR_IN_LOOP_FOR</RuleId>
+        <Patterns>
+            <Pattern patternId="f176ab">
+                <Categories>
+                    <Category>Solidity</Category>
+                </Categories>
+                <Severity>2</Severity>
+                <XPath>//forStatement[simpleStatement//typeName/elementaryTypeName[matches(text()[1],"^var$")]][expression/expression/primaryExpression[numberLiteral[matches(text()[1],"^[0-9]+$")]&gt; 255]][expression/twoPlusMinusOperator]
+                </XPath>
+            </Pattern>
+        </Patterns>
+    </Rule>
+    <Rule>
         <RuleId>SOLIDITY_VISIBILITY</RuleId>
         <Patterns>
             <Pattern patternId="910067">
