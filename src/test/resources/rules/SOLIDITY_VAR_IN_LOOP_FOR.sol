@@ -7,7 +7,10 @@ contract SolidityUncheckedSend {
             a=0;
         }
         for (var i = 0; i < 4; i++) {
-                    a=0;
-                }
+            a=0;
+        }
+        for (var i = 10; i > 4; i--) {
+            a=0;
+        }
     }
 }

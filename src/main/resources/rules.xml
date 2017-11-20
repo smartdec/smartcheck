@@ -323,6 +323,7 @@
                     <Category>Solidity</Category>
                 </Categories>
                 <Severity>2</Severity>
+                <TruePositiveRate>3</TruePositiveRate>
                 <XPath>//forStatement[simpleStatement//typeName/elementaryTypeName[matches(text()[1],"^var$")]][expression/expression/primaryExpression[numberLiteral[matches(text()[1],"^[0-9]+$")]&gt; 255]][expression/twoPlusMinusOperator]
                 </XPath>
             </Pattern>
