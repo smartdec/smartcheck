@@ -599,4 +599,19 @@
             </Pattern>
         </Patterns>
     </Rule>
+    <Rule>
+        <RuleId>SOLIDITY_REVERT_REQUIRE</RuleId>
+        <Patterns>
+            <Pattern patternId="c56b12">
+                <Categories>
+                    <Category>Solidity</Category>
+                </Categories>
+                <Severity>1</Severity>
+                <TruePositiveRate>3</TruePositiveRate>
+                <XPath>
+                    //ifStatement/block/statement/simpleStatement/expressionStatement/expression/functionCall/internalFunctionCall/functionName/identifier[matches(text()[1],"^revert$")]/ancestor-or-self::statement[last()]
+                </XPath>
+            </Pattern>
+        </Patterns>
+    </Rule>
 </Rules>
