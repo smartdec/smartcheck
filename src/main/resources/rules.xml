@@ -574,4 +574,29 @@
             </Pattern>
         </Patterns>
     </Rule>
+    <Rule>
+        <RuleId>SOLIDITY_EXTERNAL_LOOP_FOR</RuleId>
+        <Patterns>
+            <Pattern patternId="11ca45b">
+            <Categories>
+                <Category>Solidity</Category>
+            </Categories>
+            <Severity>3</Severity>
+            <TruePositiveRate>3</TruePositiveRate >
+            <XPath>
+                //forStatement/expression[matches(text()[1],">=")][expression/primaryExpression/numberLiteral[matches(text()[1],"^0$")]]
+            </XPath>
+        </Pattern>
+            <Pattern patternId="d48ac4">
+                <Categories>
+                    <Category>Solidity</Category>
+                </Categories>
+                <Severity>2</Severity>
+                <TruePositiveRate>3</TruePositiveRate >
+                <XPath>
+                    //expression[matches(text()[1],">=")][expression/primaryExpression/numberLiteral[matches(text()[1],"^0$")]]/ancestor-or-self::statement
+                </XPath>
+            </Pattern>
+        </Patterns>
+    </Rule>
 </Rules>
