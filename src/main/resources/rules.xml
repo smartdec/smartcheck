@@ -575,7 +575,7 @@
         </Patterns>
     </Rule>
     <Rule>
-        <RuleId>SOLIDITY_EXTERNAL_LOOP_FOR</RuleId>
+        <RuleId>SOLIDITY_UNDERFLOW_OTHERFLOW</RuleId>
         <Patterns>
             <Pattern patternId="11ca45b">
             <Categories>
