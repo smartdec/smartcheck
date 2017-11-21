@@ -88,6 +88,7 @@
     <Rule>
         <RuleId>SOLIDITY_ERC20_APPROVE</RuleId>
         <Patterns>
+            <!--Фиксирует конструкции: имя контракта содержит token или erc20 либо наследуется от контракта содержащего такое в названии. В этом контракте есть определение функции approve, которая не является интерфейсом-->
             <Pattern patternId="af782c">
                 <Categories>
                     <Category>Solidity</Category>
