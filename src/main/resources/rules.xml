@@ -64,7 +64,7 @@
         </Patterns>
     </Rule>
     <Rule>
-        <RuleId>SOLIDITY_ERC20_TRANSFER</RuleId>
+        <RuleId>SOLIDITY_ERC20_TRANSFER_SHOULD_THROW</RuleId>
         <Patterns>
             <Pattern patternId="550a42">
                 <Categories>

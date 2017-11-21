@@ -22,7 +22,7 @@ contract fef is Token{
                 return true;
             } else {require(_value > 10 wei); }
     }
-    // <yes> <report> SOLIDITY_ERC20_TRANSFER 550a42
+    // <yes> <report> SOLIDITY_ERC20_TRANSFER_SHOULD_THROW 550a42
     function transfer(address _to, uint256 _value) returns (bool success) {
                 if (balances[msg.sender] >= _value && _value > 0) {
                     return true;
