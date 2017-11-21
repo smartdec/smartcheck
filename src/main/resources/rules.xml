@@ -72,6 +72,9 @@
     <Rule>
         <RuleId>SOLIDITY_ERC20_TRANSFER_SHOULD_THROW</RuleId>
         <Patterns>
+            <!--Фиксирует конструкции: имя контракта содержит token или erc20 либо наследуется от контракта содержащего такое в названии.
+             В этом контракте есть определение функции, содержащей в названии transfer или transferFrom, возвращающей значение типа bool, которая не является интерфейсом.
+             В определении этой функции не содержатся функции revert, require, assert, throw-->
             <Pattern patternId="550a42">
                 <Categories>
                     <Category>Solidity</Category>
@@ -103,6 +106,9 @@
     <Rule>
         <RuleId>SOLIDITY_ERC20_TRANSFER_RETURN_FALSE</RuleId>
         <Patterns>
+            <!--Фиксирует конструкции: имя контракта содержит token или erc20 либо наследуется от контракта содержащего такое в названии.
+            В этом контракте есть определение функции, содержащей в названии transfer или transferFrom, возвращающей значение типа bool, которая не является интерфейсом.
+            В определении этой функции не содержит return false или return идентификатор-->
             <Pattern patternId="b180ca">
                 <Categories>
                     <Category>Solidity</Category>
@@ -118,6 +124,7 @@
     <Rule>
         <RuleId>SOLIDITY_GAS_LIMIT_AND_LOOPS</RuleId>
         <Patterns>
+            <!--Фиксируется конструкция: for (...;...вызов функции или переменная) или for (переменная цикла равна expression; ... ; ...)-->
             <Pattern patternId="f6f853">
                 <Categories>
                     <Category>Solidity</Category>
@@ -125,6 +132,7 @@
                 <Severity>2</Severity>
                 <XPath>//forStatement[expression[1]/expression[2][functionCall or primaryExpression/identifier] or simpleStatement/variableDeclarationStatement/variableDeclaration/expression]</XPath>
             </Pattern>
+            <!--Фиксируется конструкция: while (в условии используется вызов функции)-->
             <Pattern patternId="38f6c7">
                 <Categories>
                     <Category>Solidity</Category>
@@ -137,6 +145,7 @@
     <Rule>
         <RuleId>SOLIDITY_INTEGER_DIVISION</RuleId>
         <Patterns>
+            <!--Фиксируется конструкция: целое число / целое число-->
             <Pattern patternId="8e0621">
                 <Categories>
                     <Category>Solidity</Category>
@@ -163,6 +172,7 @@
     <Rule>
         <RuleId>SOLIDITY_MALICIOUS_LIBRARIES</RuleId>
         <Patterns>
+            <!--Фиксируется любое определение библиотек-->
             <Pattern patternId="a0298c">
                 <Categories>
                     <Category>Solidity</Category>
@@ -175,6 +185,7 @@
     <Rule>
         <RuleId>SOLIDITY_PRAGMAS_VERSION</RuleId>
         <Patterns>
+            <!--Фиксируется определение pragma имеющее в версии знаки '^' | '>=' | '>' | '<' | '<='-->
             <Pattern patternId="23fc32">
                 <Categories>
                     <Category>Solidity</Category>
@@ -187,6 +198,7 @@
     <Rule>
         <RuleId>SOLIDITY_PRIVATE_MODIFIER</RuleId>
         <Patterns>
+            <!--Фиксируется определение state переменных с типом видимости private-->
             <Pattern patternId="5616b2">
                 <Categories>
                     <Category>Solidity</Category>
@@ -199,6 +211,7 @@
     <Rule>
         <RuleId>SOLIDITY_REDUNDANT_FALLBACK_REJECT</RuleId>
         <Patterns>
+            <!--Фиксируется случаи, когда версия компилятора больше или равна 0.4.0, контракт содержит fallback функцию типа payable, в определении которой есть throw -->
             <Pattern patternId="b85a32">
                 <Categories>
                     <Category>Solidity</Category>
@@ -211,6 +224,7 @@
     <Rule>
         <RuleId>SOLIDITY_REENTRANCY_EXTERNAL_CALL</RuleId>
         <Patterns>
+            <!--Фиксируется случаи, когда внутри определения функции после внешних вызовов есть внутренние-->
             <Pattern patternId="de222d">
                 <Categories>
                     <Category>Solidity</Category>
@@ -223,6 +237,7 @@
     <Rule>
         <RuleId>SOLIDITY_SEND</RuleId>
         <Patterns>
+            <!--Фиксируется использование функции send-->
             <Pattern patternId="430636">
                 <Categories>
                     <Category>Solidity</Category>
@@ -235,6 +250,7 @@
     <Rule>
         <RuleId>SOLIDITY_STYLE_GUIDE_VIOLATION</RuleId>
         <Patterns>
+            <!--Фиксируется случаи, event определяется с маленькой буквы-->
             <Pattern patternId="343033">
                 <Categories>
                     <Category>Solidity</Category>
@@ -242,6 +258,7 @@
                 <Severity>1</Severity>
                 <XPath>//eventDefinition/identifier[matches(text()[1],"^[a-z]")]</XPath>
             </Pattern>
+            <!--Фиксируется случаи, когда функция определяется с большой буквы-->
             <Pattern patternId="b0dbcd">
                 <Categories>
                     <Category>Solidity</Category>
@@ -254,6 +271,7 @@
     <Rule>
         <RuleId>SOLIDITY_TIMESTAMP_DEPENDENCE</RuleId>
         <Patterns>
+            <!--Фиксируется случаи, когда выражение содержит "== or = block.timestamp or now"-->
             <Pattern patternId="1955d9">
                 <Categories>
                     <Category>Solidity</Category>
@@ -261,6 +279,7 @@
                 <Severity>2</Severity>
                 <XPath>//expression[matches(text()[1],"^==|!=$") and expression//environmentalVariableDefinition[matches(text()[1],"^block.timestamp|now$")]]</XPath>
             </Pattern>
+            <!--Фиксируется случаи, когда в вызове функции в качестве аргусентов передаются block.timestamp или now. А также, когда в выражении используется "= и далее выражение содержащее  block.timestamp или now" -->
             <Pattern patternId="cd1537">
                 <Categories>
                     <Category>Solidity</Category>
@@ -269,6 +288,7 @@
                 <XPath>//statement[simpleStatement//functionCall[internalFunctionCall or externalFunctionCall]//callArguments[ not(callArgument//expression[matches(text()[1],"^>=|>|lt |lt =$")]) and callArgument//expression[environmentalVariableDefinition[matches(text()[1],"^block.timestamp|now$")]]]
                     or simpleStatement/expressionStatement//expression[matches(text()[1],"^=$") and expression//environmentalVariableDefinition[matches(text()[1],"^block.timestamp|now$")]]]</XPath>
             </Pattern>
+            <!--Фиксируется все вхождения block.timestamp или now-->
             <Pattern patternId="afb67a">
                 <Categories>
                     <Category>Solidity</Category>
@@ -283,6 +303,7 @@
     <Rule>
         <RuleId>SOLIDITY_TX_ORIGIN</RuleId>
         <Patterns>
+            <!--Фиксируется вхождение tx.origin-->
             <Pattern patternId="12e802">
                 <Categories>
                     <Category>Solidity</Category>
@@ -295,6 +316,7 @@
     <Rule>
         <RuleId>SOLIDITY_UNCHECKED_CALL</RuleId>
         <Patterns>
+            <!--Фиксируется случаи, когда вызовы функций  call, delegatecall, send, callcode не имеют предков по дереву: if, require, assert-->
             <Pattern patternId="f39eed">
                 <Categories>
                     <Category>Solidity</Category>
@@ -308,6 +330,7 @@
     <Rule>
         <RuleId>SOLIDITY_VAR</RuleId>
         <Patterns>
+            <!--Фиксируется случаи определения переменных, как var ...= число-->
             <Pattern patternId="d28aa7">
                 <Categories>
                     <Category>Solidity</Category>
@@ -315,6 +338,7 @@
                 <Severity>2</Severity>
                 <XPath>//variableDeclaration[typeName/elementaryTypeName[matches(text()[1],"^var$")]][expression//primaryExpression/numberLiteral[matches(text()[1],"^[0-9]+$")]]</XPath>
             </Pattern>
+            <!--Фиксируется случаи определения переменных, как var имя переменной-->
             <Pattern patternId="f77619">
                 <Categories>
                     <Category>Solidity</Category>
@@ -342,6 +366,7 @@
     <Rule>
         <RuleId>SOLIDITY_VISIBILITY</RuleId>
         <Patterns>
+            <!-- фиксирует ситуацию, когда для функции не определена видимость"-->
             <Pattern patternId="910067">
                 <Categories>
                     <Category>Solidity</Category>
@@ -349,6 +374,7 @@
                 <Severity>1</Severity>
                 <XPath>//contractPartDefinition/functionDefinition[not(visibleType)]</XPath>
             </Pattern>
+            <!-- фиксирует ситуацию, когда для переменной состояния не определена видимость"-->
             <Pattern patternId="b51ce0">
                 <Categories>
                     <Category>Solidity</Category>
@@ -492,49 +518,57 @@
     <Rule>
         <RuleId>SOLIDITY_ADDRESS_HARDCODED</RuleId>
             <Patterns>
+                <!-- фиксирует адреса длиной в 42 символа"-->
                 <Pattern patternId="adc165">
                     <Categories>
                          <Category>Solidity</Category>
                     </Categories>
                     <Severity>3</Severity>
+                    <TruePositiveRate>2</TruePositiveRate>
                     <XPath>
                         //addressContract[string-length(addressNumber)=42]
                     </XPath>
                 </Pattern>
+                <!-- фиксирует адреса длиной менее чем 42 символа и не равные 0x0"-->
                 <Pattern patternId="b140cd">
                     <Categories>
                         <Category>Solidity</Category>
                     </Categories>
                     <Severity>3</Severity>
+                    <TruePositiveRate>2</TruePositiveRate>
                     <XPath>
                         //addressContract[string-length(addressNumber) lt 42 and not(addressNumber[matches(text()[1],"^0x0$")])]
                     </XPath>
                 </Pattern>
+                <!-- фиксирует конструкции: address(A), где A не равно 0 или this"-->
                 <Pattern patternId="f32db1">
                     <Categories>
                         <Category>Solidity</Category>
                     </Categories>
                     <Severity>3</Severity>
+                    <TruePositiveRate>2</TruePositiveRate>
                     <XPath>
                         //addressCall/expression[not(primaryExpression/numberLiteral[matches(text()[1],"^0$")]) and not(primaryExpression/identifier[matches(text()[1],"^this$")])]
                     </XPath>
                 </Pattern>
+                <!-- фиксирует конструкции: address(0)-->
                 <Pattern patternId="a91b18">
                     <Categories>
                         <Category>Solidity</Category>
                     </Categories>
                     <Severity>3</Severity>
-                    <!--сигнализировать о них, но как-то более расслабленно-->
+                    <TruePositiveRate>1</TruePositiveRate>
                     <XPath>
                         //addressCall/expression[primaryExpression/numberLiteral[matches(text()[1],"^0$")]]
                     </XPath>
                 </Pattern>
+                <!-- фиксирует использование адреса 0x0-->
                 <Pattern patternId="c67a09">
                     <Categories>
                         <Category>Solidity</Category>
                     </Categories>
                     <Severity>3</Severity>
-                    <!--сигнализировать о них, но как-то более расслабленно-->
+                    <TruePositiveRate>1</TruePositiveRate>
                     <XPath>
                         //addressContract[addressNumber[matches(text()[1],"^0x0$")]]
                     </XPath>
@@ -545,6 +579,7 @@
     <Rule>
         <RuleId>SOLIDITY_CONSTANT_FUNCTIONS</RuleId>
         <Patterns>
+            <!-- фиксирует использование типа constant в определении функции-->
             <Pattern patternId="28fa69">
                 <Categories>
                     <Category>Solidity</Category>
@@ -559,6 +594,7 @@
     <Rule>
         <RuleId>SOLIDITY_DELETE_FOR_ARRAYS</RuleId>
         <Patterns>
+            <!--Фиксирует ... .length=0-->
             <Pattern patternId="792a6d">
                 <Categories>
                     <Category>Solidity</Category>
@@ -573,6 +609,7 @@
     <Rule>
         <RuleId>SOLIDITY_DOS_WITH_REVERT</RuleId>
         <Patterns>
+            <!--Фиксирует require(внешний вызов)-->
             <Pattern patternId="15ac23">
                 <Categories>
                     <Category>Solidity</Category>
@@ -587,6 +624,7 @@
     <Rule>
         <RuleId>SOLIDITY_UNCHECKED_MATH</RuleId>
         <Patterns>
+            <!--Фиксирует все вхождения +,-,*,/, ++ ...-->
             <Pattern patternId="87b5ac">
                 <Categories>
                     <Category>Solidity</Category>
