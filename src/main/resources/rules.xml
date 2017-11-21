@@ -51,6 +51,7 @@
                 <Severity>3</Severity>
                 <XPath>//ifStatement[ifCondition//externalFunctionCall][block/statement//throwStatement or block/statement//simpleStatement/expressionStatement/expression/primaryExpression/identifier[text()[1]="revert"]]</XPath>
             </Pattern>
+            <!-- фиксирует конструкцию: "for (... внешний вызов ...)"-->
             <Pattern patternId="efb788">
                 <Categories>
                     <Category>Solidity</Category>
@@ -58,6 +59,7 @@
                 <Severity>2</Severity>
                 <XPath>//forStatement/expression//externalFunctionCall</XPath>
             </Pattern>
+            <!-- фиксирует конструкцию: "while (... внешний вызов ...)"-->
             <Pattern patternId="04242c">
                 <Categories>
                     <Category>Solidity</Category>
