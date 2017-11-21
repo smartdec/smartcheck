@@ -1,5 +1,4 @@
 pragma solidity ^0.4.16;
-
 contract C {
     function returnsenderbalance() pure returns (uint){
     // <yes> <report> SOLIDITY_ADDRESS_HARDCODED  adc165
@@ -12,17 +11,21 @@ contract C {
         address x = 0x0;
         address myAddress = this;
     }
-        function balanceOf(address _token, address _owner) public constant returns (uint) {
-            uint balance = 0;
-          // <yes> <report> SOLIDITY_ADDRESS_HARDCODED  a91b18
-            if (address(0) == _token) {
-                balance = allocated[_owner].drps;
-            }
-            // <yes> <report> SOLIDITY_ADDRESS_HARDCODED  f32db1
-            else if (address(drpuToken[i].h()) == _token) {
-                balance = allocated[_owner].drpu;
-            }
-
-            return balance;
+    function balanceOf(address _token, address _owner) public constant returns (uint) {
+        uint balance = 0;
+    // <yes> <report> SOLIDITY_ADDRESS_HARDCODED  a91b18
+        if (address(0) == _token) {
+            balance = allocated[_owner].drps;
         }
+    // <yes> <report> SOLIDITY_ADDRESS_HARDCODED  f32db1
+        else if (address(drpuToken[i].h()) == _token) {
+            balance = allocated[_owner].drpu;
+        }
+        return balance;
+    }
+    modifier onlyWallet() {
+        if (msg.sender != address(this))
+            revert();
+        _;
+    }
 }

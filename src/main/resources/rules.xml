@@ -512,7 +512,7 @@
                     </Categories>
                     <Severity>3</Severity>
                     <XPath>
-                        //addressCall/expression[not(primaryExpression/numberLiteral[matches(text()[1],"^0$")])]
+                        //addressCall/expression[not(primaryExpression/numberLiteral[matches(text()[1],"^0$")]) and not(primaryExpression/identifier[matches(text()[1],"^this$")])]
                     </XPath>
                 </Pattern>
                 <Pattern patternId="a91b18">
