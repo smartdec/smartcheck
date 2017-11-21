@@ -148,13 +148,13 @@
     <Rule>
         <RuleId>SOLIDITY_LOCKED_MONEY</RuleId>
         <Patterns>
-            <!--Фиксируются ситуации, когда в контракте имеется функция типа payable, но нет функций suicide, transfer, send-->
+            <!--Фиксируются ситуации, когда в контракте имеется функция типа payable, но нет функций suicide, selfdestruct, transfer, send-->
             <Pattern patternId="30281d">
                 <Categories>
                     <Category>Solidity</Category>
                 </Categories>
                 <Severity>1</Severity>
-                <XPath>//contractDefinition[contractPartDefinition/functionDefinition/stateMutability/payableType][not(contractPartDefinition/functionDefinition/block//functionCall/internalFunctionCall/functionName/identifier[text()[1]="^suicide|selfdestruct$"])][not(contractPartDefinition/functionDefinition/block//functionCall/externalFunctionCall/externalFunctionCallNotThis/functionNameAndArgs/functionName/identifier[text()[1]="^transfer|send$"])]
+                <XPath>//contractDefinition[contractPartDefinition//functionDefinition/stateMutability/payableType][not(contractPartDefinition/functionDefinition/block//functionCall/internalFunctionCall/functionName/identifier[matches(text()[1],"^suicide|selfdestruct$")])][not(contractPartDefinition/functionDefinition/block//functionCall/externalFunctionCall/externalFunctionCallNotThis/functionNameAndArgs/functionName/identifier[matches(text()[1],"^transfer|send$")])]
                 </XPath>
             </Pattern>
         </Patterns>
@@ -326,6 +326,7 @@
     <Rule>
         <RuleId>SOLIDITY_VAR_IN_LOOP_FOR</RuleId>
         <Patterns>
+            <!-- фиксирует конструкцию: "for (var ...; ... число более 255; ... ++)"-->
             <Pattern patternId="f176ab">
                 <Categories>
                     <Category>Solidity</Category>
