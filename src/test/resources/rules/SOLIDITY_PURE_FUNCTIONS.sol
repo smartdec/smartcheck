@@ -16,9 +16,9 @@ contract C {
         o=block.timestamp;
         return t;
     }
-     function returnsenderbalance() returns (uint){
-            y=msg.value;
-            o=block.timestamp;
-            return t;
-        }
+    function returnsenderbalance() returns (uint){
+        y=msg.value;
+        o=block.timestamp;
+        return t;
+    }
 }

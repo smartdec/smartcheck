@@ -1,7 +1,6 @@
 pragma solidity ^0.4.11;
 
 contract GasLimitAndLoops {
-
     function foo() {
         // <yes> <report> SOLIDITY_GAS_LIMIT_AND_LOOPS 38f6c7
         while ( x > refundAddresses.dd()) { 

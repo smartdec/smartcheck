@@ -94,7 +94,7 @@
                 </Categories>
                 <Severity>1</Severity>
                 <XPath> //contractDefinition[identifier[matches(text()[1],"token|erc20","i")] or inheritanceSpecifier/userDefinedTypeName/identifier[matches(text()[1],"token|erc20","i")]]
-                    //functionDefinition[identifier[matches(text()[1],"^approve$","i")]]
+                    //functionDefinition[block/statement][identifier[matches(text()[1],"^approve$","i")]]
                 </XPath>
             </Pattern>
         </Patterns>
