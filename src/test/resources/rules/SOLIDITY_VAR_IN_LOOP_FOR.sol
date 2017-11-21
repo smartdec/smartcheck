@@ -9,7 +9,7 @@ contract SolidityUncheckedSend {
         for (var i = 0; i < 4; i++) {
             a=0;
         }
-        for (var i = 10; i > 4; i--) {
+        for (var i = 1000; i > 400; i--) {
             a=0;
         }
     }

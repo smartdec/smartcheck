@@ -3,6 +3,7 @@
     <Rule>
         <RuleId>SOLIDITY_BALANCE_EQUALITY</RuleId>
         <Patterns>
+            <!-- фиксирует конструкцию: "this.balance=="-->
             <Pattern patternId="5094ad">
                 <Categories>
                     <Category>Solidity</Category>
@@ -16,6 +17,7 @@
     <Rule>
         <RuleId>SOLIDITY_BYTES_BYTE</RuleId>
         <Patterns>
+            <!-- фиксирует конструкцию: "byte[]"-->
             <Pattern patternId="f13a9f">
                 <Categories>
                     <Category>Solidity</Category>
@@ -28,6 +30,7 @@
     <Rule>
         <RuleId>SOLIDITY_CALL_VALUE</RuleId>
         <Patterns>
+            <!-- фиксирует конструкцию: "call.value()()"-->
             <Pattern patternId="cc2e04">
                 <Categories>
                     <Category>Solidity</Category>
@@ -40,6 +43,7 @@
     <Rule>
         <RuleId>SOLIDITY_DOS_WITH_THROW</RuleId>
         <Patterns>
+            <!-- фиксирует конструкцию: "if (... внешний вызов ...) {throw, revert}"-->
             <Pattern patternId="637fdc">
                 <Categories>
                     <Category>Solidity</Category>
@@ -324,7 +328,7 @@
                 </Categories>
                 <Severity>2</Severity>
                 <TruePositiveRate>3</TruePositiveRate>
-                <XPath>//forStatement[simpleStatement//typeName/elementaryTypeName[matches(text()[1],"^var$")]][expression/expression/primaryExpression[numberLiteral[matches(text()[1],"^[0-9]+$")]&gt; 255]][expression/twoPlusMinusOperator]
+                <XPath>//forStatement[simpleStatement//typeName/elementaryTypeName[matches(text()[1],"^var$")]][expression/expression/primaryExpression[numberLiteral[matches(text()[1],"^[0-9]+$")]&gt; 255]][expression/twoPlusMinusOperator/twoPlusOperator]
                 </XPath>
             </Pattern>
         </Patterns>
