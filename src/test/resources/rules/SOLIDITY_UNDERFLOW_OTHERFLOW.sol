@@ -7,7 +7,7 @@ contract a{
         }
         for (uint i=100; i >= 1; i--) {
         }
-    // <yes> <report> SOLIDITY_EXTERNAL_LOOP_FOR  d48ac4
+    // <yes> <report> SOLIDITY_UNDERFLOW_OTHERFLOW  d48ac4
         require(a>=0);
         require(a<=0);
         require(a>=7);
