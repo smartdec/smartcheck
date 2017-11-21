@@ -602,6 +602,7 @@
     <Rule>
         <RuleId>SOLIDITY_REVERT_REQUIRE</RuleId>
         <Patterns>
+            <!--Фиксирует конструкцию: "if (...){revert();}"-->
             <Pattern patternId="c56b12">
                 <Categories>
                     <Category>Solidity</Category>
