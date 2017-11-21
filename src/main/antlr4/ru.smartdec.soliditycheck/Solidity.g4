@@ -200,7 +200,11 @@ callObject:callObjectExpressionSimple
           ;
 plusminusOperator:('+' | '-');
 
-twoPlusMinusOperator:'++' | '--';
+twoPlusMinusOperator:twoMinusOperator | twoPlusOperator;
+
+twoMinusOperator:'--';
+
+twoPlusOperator:'++';
 
 muldivOperator:'*' | '/' | '%'|'**';
 
@@ -238,7 +242,7 @@ expression:   environmentalVariableDefinition
               | expression '&' expression
               | expression '^' expression
               | expression '|' expression
-              | expression ('<' | '>' | '<=' | '>=') expression
+              | expression ('<' | '>' | '<=' | '>=') expression (plusminusOperator)?
               | expression ('==' | '!=') expression
               | expression '&&' expression
               | expression '||' expression

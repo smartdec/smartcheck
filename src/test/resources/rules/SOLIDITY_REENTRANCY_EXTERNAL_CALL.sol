@@ -19,44 +19,44 @@ contract Bob {
         }
     }
     function bid() payable {
-            require(msg.value > highestBid);
+        require(msg.value > highestBid);
 // <yes> <report> SOLIDITY_REENTRANCY_EXTERNAL_CALL de222d
-            require(currentLeader.send(highestBid));
-            currentLeader = msg.sender;
-            highestBid = msg.value;
+        require(currentLeader.send(highestBid));
+        currentLeader = msg.sender;
+        highestBid = msg.value;
     }
     function bid() payable {
-                require(msg.value > highestBid);
-                currentLeader = msg.sender;
+        require(msg.value > highestBid);
+        currentLeader = msg.sender;
 // <yes> <report> SOLIDITY_REENTRANCY_EXTERNAL_CALL de222d
-                require(currentLeader.send(highestBid));
-                highestBid = msg.value;
+        require(currentLeader.send(highestBid));
+        highestBid = msg.value;
     }
     function bid() payable {
 // <yes> <report> SOLIDITY_REENTRANCY_EXTERNAL_CALL de222d
-                   require(currentLeader.send(highestBid));
-                   currentLeader = msg.sender;
-                   require(msg.value > highestBid);
-                   highestBid = msg.value;
+        require(currentLeader.send(highestBid));
+        currentLeader = msg.sender;
+        require(msg.value > highestBid);
+        highestBid = msg.value;
     }
     function bid() payable {
-                   currentLeader = msg.sender;
-                   require(msg.value > highestBid);
-                   highestBid = msg.value;
-                   require(currentLeader.send(highestBid));
+        currentLeader = msg.sender;
+        require(msg.value > highestBid);
+        highestBid = msg.value;
+        require(currentLeader.send(highestBid));
     }
     function transferFrom(address _from, address _to, uint _value) public returns (bool) {
     // <yes> <report> SOLIDITY_REENTRANCY_EXTERNAL_CALL de222d
-            bool result = super.transferFrom(_from, _to, _value);
-            if (isObserver(_to)) {
-                ITokenObserver(_to).notifyTokensReceived(_from, _value);
+        bool result = super.transferFrom(_from, _to, _value);
+        if (isObserver(_to)) {
+            ITokenObserver(_to).notifyTokensReceived(_from, _value);
             }
-            return result;
+        return result;
     }
     function bid() payable {
-            require(currentLeader.send(highestBid));
-            require(currentLeader.send(highestBid));
-            require(currentLeader.send(highestBid));
+        require(currentLeader.send(highestBid));
+        require(currentLeader.send(highestBid));
+        require(currentLeader.send(highestBid));
     }
 function propose(address _proposedAddress) public only_owner only_at_stage(Stages.Deployed) {
         require(!isProposed(_proposedAddress));
