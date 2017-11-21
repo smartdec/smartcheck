@@ -575,8 +575,10 @@
         </Patterns>
     </Rule>
     <Rule>
+
         <RuleId>SOLIDITY_UNDERFLOW_OTHERFLOW</RuleId>
         <Patterns>
+            <!--Фиксирует конструкцию: "for (...; i >= 0; ...) { ... }"-->
             <Pattern patternId="11ca45b">
             <Categories>
                 <Category>Solidity</Category>
@@ -587,6 +589,7 @@
                 //forStatement/expression[matches(text()[1],">=")][expression/primaryExpression/numberLiteral[matches(text()[1],"^0$")]]
             </XPath>
         </Pattern>
+            <!--Фиксирует конструкцию: "...>=0"-->
             <Pattern patternId="d48ac4">
                 <Categories>
                     <Category>Solidity</Category>
