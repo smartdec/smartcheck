@@ -642,4 +642,19 @@
             </Pattern>
         </Patterns>
     </Rule>
+    <Rule>
+        <RuleId>SOLIDITY_FUNCTIONS_RETURNS_TYPE</RuleId>
+        <Patterns>
+            <!--Фиксирует конструкцию: "function(...) ... returns (type) {...}" т.е. после type ничего нет-->
+            <Pattern patternId="47acc2">
+                <Categories>
+                    <Category>Solidity</Category>
+                </Categories>
+                <Severity>1</Severity>
+                <XPath>
+                    //functionDefinition[not(parameterList/parameter/identifier)]
+                </XPath>
+            </Pattern>
+        </Patterns>
+    </Rule>
 </Rules>
