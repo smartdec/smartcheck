@@ -200,11 +200,11 @@ callObject:callObjectExpressionSimple
           ;
 plusminusOperator:('+' | '-');
 
-twoPlusMinusOperator:twoMinusOperator | twoPlusOperator;
+twoPlusMinusOperator:decrementOperator | incrementOperator;
 
-twoMinusOperator:'--';
+decrementOperator:'--';
 
-twoPlusOperator:'++';
+incrementOperator:'++';
 
 muldivOperator:'*' | '/' | '%'|'**';
 

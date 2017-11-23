@@ -11,7 +11,7 @@ contract DeleteExample {
         // <yes> <report> SOLIDITY_DELETE_FOR_ARRAYS 792a6d
         ownersIndex.length = 0;
 
-        for (uint i = proposalIndex.length; i > 0; i--) {
+        for (uint i = proposalIndex.length; i > 0; i--){
                     Proposal storage p = proposals[proposalIndex[i - 1]];
                     proposalIndex[i]=0;
                     if (now > p.createdTimestamp + VOTING_DURATION) {

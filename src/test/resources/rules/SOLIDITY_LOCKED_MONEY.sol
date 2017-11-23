@@ -26,6 +26,12 @@ contract BadMarketPlace {
     function foo() {}
 }
 contract BadMarketPlace {
+    function deposit() payable {}
+    function foo(uint amount) {
+        someAddress.someFunction.value(amount)();
+    }
+}
+contract BadMarketPlace {
 	function kill() onlyOwner(){
 		RequireDispose[msg.sender] = true;
 		if(ConfirmDispose()){
