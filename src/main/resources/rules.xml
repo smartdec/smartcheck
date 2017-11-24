@@ -634,7 +634,7 @@
                 </Categories>
                 <Severity>3</Severity>
                 <XPath>
-                    //contractDefinition//expression[last()][descendant-or-self::*[plusminusOperator or muldivOperator or twoPlusMinusOperator]]/ancestor-or-self::expression[last()][descendant-or-self::*[plusminusOperator or muldivOperator or twoPlusMinusOperator]]
+                    //contractDefinition//expression[last()][descendant-or-self::*[plusminusOperator or muldivOperator or twoPlusMinusOperator]]/ancestor-or-self::expression[last()][descendant-or-self::*[plusminusOperator or muldivOperator or decrementOperator]]
                 </XPath>
             </Pattern>
         </Patterns>

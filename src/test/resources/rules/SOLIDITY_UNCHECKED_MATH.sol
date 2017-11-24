@@ -10,5 +10,8 @@ contract C {
          else if (a < d * e) bar();
 // <yes> <report> SOLIDITY_UNCHECKED_MATH 87b5ac
          c / a =b;
+         for (uint i=0;i<10;i++){
+            a=0;
+         }
     }
 }
