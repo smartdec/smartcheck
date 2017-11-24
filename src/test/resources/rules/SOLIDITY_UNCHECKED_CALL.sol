@@ -35,7 +35,9 @@ contract SolidityUncheckedSend {
     function functionArgumentSend(address a) returns (bool) {
         return checkArg(a.send(1));
     }
-    function checkArg(bool v) {
-        require(v);
+    function f1(){
+        bool x = y.send();
+        foo(a.send());
+        f.deff(d.send);
     }
 }
