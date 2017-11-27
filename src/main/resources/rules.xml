@@ -698,4 +698,19 @@
             </Pattern>
         </Patterns>
     </Rule>
+    <Rule>
+        <RuleId>SOLIDITY_USING_THROW</RuleId>
+        <Patterns>
+            <!--Фиксирует конструкцию: "throw"-->
+            <Pattern patternId="49bd2a">
+                <Categories>
+                    <Category>Solidity</Category>
+                </Categories>
+                <Severity>1</Severity>
+                <XPath>
+                    //statement/throwStatement
+                </XPath>
+            </Pattern>
+        </Patterns>
+    </Rule>
 </Rules>
