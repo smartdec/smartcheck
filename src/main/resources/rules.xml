@@ -319,13 +319,13 @@
     <Rule>
         <RuleId>SOLIDITY_UNCHECKED_CALL</RuleId>
         <Patterns>
-            <!--Фиксируется случаи, когда вызовы функций  call, delegatecall, send, callcode не имеют предков по дереву: if, require, assert-->
+            <!--Фиксируется случаи, когда вызовы функций  call, delegatecall, send, callcode не имеют предков по дереву: if, require, assert, return, вызов функции, не входит в определение переменной-->
             <Pattern patternId="f39eed">
                 <Categories>
                     <Category>Solidity</Category>
                 </Categories>
                 <Severity>3</Severity>
-                <XPath>//externalFunctionCall/externalFunctionCallNotThis[functionNameAndArgs/functionName/identifier[matches(text()[1],"^call|delegatecall|send|callcode$")] and not(ancestor::ifCondition) and not(ancestor::internalFunctionCall[functionName/identifier[matches(text()[1],"^require|assert$")]])]
+                <XPath>//externalFunctionCall/externalFunctionCallNotThis[functionNameAndArgs/functionName/identifier[matches(text()[1],"^call|delegatecall|send|callcode$")] and not(ancestor::ifCondition) and not(ancestor::internalFunctionCall[functionName/identifier[matches(text()[1],"^require|assert$")]]) and not(ancestor::returnStatement) and not(ancestor::functionCall[2]) and not(ancestor::variableDeclarationStatement)]
                 </XPath>
             </Pattern>
         </Patterns>

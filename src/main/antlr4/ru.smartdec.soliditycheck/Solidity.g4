@@ -59,7 +59,7 @@ modifierDefinition : 'modifier' identifier parameterList? block ;
 functionDefinition
     : ('function' identifier '(' (variableDeclarationList |elementaryTypeName ','? )*')'
     | 'function' identifier )
-      ( modifierList|identifier | stateMutability |visibleType|functionCall )*
+    ( modifierList|identifier | stateMutability |visibleType|functionCall )*
       ( 'returns' parameterList )? block? ;
 
 modifierList: modifierCall+;
