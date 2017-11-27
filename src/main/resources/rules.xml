@@ -728,4 +728,19 @@
             </Pattern>
         </Patterns>
     </Rule>
+    <Rule>
+        <RuleId>SOLIDITY_USING_SHA3</RuleId>
+        <Patterns>
+            <!--Фиксирует конструкцию: "sha3"-->
+            <Pattern patternId="187b5a">
+                <Categories>
+                    <Category>Solidity</Category>
+                </Categories>
+                <Severity>3</Severity>
+                <XPath>
+                    //functionName/identifier[matches(text()[1],"^sha3$")]
+                </XPath>
+            </Pattern>
+        </Patterns>
+    </Rule>
 </Rules>
