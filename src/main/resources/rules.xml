@@ -698,4 +698,19 @@
             </Pattern>
         </Patterns>
     </Rule>
+    <Rule>
+        <RuleId>SOLIDITY_USING_INLINE_ASSEMBLY</RuleId>
+        <Patterns>
+            <!--Фиксирует конструкцию: "assembly"-->
+            <Pattern patternId="109cd5">
+                <Categories>
+                    <Category>Solidity</Category>
+                </Categories>
+                <Severity>1</Severity>
+                <XPath>
+                    //statement/inlineAssemblyStatement
+                </XPath>
+            </Pattern>
+        </Patterns>
+    </Rule>
 </Rules>
