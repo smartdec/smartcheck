@@ -698,4 +698,19 @@
             </Pattern>
         </Patterns>
     </Rule>
+    <Rule>
+        <RuleId>SOLIDITY_USING_SUICIDE</RuleId>
+        <Patterns>
+            <!--Фиксирует конструкцию: "suicide"-->
+            <Pattern patternId="27cb59">
+                <Categories>
+                    <Category>Solidity</Category>
+                </Categories>
+                <Severity>3</Severity>
+                <XPath>
+                    //functionName/identifier[matches(text()[1],"suicide")]
+                </XPath>
+            </Pattern>
+        </Patterns>
+    </Rule>
 </Rules>
