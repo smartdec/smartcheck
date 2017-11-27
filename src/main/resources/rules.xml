@@ -684,16 +684,31 @@
         </Patterns>
     </Rule>
     <Rule>
-        <RuleId>SOLIDITY_FUNCTIONS_RETURNS_TYPE</RuleId>
+    <RuleId>SOLIDITY_FUNCTIONS_RETURNS_TYPE</RuleId>
+    <Patterns>
+        <!--Фиксирует конструкцию: "function(...) ... returns (type) {...}" т.е. после type ничего нет и в теле функции нет return-->
+        <Pattern patternId="47acc2">
+            <Categories>
+                <Category>Solidity</Category>
+            </Categories>
+            <Severity>1</Severity>
+            <XPath>
+                //functionDefinition[not(parameterList/parameter/identifier)][not(block/statement/returnStatement)]
+            </XPath>
+        </Pattern>
+    </Patterns>
+    </Rule>
+    <Rule>
+        <RuleId>SOLIDITY_USING_NON_PAYABLE_FALLBACK</RuleId>
         <Patterns>
-            <!--Фиксирует конструкцию: "function(...) ... returns (type) {...}" т.е. после type ничего нет и в теле функции нет return-->
-            <Pattern patternId="47acc2">
+            <!--Фиксирует ситуацию, когда в fallback функции нет "payable"-->
+            <Pattern patternId="86c34a">
                 <Categories>
                     <Category>Solidity</Category>
                 </Categories>
                 <Severity>1</Severity>
                 <XPath>
-                    //functionDefinition[not(parameterList/parameter/identifier)][not(block/statement/returnStatement)]
+                    //functionFallBackDefinition[not(stateMutability/payableType)]
                 </XPath>
             </Pattern>
         </Patterns>
