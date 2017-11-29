@@ -708,7 +708,7 @@
                 </Categories>
                 <Severity>1</Severity>
                 <XPath>
-                    //expression[//environmentalVariableDefinition[matches(text()[1],"block.blockhash")] or //functionName/identifier[matches(text()[1],"^blockhash$")]]
+                    //expression[//environmentalVariableDefinition[matches(text()[1],"block.blockhash")]]
                 </XPath>
             </Pattern>
         </Patterns>
