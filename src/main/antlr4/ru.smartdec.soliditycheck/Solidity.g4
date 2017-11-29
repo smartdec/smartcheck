@@ -206,7 +206,9 @@ decrementOperator:'--';
 
 incrementOperator:'++';
 
-muldivOperator: mulOperator | divOperator | '%'| powerOperator;
+muldivOperator: mulOperator | divOperator | divRemOperator| powerOperator;
+
+divRemOperator:'%';
 
 powerOperator:'**';
 
@@ -253,7 +255,7 @@ expression:   environmentalVariableDefinition
               | expression '&&' expression
               | expression '||' expression
               | expression '?' expression ':' expression
-              | expression ('=' | '**' | lvalueOperator) expression
+              | expression ('=' | powerOperator | lvalueOperator) expression
               | variableDeclaration
               | expression '(' callArguments ')'
               | moneyExpression
@@ -262,7 +264,7 @@ expression:   environmentalVariableDefinition
               | '{'(identifier ':' expression ','?)+'}'
              ;
 
-lvalueOperator: '|=' | '^=' | '&=' | plusLvalueOperator | minusLvalueOperator | mulLvalueOperator | divLvalueOperator | '%='|'<<=' | '>>=' ;
+lvalueOperator: '|=' | '^=' | '&=' | plusLvalueOperator | minusLvalueOperator | mulLvalueOperator | divLvalueOperator | divRemLvalueOperator|'<<=' | '>>=' ;
 
 plusLvalueOperator:'+=';
 
@@ -271,6 +273,7 @@ minusLvalueOperator:'-=';
 divLvalueOperator: '/=';
 
 mulLvalueOperator: '*=';
+divRemLvalueOperator: '%=';
 
 argument: identifier|addressContract|numberLiteral|stringLiteral|environmentalVariableDefinition;
 

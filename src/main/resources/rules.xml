@@ -627,14 +627,24 @@
     <Rule>
         <RuleId>SOLIDITY_UNCHECKED_MATH</RuleId>
         <Patterns>
-            <!--Фиксирует все вхождения /,/=,increment, -, -= -->
+            <!--Фиксирует все вхождения decrement, -, -=, ... -->
             <Pattern patternId="87b5ac">
                 <Categories>
                     <Category>Solidity</Category>
                 </Categories>
                 <Severity>3</Severity>
                 <XPath>
-                    //contractDefinition//expression[last()][descendant-or-self::*[decrementOperator or plusminusOperator[text()[1]="-"] or divOperator or divLvalueOperator or minusLvalueOperator]]/ancestor-or-self::expression[last()]
+                    //contractDefinition//expression[last()][descendant-or-self::*[decrementOperator or plusminusOperator[text()[1]="-"] or minusLvalueOperator]]/ancestor-or-self::expression[last()]
+                </XPath>
+            </Pattern>
+            <!--Фиксирует все вхождения /,/=,%,%= -->
+            <Pattern patternId="16dca5">
+                <Categories>
+                    <Category>Solidity</Category>
+                </Categories>
+                <Severity>3</Severity>
+                <XPath>
+                    //contractDefinition//expression[last()][descendant-or-self::*[divOperator or divRemOperator or divRemLvalueOperator or divLvalueOperator]]/ancestor-or-self::expression[last()]
                 </XPath>
             </Pattern>
             <!--Фиксирует все вхождения +,++,+=-->
@@ -644,17 +654,17 @@
                 </Categories>
                 <Severity>3</Severity>
                 <XPath>
-                    //contractDefinition//expression[last()][descendant-or-self::*[plusminusOperator[text()[1]="+"]/parent::*[not(expression/primaryExpression/numberLiteral)] or incrementOperator or plusLvalueOperator]]/ancestor-or-self::expression[last()]
+                    //contractDefinition//expression[last()][descendant-or-self::*[plusminusOperator[text()[1]="+"] or incrementOperator or plusLvalueOperator]]/ancestor-or-self::expression[last()]
                 </XPath>
             </Pattern>
-            <!--Фиксирует все вхождения + (не число),++,+=-->
-            <Pattern patternId="50dc28">
+            <!--Фиксирует все вхождения +, где нет сложения с константой-->
+            <Pattern patternId="61c5ab">
                 <Categories>
                     <Category>Solidity</Category>
                 </Categories>
-                <Severity>3</Severity>
+                <Severity>2</Severity>
                 <XPath>
-                    //contractDefinition//expression[last()][descendant-or-self::*[plusminusOperator[text()[1]="+"]/parent::*[not(expression/primaryExpression/numberLiteral)] or incrementOperator or plusLvalueOperator]]/ancestor-or-self::expression[last()]
+                    //contractDefinition//expression[last()][descendant-or-self::*[plusminusOperator[text()[1]="+"]/parent::*[not(expression/primaryExpression/numberLiteral)]]]/ancestor-or-self::expression[last()]
                 </XPath>
             </Pattern>
             <!--Фиксирует все вхождения *,**,*=-->
@@ -664,7 +674,7 @@
                 </Categories>
                 <Severity>2</Severity>
                 <XPath>
-                    //contractDefinition//expression[last()][descendant-or-self::*[mulLvalueOperator or muldivOperator[powerOperator|mulOperator]]]/ancestor-or-self::expression[last()]
+                    //contractDefinition//expression[last()][descendant-or-self::*[mulLvalueOperator or powerOperator or mulOperator]]/ancestor-or-self::expression[last()]
                 </XPath>
             </Pattern>
         </Patterns>
