@@ -773,4 +773,19 @@
             </Pattern>
         </Patterns>
     </Rule>
+    <Rule>
+        <RuleId>SOLIDITY_USING_BLOCKHASH</RuleId>
+        <Patterns>
+            <!--Фиксирует конструкцию: "blockhash"-->
+            <Pattern patternId="b629ad">
+                <Categories>
+                    <Category>Solidity</Category>
+                </Categories>
+                <Severity>1</Severity>
+                <XPath>
+                    //expression[//environmentalVariableDefinition[matches(text()[1],"block.blockhash")]]
+                </XPath>
+            </Pattern>
+        </Patterns>
+    </Rule>
 </Rules>
