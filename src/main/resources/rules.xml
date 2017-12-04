@@ -96,7 +96,7 @@
                 <Categories>
                     <Category>Solidity</Category>
                 </Categories>
-                <Severity>1</Severity>
+                <Severity>2</Severity>
                 <XPath> //contractDefinition[identifier[matches(text()[1],"token|erc20","i")] or inheritanceSpecifier/userDefinedTypeName/identifier[matches(text()[1],"token|erc20","i")]]
                     //functionDefinition[block/statement][identifier[matches(text()[1],"^approve$","i")]]
                 </XPath>
@@ -163,7 +163,7 @@
                 <Categories>
                     <Category>Solidity</Category>
                 </Categories>
-                <Severity>1</Severity>
+                <Severity>2</Severity>
                 <XPath>//contractDefinition[contractPartDefinition//functionDefinition/stateMutability/payableType]
                     [not(contractPartDefinition/functionDefinition/block//functionCall/internalFunctionCall/functionName/identifier[matches(text()[1],"^suicide|selfdestruct$")])]
                     [not(contractPartDefinition/functionDefinition/block//functionCall/externalFunctionCall/externalFunctionCallNotThis/functionNameAndArgs/functionName/identifier[matches(text()[1],"^transfer|send$")])]
@@ -193,7 +193,7 @@
                 <Categories>
                     <Category>Solidity</Category>
                 </Categories>
-                <Severity>1</Severity>
+                <Severity>2</Severity>
                 <XPath>//pragmaDirective/pragmaValue//versionOperator</XPath>
             </Pattern>
         </Patterns>
@@ -245,7 +245,7 @@
                 <Categories>
                     <Category>Solidity</Category>
                 </Categories>
-                <Severity>2</Severity>
+                <Severity>3</Severity>
                 <XPath>//functionName/identifier[text()[1]="send"]</XPath>
             </Pattern>
         </Patterns>
@@ -258,7 +258,7 @@
                 <Categories>
                     <Category>Solidity</Category>
                 </Categories>
-                <Severity>1</Severity>
+                <Severity>0</Severity>
                 <XPath>//eventDefinition/identifier[matches(text()[1],"^[a-z]")]</XPath>
             </Pattern>
             <!--Фиксируется случаи, когда функция определяется с большой буквы-->
@@ -266,7 +266,7 @@
                 <Categories>
                     <Category>Solidity</Category>
                 </Categories>
-                <Severity>1</Severity>
+                <Severity>0</Severity>
                 <XPath>//functionDefinition[identifier[matches(text()[1],"^[A-Z]")]][not(identifier =//ancestor::*/contractDefinition/identifier)]</XPath>
             </Pattern>
         </Patterns>
@@ -296,7 +296,7 @@
                 <Categories>
                     <Category>Solidity</Category>
                 </Categories>
-                <Severity>3</Severity>
+                <Severity>0</Severity>
                 <XPath>
                     //expression/environmentalVariableDefinition[matches(text()[1],"block.timestamp|now")]/ancestor-or-self::statement
                 </XPath>
@@ -374,7 +374,7 @@
                 <Categories>
                     <Category>Solidity</Category>
                 </Categories>
-                <Severity>1</Severity>
+                <Severity>0</Severity>
                 <XPath>//contractPartDefinition/functionDefinition[not(visibleType)]</XPath>
             </Pattern>
             <!-- фиксирует ситуацию, когда для переменной состояния не определена видимость"-->
@@ -382,7 +382,7 @@
                 <Categories>
                     <Category>Solidity</Category>
                 </Categories>
-                <Severity>1</Severity>
+                <Severity>0</Severity>
                 <XPath>//contractPartDefinition/stateVariableDeclaration[not(visibleType)]</XPath>
             </Pattern>
         </Patterns>
@@ -394,7 +394,7 @@
                 <Categories>
                     <Category>Solidity</Category>
                 </Categories>
-                <Severity>3</Severity>
+                <Severity>0</Severity>
                 <!--Writing to state variables - лучше сделать через флаги-->
                 <!--Emitting events - лучше сделать через флаги-->
                 <!--Creating other contracts - лучше сделать через флаги-->
@@ -426,7 +426,7 @@
                 <Categories>
                     <Category>Solidity</Category>
                 </Categories>
-                <Severity>3</Severity>
+                <Severity>0</Severity>
                 <!--Writing to state variables - лучше сделать через флаги-->
                 <!--Emitting events - лучше сделать через флаги-->
                 <!--Creating other contracts - лучше сделать через флаги-->
@@ -458,7 +458,7 @@
                 <Categories>
                     <Category>Solidity</Category>
                 </Categories>
-                <Severity>3</Severity>
+                <Severity>0</Severity>
                 <XPath>
                     //functionDefinition[stateMutability/pureType][
                     <!--Accessing this.balance or <address>.balance: using .balance or this.balance-->
@@ -491,7 +491,7 @@
                 <Categories>
                     <Category>Solidity</Category>
                 </Categories>
-                <Severity>3</Severity>
+                <Severity>0</Severity>
                 <XPath>
                     //functionDefinition[not(identifier=//ancestor::*/contractDefinition/identifier)][not(stateMutability/pureType) and not(stateMutability/constantType) and not(stateMutability/viewType)][block][
                     <!--Accessing this.balance or <address>.balance: using .balance or this.balance-->
@@ -526,7 +526,7 @@
                     <Categories>
                          <Category>Solidity</Category>
                     </Categories>
-                    <Severity>3</Severity>
+                    <Severity>1</Severity>
                     <TruePositiveRate>2</TruePositiveRate>
                     <XPath>
                         //addressContract[string-length(addressNumber)=42]
@@ -537,7 +537,7 @@
                     <Categories>
                         <Category>Solidity</Category>
                     </Categories>
-                    <Severity>3</Severity>
+                    <Severity>1</Severity>
                     <TruePositiveRate>2</TruePositiveRate>
                     <XPath>
                         //addressContract[string-length(addressNumber) lt 42 and not(addressNumber[matches(text()[1],"^0x0$")])]
@@ -548,7 +548,7 @@
                     <Categories>
                         <Category>Solidity</Category>
                     </Categories>
-                    <Severity>3</Severity>
+                    <Severity>1</Severity>
                     <TruePositiveRate>2</TruePositiveRate>
                     <XPath>
                         //addressCall/expression[not(primaryExpression/numberLiteral[matches(text()[1],"^0$")]) and not(primaryExpression/identifier[matches(text()[1],"^this$")])]
@@ -559,7 +559,7 @@
                     <Categories>
                         <Category>Solidity</Category>
                     </Categories>
-                    <Severity>3</Severity>
+                    <Severity>1</Severity>
                     <TruePositiveRate>1</TruePositiveRate>
                     <XPath>
                         //addressCall/expression[primaryExpression/numberLiteral[matches(text()[1],"^0$")]]
@@ -570,7 +570,7 @@
                     <Categories>
                         <Category>Solidity</Category>
                     </Categories>
-                    <Severity>3</Severity>
+                    <Severity>1</Severity>
                     <TruePositiveRate>1</TruePositiveRate>
                     <XPath>
                         //addressContract[addressNumber[matches(text()[1],"^0x0$")]]
@@ -587,7 +587,7 @@
                 <Categories>
                     <Category>Solidity</Category>
                 </Categories>
-                <Severity>3</Severity>
+                <Severity>0</Severity>
                 <XPath>
                     //functionDefinition[stateMutability/constantType]
                 </XPath>
@@ -602,7 +602,7 @@
                 <Categories>
                     <Category>Solidity</Category>
                 </Categories>
-                <Severity>3</Severity>
+                <Severity>1</Severity>
                 <XPath>
                     //simpleStatement/expressionStatement/expression[expression/environmentalVariableDefinition[matches(text()[1],"length")]][matches(text()[1],"^=$")][expression/primaryExpression/numberLiteral[matches(text()[1],"^0$")]]
                 </XPath>
@@ -617,7 +617,7 @@
                 <Categories>
                     <Category>Solidity</Category>
                 </Categories>
-                <Severity>3</Severity>
+                <Severity>1</Severity>
                 <XPath>
                 //statement//internalFunctionCall[functionName/identifier[matches(text()[1],"require")]][callArguments/callArgument//functionCall/externalFunctionCall]
             </XPath>
@@ -648,7 +648,7 @@
             <Categories>
                 <Category>Solidity</Category>
             </Categories>
-            <Severity>3</Severity>
+            <Severity>1</Severity>
             <TruePositiveRate>3</TruePositiveRate>
             <XPath>
                 //forStatement/expression[matches(text()[1],">=")][expression/primaryExpression/numberLiteral[matches(text()[1],"^0$")]]
@@ -736,7 +736,7 @@
                 <Categories>
                     <Category>Solidity</Category>
                 </Categories>
-                <Severity>3</Severity>
+                <Severity>2</Severity>
                 <XPath>
                     //functionName/identifier[matches(text()[1],"^sha3$")]
                 </XPath>
@@ -751,7 +751,7 @@
                 <Categories>
                     <Category>Solidity</Category>
                 </Categories>
-                <Severity>3</Severity>
+                <Severity>1</Severity>
                 <XPath>
                     //functionName/identifier[matches(text()[1],"suicide")]
                 </XPath>
