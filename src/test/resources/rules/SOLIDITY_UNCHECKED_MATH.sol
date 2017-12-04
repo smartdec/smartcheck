@@ -2,19 +2,21 @@ pragma solidity ^0.4.18;
 
 contract C {
   function f(uint a, uint b, uint c, uint d, uint e){
-// <yes> <report> SOLIDITY_UNCHECKED_MATH 61c5ab  <yes> <report> SOLIDITY_UNCHECKED_MATH 50dc28  <yes> <report> SOLIDITY_UNCHECKED_MATH 7dc23a
+// <yes> <report> SOLIDITY_UNCHECKED_MATH 61c5ab  <yes> <report> SOLIDITY_UNCHECKED_MATH 7dc23a
         d = a * (b + c);
-// <yes> <report> SOLIDITY_UNCHECKED_MATH 61c5ab <yes> <report> SOLIDITY_UNCHECKED_MATH 50dc28
+// <yes> <report> SOLIDITY_UNCHECKED_MATH 61c5ab
         if (a < b + c){
             foo(a);
         }
 // <yes> <report> SOLIDITY_UNCHECKED_MATH 50dc28
         if (a < b + 10){
             foo(a);
+//<yes> <report> SOLIDITY_UNCHECKED_MATH 50dc28
+            a+=10;
         }
 // <yes> <report> SOLIDITY_UNCHECKED_MATH 50dc28
         for (uint j=0;i<100;j++){
-// <yes> <report> SOLIDITY_UNCHECKED_MATH 50dc28
+// <yes> <report> SOLIDITY_UNCHECKED_MATH 61c5ab
             a+=b;
         }
 // <yes> <report> SOLIDITY_UNCHECKED_MATH 7dc23a

@@ -632,7 +632,7 @@
                 <Categories>
                     <Category>Solidity</Category>
                 </Categories>
-                <Severity>3</Severity>
+                <Severity>1</Severity>
                 <XPath>
                     //contractDefinition//expression[last()][descendant-or-self::*[decrementOperator or plusminusOperator[text()[1]="-"] or minusLvalueOperator]]/ancestor-or-self::expression[last()]
                 </XPath>
@@ -642,29 +642,29 @@
                 <Categories>
                     <Category>Solidity</Category>
                 </Categories>
-                <Severity>3</Severity>
+                <Severity>1</Severity>
                 <XPath>
                     //contractDefinition//expression[last()][descendant-or-self::*[divOperator or divRemOperator or divRemLvalueOperator or divLvalueOperator]]/ancestor-or-self::expression[last()]
                 </XPath>
             </Pattern>
-            <!--Фиксирует все вхождения +,++,+=-->
+            <!--Фиксирует все вхождения + с константой,+= с константой, ++,-->
             <Pattern patternId="50dc28">
                 <Categories>
                     <Category>Solidity</Category>
                 </Categories>
-                <Severity>3</Severity>
+                <Severity>0</Severity>
                 <XPath>
-                    //contractDefinition//expression[last()][descendant-or-self::*[plusminusOperator[text()[1]="+"] or incrementOperator or plusLvalueOperator]]/ancestor-or-self::expression[last()]
+                    //contractDefinition//expression[last()][descendant-or-self::*[plusminusOperator[text()[1]="+"]/parent::*[expression/primaryExpression/numberLiteral] or lvalueOperator[plusLvalueOperator]/parent::*[expression/primaryExpression/numberLiteral] or incrementOperator]]/ancestor-or-self::expression[last()]
                 </XPath>
             </Pattern>
-            <!--Фиксирует все вхождения +, где нет сложения с константой-->
+            <!--Фиксирует все вхождения +, += где нет сложения с константой-->
             <Pattern patternId="61c5ab">
                 <Categories>
                     <Category>Solidity</Category>
                 </Categories>
-                <Severity>2</Severity>
+                <Severity>1</Severity>
                 <XPath>
-                    //contractDefinition//expression[last()][descendant-or-self::*[plusminusOperator[text()[1]="+"]/parent::*[not(expression/primaryExpression/numberLiteral)]]]/ancestor-or-self::expression[last()]
+                    //contractDefinition//expression[last()][descendant-or-self::*[plusminusOperator[text()[1]="+"]/parent::*[not(expression/primaryExpression/numberLiteral)] or lvalueOperator[plusLvalueOperator]/parent::*[not(expression/primaryExpression/numberLiteral)]]]/ancestor-or-self::expression[last()]
                 </XPath>
             </Pattern>
             <!--Фиксирует все вхождения *,**,*=-->
