@@ -11,6 +11,14 @@
                 <Severity>2</Severity>
                 <XPath>//expression[expression//environmentalVariableDefinition[matches(text()[1],"^this.balance$")]][matches(text()[1],"^==$")]</XPath>
             </Pattern>
+            <!-- фиксирует конструкцию: "this.balance!="-->
+            <Pattern patternId="58a5bd">
+                <Categories>
+                    <Category>Solidity</Category>
+                </Categories>
+                <Severity>2</Severity>
+                <XPath>//expression[expression//environmentalVariableDefinition[matches(text()[1],"^this.balance$")]][matches(text()[1],"^!=$")]</XPath>
+            </Pattern>
         </Patterns>
     </Rule>
 
