@@ -10,6 +10,10 @@ contract C {
         // <yes> <report> SOLIDITY_ADDRESS_HARDCODED  c67a09
         address x = 0x0;
         address myAddress = this;
+        // <yes> <report> SOLIDITY_ADDRESS_HARDCODED  c67a09
+        if (msg.sender != 0x0) {
+            revert();
+        }
     }
     function balanceOf(address _token, address _owner) public constant returns (uint) {
         uint balance = 0;
@@ -20,6 +24,9 @@ contract C {
     // <yes> <report> SOLIDITY_ADDRESS_HARDCODED  f32db1
         else if (address(drpuToken[i].h()) == _token) {
             balance = allocated[_owner].drpu;
+        }
+        if (address(0) != _token) {
+            balance = allocated[_owner].drps;
         }
         return balance;
     }

@@ -554,7 +554,7 @@
                         //addressCall/expression[not(primaryExpression/numberLiteral[matches(text()[1],"^0$")]) and not(primaryExpression/identifier[matches(text()[1],"^this$")])]
                     </XPath>
                 </Pattern>
-                <!-- фиксирует конструкции: address(0)-->
+                <!-- фиксирует конструкции: address(0), кроме "!=address(0)"-->
                 <Pattern patternId="a91b18">
                     <Categories>
                         <Category>Solidity</Category>
@@ -562,7 +562,7 @@
                     <Severity>1</Severity>
                     <TruePositiveRate>1</TruePositiveRate>
                     <XPath>
-                        //addressCall/expression[primaryExpression/numberLiteral[matches(text()[1],"^0$")]]
+                        //expression[addressCall/expression/primaryExpression/numberLiteral[matches(text()[1],"^0$")]]/parent::*[not(matches(text()[1],"^!=$"))]
                     </XPath>
                 </Pattern>
                 <!-- фиксирует использование адреса 0x0-->
@@ -573,7 +573,7 @@
                     <Severity>1</Severity>
                     <TruePositiveRate>1</TruePositiveRate>
                     <XPath>
-                        //addressContract[addressNumber[matches(text()[1],"^0x0$")]]
+                        //addressNumber[matches(text()[1],"^0x0$")]
                     </XPath>
                 </Pattern>
             </Patterns>
