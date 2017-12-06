@@ -741,7 +741,7 @@
             </Categories>
             <Severity>1</Severity>
             <XPath>
-                //functionDefinition[block]/returnsParameters[not(parameterList/parameter/identifier)]/parent::*[not(block/statement/returnStatement)]
+                //functionDefinition[block]/returnsParameters[not(parameterList/parameter/identifier)]/parent::*[not(block/statement//returnStatement)]
             </XPath>
         </Pattern>
     </Patterns>
