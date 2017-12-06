@@ -89,7 +89,7 @@
                 </Categories>
                 <Severity>1</Severity>
                 <XPath> //contractDefinition[identifier[matches(text()[1],"token|erc20","i")] or inheritanceSpecifier/userDefinedTypeName/identifier[matches(text()[1],"token|erc20","i")]]
-                    //functionDefinition[block/statement][identifier[matches(text()[1],"^transfer(From)?$","i")]][parameterList/parameter/typeName/elementaryTypeName[matches(text()[1],"bool")]]
+                    //functionDefinition[block/statement][identifier[matches(text()[1],"^transfer(From)?$","i")]][returnsParameters/parameterList/parameter/typeName/elementaryTypeName[matches(text()[1],"bool")]]
                     [count(descendant-or-self::*[functionCall[internalFunctionCall/functionName/identifier
                     [matches(text()[1],"revert|require|assert")]]] | descendant-or-self::*[statement/throwStatement])=0]
                 </XPath>
@@ -124,7 +124,7 @@
                 <Severity>1</Severity>
             <XPath>
                 //contractDefinition[identifier[matches(text()[1],"token|erc20","i")]  or inheritanceSpecifier/userDefinedTypeName/identifier[matches(text()[1],"token|erc20","i")]]
-                //functionDefinition[block/statement][identifier[matches(text()[1],"^transfer(From)?$","i")]][parameterList/parameter/typeName/elementaryTypeName[matches(text()[1],"bool")]][count(descendant-or-self::*[returnStatement/expression/primaryExpression[booleanLiteral[matches(text()[1],"false")] or identifier]])=0]
+                //functionDefinition[block/statement][identifier[matches(text()[1],"^transfer(From)?$","i")]][returnsParameters/parameterList/parameter/typeName/elementaryTypeName[matches(text()[1],"bool")]][count(descendant-or-self::*[returnStatement/expression/primaryExpression[booleanLiteral[matches(text()[1],"false")] or identifier]])=0]
             </XPath>
             </Pattern>
         </Patterns>
@@ -741,7 +741,7 @@
             </Categories>
             <Severity>1</Severity>
             <XPath>
-                //functionDefinition[not(parameterList/parameter/identifier)][not(block/statement/returnStatement)]
+                //functionDefinition[block]/returnsParameters[not(parameterList/parameter/identifier)]/parent::*[not(block/statement/returnStatement)]
             </XPath>
         </Pattern>
     </Patterns>

@@ -60,7 +60,9 @@ functionDefinition
     : ('function' identifier '(' (variableDeclarationList |elementaryTypeName ','? )*')'
     | 'function' identifier )
     ( modifierList|identifier | stateMutability |visibleType|functionCall )*
-      ( 'returns' parameterList )? block? ;
+      returnsParameters? block? ;
+
+returnsParameters: 'returns' parameterList;
 
 modifierList: modifierCall+;
 
@@ -81,7 +83,7 @@ addressCall:'address' '('expression')';
 functionFallBackDefinition
     : 'function' parameterList
       ( functionCall | identifier | stateMutability |visibleType )*
-      ( 'returns' parameterList )? ( block ) ;
+      returnsParameters? ( block ) ;
 
 eventDefinition
     : 'event' identifier indexedParameterList 'anonymous'? ';'? ;
@@ -348,7 +350,7 @@ functionCallStatement : functionCall ';'? ;
 functionFallBackCall
     : 'function' parameterList
       ( functionCall | identifier | stateMutability | visibleType )*
-      ( 'returns' parameterList )? ';'? ;
+      returnsParameters? ';'? ;
 
 expressionStatement : expression+  ';' ;
 
