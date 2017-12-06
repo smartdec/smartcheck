@@ -689,7 +689,7 @@
     </Rule>
     <Rule>
 
-        <RuleId>SOLIDITY_UNDERFLOW_OTHERFLOW</RuleId>
+        <RuleId>SOLIDITY_UNDERFLOW_OVERFLOW</RuleId>
         <Patterns>
             <!--Фиксирует конструкцию: "for (...; i >= 0; ...) { ... }"-->
             <Pattern patternId="11ca45b">
@@ -732,7 +732,7 @@
         </Patterns>
     </Rule>
     <Rule>
-    <RuleId>SOLIDITY_FUNCTIONS_RETURNS_TYPE</RuleId>
+    <RuleId>SOLIDITY_FUNCTIONS_RETURNS_TYPE_AND_NO_RETURN</RuleId>
     <Patterns>
         <!--Фиксирует конструкцию: "function(...) ... returns (type) {...}" т.е. после type ничего нет и в теле функции нет return-->
         <Pattern patternId="47acc2">
