@@ -320,7 +320,7 @@
                     <Category>Solidity</Category>
                 </Categories>
                 <Severity>2</Severity>
-                <XPath>//environmentalVariableDefinition[matches(text()[1],"^tx.origin$")]</XPath>
+                <XPath>//environmentalVariableDefinition[matches(text()[1],"^tx.origin$")]/parent::*[parent::*[not(matches(text()[1],"^==|!=$") and expression/environmentalVariableDefinition[matches(text()[1],"^msg.sender$")])]]</XPath>
             </Pattern>
         </Patterns>
     </Rule>

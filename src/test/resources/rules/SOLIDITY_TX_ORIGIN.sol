@@ -9,5 +9,11 @@ contract SolidityTxOrigin {
         var tx = 3;
         var origin = "foo";
         return false;
+        if (msg.sender != tx.origin){
+            throw;
+        }
+        require(tx.origin == msg.sender)
+        // <yes> <report> SOLIDITY_TX_ORIGIN 12e802
+        tx.origin = owner;
     }
 }
