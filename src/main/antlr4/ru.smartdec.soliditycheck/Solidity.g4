@@ -357,7 +357,9 @@ expressionStatement : expression+  ';' ;
 variableDeclarationStatement : ( 'var' identifierList | variableDeclaration ) ;
 
 //___Assembler___
-inlineAssemblyBlock : '{' assemblyItem* '}' ;
+inlineAssemblyBlock : '{' assemblyStatement* '}' ;
+
+assemblyStatement:assemblyItem;
 
 assemblyItem : identifier| assemblyItemCase|assemblySwitchStatement|assemblyItemDefault | functionalAssemblyExpression
              | inlineAssemblyBlock | assemblyLabels| assemblyFunctionCall | assemblerLocalVariables | assemblerLoopAndLocalVariables | addressContract
