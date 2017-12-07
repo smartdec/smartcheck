@@ -748,7 +748,7 @@
     </Patterns>
     </Rule>
     <Rule>
-        <RuleId>SOLIDITY_USING_NON_PAYABLE_FALLBACK</RuleId>
+        <RuleId>SOLIDITY_NO_PAYABLE_FALLBACK</RuleId>
         <Patterns>
             <!--Фиксирует ситуацию, когда в fallback функции нет "payable"-->
             <Pattern patternId="86c34a">
