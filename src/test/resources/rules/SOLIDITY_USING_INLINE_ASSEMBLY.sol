@@ -10,4 +10,9 @@ pragma solidity ^0.4.0;
                 extcodecopy(_addr, add(o_code, 0x20), 0, size)
             }
         }
+        function isContract(address addr) private returns (bool) {
+            uint _size;
+            assembly { _size := extcodesize(addr) }
+            return _size > 0;
+        }
     }
