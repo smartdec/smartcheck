@@ -7,7 +7,7 @@ contract C {
     function returnsenderbalance() pure returns (uint){
         return a;
     }
-// <yes> <report> SOLIDITY_SHOULD_BE_PURE_BUT_IS_NOT bca409
+// <_yes> <report> SOLIDITY_SHOULD_BE_PURE_BUT_IS_NOT bca409
     function returnsenderbalance() returns (uint){
         return a;
     }

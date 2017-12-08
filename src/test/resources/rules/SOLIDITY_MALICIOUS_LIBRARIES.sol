@@ -1,4 +1,4 @@
-// <yes> <report> SOLIDITY_MALICIOUS_LIBRARIES a0298c
+// <_yes> <report> SOLIDITY_MALICIOUS_LIBRARIES a0298c
 library x{
     function foo();
 }

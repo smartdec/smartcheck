@@ -51,30 +51,33 @@
     <Rule>
         <RuleId>SOLIDITY_DOS_WITH_THROW</RuleId>
         <Patterns>
+            <!-- пока отключаем -->
             <!-- фиксирует конструкцию: "if (... внешний вызов ...) {throw, revert}"-->
-            <Pattern patternId="637fdc">
+            <!-- <Pattern patternId="637fdc">
                 <Categories>
                     <Category>Solidity</Category>
                 </Categories>
                 <Severity>3</Severity>
                 <XPath>//ifStatement[ifCondition//externalFunctionCall][block/statement//throwRevertStatement]</XPath>
-            </Pattern>
+            </Pattern> -->
+            <!-- пока отключаем -->
             <!-- фиксирует конструкцию: "for (... внешний вызов ...)"-->
-            <Pattern patternId="efb788">
+            <!-- <Pattern patternId="efb788">
                 <Categories>
                     <Category>Solidity</Category>
                 </Categories>
                 <Severity>2</Severity>
                 <XPath>//forStatement/expression//externalFunctionCall</XPath>
-            </Pattern>
+            </Pattern> -->
+            <!-- пока отключаем -->
             <!-- фиксирует конструкцию: "while (... внешний вызов ...)"-->
-            <Pattern patternId="04242c">
+            <!-- <Pattern patternId="04242c">
                 <Categories>
                     <Category>Solidity</Category>
                 </Categories>
                 <Severity>2</Severity>
                 <XPath>//whileStatement/whileCondition//externalFunctionCall</XPath>
-            </Pattern>
+            </Pattern> -->
         </Patterns>
     </Rule>
     <Rule>
@@ -153,14 +156,15 @@
     <Rule>
         <RuleId>SOLIDITY_INTEGER_DIVISION</RuleId>
         <Patterns>
+            <!-- пока отключаем -->
             <!--Фиксируется конструкция: целое число / целое число-->
-            <Pattern patternId="8e0621">
+            <!-- <Pattern patternId="8e0621">
                 <Categories>
                     <Category>Solidity</Category>
                 </Categories>
                 <Severity>1</Severity>
                 <XPath>//expression[expression[1]//numberLiteral][muldivOperator/divOperator][expression[2]//numberLiteral]</XPath>
-            </Pattern>
+            </Pattern> -->
         </Patterns>
     </Rule>
     <Rule>
@@ -183,14 +187,15 @@
     <Rule>
         <RuleId>SOLIDITY_MALICIOUS_LIBRARIES</RuleId>
         <Patterns>
+            <!-- пока отключаем -->
             <!--Фиксируется любое определение библиотек-->
-            <Pattern patternId="a0298c">
+            <!-- <Pattern patternId="a0298c">
                 <Categories>
                     <Category>Solidity</Category>
                 </Categories>
                 <Severity>1</Severity>
                 <XPath>//contractDefinition[text()[1]="library"]</XPath>
-            </Pattern>
+            </Pattern> -->
         </Patterns>
     </Rule>
     <Rule>
@@ -301,8 +306,9 @@
                 <XPath>//statement[simpleStatement//functionCall[internalFunctionCall or externalFunctionCall]//callArguments[ not(callArgument//expression[matches(text()[1],"^>=|>|lt |lt =$")]) and callArgument//expression[environmentalVariableDefinition[matches(text()[1],"^block.timestamp|now$")]]]
                     or simpleStatement/expressionStatement//expression[matches(text()[1],"^=$") and expression//environmentalVariableDefinition[matches(text()[1],"^block.timestamp|now$")]]]</XPath>
             </Pattern>
+            <!-- пока отключаем -->
             <!--Фиксируется все вхождения block.timestamp или now-->
-            <Pattern patternId="afb67a">
+            <!-- <Pattern patternId="afb67a">
                 <Categories>
                     <Category>Solidity</Category>
                 </Categories>
@@ -310,7 +316,7 @@
                 <XPath>
                     //expression/environmentalVariableDefinition[matches(text()[1],"block.timestamp|now")]/ancestor-or-self::statement
                 </XPath>
-            </Pattern>
+            </Pattern> -->
         </Patterns>
     </Rule>
     <Rule>
@@ -408,23 +414,18 @@
                 <!--Writing to state variables - лучше сделать через флаги-->
                 <!--Emitting events - лучше сделать через флаги-->
                 <!--Creating other contracts - лучше сделать через флаги-->
-
+                <!--Calling any function not marked view or pure:- лучше сделать через флаги-->
                 <XPath>
                     //functionDefinition[stateMutability/viewType][
-                <!--Using selfdestruct and it's alias suicide:-->
-                    block/statement//functionCall/internalFunctionCall/functionName/identifier[matches(text()[1],"^selfdestruct|suicide$")]
-                or
-                <!--Sending Ether via calls:-->
-                    block/statement//functionCall//externalFunctionCallNotThis/functionNameAndArgs/functionName/identifier[matches(text()[1],"^send|transfer$")]
-
-                 <!--Calling any function not marked view or pure:- лучше сделать через флаги-->
-
-                <!--Using low-level calls:-->
-                or
-                    block/statement//functionCall//externalFunctionCallNotThis/functionNameAndArgs/functionName/identifier[matches(text()[1],"^call|delegatecall|callcode$")]
-                or
-                <!--Using inline assembly that contains certain opcodes:-->
-                    block/statement//inlineAssemblyStatement]
+                        <!--Using selfdestruct and it's alias suicide:-->
+                        block/statement//functionCall/internalFunctionCall/functionName/identifier[matches(text()[1],"^selfdestruct|suicide$")]
+                        <!--Sending Ether via calls:-->
+                        or block/statement//functionCall//externalFunctionCallNotThis/functionNameAndArgs/functionName/identifier[matches(text()[1],"^send|transfer$")]
+                        <!--Using low-level calls:-->
+                        or block/statement//functionCall//externalFunctionCallNotThis/functionNameAndArgs/functionName/identifier[matches(text()[1],"^call|delegatecall|callcode$")]
+                        <!--Using inline assembly that contains certain opcodes:-->
+                        or block/statement//inlineAssemblyStatement
+                    ]
                 </XPath>
             </Pattern>
         </Patterns>
@@ -432,33 +433,30 @@
     <Rule>
         <RuleId>SOLIDITY_SHOULD_BE_VIEW_BUT_IS_NOT</RuleId>
         <Patterns>
-            <Pattern patternId="ad1827">
+            <!-- пока отключаем -->
+            <!-- <Pattern patternId="ad1827">
                 <Categories>
                     <Category>Solidity</Category>
                 </Categories>
                 <Severity>0</Severity>
-                <!--Writing to state variables - лучше сделать через флаги-->
-                <!--Emitting events - лучше сделать через флаги-->
-                <!--Creating other contracts - лучше сделать через флаги-->
+                <!-Writing to state variables - лучше сделать через флаги ->
+                <!-Emitting events - лучше сделать через флаги ->
+                <!-Creating other contracts - лучше сделать через флаги ->
+                <!-Calling any function not marked view or pure:- лучше сделать через флаги ->
 
                 <XPath>
                     //functionDefinition[not(identifier=//ancestor::*/contractDefinition/identifier)][not(stateMutability/viewType) and not(stateMutability/constantType) and not(stateMutability/pureType)][block][
-                    <!--Using selfdestruct and it's alias suicide:-->
-                    not(block/statement//functionCall/internalFunctionCall/functionName/identifier[matches(text()[1],"^selfdestruct|suicide$")])
-                    and
-                    <!--Sending Ether via calls:-->
-                    not(block/statement//functionCall//externalFunctionCallNotThis/functionNameAndArgs/functionName/identifier[matches(text()[1],"^send|transfer$")])
-
-                    <!--Calling any function not marked view or pure:- лучше сделать через флаги-->
-
-                    <!--Using low-level calls:-->
-                    and
-                    not(block/statement//functionCall//externalFunctionCallNotThis/functionNameAndArgs/functionName/identifier[matches(text()[1],"^call|delegatecall|callcode$")])
-                    and
-                    <!--Using inline assembly that contains certain opcodes:-->
-                    not(block/statement//inlineAssemblyStatement)]
+                        <!-Using selfdestruct and it's alias suicide: ->
+                        not(block/statement//functionCall/internalFunctionCall/functionName/identifier[matches(text()[1],"^selfdestruct|suicide$")])
+                        <!-Sending Ether via calls: ->
+                        and not(block/statement//functionCall//externalFunctionCallNotThis/functionNameAndArgs/functionName/identifier[matches(text()[1],"^send|transfer$")])
+                        <!-Using low-level calls: ->
+                        and not(block/statement//functionCall//externalFunctionCallNotThis/functionNameAndArgs/functionName/identifier[matches(text()[1],"^call|delegatecall|callcode$")])
+                        <!-Using inline assembly that contains certain opcodes: ->
+                        and not(block/statement//inlineAssemblyStatement)
+                    ]
                 </XPath>
-            </Pattern>
+            </Pattern> -->
         </Patterns>
     </Rule>
     <Rule>
@@ -471,24 +469,19 @@
                 <Severity>0</Severity>
                 <XPath>
                     //functionDefinition[stateMutability/pureType][
-                    <!--Accessing this.balance or <address>.balance: using .balance or this.balance-->
-                    block/statement//functionCall//externalFunctionCallNotThis/functionNameAndArgs[matches(text()[1],"^.$")][functionName/identifier[matches(text()[1],"^balance$")]]
-                    or //environmentalVariableDefinition[matches(text()[1],"^this.balance$")]
-                    <!--Accessing any of the members of block, tx, msg (with the exception of msg.sig and msg.data)-->
-                    or
-                    //environmentalVariableDefinition[matches(text()[1],"^msg.value|msg.gas|msg.sender|block.timestamp|tx.origin|block.blockhash|block.coinbase|block.difficulty|block.gaslimit|block.number|block.blockhash|block.coinbase|tx.gasprice$")]
-                    or
-                    <!--Using selfdestruct and it's alias suicide:-->
-                    block/statement//functionCall/internalFunctionCall/functionName/identifier[matches(text()[1],"^selfdestruct|suicide$")]
-                    or
-                    <!--Sending Ether via calls:-->
-                    block/statement//functionCall//externalFunctionCallNotThis/functionNameAndArgs/functionName/identifier[matches(text()[1],"^send|transfer$")]
-                    <!--Using low-level calls:-->
-                    or
-                    block/statement//functionCall//externalFunctionCallNotThis/functionNameAndArgs/functionName/identifier[matches(text()[1],"^call|delegatecall|callcode$")]
-                    or
-                    <!--Using inline assembly that contains certain opcodes:-->
-                    block/statement//inlineAssemblyStatement
+                        <!--Accessing this.balance or <address>.balance: using .balance or this.balance-->
+                        block/statement//functionCall//externalFunctionCallNotThis/functionNameAndArgs[matches(text()[1],"^.$")][functionName/identifier[matches(text()[1],"^balance$")]]
+                        or //environmentalVariableDefinition[matches(text()[1],"^this.balance$")]
+                        <!--Accessing any of the members of block, tx, msg (with the exception of msg.sig and msg.data)-->
+                        or //environmentalVariableDefinition[matches(text()[1],"^msg.value|msg.gas|msg.sender|block.timestamp|tx.origin|block.blockhash|block.coinbase|block.difficulty|block.gaslimit|block.number|block.blockhash|block.coinbase|tx.gasprice$")]
+                        <!--Using selfdestruct and it's alias suicide:-->
+                        or block/statement//functionCall/internalFunctionCall/functionName/identifier[matches(text()[1],"^selfdestruct|suicide$")]
+                        <!--Sending Ether via calls:-->
+                        or block/statement//functionCall//externalFunctionCallNotThis/functionNameAndArgs/functionName/identifier[matches(text()[1],"^send|transfer$")]
+                        <!--Using low-level calls:-->
+                        or block/statement//functionCall//externalFunctionCallNotThis/functionNameAndArgs/functionName/identifier[matches(text()[1],"^call|delegatecall|callcode$")]
+                        <!--Using inline assembly that contains certain opcodes:-->
+                        or block/statement//inlineAssemblyStatement
                     ]
                 </XPath>
             </Pattern>
@@ -497,35 +490,31 @@
     <Rule>
         <RuleId>SOLIDITY_SHOULD_BE_PURE_BUT_IS_NOT</RuleId>
         <Patterns>
-            <Pattern patternId="bca409">
+            <!-- пока отключаем -->
+            <!-- <Pattern patternId="bca409">
                 <Categories>
                     <Category>Solidity</Category>
                 </Categories>
                 <Severity>0</Severity>
                 <XPath>
                     //functionDefinition[not(identifier=//ancestor::*/contractDefinition/identifier)][not(stateMutability/pureType) and not(stateMutability/constantType) and not(stateMutability/viewType)][block][
-                    <!--Accessing this.balance or <address>.balance: using .balance or this.balance-->
-                    not(block/statement//functionCall//externalFunctionCallNotThis/functionNameAndArgs[matches(text()[1],"^.$")][functionName/identifier[matches(text()[1],"^balance$")]])
-                    and not(block/statement//environmentalVariableDefinition[matches(text()[1],"^this.balance$")])
-                    <!--Accessing any of the members of block, tx, msg (with the exception of msg.sig and msg.data)-->
-                    and
-                    not(block/statement//environmentalVariableDefinition[matches(text()[1],"^msg.value|msg.gas|msg.sender|block.timestamp|tx.origin|block.blockhash|block.coinbase
-                    |block.difficulty|block.gaslimit|block.number|block.blockhash|block.coinbase|tx.gasprice$")])
-                    and
-                    <!--Using selfdestruct and it's alias suicide:-->
-                    not(block/statement//functionCall/internalFunctionCall/functionName/identifier[matches(text()[1],"^selfdestruct|suicide$")])
-                    and
-                    <!--Sending Ether via calls:-->
-                    not(block/statement//functionCall//externalFunctionCallNotThis/functionNameAndArgs/functionName/identifier[matches(text()[1],"^send|transfer$")])
-                    <!--Using low-level calls:-->
-                    and
-                    not(block/statement//functionCall//externalFunctionCallNotThis/functionNameAndArgs/functionName/identifier[matches(text()[1],"^call|delegatecall|callcode$")])
-                    and
-                    <!--Using inline assembly that contains certain opcodes:-->
-                    not(block/statement//inlineAssemblyStatement)
+                        <!-Accessing this.balance or <address>.balance: using .balance or this.balance ->
+                        not(block/statement//functionCall//externalFunctionCallNotThis/functionNameAndArgs[matches(text()[1],"^.$")][functionName/identifier[matches(text()[1],"^balance$")]])
+                        and not(block/statement//environmentalVariableDefinition[matches(text()[1],"^this.balance$")])
+                        <!-Accessing any of the members of block, tx, msg (with the exception of msg.sig and msg.data) ->
+                        and not(block/statement//environmentalVariableDefinition[matches(text()[1],"^msg.value|msg.gas|msg.sender|block.timestamp|tx.origin|block.blockhash|block.coinbase
+                        |block.difficulty|block.gaslimit|block.number|block.blockhash|block.coinbase|tx.gasprice$")])
+                        <!-Using selfdestruct and it's alias suicide: ->
+                        and not(block/statement//functionCall/internalFunctionCall/functionName/identifier[matches(text()[1],"^selfdestruct|suicide$")])
+                        <!-Sending Ether via calls: ->
+                        and not(block/statement//functionCall//externalFunctionCallNotThis/functionNameAndArgs/functionName/identifier[matches(text()[1],"^send|transfer$")])
+                        <!-Using low-level calls: ->
+                        and not(block/statement//functionCall//externalFunctionCallNotThis/functionNameAndArgs/functionName/identifier[matches(text()[1],"^call|delegatecall|callcode$")])
+                        <!-Using inline assembly that contains certain opcodes: ->
+                        and not(block/statement//inlineAssemblyStatement)
                     ]
                 </XPath>
-            </Pattern>
+            </Pattern> -->
         </Patterns>
     </Rule>
     <Rule>
@@ -658,8 +647,9 @@
                     //contractDefinition[not(identifier[matches(text()[1],"SafeMath")])]//expression[last()][descendant-or-self::*[divOperator or divRemOperator or divRemLvalueOperator or divLvalueOperator]]/ancestor-or-self::expression[last()]
                 </XPath>
             </Pattern>
+            <!-- пока отключаем -->
             <!--Фиксирует все вхождения + с константой,+= с константой, ++,-->
-            <Pattern patternId="50dc28">
+            <!-- <Pattern patternId="50dc28">
                 <Categories>
                     <Category>Solidity</Category>
                 </Categories>
@@ -667,7 +657,7 @@
                 <XPath>
                     //contractDefinition[not(identifier[matches(text()[1],"SafeMath")])]//expression[last()][descendant-or-self::*[plusminusOperator[text()[1]="+"]/parent::*[expression/primaryExpression/numberLiteral] or lvalueOperator[plusLvalueOperator]/parent::*[expression/primaryExpression/numberLiteral] or incrementOperator]]/ancestor-or-self::expression[last()]
                 </XPath>
-            </Pattern>
+            </Pattern> -->
             <!--Фиксирует все вхождения +, += где нет сложения с константой-->
             <Pattern patternId="61c5ab">
                 <Categories>
