@@ -1,7 +1,7 @@
 pragma solidity ^0.4.11;
 
 contract SolidityUncheckedSend {
-// <yes> <report> SOLIDITY_SHOULD_BE_VIEW_BUT_IS_NOT ad1827
+// <_yes> <report> SOLIDITY_SHOULD_BE_VIEW_BUT_IS_NOT ad1827
         function unseatKing(address a, uint w) returns (uint){
             x.job(10);
         }
