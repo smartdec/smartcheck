@@ -57,7 +57,7 @@
                     <Category>Solidity</Category>
                 </Categories>
                 <Severity>3</Severity>
-                <XPath>//ifStatement[ifCondition//externalFunctionCall][block/statement//throwRevertStatement or block/statement//simpleStatement/expressionStatement/expression/primaryExpression/identifier[text()[1]="revert"]]</XPath>
+                <XPath>//ifStatement[ifCondition//externalFunctionCall][block/statement//throwRevertStatement]</XPath>
             </Pattern>
             <!-- фиксирует конструкцию: "for (... внешний вызов ...)"-->
             <Pattern patternId="efb788">
@@ -222,7 +222,7 @@
     <Rule>
         <RuleId>SOLIDITY_REDUNDANT_FALLBACK_REJECT</RuleId>
         <Patterns>
-            <!--Фиксируется случаи, когда версия компилятора больше или равна 0.4.0, контракт содержит fallback функцию типа payable, в определении которой есть throw -->
+            <!--Фиксируется случаи, когда версия компилятора больше или равна 0.4.0, контракт содержит fallback функцию типа payable, в определении которой есть throw или revert() -->
             <Pattern patternId="b85a32">
                 <Categories>
                     <Category>Solidity</Category>
@@ -719,7 +719,7 @@
     <Rule>
         <RuleId>SOLIDITY_REVERT_REQUIRE</RuleId>
         <Patterns>
-            <!--Фиксирует конструкцию: "if (...){revert();}"-->
+            <!--Фиксирует конструкцию: "if (...){revert(); или throw;}"-->
             <Pattern patternId="c56b12">
                 <Categories>
                     <Category>Solidity</Category>
@@ -770,7 +770,7 @@
                     //contractDefinition[not(contractPartDefinition/functionFallBackDefinition)]
                 </XPath>
             </Pattern>
-            <!--Фиксирует ситуацию, когда в контракте есть payable fallback функция, которая содержит только throw-->
+            <!--Фиксирует ситуацию, когда в контракте есть payable fallback функция, которая содержит только throw или только revert()-->
             <Pattern patternId="12fa3c">
                 <Categories>
                     <Category>Solidity</Category>
