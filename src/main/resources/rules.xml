@@ -784,7 +784,7 @@
                 </Categories>
                 <Severity>1</Severity>
                 <XPath>
-                    //statement/inlineAssemblyStatement
+                    //statement/inlineAssemblyStatement/inlineAssemblyBlock/assemblyStatement[not(assemblyItem/assemblerLocalVariables[matches(text()[1],"^:=$")][functionalAssemblyExpression/identifier[matches(text()[1],"^extcodesize$")]])]/ancestor::inlineAssemblyStatement
                 </XPath>
             </Pattern>
         </Patterns>
