@@ -248,13 +248,15 @@
     <Rule>
         <RuleId>SOLIDITY_SEND</RuleId>
         <Patterns>
-            <!--Фиксируется использование функции send-->
+            <!--Фиксируется использование функции send, в случаях: if (..send()){revert() или throw} и require или assert от send-->
             <Pattern patternId="430636">
                 <Categories>
                     <Category>Solidity</Category>
                 </Categories>
                 <Severity>3</Severity>
-                <XPath>//functionName/identifier[text()[1]="send"]</XPath>
+                <XPath>
+                    //functionName/identifier[text()[1]="send"][ancestor::ifCondition/parent::*[block//statement/throwRevertStatement] or ancestor::internalFunctionCall/functionName/identifier[matches(text()[1],"^require|assert$")]]
+                </XPath>
             </Pattern>
         </Patterns>
     </Rule>
