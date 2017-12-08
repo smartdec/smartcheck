@@ -8,6 +8,8 @@ contract SolidityUncheckedSend {
         a.send(w);
         // <yes> <report> SOLIDITY_UNCHECKED_CALL f39eed
         a.delegatecall(w);
+        // <yes> <report> SOLIDITY_UNCHECKED_CALL f39eed
+        a.callcode(w);
     }
     function delegatecallSetN(address _e, uint _n) {
         if (!_e.delegatecall(bytes(sha3("setN(uint256)"), u))) throw;
@@ -19,17 +21,23 @@ contract SolidityUncheckedSend {
         if (!_e.send(bytes(sha3("setN(uint256)"), u))) throw;
     }
     function delegatecallSetN(address _e, uint _n) {
-     // <yes> <report> SOLIDITY_UNCHECKED_CALL f39eed
-        requre(e.call(bytes(sha3("setN(uint256)"), u)));
+        require(e.call(bytes(sha3("setN(uint256)"), u)));
     }
     function delegatecallSetN(address _e, uint _n) {
         assert(_e.send(bytes(sha3("setN(uint256)"), u)));
     }
     function delegatecallSetN(address _e, uint _n) {
-         // <yes> <report> SOLIDITY_UNCHECKED_CALL a49egh <yes> <report> SOLIDITY_UNCHECKED_CALL f39eed
-            x=_e.send(bytes(sha3("setN(uint256)"), u));
+            assert(_e.callcode(bytes(sha3("setN(uint256)"), u)));
     }
-
+    function returnSend(address a) returns (bool) {
+        return a.send(1);
+    }
+    function functionArgumentSend(address a) returns (bool) {
+        return checkArg(a.send(1));
+    }
+    function f1(){
+        bool x = y.send();
+        foo(a.send());
+        f.deff(d.send);
+    }
 }
-
-

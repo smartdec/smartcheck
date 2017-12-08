@@ -22,12 +22,6 @@ contract SolidityUncheckedSend {
 }
     contract SolidityUncheckedSend {
 
-        // <yes> <report> SOLIDITY_VISIBILITY b51ce0
-        uint x;
-        // <yes> <report> SOLIDITY_VISIBILITY 910067
-        function transfer() {
-
-        }
       // <yes> <report> SOLIDITY_VISIBILITY 910067
       function AccessManager(address _server, address _guardian) {
             server = _server;
