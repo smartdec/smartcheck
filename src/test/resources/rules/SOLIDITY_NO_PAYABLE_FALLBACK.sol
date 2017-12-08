@@ -5,7 +5,7 @@ contract StandardToken{
         throw;
     }
     function f1() payable {
-        revert();
+        return a;
     }
 }
 // <yes> <report> SOLIDITY_NO_PAYABLE_FALLBACK 70ac56
@@ -26,6 +26,7 @@ contract ERC20Token2{
     }
 }
 contract ERC20Token3{
+// <yes> <report> SOLIDITY_NO_PAYABLE_FALLBACK 12fa3c
     function () payable {
         revert();
     }

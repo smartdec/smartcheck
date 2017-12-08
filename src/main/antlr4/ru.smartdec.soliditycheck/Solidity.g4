@@ -308,7 +308,7 @@ statement
     | continueStatement ';'?
     | breakStatement ';'?
     | returnStatement ';'?
-    | throwStatement ';'?
+    | throwRevertStatement ';'?
     | simpleStatement ';'?
     | functionCallStatement
     | functionFallBackCall ';'?
@@ -339,7 +339,7 @@ breakStatement : 'break' ;
 
 returnStatement : 'return' '('? (expression ','?)* ')'? ;
 
-throwStatement : 'throw' ;
+throwRevertStatement : 'throw'|'revert' '(' ')' ;
 
 simpleStatement : variableDeclarationStatement expressionStatement?
                 | expressionStatement

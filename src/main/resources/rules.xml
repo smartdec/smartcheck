@@ -57,7 +57,7 @@
                     <Category>Solidity</Category>
                 </Categories>
                 <Severity>3</Severity>
-                <XPath>//ifStatement[ifCondition//externalFunctionCall][block/statement//throwStatement or block/statement//simpleStatement/expressionStatement/expression/primaryExpression/identifier[text()[1]="revert"]]</XPath>
+                <XPath>//ifStatement[ifCondition//externalFunctionCall][block/statement//throwRevertStatement or block/statement//simpleStatement/expressionStatement/expression/primaryExpression/identifier[text()[1]="revert"]]</XPath>
             </Pattern>
             <!-- фиксирует конструкцию: "for (... внешний вызов ...)"-->
             <Pattern patternId="efb788">
@@ -91,7 +91,7 @@
                 <XPath> //contractDefinition[identifier[matches(text()[1],"token|erc20","i")] or inheritanceSpecifier/userDefinedTypeName/identifier[matches(text()[1],"token|erc20","i")]]
                     //functionDefinition[block/statement][identifier[matches(text()[1],"^transfer(From)?$","i")]][returnsParameters/parameterList/parameter/typeName/elementaryTypeName[matches(text()[1],"bool")]]
                     [count(descendant-or-self::*[functionCall[internalFunctionCall/functionName/identifier
-                    [matches(text()[1],"revert|require|assert")]]] | descendant-or-self::*[statement/throwStatement])=0]
+                    [matches(text()[1],"require|assert")]]] | descendant-or-self::*[statement/throwRevertStatement])=0]
                 </XPath>
             </Pattern>
         </Patterns>
@@ -228,7 +228,7 @@
                     <Category>Solidity</Category>
                 </Categories>
                 <Severity>1</Severity>
-                <XPath>//sourceUnit[pragmaDirective/pragmaValue/version/versionConstraint[versionLiteral &gt;= "0.4.0"]]/contractDefinition/contractPartDefinition/functionFallBackDefinition[stateMutability/payableType][block/statement/throwStatement]</XPath>
+                <XPath>//sourceUnit[pragmaDirective/pragmaValue/version/versionConstraint[versionLiteral &gt;= "0.4.0"]]/contractDefinition/contractPartDefinition/functionFallBackDefinition[stateMutability/payableType][block/statement/throwRevertStatement]</XPath>
             </Pattern>
         </Patterns>
     </Rule>
@@ -727,7 +727,7 @@
                 <Severity>1</Severity>
                 <TruePositiveRate>3</TruePositiveRate>
                 <XPath>
-                    //ifStatement/block/statement/simpleStatement/expressionStatement/expression/functionCall/internalFunctionCall/functionName/identifier[matches(text()[1],"^revert$")]/ancestor-or-self::statement[last()]
+                    //ifStatement/block/statement/throwRevertStatement[matches(text()[1],"revert")]/ancestor-or-self::statement[last()]
                 </XPath>
             </Pattern>
         </Patterns>
@@ -777,7 +777,7 @@
                 </Categories>
                 <Severity>1</Severity>
                 <XPath>
-                    //functionFallBackDefinition[stateMutability/payableType]/block[count(descendant-or-self::statement)=1]/statement[throwStatement]/ancestor-or-self::functionFallBackDefinition
+                    //functionFallBackDefinition[stateMutability/payableType]/block[count(descendant-or-self::statement)=1]/statement[throwRevertStatement]/ancestor-or-self::functionFallBackDefinition
                 </XPath>
             </Pattern>
         </Patterns>
@@ -837,7 +837,7 @@
                 </Categories>
                 <Severity>1</Severity>
                 <XPath>
-                    //statement/throwStatement
+                    //statement/throwRevertStatement[matches(text()[1],"throw")]
                 </XPath>
             </Pattern>
         </Patterns>
