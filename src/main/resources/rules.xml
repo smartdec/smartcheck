@@ -772,7 +772,7 @@
                 </Categories>
                 <Severity>1</Severity>
                 <XPath>
-                    //statement/inlineAssemblyStatement[not(inlineAssemblerBlock[count(child::*[assemblyStatement/assemblyItem])=1]/assemblyStatement/assemblyItem/assemblerLocalVariables[matches(text()[1],"^:=$")][functionAssemblyExpression/identifier[matches(text()[1],"^extcodesize$")]])]
+                    //statement/inlineAssemblyStatement[not(inlineAssemblerBlock[count(descendant-or-self::*[assemblyStatement/assemblyItem])=1]/assemblyStatement/assemblyItem/assemblerLocalVariables[matches(text()[1],"^:=$")][functionAssemblyExpression/identifier[matches(text()[1],"^extcodesize$")]])]
                 </XPath>
             </Pattern>
         </Patterns>
