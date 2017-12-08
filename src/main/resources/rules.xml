@@ -727,7 +727,7 @@
                 <Severity>1</Severity>
                 <TruePositiveRate>3</TruePositiveRate>
                 <XPath>
-                    //ifStatement/block/statement/throwRevertStatement/ancestor-or-self::statement[last()]
+                    //functionDefinition//ifStatement/block/statement/throwRevertStatement/ancestor-or-self::statement[last()]
                 </XPath>
             </Pattern>
         </Patterns>
