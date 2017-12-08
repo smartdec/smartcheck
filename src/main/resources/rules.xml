@@ -404,7 +404,7 @@
         </Patterns>
     </Rule>
     <Rule>
-        <RuleId>SOLIDITY_VIEW_FUNCTIONS</RuleId>
+        <RuleId>SOLIDITY_VIEW_FUNCTION</RuleId>
         <Patterns>
             <Pattern patternId="189abf">
                 <Categories>
@@ -460,7 +460,7 @@
         </Patterns>
     </Rule>
     <Rule>
-        <RuleId>SOLIDITY_PURE_FUNCTIONS</RuleId>
+        <RuleId>SOLIDITY_PURE_FUNCTION</RuleId>
         <Patterns>
             <Pattern patternId="11314f">
                 <Categories>
@@ -777,7 +777,7 @@
     <Rule>
         <RuleId>SOLIDITY_USING_INLINE_ASSEMBLY</RuleId>
         <Patterns>
-            <!--Фиксирует конструкцию: "assembly"-->
+            <!--Фиксирует конструкцию: "assembly", кроме конструкции: assembly { ... := extcodesize(...) }-->
             <Pattern patternId="109cd5">
                 <Categories>
                     <Category>Solidity</Category>
