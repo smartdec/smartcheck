@@ -619,7 +619,7 @@
                 </Categories>
                 <Severity>1</Severity>
                 <XPath>
-                //statement//internalFunctionCall[functionName/identifier[matches(text()[1],"require")]][callArguments/callArgument//functionCall/externalFunctionCall]
+                //statement//internalFunctionCall[functionName/identifier[matches(text()[1],"^require|assert$")]][callArguments/callArgument//functionCall/externalFunctionCall]
             </XPath>
             </Pattern>
         </Patterns>
