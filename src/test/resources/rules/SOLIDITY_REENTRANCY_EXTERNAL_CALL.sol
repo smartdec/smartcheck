@@ -72,7 +72,7 @@ contract Bob1 {
     using SafeMath for uint;
     function transfer(address _to, uint256 _value) returns (bool) {
     // <yes> <report> SOLIDITY_REENTRANCY_EXTERNAL_CALL de222d
-        currentLeader.send(highestBid)
+        currentLeader.send(highestBid);
         balances[msg.sender] = balances[msg.sender].sub(_value);
         balances[_to] = balances[_to].add(_value);
         balances[_to] = balances[_to].add(_value, sum);
