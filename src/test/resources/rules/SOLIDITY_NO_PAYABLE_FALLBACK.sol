@@ -1,4 +1,5 @@
 pragma solidity ^0.4.18;
+
 contract StandardToken{
 // <yes> <report> SOLIDITY_NO_PAYABLE_FALLBACK 86c34a
     function () {
@@ -29,5 +30,15 @@ contract ERC20Token3{
 // <yes> <report> SOLIDITY_NO_PAYABLE_FALLBACK 12fa3c
     function () payable {
         revert();
+    }
+}
+library SafeMath {
+    function mul(uint256 a, uint256 b) internal pure returns (uint256) {
+        if (a == 0) {
+            return 0;
+        }
+        uint256 c = a * b;
+        assert(c / a == b);
+        return c;
     }
 }
