@@ -1,42 +1,55 @@
-contract GoodMarketPlace1 {
+pragma solidity ^0.4.19;
+
+contract GoodMarketPlace {
+
     function kill() public {
         suicide(msg.sender);
     }
 }
+
 contract GoodMarketPlace1 {
+
     function kill() payable {
-        suicide(msg.sender);
+        selfdestruct(msg.sender);
     }
 }
+
 contract GoodMarketPlace2 {
-    function someComp() {
+
+    address x;
+    address myAddress;
+    function someComp() payable{
         if (x.balance < 10 && myAddress.balance >= 10) x.send(10);
     }
 }
+
 contract GoodMarketPlace3 {
-    function deposit() payable {}
-    function foo() {a.transfer();}
+
+    uint a;
+    function deposit(address w){
+        w.transfer(9);
+    }
+    function deposit1() payable {}
+    function foo() {a=0;}
 }
-contract GoodMarketPlace4 {
-    function foo() {}
-}
+
 // <yes> <report> SOLIDITY_LOCKED_MONEY 30281d
-contract BadMarketPlace {
+contract GoodMarketPlace5 {
+
     function deposit() payable {}
     function foo() {}
 }
-contract BadMarketPlace {
+
+contract GoodMarketPlace6 {
+
+    address s;
     function deposit() payable {}
-    function foo(uint amount) {
-        someAddress.someFunction.value(amount)();
+    function foo(uint amount) payable {
+        s.call.value(amount)();
     }
 }
-contract BadMarketPlace {
-	function kill() onlyOwner(){
-		RequireDispose[msg.sender] = true;
-		if(ConfirmDispose()){
-			selfdestruct(msg.sender);
-		}
-    }
-    function deposit() payable {}
+
+library BadMarketPlace1 {
+
+    function foo() payable {}
 }

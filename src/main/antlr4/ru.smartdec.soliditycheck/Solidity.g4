@@ -1,7 +1,7 @@
 grammar Solidity;
 
 sourceUnit
-    : (pragmaDirective | importDirective | contractDefinition)* EOF
+    : (pragmaDirective | importDirective | contractDefinition | libraryDefinition | interfaceDefinition)* EOF
     ;
 
 pragmaDirective
@@ -29,9 +29,20 @@ importDirective
 importDeclaration : identifier ('as' identifier)? ;
 
 contractDefinition
-    : ( 'contract' | 'library' |'interface') identifier
-      ( 'is' inheritanceSpecifier (',' inheritanceSpecifier )* )?
-      '{' (contractPartDefinition ';'? )* '}'
+    : 'contract' identifier
+        ( 'is' inheritanceSpecifier (',' inheritanceSpecifier )* )?
+            '{' (contractPartDefinition ';'? )* '}'
+    ;
+libraryDefinition
+    :'library' identifier
+        ('is' inheritanceSpecifier (',' inheritanceSpecifier )* )?
+            '{' (contractPartDefinition ';'? )* '}'
+    ;
+
+interfaceDefinition
+    :'interface' identifier
+        ( 'is' inheritanceSpecifier (',' inheritanceSpecifier )* )?
+            '{' (contractPartDefinition ';'? )* '}'
     ;
 
 inheritanceSpecifier : userDefinedTypeName ( '(' expression ( ',' expression )* ')' )? ;
