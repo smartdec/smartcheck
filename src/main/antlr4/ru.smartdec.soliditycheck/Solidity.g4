@@ -200,7 +200,11 @@ callObject:callObjectExpressionSimple
           | externalFunctionCall
           | internalFunctionCall
           ;
-plusminusOperator:('+' | '-');
+plusminusOperator:plusOperator|minusOperator;
+
+plusOperator:'+';
+
+minusOperator:'-';
 
 twoPlusMinusOperator:decrementOperator | incrementOperator;
 

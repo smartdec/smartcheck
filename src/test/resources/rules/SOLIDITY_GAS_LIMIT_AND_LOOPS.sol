@@ -25,11 +25,19 @@ contract GasLimitAndLoops {
             x=8;
         }
         // <yes> <report> SOLIDITY_GAS_LIMIT_AND_LOOPS f6f853
+        for (uint i = 0; i < y.length; i=i+1){
+            x=8;
+        }
+        // <yes> <report> SOLIDITY_GAS_LIMIT_AND_LOOPS f6f853
         for (uint z = y.length; z <= max(y.length, 4); z += y.length){
             x=8;
         }
         // <yes> <report> SOLIDITY_GAS_LIMIT_AND_LOOPS 12cf32
         for ( i = y.length; i > 0 ; i--){
+            x=8;
+        }
+        // <yes> <report> SOLIDITY_GAS_LIMIT_AND_LOOPS 12cf32
+        for ( i = y.length; i > 0 ; i=i-1){
             x=8;
         }
         // <yes> <report> SOLIDITY_GAS_LIMIT_AND_LOOPS 12cf32

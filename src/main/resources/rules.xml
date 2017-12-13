@@ -141,7 +141,7 @@
                     <Category>Solidity</Category>
                 </Categories>
                 <Severity>2</Severity>
-                <XPath>//forStatement[expression[1][matches(text()[1],"&lt;|&lt; =")]/expression[2][not(primaryExpression/numberLiteral)] and expression[2][twoPlusMinusOperator/incrementOperator or lvalueOperator/plusLvalueOperator]]
+                <XPath>//forStatement[expression[1][matches(text()[1],"&lt;|&lt; =")]/expression[2][not(primaryExpression/numberLiteral)]][expression[2][twoPlusMinusOperator/incrementOperator or lvalueOperator/plusLvalueOperator or expression[2]/plusminusOperator/plusOperator]]
                 </XPath>
             </Pattern>
             <!-- for (<инициализация счетчика не числом>; <счетчик больше чем что угодно>; <уменьшение счетчика>)-->
@@ -150,8 +150,7 @@
                     <Category>Solidity</Category>
                 </Categories>
                 <Severity>2</Severity>
-                <XPath>
-                    //forStatement[simpleStatement[not(variableDeclarationStatement/variableDeclaration/expression/primaryExpression/numberLiteral)]][expression[1][matches(text()[1],"&gt;|&gt; =")]][expression[2][twoPlusMinusOperator/decrementOperator or lvalueOperator/minusLvalueOperator]]
+                <XPath>//forStatement[simpleStatement[not(variableDeclarationStatement/variableDeclaration/expression/primaryExpression/numberLiteral)]][expression[1][matches(text()[1],"&gt;|&gt; =")]][expression[2][twoPlusMinusOperator/decrementOperator or lvalueOperator/minusLvalueOperator or expression[2]/plusminusOperator/minusOperator]]
                 </XPath>
             </Pattern>
             <!--Фиксируется конструкция: while (в условии используется вызов функции)-->
@@ -653,7 +652,7 @@
                 </Categories>
                 <Severity>1</Severity>
                 <XPath>
-                    //contractDefinition[not(identifier[matches(text()[1],"SafeMath")])]//expression[last()][descendant-or-self::*[decrementOperator or plusminusOperator[text()[1]="-"] or minusLvalueOperator]]/ancestor-or-self::expression[last()]
+                    //contractDefinition[not(identifier[matches(text()[1],"SafeMath")])]//expression[last()][descendant-or-self::*[decrementOperator or plusOperator or minusLvalueOperator]]/ancestor-or-self::expression[last()]
                 </XPath>
             </Pattern>
             <!--Фиксирует все вхождения /,/=,%,%= -->
@@ -674,7 +673,7 @@
                 </Categories>
                 <Severity>0</Severity>
                 <XPath>
-                    //contractDefinition[not(identifier[matches(text()[1],"SafeMath")])]//expression[last()][descendant-or-self::*[plusminusOperator[text()[1]="+"]/parent::*[expression/primaryExpression/numberLiteral] or lvalueOperator[plusLvalueOperator]/parent::*[expression/primaryExpression/numberLiteral] or incrementOperator]]/ancestor-or-self::expression[last()]
+                    //contractDefinition[not(identifier[matches(text()[1],"SafeMath")])]//expression[last()][descendant-or-self::*[plusOperator/parent::*[expression/primaryExpression/numberLiteral] or lvalueOperator[plusLvalueOperator]/parent::*[expression/primaryExpression/numberLiteral] or incrementOperator]]/ancestor-or-self::expression[last()]
                 </XPath>
             </Pattern> -->
             <!--Фиксирует все вхождения +, += где нет сложения с константой-->
@@ -684,7 +683,7 @@
                 </Categories>
                 <Severity>1</Severity>
                 <XPath>
-                    //contractDefinition[not(identifier[matches(text()[1],"SafeMath")])]//expression[last()][descendant-or-self::*[plusminusOperator[text()[1]="+"]/parent::*[not(expression/primaryExpression/numberLiteral)] or lvalueOperator[plusLvalueOperator]/parent::*[not(expression/primaryExpression/numberLiteral)]]]/ancestor-or-self::expression[last()]
+                    //contractDefinition[not(identifier[matches(text()[1],"SafeMath")])]//expression[last()][descendant-or-self::*[plusOperator/parent::*[not(expression/primaryExpression/numberLiteral)] or lvalueOperator[plusLvalueOperator]/parent::*[not(expression/primaryExpression/numberLiteral)]]]/ancestor-or-self::expression[last()]
                 </XPath>
             </Pattern>
             <!--Фиксирует все вхождения *,**,*=-->
