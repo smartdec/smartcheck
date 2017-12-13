@@ -18,14 +18,10 @@ contract GasLimitAndLoops {
         while (max(6,4)<x) {
             x=1;
         }
-        // <yes> <report> SOLIDITY_GAS_LIMIT_AND_LOOPS f6f853
         for(uint bidderIndex = 0; bidderIndex < 1000; bidderIndex++) {
         }
         // <yes> <report> SOLIDITY_GAS_LIMIT_AND_LOOPS f6f853
         for (uint i = 0; i < y.length; i++){
-            x=8;
-        }
-        for (uint j = 0; j < y.length; j--){
             x=8;
         }
         // <yes> <report> SOLIDITY_GAS_LIMIT_AND_LOOPS f6f853

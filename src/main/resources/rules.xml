@@ -135,13 +135,24 @@
     <Rule>
         <RuleId>SOLIDITY_GAS_LIMIT_AND_LOOPS</RuleId>
         <Patterns>
-            <!--Фиксируется конструкция: for (...;...вызов функции или переменная) или for (переменная цикла равна expression; ... ; ...)-->
+            <!-- for (<инициализация счетчика>; <счетчик меньше чем не numberLiteral; <увеличение счетчика>)-->
             <Pattern patternId="f6f853">
                 <Categories>
                     <Category>Solidity</Category>
                 </Categories>
                 <Severity>2</Severity>
-                <XPath>//forStatement[expression[1]/expression[2][functionCall or primaryExpression/identifier] or simpleStatement/variableDeclarationStatement/variableDeclaration/expression]</XPath>
+                <XPath>//forStatement[expression[1][matches(text()[1],"&lt;|&lt; =")]/expression[2][not(primaryExpression/numberLiteral)] and expression[2][twoPlusMinusOperator/incrementOperator or lvalueOperator/plusLvalueOperator]]
+                </XPath>
+            </Pattern>
+            <!-- for (<инициализация счетчика не числом>; <счетчик больше чем что угодно>; <уменьшение счетчика>)-->
+            <Pattern patternId="12cf32">
+                <Categories>
+                    <Category>Solidity</Category>
+                </Categories>
+                <Severity>2</Severity>
+                <XPath>
+                    //forStatement[simpleStatement[not(variableDeclarationStatement/variableDeclaration/expression/primaryExpression/numberLiteral)]][expression[1][matches(text()[1],"&gt;|&gt; =")]][expression[2][twoPlusMinusOperator/decrementOperator or lvalueOperator/minusLvalueOperator]]
+                </XPath>
             </Pattern>
             <!--Фиксируется конструкция: while (в условии используется вызов функции)-->
             <Pattern patternId="38f6c7">
