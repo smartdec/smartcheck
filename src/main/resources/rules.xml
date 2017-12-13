@@ -120,7 +120,8 @@
             <!--Фиксирует конструкции: имя контракта содержит token или erc20 либо наследуется от контракта содержащего такое в названии.
             В этом контракте есть определение функции, содержащей в названии transfer или transferFrom, возвращающей значение типа bool, которая не является интерфейсом.
             В определении этой функции не содержит return false или return идентификатор-->
-            <Pattern patternId="b180ca">
+            <!-- пока отключаем -->
+            <!-- <Pattern patternId="b180ca">
                 <Categories>
                     <Category>Solidity</Category>
                 </Categories>
@@ -129,7 +130,7 @@
                 //contractDefinition[identifier[matches(text()[1],"token|erc20","i")]  or inheritanceSpecifier/userDefinedTypeName/identifier[matches(text()[1],"token|erc20","i")]]
                 //functionDefinition[block/statement][identifier[matches(text()[1],"^transfer(From)?$","i")]][returnsParameters/parameterList/parameter/typeName/elementaryTypeName[matches(text()[1],"bool")]][count(descendant-or-self::*[returnStatement/expression/primaryExpression[booleanLiteral[matches(text()[1],"false")] or identifier]])=0]
             </XPath>
-            </Pattern>
+            </Pattern> -->
         </Patterns>
     </Rule>
     <Rule>
