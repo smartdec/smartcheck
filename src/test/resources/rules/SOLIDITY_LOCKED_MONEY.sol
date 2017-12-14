@@ -49,6 +49,18 @@ contract GoodMarketPlace6 {
     }
 }
 
+// <yes> <report> SOLIDITY_LOCKED_MONEY 30281d
+contract GoodMarketPlace7 {
+
+     function() payable {}
+}
+
+// <yes> <report> SOLIDITY_LOCKED_MONEY 30281d
+contract GoodMarketPlace8 {
+
+    function() payable {}
+}
+
 library BadMarketPlace1 {
 
     function foo() payable {}

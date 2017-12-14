@@ -35,8 +35,7 @@ contractDefinition
     ;
 libraryDefinition
     :'library' identifier
-        ('is' inheritanceSpecifier (',' inheritanceSpecifier )* )?
-            '{' (contractPartDefinition ';'? )* '}'
+        '{' (contractPartDefinition ';'? )* '}'
     ;
 
 interfaceDefinition
@@ -211,7 +210,11 @@ callObject:callObjectExpressionSimple
           | externalFunctionCall
           | internalFunctionCall
           ;
-plusminusOperator:('+' | '-');
+plusminusOperator:minusOperator |plusOperator;
+
+minusOperator:'-';
+
+plusOperator:'+';
 
 twoPlusMinusOperator:decrementOperator | incrementOperator;
 

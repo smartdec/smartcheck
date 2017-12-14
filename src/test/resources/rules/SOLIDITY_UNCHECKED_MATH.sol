@@ -51,27 +51,29 @@ contract C {
 library SafeMath {
 
   function mul(uint256 a, uint256 b) internal constant returns (uint256) {
+   // <yes> <report> SOLIDITY_UNCHECKED_MATH 7dc23a
     uint256 c = a * b;
+    // <yes> <report> SOLIDITY_UNCHECKED_MATH 16dca5
     assert(a == 0 || c / a == b);
     return c;
   }
 
   function div(uint256 a, uint256 b) internal constant returns (uint256) {
-    // assert(b > 0); // Solidity automatically throws when dividing by 0
+    // <yes> <report> SOLIDITY_UNCHECKED_MATH 16dca5
     uint256 c = a / b;
-    // assert(a == b * c + a % b); // There is no case in which this doesn't hold
     return c;
   }
 
   function sub(uint256 a, uint256 b) internal constant returns (uint256) {
     assert(b <= a);
+     // <yes> <report> SOLIDITY_UNCHECKED_MATH 87b5ac
     return a - b;
   }
 
   function add(uint256 a, uint256 b) internal constant returns (uint256) {
+  // <yes> <report> SOLIDITY_UNCHECKED_MATH 61c5ab
     uint256 c = a + b;
     assert(c >= a);
     return c;
   }
-
 }
