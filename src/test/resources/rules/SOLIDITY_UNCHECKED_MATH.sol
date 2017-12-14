@@ -1,7 +1,7 @@
 pragma solidity ^0.4.18;
 
 contract C {
-  function f(uint a, uint b, uint c, uint d, uint e){
+    function f(uint a, uint b, uint c, uint d, uint e){
 // <yes> <report> SOLIDITY_UNCHECKED_MATH 61c5ab  <yes> <report> SOLIDITY_UNCHECKED_MATH 7dc23a
         d = a * (b + c);
 // <yes> <report> SOLIDITY_UNCHECKED_MATH 61c5ab
@@ -50,30 +50,40 @@ contract C {
 }
 library SafeMath {
 
-  function mul(uint256 a, uint256 b) internal constant returns (uint256) {
-   // <yes> <report> SOLIDITY_UNCHECKED_MATH 7dc23a
-    uint256 c = a * b;
-    // <yes> <report> SOLIDITY_UNCHECKED_MATH 16dca5
-    assert(a == 0 || c / a == b);
-    return c;
-  }
+    function mul(uint256 a, uint256 b) internal constant returns (uint256) {
+        uint256 c = a * b;
+        assert(a == 0 || c / a == b);
+        return c;
+    }
 
-  function div(uint256 a, uint256 b) internal constant returns (uint256) {
-    // <yes> <report> SOLIDITY_UNCHECKED_MATH 16dca5
-    uint256 c = a / b;
-    return c;
-  }
+    function div(uint256 a, uint256 b) internal constant returns (uint256) {
+        uint256 c = a / b;
+        return c;
+    }
 
-  function sub(uint256 a, uint256 b) internal constant returns (uint256) {
-    assert(b <= a);
-     // <yes> <report> SOLIDITY_UNCHECKED_MATH 87b5ac
-    return a - b;
-  }
+    function sub(uint256 a, uint256 b) internal constant returns (uint256) {
+        assert(b <= a);
+        return a - b;
+    }
 
-  function add(uint256 a, uint256 b) internal constant returns (uint256) {
-  // <yes> <report> SOLIDITY_UNCHECKED_MATH 61c5ab
-    uint256 c = a + b;
-    assert(c >= a);
-    return c;
-  }
+    function add(uint256 a, uint256 b) internal constant returns (uint256) {
+        uint256 c = a + b;
+        assert(c >= a);
+        return c;
+    }
+}
+library Math {
+
+    function mul(uint256 a, uint256 b) internal constant returns (uint256) {
+    // <yes> <report> SOLIDITY_UNCHECKED_MATH 7dc23a
+        uint256 c = a * b;
+        return c;
+    }
+}
+contract SafeMath {
+
+    function mul(uint256 a, uint256 b) internal constant returns (uint256) {
+        uint256 c = a * b;
+        return c;
+    }
 }
