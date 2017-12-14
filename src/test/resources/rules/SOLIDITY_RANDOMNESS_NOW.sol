@@ -2,7 +2,7 @@ pragma solidity ^0.4.16;
 
 contract C {
     function returnsenderbalance() pure returns (uint){
-    // <yes> <report> SOLIDITY_RANDOMNESS_NOW  afb67a
+    // <no> <report> SOLIDITY_RANDOMNESS_NOW  afb67a
         d=now+1;
     }
     //function GVTTeamAllocator() {
