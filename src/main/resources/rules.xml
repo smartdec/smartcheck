@@ -767,7 +767,7 @@
                 </Categories>
                 <Severity>1</Severity>
                 <XPath>
-                    //contractDefinition[contract]//functionFallBackDefinition[not(stateMutability/payableType)]
+                    //contractDefinition//functionFallBackDefinition[not(stateMutability/payableType)]
                 </XPath>
             </Pattern>
             <!--Фиксирует ситуацию, когда в контракте нет fallback функции-->
@@ -777,7 +777,7 @@
                 </Categories>
                 <Severity>1</Severity>
                 <XPath>
-                    //contractDefinition[contract]//contractDefinition[not(contractPartDefinition/functionFallBackDefinition)]
+                    //contractDefinition[not(contractPartDefinition/functionFallBackDefinition)]
                 </XPath>
             </Pattern>
             <!--Фиксирует ситуацию, когда в контракте есть payable fallback функция, которая содержит только throw или только revert()-->
@@ -787,7 +787,7 @@
                 </Categories>
                 <Severity>1</Severity>
                 <XPath>
-                    //contractDefinition[contract]//functionFallBackDefinition[stateMutability/payableType]/block[count(descendant-or-self::statement)=1]/statement[throwRevertStatement]/ancestor-or-self::functionFallBackDefinition
+                    //contractDefinition//functionFallBackDefinition[stateMutability/payableType]/block[count(descendant-or-self::statement)=1]/statement[throwRevertStatement]/ancestor-or-self::functionFallBackDefinition
                 </XPath>
             </Pattern>
         </Patterns>
