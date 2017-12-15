@@ -120,7 +120,8 @@
             <!--Фиксирует конструкции: имя контракта содержит token или erc20 либо наследуется от контракта содержащего такое в названии.
             В этом контракте есть определение функции, содержащей в названии transfer или transferFrom, возвращающей значение типа bool, которая не является интерфейсом.
             В определении этой функции не содержит return false или return идентификатор-->
-            <Pattern patternId="b180ca">
+            <!-- пока отключаем -->
+            <!-- <Pattern patternId="b180ca">
                 <Categories>
                     <Category>Solidity</Category>
                 </Categories>
@@ -129,7 +130,7 @@
                 //contractDefinition[identifier[matches(text()[1],"token|erc20","i")]  or inheritanceSpecifier/userDefinedTypeName/identifier[matches(text()[1],"token|erc20","i")]]
                 //functionDefinition[block/statement][identifier[matches(text()[1],"^transfer(From)?$","i")]][returnsParameters/parameterList/parameter/typeName/elementaryTypeName[matches(text()[1],"bool")]][count(descendant-or-self::*[returnStatement/expression/primaryExpression[booleanLiteral[matches(text()[1],"false")] or identifier]])=0]
             </XPath>
-            </Pattern>
+            </Pattern> -->
         </Patterns>
     </Rule>
     <Rule>
@@ -186,10 +187,11 @@
                     <Category>Solidity</Category>
                 </Categories>
                 <Severity>2</Severity>
-                <XPath>//contractDefinition[contractPartDefinition//functionDefinition/stateMutability/payableType]
+                <XPath>
+                    //contractDefinition[contractPartDefinition[functionDefinition/stateMutability/payableType or functionFallBackDefinition/stateMutability/payableType]]
                     [not(contractPartDefinition/functionDefinition/block//functionCall/internalFunctionCall/functionName/identifier[matches(text()[1],"^suicide|selfdestruct$")])]
                     [not(contractPartDefinition/functionDefinition/block//functionCall/externalFunctionCall/externalFunctionCallNotThis/functionNameAndArgs/functionName/identifier[matches(text()[1],"^transfer|send$")])]
-                    [not(contractPartDefinition/functionDefinition/block//functionCall/externalFunctionCall/externalFunctionCallNotThis/functionNameAndArgs/functionName/identifier[text()[1]="value"])]
+                    [not(contractPartDefinition/functionDefinition/block//functionCall/externalFunctionCall/externalFunctionCallNotThis/functionNameAndArgs/functionName/identifier[matches(text()[1],"^value$")])]
                 </XPath>
             </Pattern>
         </Patterns>
@@ -410,6 +412,14 @@
                 </Categories>
                 <Severity>0</Severity>
                 <XPath>//contractPartDefinition/functionDefinition[not(visibleType)]</XPath>
+            </Pattern>
+            <!-- фиксирует ситуацию, когда для fallback функции не определена видимость"-->
+            <Pattern patternId="d67c21">
+                <Categories>
+                    <Category>Solidity</Category>
+                </Categories>
+                <Severity>0</Severity>
+                <XPath>//contractPartDefinition/functionFallBackDefinition[not(visibleType)]</XPath>
             </Pattern>
             <!-- фиксирует ситуацию, когда для переменной состояния не определена видимость"-->
             <Pattern patternId="b51ce0">
@@ -652,7 +662,7 @@
                 </Categories>
                 <Severity>1</Severity>
                 <XPath>
-                    //contractDefinition[not(identifier[matches(text()[1],"SafeMath")])]//expression[last()][descendant-or-self::*[decrementOperator or plusminusOperator[text()[1]="-"] or minusLvalueOperator]]/ancestor-or-self::expression[last()]
+                    //expression[ancestor::contractDefinition[not(identifier[matches(text()[1],"SafeMath")])] or ancestor::libraryDefinition[not(identifier[matches(text()[1],"SafeMath")])]][last()][descendant-or-self::*[decrementOperator or minusOperator or minusLvalueOperator]]/ancestor-or-self::expression[last()]
                 </XPath>
             </Pattern>
             <!--Фиксирует все вхождения /,/=,%,%= -->
@@ -662,7 +672,7 @@
                 </Categories>
                 <Severity>1</Severity>
                 <XPath>
-                    //contractDefinition[not(identifier[matches(text()[1],"SafeMath")])]//expression[last()][descendant-or-self::*[divOperator or divRemOperator or divRemLvalueOperator or divLvalueOperator]]/ancestor-or-self::expression[last()]
+                    //expression[ancestor::contractDefinition[not(identifier[matches(text()[1],"SafeMath")])] or ancestor::libraryDefinition[not(identifier[matches(text()[1],"SafeMath")])]][last()][descendant-or-self::*[divOperator or divRemOperator or divRemLvalueOperator or divLvalueOperator]]/ancestor-or-self::expression[last()]
                 </XPath>
             </Pattern>
             <!-- пока отключаем -->
@@ -673,7 +683,7 @@
                 </Categories>
                 <Severity>0</Severity>
                 <XPath>
-                    //contractDefinition[not(identifier[matches(text()[1],"SafeMath")])]//expression[last()][descendant-or-self::*[plusminusOperator[text()[1]="+"]/parent::*[expression/primaryExpression/numberLiteral] or lvalueOperator[plusLvalueOperator]/parent::*[expression/primaryExpression/numberLiteral] or incrementOperator]]/ancestor-or-self::expression[last()]
+                    //expression[ancestor::contractDefinition[not(identifier[matches(text()[1],"SafeMath")])] or ancestor::libraryDefinition[not(identifier[matches(text()[1],"SafeMath")])]][last()][descendant-or-self::*[plusminusOperator[plusOperator]/parent::*[expression/primaryExpression/numberLiteral] or lvalueOperator[plusLvalueOperator]/parent::*[expression/primaryExpression/numberLiteral] or incrementOperator]]/ancestor-or-self::expression[last()]
                 </XPath>
             </Pattern> -->
             <!--Фиксирует все вхождения +, += где нет сложения с константой-->
@@ -683,23 +693,22 @@
                 </Categories>
                 <Severity>1</Severity>
                 <XPath>
-                    //contractDefinition[not(identifier[matches(text()[1],"SafeMath")])]//expression[last()][descendant-or-self::*[plusminusOperator[text()[1]="+"]/parent::*[not(expression/primaryExpression/numberLiteral)] or lvalueOperator[plusLvalueOperator]/parent::*[not(expression/primaryExpression/numberLiteral)]]]/ancestor-or-self::expression[last()]
+                    //expression[ancestor::contractDefinition[not(identifier[matches(text()[1],"SafeMath")])] or ancestor::libraryDefinition[not(identifier[matches(text()[1],"SafeMath")])]][last()][descendant-or-self::*[plusminusOperator[plusOperator]/parent::*[not(expression/primaryExpression/numberLiteral)] or lvalueOperator[plusLvalueOperator]/parent::*[not(expression/primaryExpression/numberLiteral)]]]/ancestor-or-self::expression[last()]
                 </XPath>
             </Pattern>
-            <!--Фиксирует все вхождения *,**,*=-->
+            <!--Фиксирует все вхождения *,**,*= в контракте-->
             <Pattern patternId="7dc23a">
                 <Categories>
                     <Category>Solidity</Category>
                 </Categories>
                 <Severity>2</Severity>
                 <XPath>
-                    //contractDefinition[not(identifier[matches(text()[1],"SafeMath")])]//expression[last()][descendant-or-self::*[mulLvalueOperator or powerOperator or mulOperator]]/ancestor-or-self::expression[last()]
+                    //expression[ancestor::contractDefinition[not(identifier[matches(text()[1],"SafeMath")])] or ancestor::libraryDefinition[not(identifier[matches(text()[1],"SafeMath")])]][last()][descendant-or-self::*[mulLvalueOperator or powerOperator or mulOperator]]/ancestor-or-self::expression[last()]
                 </XPath>
             </Pattern>
         </Patterns>
     </Rule>
     <Rule>
-
         <RuleId>SOLIDITY_UNDERFLOW_OVERFLOW</RuleId>
         <Patterns>
             <!--Фиксирует конструкцию: "for (...; i >= 0; ...) { ... }"-->
