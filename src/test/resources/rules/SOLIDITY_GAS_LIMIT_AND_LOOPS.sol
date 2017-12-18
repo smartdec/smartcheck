@@ -16,7 +16,7 @@ contract GasLimitAndLoops {
         // <yes> <report> SOLIDITY_GAS_LIMIT_AND_LOOPS f6f853
         for (uint bidderIndex = 0; bidderIndex < biddersCount; bidderIndex++) {
         }
-        // <yes> <report> SOLIDITY_GAS_LIMIT_AND_LOOPS f6f853
+        // <yes> <report> SOLIDITY_GAS_LIMIT_AND_LOOPS 12cf32
         for (uint i = proposalIndex.length; i > 0; i--) {
             p.supportingWeight -= _value;
         }
