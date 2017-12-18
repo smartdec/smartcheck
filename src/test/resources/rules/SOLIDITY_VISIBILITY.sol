@@ -1,30 +1,31 @@
-pragma solidity ^0.4.11;
+pragma solidity ^0.4.19;
 
-contract SolidityUncheckedSend {
+contract SolidityVisibility1 {
 
-    // <yes> <report> SOLIDITY_VISIBILITY b51ce0
+// <yes> <report> SOLIDITY_VISIBILITY b51ce0
     uint x;
-    // <yes> <report> SOLIDITY_VISIBILITY 910067
+// <yes> <report> SOLIDITY_VISIBILITY 910067
     function transfer() {
-
+        x=0;
     }
    function isServer(address sender) public constant returns (bool) {
-        return sender == server;
+        return sender == msg.sender;
+   }
+   uint private y;
+   function transfernew() external {
+   }
+   function internalAction() internal {
+   }
+   function () private {
+   }
+}
+contract SolidityVisibility2 {
+
+// <yes> <report> SOLIDITY_VISIBILITY 910067
+    function AccessManager(address _server, address _guardian) returns(address){
+        return _server;
     }
-    uint private y;
-    function transfer() external {
-
-    }
-
-    function internalAction() internal {
-
+// <yes> <report> SOLIDITY_VISIBILITY d67c21
+    function (){
     }
 }
-    contract SolidityUncheckedSend {
-
-      // <yes> <report> SOLIDITY_VISIBILITY 910067
-      function AccessManager(address _server, address _guardian) {
-            server = _server;
-            guardian = _guardian;
-        }
-    }
