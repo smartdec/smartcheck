@@ -186,10 +186,11 @@
                     <Category>Solidity</Category>
                 </Categories>
                 <Severity>2</Severity>
-                <XPath>//contractDefinition[contractPartDefinition//functionDefinition/stateMutability/payableType]
+                <XPath>
+                    //contractDefinition[contractPartDefinition[functionDefinition/stateMutability/payableType or functionFallBackDefinition/stateMutability/payableType]]
                     [not(contractPartDefinition/functionDefinition/block//functionCall/internalFunctionCall/functionName/identifier[matches(text()[1],"^suicide|selfdestruct$")])]
                     [not(contractPartDefinition/functionDefinition/block//functionCall/externalFunctionCall/externalFunctionCallNotThis/functionNameAndArgs/functionName/identifier[matches(text()[1],"^transfer|send$")])]
-                    [not(contractPartDefinition/functionDefinition/block//functionCall/externalFunctionCall/externalFunctionCallNotThis/functionNameAndArgs/functionName/identifier[text()[1]="value"])]
+                    [not(contractPartDefinition/functionDefinition/block//functionCall/externalFunctionCall/externalFunctionCallNotThis/functionNameAndArgs/functionName/identifier[matches(text()[1],"^value$")])]
                 </XPath>
             </Pattern>
         </Patterns>
@@ -410,6 +411,14 @@
                 </Categories>
                 <Severity>0</Severity>
                 <XPath>//contractPartDefinition/functionDefinition[not(visibleType)]</XPath>
+            </Pattern>
+            <!-- фиксирует ситуацию, когда для fallback функции не определена видимость"-->
+            <Pattern patternId="d67c21">
+                <Categories>
+                    <Category>Solidity</Category>
+                </Categories>
+                <Severity>0</Severity>
+                <XPath>//contractPartDefinition/functionFallBackDefinition[not(visibleType)]</XPath>
             </Pattern>
             <!-- фиксирует ситуацию, когда для переменной состояния не определена видимость"-->
             <Pattern patternId="b51ce0">
@@ -652,8 +661,7 @@
                 </Categories>
                 <Severity>1</Severity>
                 <XPath>
-                    //contractDefinition[not(identifier[matches(text()[1],"SafeMath")])]//expression[last()][descendant-or-self::*[decrementOperator or minusOperator or minusLvalueOperator]]/ancestor-or-self::expression[last()]
-                </XPath>
+                    //expression[ancestor::contractDefinition[not(identifier[matches(text()[1],"SafeMath")])] or ancestor::libraryDefinition[not(identifier[matches(text()[1],"SafeMath")])]][last()][descendant-or-self::*[decrementOperator or minusOperator or minusLvalueOperator]]/ancestor-or-self::expression[last()]                </XPath>
             </Pattern>
             <!--Фиксирует все вхождения /,/=,%,%= -->
             <Pattern patternId="16dca5">
@@ -662,8 +670,7 @@
                 </Categories>
                 <Severity>1</Severity>
                 <XPath>
-                    //contractDefinition[not(identifier[matches(text()[1],"SafeMath")])]//expression[last()][descendant-or-self::*[divOperator or divRemOperator or divRemLvalueOperator or divLvalueOperator]]/ancestor-or-self::expression[last()]
-                </XPath>
+                    //expression[ancestor::contractDefinition[not(identifier[matches(text()[1],"SafeMath")])] or ancestor::libraryDefinition[not(identifier[matches(text()[1],"SafeMath")])]][last()][descendant-or-self::*[divOperator or divRemOperator or divRemLvalueOperator or divLvalueOperator]]/ancestor-or-self::expression[last()]                </XPath>
             </Pattern>
             <!-- пока отключаем -->
             <!--Фиксирует все вхождения + с константой,+= с константой, ++,-->
@@ -673,8 +680,7 @@
                 </Categories>
                 <Severity>0</Severity>
                 <XPath>
-                    //contractDefinition[not(identifier[matches(text()[1],"SafeMath")])]//expression[last()][descendant-or-self::*[plusOperator/parent::*[expression/primaryExpression/numberLiteral] or lvalueOperator[plusLvalueOperator]/parent::*[expression/primaryExpression/numberLiteral] or incrementOperator]]/ancestor-or-self::expression[last()]
-                </XPath>
+                    //expression[ancestor::contractDefinition[not(identifier[matches(text()[1],"SafeMath")])] or ancestor::libraryDefinition[not(identifier[matches(text()[1],"SafeMath")])]][last()][descendant-or-self::*[plusminusOperator[plusOperator]/parent::*[expression/primaryExpression/numberLiteral] or lvalueOperator[plusLvalueOperator]/parent::*[expression/primaryExpression/numberLiteral] or incrementOperator]]/ancestor-or-self::expression[last()]                </XPath>
             </Pattern> -->
             <!--Фиксирует все вхождения +, += где нет сложения с константой-->
             <Pattern patternId="61c5ab">
@@ -683,8 +689,7 @@
                 </Categories>
                 <Severity>1</Severity>
                 <XPath>
-                    //contractDefinition[not(identifier[matches(text()[1],"SafeMath")])]//expression[last()][descendant-or-self::*[plusOperator/parent::*[not(expression/primaryExpression/numberLiteral)] or lvalueOperator[plusLvalueOperator]/parent::*[not(expression/primaryExpression/numberLiteral)]]]/ancestor-or-self::expression[last()]
-                </XPath>
+                    //expression[ancestor::contractDefinition[not(identifier[matches(text()[1],"SafeMath")])] or ancestor::libraryDefinition[not(identifier[matches(text()[1],"SafeMath")])]][last()][descendant-or-self::*[plusminusOperator[plusOperator]/parent::*[not(expression/primaryExpression/numberLiteral)] or lvalueOperator[plusLvalueOperator]/parent::*[not(expression/primaryExpression/numberLiteral)]]]/ancestor-or-self::expression[last()]                </XPath>
             </Pattern>
             <!--Фиксирует все вхождения *,**,*=-->
             <Pattern patternId="7dc23a">
@@ -693,8 +698,7 @@
                 </Categories>
                 <Severity>2</Severity>
                 <XPath>
-                    //contractDefinition[not(identifier[matches(text()[1],"SafeMath")])]//expression[last()][descendant-or-self::*[mulLvalueOperator or powerOperator or mulOperator]]/ancestor-or-self::expression[last()]
-                </XPath>
+                    //expression[ancestor::contractDefinition[not(identifier[matches(text()[1],"SafeMath")])] or ancestor::libraryDefinition[not(identifier[matches(text()[1],"SafeMath")])]][last()][descendant-or-self::*[mulLvalueOperator or powerOperator or mulOperator]]/ancestor-or-self::expression[last()]                </XPath>
             </Pattern>
         </Patterns>
     </Rule>
