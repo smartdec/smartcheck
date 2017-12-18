@@ -6,8 +6,11 @@ contract GasLimitAndLoops {
         while ( x > refundAddresses.dd()) { 
             d++;
         }
-        // <yes> <report> SOLIDITY_GAS_LIMIT_AND_LOOPS 38f6c7
-        while (refundAddresses.dd()<x) {
+        while ( x > 100) {
+            d++;
+        }
+        // <yes> <report> SOLIDITY_GAS_LIMIT_AND_LOOPS 17f23a
+        while (refundAddresses[5]<x) {
             a++;
         }
         // <yes> <report> SOLIDITY_GAS_LIMIT_AND_LOOPS f6f853
