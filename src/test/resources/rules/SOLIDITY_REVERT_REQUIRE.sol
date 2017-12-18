@@ -37,5 +37,11 @@ contract f{
         } else {
             revert();
         }
+    // <yes> <report> SOLIDITY_REVERT_REQUIRE c56b12
+        if(!ico_ended) {
+           eth_received = Add(eth_received, msg.value);
+        } else {
+           revert();
+        }
     }
 }
