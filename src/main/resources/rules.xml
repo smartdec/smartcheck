@@ -45,7 +45,8 @@
                 </Categories>
                 <Severity>3</Severity>
                 <XPath>
-                    //externalFunctionCall/externalFunctionCallNotThis/functionNameAndArgs[functionName/identifier[matches(text()[1],"^call$")] and functionName/identifier[matches(text()[1],"^value$")] and not(callArguments/callArgument)]</XPath>
+                    //externalFunctionCall/externalFunctionCallNotThis/functionNameAndArgs[functionName/identifier[matches(text()[1],"^call$")] and functionName/identifier[matches(text()[1],"^value$")] and not(callArguments/callArgument)]
+                </XPath>
             </Pattern>
         </Patterns>
     </Rule>
@@ -339,8 +340,10 @@
                     <Category>Solidity</Category>
                 </Categories>
                 <Severity>2</Severity>
-                <XPath>//statement[simpleStatement//functionCall[internalFunctionCall or externalFunctionCall]//callArguments[ not(callArgument//expression[matches(text()[1],"^>=|>|lt |lt =$")]) and callArgument//expression[environmentalVariableDefinition[matches(text()[1],"^block.timestamp|now$")]]]
-                    or simpleStatement/expressionStatement//expression[matches(text()[1],"^=$") and expression//environmentalVariableDefinition[matches(text()[1],"^block.timestamp|now$")]]]</XPath>
+                <XPath>
+                    //statement[simpleStatement//functionCall[internalFunctionCall or externalFunctionCall]//callArguments[ not(callArgument//expression[matches(text()[1],"^>=|>|lt |lt =$")]) and callArgument//expression[environmentalVariableDefinition[matches(text()[1],"^block.timestamp|now$")]]]
+                    or simpleStatement/expressionStatement//expression[matches(text()[1],"^=$") and expression//environmentalVariableDefinition[matches(text()[1],"^block.timestamp|now$")]]]
+                </XPath>
             </Pattern>
             <!-- пока отключаем -->
             <!--Фиксируется все вхождения block.timestamp или now-->
@@ -377,7 +380,8 @@
                     <Category>Solidity</Category>
                 </Categories>
                 <Severity>3</Severity>
-                <XPath>//externalFunctionCall/externalFunctionCallNotThis[functionNameAndArgs/functionName/identifier[matches(text()[1],"^call|delegatecall|send|callcode$")] and not(ancestor::ifCondition) and not(ancestor::internalFunctionCall[functionName/identifier[matches(text()[1],"^require|assert$")]]) and not(ancestor::returnStatement) and not(ancestor::functionCall[2]) and not(ancestor::variableDeclarationStatement)]
+                <XPath>
+                    //externalFunctionCall/externalFunctionCallNotThis[functionNameAndArgs/functionName/identifier[matches(text()[1],"^call|delegatecall|send|callcode$")] and not(ancestor::ifCondition) and not(ancestor::internalFunctionCall[functionName/identifier[matches(text()[1],"^require|assert$")]]) and not(ancestor::returnStatement) and not(ancestor::functionCall[2]) and not(ancestor::variableDeclarationStatement)]
                 </XPath>
             </Pattern>
         </Patterns>

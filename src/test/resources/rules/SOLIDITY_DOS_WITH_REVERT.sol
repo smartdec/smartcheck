@@ -21,7 +21,7 @@ contract Auction {
         // <yes> <report> SOLIDITY_DOS_WITH_REVERT 15ac23
         require(allocated[msg.sender].drps > 0 || allocated[msg.sender].drpu > 0);
         _;
-
+    }
 
     modifier only_token_holder2() {
         // <yes> <report> SOLIDITY_DOS_WITH_REVERT 15ac23
