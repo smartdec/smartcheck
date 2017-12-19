@@ -93,7 +93,7 @@ addressCall:'address' '('expression')';
 functionFallBackDefinition
     : 'function' parameterList
       ( functionCall | identifier | stateMutability |visibleType )*
-      returnsParameters? ( block ) ;
+      returnsParameters? ( block )? ;
 
 eventDefinition
     : 'event' identifier indexedParameterList 'anonymous'? ';'? ;
