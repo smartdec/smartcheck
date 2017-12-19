@@ -434,15 +434,16 @@
                 <!--Creating other contracts - лучше сделать через флаги-->
                 <!--Calling any function not marked view or pure:- лучше сделать через флаги-->
                 <XPath>
-                    //functionDefinition[stateMutability/viewType][
+                    //functionDefinition[stateMutability/viewType and block/descendant-or-self::*[
                         <!--Using selfdestruct and it's alias suicide:-->
-                        block/statement//functionCall/internalFunctionCall/functionName/identifier[matches(text()[1],"^selfdestruct|suicide$")]
+                        functionCall/internalFunctionCall/functionName/identifier[matches(text()[1],"^selfdestruct|suicide$")]
                         <!--Sending Ether via calls:-->
-                        or block/statement//functionCall//externalFunctionCallNotThis/functionNameAndArgs/functionName/identifier[matches(text()[1],"^send|transfer$")]
+                        or externalFunctionCallNotThis/functionNameAndArgs/functionName/identifier[matches(text()[1],"^send|transfer$")]
                         <!--Using low-level calls:-->
-                        or block/statement//functionCall//externalFunctionCallNotThis/functionNameAndArgs/functionName/identifier[matches(text()[1],"^call|delegatecall|callcode$")]
+                        or externalFunctionCallNotThis/functionNameAndArgs/functionName/identifier[matches(text()[1],"^call|delegatecall|callcode$")]
                         <!--Using inline assembly that contains certain opcodes:-->
-                        or block/statement//inlineAssemblyStatement
+                        or inlineAssemblyStatement
+                    ]
                     ]
                 </XPath>
             </Pattern>
@@ -486,20 +487,21 @@
                 </Categories>
                 <Severity>0</Severity>
                 <XPath>
-                    //functionDefinition[stateMutability/pureType][
-                        <!--Accessing this.balance or <address>.balance: using .balance or this.balance-->
-                        block/statement//functionCall//externalFunctionCallNotThis/functionNameAndArgs[matches(text()[1],"^.$")][functionName/identifier[matches(text()[1],"^balance$")]]
-                        or //environmentalVariableDefinition[matches(text()[1],"^this.balance$")]
-                        <!--Accessing any of the members of block, tx, msg (with the exception of msg.sig and msg.data)-->
-                        or //environmentalVariableDefinition[matches(text()[1],"^msg.value|msg.gas|msg.sender|block.timestamp|tx.origin|block.blockhash|block.coinbase|block.difficulty|block.gaslimit|block.number|block.blockhash|block.coinbase|tx.gasprice$")]
-                        <!--Using selfdestruct and it's alias suicide:-->
-                        or block/statement//functionCall/internalFunctionCall/functionName/identifier[matches(text()[1],"^selfdestruct|suicide$")]
-                        <!--Sending Ether via calls:-->
-                        or block/statement//functionCall//externalFunctionCallNotThis/functionNameAndArgs/functionName/identifier[matches(text()[1],"^send|transfer$")]
-                        <!--Using low-level calls:-->
-                        or block/statement//functionCall//externalFunctionCallNotThis/functionNameAndArgs/functionName/identifier[matches(text()[1],"^call|delegatecall|callcode$")]
-                        <!--Using inline assembly that contains certain opcodes:-->
-                        or block/statement//inlineAssemblyStatement
+                    //functionDefinition[stateMutability/pureType and block/descendant-or-self::*[
+                    <!--Accessing this.balance or <address>.balance: using .balance or this.balance-->
+                    environmentalVariableDefinition[matches(text()[1],"balance")]
+                    or environmentalVariableDefinition[matches(text()[1],"this.balance")]
+                    <!--Accessing any of the members of block, tx, msg (with the exception of msg.sig and msg.data)-->
+                    or environmentalVariableDefinition[matches(text()[1],"msg.value|msg.gas|msg.sender|block.timestamp|tx.origin|block.blockhash|block.coinbase|block.difficulty|block.gaslimit|block.number|block.blockhash|block.coinbase|tx.gasprice")]
+                    <!--Using selfdestruct and it's alias suicide:-->
+                    or functionCall/internalFunctionCall/functionName/identifier[matches(text()[1],"^selfdestruct|suicide$")]
+                    <!--Sending Ether via calls:-->
+                    or externalFunctionCallNotThis/functionNameAndArgs/functionName/identifier[matches(text()[1],"^send|transfer$")]
+                    <!--Using low-level calls:-->
+                    or externalFunctionCallNotThis/functionNameAndArgs/functionName/identifier[matches(text()[1],"^call|delegatecall|callcode$")]
+                    <!--Using inline assembly that contains certain opcodes:-->
+                    or inlineAssemblyStatement
+                    ]
                     ]
                 </XPath>
             </Pattern>
