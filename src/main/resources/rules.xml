@@ -144,13 +144,20 @@
                 <Severity>2</Severity>
                 <XPath>//forStatement[expression[1]/expression[2][functionCall or primaryExpression/identifier] or simpleStatement/variableDeclarationStatement/variableDeclaration/expression]</XPath>
             </Pattern>
-            <!--Фиксируется конструкция: while (в условии используется вызов функции)-->
+            <!--Фиксируется конструкция: while (в условии все, кроме вызова функции и числа)-->
+            <Pattern patternId="17f23a">
+                <Categories>
+                    <Category>Solidity</Category>
+                </Categories>
+                <Severity>1</Severity>
+                <XPath>//whileStatement/whileCondition[not(descendant-or-self::functionCall) and not(expression/expression/primaryExpression/numberLiteral)]</XPath>            </Pattern>
+            <!--Фиксируется конструкция: while (в условии вызов функции)-->
             <Pattern patternId="38f6c7">
                 <Categories>
                     <Category>Solidity</Category>
                 </Categories>
                 <Severity>2</Severity>
-                <XPath>//whileStatement[whileCondition/descendant::*[functionCall]]</XPath>
+                <XPath>//whileStatement[whileCondition/descendant::functionCall]</XPath>
             </Pattern>
         </Patterns>
     </Rule>
