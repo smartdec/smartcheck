@@ -144,15 +144,6 @@
                 <Severity>2</Severity>
                 <XPath>//forStatement[expression[1]/expression[2][functionCall or primaryExpression/identifier] or simpleStatement/variableDeclarationStatement/variableDeclaration/expression]</XPath>
             </Pattern>
-            <!-- for (<инициализация счетчика не числом>; <счетчик больше чем что угодно>; <уменьшение счетчика>)-->
-            <Pattern patternId="12cf32">
-                <Categories>
-                    <Category>Solidity</Category>
-                </Categories>
-                <Severity>2</Severity>
-                <XPath>//forStatement[simpleStatement/variableDeclarationStatement/variableDeclaration[not(expression/primaryExpression/numberLiteral)]][expression[1][matches(text()[1],"&gt;|&gt; =")]][expression[2][twoPlusMinusOperator/decrementOperator or lvalueOperator/minusLvalueOperator]]
-                </XPath>
-            </Pattern>
             <!--Фиксируется конструкция: while (в условии используется вызов функции)-->
             <Pattern patternId="38f6c7">
                 <Categories>
