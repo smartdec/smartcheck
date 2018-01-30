@@ -305,8 +305,8 @@ statement
     | inlineAssemblyStatement ';'?
     | doWhileStatement ';'?
     | placeholderStatement ';'?
-    | continueStatement ';'?
-    | breakStatement ';'?
+    | continueStatement
+    | breakStatement
     | returnStatement ';'?
     | throwRevertStatement ';'?
     | simpleStatement ';'?
@@ -333,9 +333,9 @@ doWhileStatement : 'do' block 'while' '(' expression ')';
 
 placeholderStatement : '_' ;
 
-continueStatement : 'continue' ;
+continueStatement : 'continue' ';'?;
 
-breakStatement : 'break' ;
+breakStatement : 'break' ';'?;
 
 returnStatement : 'return' '('? (expression ','?)* ')'? ;
 
