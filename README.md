@@ -1,26 +1,31 @@
 # solidity-checker
-## Сборка проекта
-В корне проекта выполнить mvn clean package
+## Version
+This version of SmartCheck accompanies the original academic paper<!--  (LINK) as released (DATE) -->. The actual version of SmartCheck is used in tool.smartdec.net.
 
-## Анализ файлов
-выполнить в папке target 
+## Building the project
+Execute in the project directory:
 
-`java -jar solidity-checker-1.0-SNAPSHOT-jar-with-dependencies.jar -p <путь к директории или к файлу>`
+`mvn clean package`
 
-Опциальный параметр: `-r <путь к xml с правилами>`, по умолчанию берутся правила из src\main\resources\rules.xml
+## Start analysis
+Execute in `target` folder: 
 
-Так же это можно сделать через IDE, запустив main-метод `src\main\java\ru\smartdec\soliditycheck\app\cli\Tool.java`
+`java -jar solidity-checker-1.0-SNAPSHOT-jar-with-dependencies.jar -p <path to directory or file>`
 
-## Просмотр дерева разбора
-выполнить команду maven
+Optional parameter: `-r <path to .xml-file with rules>`; by default it is src\main\resources\rules.xml
 
-`mvn exec:java@tree -Dexec.args="-p <путь к файлу>"`
+It can also be done via IDE by executing main-method `src\main\java\ru\smartdec\soliditycheck\app\cli\Tool.java`
 
-Так же это можно сделать через IDE, запустив main-метод `src\main\java\ru\smartdec\soliditycheck\app\cli\TreeView.java`
+## View parse tree
+Execute maven command:
 
-## Просмотр дерева разбора в виде XML
-выполнить команду maven
+`mvn exec:java@tree -Dexec.args="-p <path to the file>"`
 
-`mvn exec:java@xml -Dexec.args="-t <путь к xml> -s <путь к файлу>"`
+It can also be done via IDE by executing main-method `src\main\java\ru\smartdec\soliditycheck\app\cli\TreeView.java`
 
-Так же это можно сделать через IDE, запустив main-метод `src\main\java\ru\smartdec\soliditycheck\app\cli\XmlView.java`
+## View parse tree in XML-form
+Execute maven command:
+
+`mvn exec:java@xml -Dexec.args="-t <path to save xml-tree> -s <path to the file>"`
+
+It can also be done via IDE by executing main-method `src\main\java\ru\smartdec\soliditycheck\app\cli\XmlView.java`
