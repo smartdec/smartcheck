@@ -1,4 +1,4 @@
-# solidity-checker
+# SmartCheck
 ## Version
 This version of SmartCheck accompanies the original academic paper "SmartCheck: Static Analysis of Ethereum Smart Contracts"<!--  (LINK) as released (DATE) -->. [The online tool](https://tool.smartdec.net/) uses the actual version of SmartCheck.
 
