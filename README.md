@@ -1,26 +1,29 @@
 # solidity-checker
-## Сборка проекта
-В корне проекта выполнить mvn clean package
+## Version
+This version of SmartCheck accompanies the original academic paper "SmartCheck: Static Analysis of Ethereum Smart Contracts"<!--  (LINK) as released (DATE) -->. [The online tool](https://tool.smartdec.net/) uses the actual version of SmartCheck.
 
-## Анализ файлов
-выполнить в папке target 
+## Building the project
+Execute in the project directory:
 
-`java -jar solidity-checker-1.0-SNAPSHOT-jar-with-dependencies.jar -p <путь к директории или к файлу>`
+`mvn clean package`
 
-Опциальный параметр: `-r <путь к xml с правилами>`, по умолчанию берутся правила из src\main\resources\rules.xml
+## Start analysis
+Execute in the `target` folder: 
 
-Так же это можно сделать через IDE, запустив main-метод `src\main\java\ru\smartdec\soliditycheck\app\cli\Tool.java`
+`java -jar solidity-checker-1.0-SNAPSHOT-jar-with-dependencies.jar -p <path to directory or file>`
 
-## Просмотр дерева разбора
-выполнить команду maven
+Optional parameter: `-r <path to .xml-file with rules>`; by default the file at `src\main\resources\rules.xml` is used.
 
-`mvn exec:java@tree -Dexec.args="-p <путь к файлу>"`
+Analysis can also be started from an IDE by executing the `main` method of `src\main\java\ru\smartdec\soliditycheck\app\cli\Tool.java`.
 
-Так же это можно сделать через IDE, запустив main-метод `src\main\java\ru\smartdec\soliditycheck\app\cli\TreeView.java`
+## View the parse tree in a graphical form
 
-## Просмотр дерева разбора в виде XML
-выполнить команду maven
+`mvn exec:java@tree -Dexec.args="-p <path to the file>"`
 
-`mvn exec:java@xml -Dexec.args="-t <путь к xml> -s <путь к файлу>"`
+It can also be done from an IDE by executing the `main` method of `src\main\java\ru\smartdec\soliditycheck\app\cli\TreeView.java`
 
-Так же это можно сделать через IDE, запустив main-метод `src\main\java\ru\smartdec\soliditycheck\app\cli\XmlView.java`
+## View the parse tree as XML
+
+`mvn exec:java@xml -Dexec.args="-t <path to save xml-tree> -s <path to the file>"`
+
+It can also be done from an IDE by executing the `main` method of `src\main\java\ru\smartdec\soliditycheck\app\cli\XmlView.java`
