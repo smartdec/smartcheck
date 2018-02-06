@@ -1,4 +1,11 @@
 contract SolidityStyleGuideViolation {
+    function releaseUnclaimedFunds() onlyOwner public {
+        /* <no> <report> SOLIDITY_TIMESTAMP_DEPENDENCE afb67a */
+        require(vault_state == State.Refunding && now >= refundDeadline);
+        vault_releaseDeposit();
+        /* <no> <report> SOLIDITY_TIMESTAMP_DEPENDENCE afb67a */
+        require(ICOendtime < now);
+    }
 
     function doSomething() {
     /* <no> <report> SOLIDITY_TIMESTAMP_DEPENDENCE afb67a */
