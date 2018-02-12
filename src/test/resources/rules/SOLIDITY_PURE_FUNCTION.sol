@@ -1,6 +1,7 @@
 pragma solidity ^0.4.16;
 
 contract C {
+    address f;
 // <yes> <report> SOLIDITY_PURE_FUNCTION 11314f
     function returnsenderbalance() pure returns (uint){
          return msg.sender.balance;
@@ -16,9 +17,27 @@ contract C {
         o=block.timestamp;
         return t;
     }
+    // <yes> <report> SOLIDITY_PURE_FUNCTION 11314f
+    function returnsenderbalance() pure returns (uint){
+        y=msg.value;
+        o=block.timestamp;
+        selfdestruct(f);
+        return t;
+    }
+    function returnsenderbalance() pure returns (uint){
+        return t;
+    }
     function returnsenderbalance() returns (uint){
         y=msg.value;
         o=block.timestamp;
         return t;
+    }
+}
+contract Math {
+    function Mul(uint a, uint b) pure internal returns (uint) {
+      uint c = a * b;
+      //check result should not be other wise until a=0
+      assert(a == 0 || c / a == b);
+      return c;
     }
 }

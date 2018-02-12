@@ -1,7 +1,7 @@
 grammar Solidity;
 
 sourceUnit
-    : (pragmaDirective | importDirective | contractDefinition)* EOF
+    : (pragmaDirective | importDirective | contractDefinition | libraryDefinition | interfaceDefinition)* EOF
     ;
 
 pragmaDirective
@@ -29,9 +29,19 @@ importDirective
 importDeclaration : identifier ('as' identifier)? ;
 
 contractDefinition
-    : ( 'contract' | 'library' |'interface') identifier
-      ( 'is' inheritanceSpecifier (',' inheritanceSpecifier )* )?
-      '{' (contractPartDefinition ';'? )* '}'
+    : 'contract' identifier
+        ( 'is' inheritanceSpecifier (',' inheritanceSpecifier )* )?
+            '{' (contractPartDefinition ';'? )* '}'
+    ;
+libraryDefinition
+    :'library' identifier
+        '{' (contractPartDefinition ';'? )* '}'
+    ;
+
+interfaceDefinition
+    :'interface' identifier
+        ( 'is' inheritanceSpecifier (',' inheritanceSpecifier )* )?
+            '{' (contractPartDefinition ';'? )* '}'
     ;
 
 inheritanceSpecifier : userDefinedTypeName ( '(' expression ( ',' expression )* ')' )? ;
@@ -83,7 +93,7 @@ addressCall:'address' '('expression')';
 functionFallBackDefinition
     : 'function' parameterList
       ( functionCall | identifier | stateMutability |visibleType )*
-      returnsParameters? ( block ) ;
+      returnsParameters? ( block )? ;
 
 eventDefinition
     : 'event' identifier indexedParameterList 'anonymous'? ';'? ;
@@ -200,7 +210,11 @@ callObject:callObjectExpressionSimple
           | externalFunctionCall
           | internalFunctionCall
           ;
-plusminusOperator:('+' | '-');
+plusminusOperator:minusOperator |plusOperator;
+
+minusOperator:'-';
+
+plusOperator:'+';
 
 twoPlusMinusOperator:decrementOperator | incrementOperator;
 

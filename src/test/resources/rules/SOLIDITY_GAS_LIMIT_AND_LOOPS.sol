@@ -1,24 +1,64 @@
-pragma solidity ^0.4.11;
+pragma solidity ^0.4.18;
+
+interface Foo {
+    function foo() public returns (uint);
+}
 
 contract GasLimitAndLoops {
-    function foo() {
+    function test_while() public {
+        uint x=0;
+        Foo addr = Foo(0x0);
+        uint[] y;
         // <yes> <report> SOLIDITY_GAS_LIMIT_AND_LOOPS 38f6c7
-        while ( x > refundAddresses.dd()) { 
-            d++;
+        while ( x < addr.foo()) { 
+            x++;
         }
-        // <yes> <report> SOLIDITY_GAS_LIMIT_AND_LOOPS 38f6c7
-        while (refundAddresses.dd()<x) {
-            a++;
+        while ( x > 100) {
+            x++;
+        }
+        // <yes> <report> SOLIDITY_GAS_LIMIT_AND_LOOPS 17f23a
+        while (y[5]<x) {
+            x++;
+        }
+    }
+
+    function test_for() public {
+        uint x=0;
+        uint[] y;
+
+        // <yes> <report> SOLIDITY_GAS_LIMIT_AND_LOOPS f6f853
+        for (uint i = 0; i < y.length; i++){
+            x=8;
         }
         // <yes> <report> SOLIDITY_GAS_LIMIT_AND_LOOPS f6f853
-        for(bidderIndex = 0; bidderIndex < groups[groupIndex].bidders.ma(); bidderIndex++) {
+        for (i = 0; i < y.length; i=i+1){
+            x=8;
         }
         // <yes> <report> SOLIDITY_GAS_LIMIT_AND_LOOPS f6f853
-        for (uint bidderIndex = 0; bidderIndex < biddersCount; bidderIndex++) {
+        for (i = y.length; i <= max(y.length, 4); i += y.length){
+            x=8;
         }
-        // <yes> <report> SOLIDITY_GAS_LIMIT_AND_LOOPS f6f853
-        for (uint i = proposalIndex.length; i > 0; i--) {
-            p.supportingWeight -= _value;
+        // <yes> <report> SOLIDITY_GAS_LIMIT_AND_LOOPS 12cf32
+        for (i = y.length; i > 0 ; i--){
+            x=8;
         }
+        // <yes> <report> SOLIDITY_GAS_LIMIT_AND_LOOPS 12cf32
+        for (i = y.length; i > 0 ; i=i-1){
+            x=8;
+        }
+        // <yes> <report> SOLIDITY_GAS_LIMIT_AND_LOOPS 12cf32
+        for (x = y.length; x > max(y.length, max(1,2)); x -= y.length){
+            x=8;
+        }
+        for (i = y.length; i < 100; i--){
+            x=8;
+        }
+        for (i = y.length; i < 100; i++){
+            x=8;
+        }
+    }
+
+    function max(uint x,uint y) internal returns (uint){
+        return x;
     }
 }
