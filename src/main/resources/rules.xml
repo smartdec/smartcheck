@@ -1,6 +1,67 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <Rules xmlns="http://www.smartdec.ru/SmartCheck/Conditions" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.smartdec.ru/SmartCheck/Conditions rules-grammar-schema.xsd ">
     <Rule>
+        <RuleId>SOLIDITY_ADDRESS_HARDCODED</RuleId>
+            <Patterns>
+                <!-- фиксирует адреса длиной в 42 символа"-->
+                <Pattern patternId="adc165">
+                    <Categories>
+                         <Category>Solidity</Category>
+                    </Categories>
+                    <Severity>1</Severity>
+                    <TruePositiveRate>2</TruePositiveRate>
+                    <XPath>
+                        //addressContract[string-length(addressNumber)=42]
+                    </XPath>
+                </Pattern>
+                <!-- фиксирует адреса длиной менее чем 42 символа и не равные 0x0"-->
+                <Pattern patternId="b140cd">
+                    <Categories>
+                        <Category>Solidity</Category>
+                    </Categories>
+                    <Severity>1</Severity>
+                    <TruePositiveRate>2</TruePositiveRate>
+                    <XPath>
+                        //addressContract[string-length(addressNumber) lt 42 and not(addressNumber[matches(text()[1],"^0x0$")])]
+                    </XPath>
+                </Pattern>
+                <!-- фиксирует конструкции: address(numberLiteral), где numberLiteral не равно 0"-->
+                <Pattern patternId="f32db1">
+                    <Categories>
+                        <Category>Solidity</Category>
+                    </Categories>
+                    <Severity>1</Severity>
+                    <TruePositiveRate>2</TruePositiveRate>
+                    <XPath>
+                        //addressCall/expression[primaryExpression/numberLiteral][not(primaryExpression/numberLiteral[matches(text()[1],"^0$")]) and not(primaryExpression/identifier[matches(text()[1],"^this$")])]
+                    </XPath>
+                </Pattern>
+                <!-- фиксирует конструкции: address(0), кроме "!=address(0)", кроме Transfer(address(),...) в контракте, который называется или унаследован от token/erc20-->
+                <Pattern patternId="a91b18">
+                    <Categories>
+                        <Category>Solidity</Category>
+                    </Categories>
+                    <Severity>1</Severity>
+                    <TruePositiveRate>1</TruePositiveRate>
+                    <XPath>
+                        //expression[addressCall/expression/primaryExpression/numberLiteral[matches(text()[1],"^0$")]]
+                        /parent::*[not(matches(text()[1],"^!=$"))][not(ancestor::internalFunctionCall[1]/functionName/identifier[matches(text()[1],"^Transfer$")]/ancestor::contractDefinition[identifier[matches(text()[1],"token|erc20","i")] or inheritanceSpecifier/userDefinedTypeName/identifier[matches(text()[1],"token|erc20","i")]])]
+                    </XPath>
+                </Pattern>
+                <!-- фиксирует использование адреса 0x0, кроме "!=0x0", и кторе тех случаев, когда 0x0 внутри event(внутренняя функция, название которой начинается с большой буквы)-->
+                <Pattern patternId="c67a09">
+                    <Categories>
+                        <Category>Solidity</Category>
+                    </Categories>
+                    <Severity>1</Severity>
+                    <TruePositiveRate>1</TruePositiveRate>
+                    <XPath>
+                        //addressContract[addressNumber[matches(text()[1],"^0x0$")]]/parent::*[parent::*[parent::*[not(matches(text()[1],"^!=$"))]]][not(ancestor::internalFunctionCall[1]/functionName/identifier[matches(text()[1],"^[A-Z]")])]
+                    </XPath>
+                </Pattern>
+            </Patterns>
+    </Rule>
+    <Rule>
         <RuleId>SOLIDITY_BALANCE_EQUALITY</RuleId>
         <Patterns>
             <!-- фиксирует конструкцию: "this.balance=="-->
@@ -21,7 +82,6 @@
             </Pattern>
         </Patterns>
     </Rule>
-
     <Rule>
         <RuleId>SOLIDITY_BYTES_BYTE</RuleId>
         <Patterns>
@@ -46,6 +106,51 @@
                 <Severity>3</Severity>
                 <XPath>
                     //externalFunctionCall/externalFunctionCallNotThis/functionNameAndArgs[functionName/identifier[matches(text()[1],"^call$")] and functionName/identifier[matches(text()[1],"^value$")] and not(callArguments/callArgument)]
+                </XPath>
+            </Pattern>
+        </Patterns>
+    </Rule>
+    <Rule>
+        <RuleId>SOLIDITY_CONSTANT_FUNCTIONS</RuleId>
+        <Patterns>
+            <!-- фиксирует использование типа constant в определении функции-->
+            <Pattern patternId="28fa69">
+                <Categories>
+                    <Category>Solidity</Category>
+                </Categories>
+                <Severity>0</Severity>
+                <XPath>
+                    //functionDefinition[stateMutability/constantType]
+                </XPath>
+            </Pattern>
+        </Patterns>
+    </Rule>
+    <Rule>
+        <RuleId>SOLIDITY_DELETE_FOR_ARRAYS</RuleId>
+        <Patterns>
+            <!--Фиксирует ... .length=0-->
+            <Pattern patternId="792a6d">
+                <Categories>
+                    <Category>Solidity</Category>
+                </Categories>
+                <Severity>1</Severity>
+                <XPath>
+                    //simpleStatement/expressionStatement/expression[expression/environmentalVariableDefinition[matches(text()[1],"length")]][matches(text()[1],"^=$")][expression/primaryExpression/numberLiteral[matches(text()[1],"^0$")]]
+                </XPath>
+            </Pattern>
+        </Patterns>
+    </Rule>
+    <Rule>
+        <RuleId>SOLIDITY_DOS_WITH_REVERT</RuleId>
+        <Patterns>
+            <!--Фиксирует require(внешний вызов)-->
+            <Pattern patternId="15ac23">
+                <Categories>
+                    <Category>Solidity</Category>
+                </Categories>
+                <Severity>1</Severity>
+                <XPath>
+                    //statement//internalFunctionCall[functionName/identifier[matches(text()[1],"^require|assert$")]][callArguments/callArgument//functionCall/externalFunctionCall]
                 </XPath>
             </Pattern>
         </Patterns>
@@ -83,26 +188,6 @@
         </Patterns>
     </Rule>
     <Rule>
-        <RuleId>SOLIDITY_ERC20_TRANSFER_SHOULD_THROW</RuleId>
-        <Patterns>
-            <!--Фиксирует конструкции: имя контракта содержит token или erc20 либо наследуется от контракта содержащего такое в названии.
-             В этом контракте есть определение функции, содержащей в названии transfer или transferFrom, возвращающей значение типа bool, которая не является интерфейсом.
-             В определении этой функции не содержатся функции revert, require, assert, throw-->
-            <Pattern patternId="550a42">
-                <Categories>
-                    <Category>Solidity</Category>
-                </Categories>
-                <Severity>1</Severity>
-                <XPath>
-                    //contractDefinition[identifier[matches(text()[1],"token|erc20","i")] or inheritanceSpecifier/userDefinedTypeName/identifier[matches(text()[1],"token|erc20","i")]]
-                    //functionDefinition[block/statement][identifier[matches(text()[1],"^transfer(From)?$","i")]][returnsParameters/parameterList/parameter/typeName/elementaryTypeName[matches(text()[1],"bool")]]
-                    [count(descendant-or-self::*[functionCall[internalFunctionCall/functionName/identifier
-                    [matches(text()[1],"require|assert")]]] | descendant-or-self::*[statement/throwRevertStatement])=0]
-                </XPath>
-            </Pattern>
-        </Patterns>
-    </Rule>
-    <Rule>
         <RuleId>SOLIDITY_ERC20_APPROVE</RuleId>
         <Patterns>
             <!--Фиксирует конструкции: имя контракта содержит token или erc20 либо наследуется от контракта содержащего такое в названии. В этом контракте есть определение функции approve, которая не является интерфейсом-->
@@ -136,6 +221,41 @@
                 </XPath>
             </Pattern> -->
         </Patterns>
+    </Rule>
+    <Rule>
+        <RuleId>SOLIDITY_ERC20_TRANSFER_SHOULD_THROW</RuleId>
+        <Patterns>
+            <!--Фиксирует конструкции: имя контракта содержит token или erc20 либо наследуется от контракта содержащего такое в названии.
+             В этом контракте есть определение функции, содержащей в названии transfer или transferFrom, возвращающей значение типа bool, которая не является интерфейсом.
+             В определении этой функции не содержатся функции revert, require, assert, throw-->
+            <Pattern patternId="550a42">
+                <Categories>
+                    <Category>Solidity</Category>
+                </Categories>
+                <Severity>1</Severity>
+                <XPath>
+                    //contractDefinition[identifier[matches(text()[1],"token|erc20","i")] or inheritanceSpecifier/userDefinedTypeName/identifier[matches(text()[1],"token|erc20","i")]]
+                    //functionDefinition[block/statement][identifier[matches(text()[1],"^transfer(From)?$","i")]][returnsParameters/parameterList/parameter/typeName/elementaryTypeName[matches(text()[1],"bool")]]
+                    [count(descendant-or-self::*[functionCall[internalFunctionCall/functionName/identifier
+                    [matches(text()[1],"require|assert")]]] | descendant-or-self::*[statement/throwRevertStatement])=0]
+                </XPath>
+            </Pattern>
+        </Patterns>
+    </Rule>
+    <Rule>
+    <RuleId>SOLIDITY_FUNCTIONS_RETURNS_TYPE_AND_NO_RETURN</RuleId>
+    <Patterns>
+        <!--Фиксирует конструкцию: "function(...) ... returns (type) {...}" т.е. после type ничего нет и в теле функции нет return-->
+        <Pattern patternId="47acc2">
+            <Categories>
+                <Category>Solidity</Category>
+            </Categories>
+            <Severity>1</Severity>
+            <XPath>
+                //functionDefinition[block]/returnsParameters[not(parameterList/parameter/identifier)]/parent::*[not(block/statement//returnStatement)]
+            </XPath>
+        </Pattern>
+    </Patterns>
     </Rule>
     <Rule>
         <RuleId>SOLIDITY_GAS_LIMIT_AND_LOOPS</RuleId>
@@ -224,6 +344,41 @@
         </Patterns>
     </Rule>
     <Rule>
+        <RuleId>SOLIDITY_NO_PAYABLE_FALLBACK</RuleId>
+        <Patterns>
+            <!--Фиксирует ситуацию, когда в fallback функции нет "payable"-->
+            <Pattern patternId="86c34a">
+                <Categories>
+                    <Category>Solidity</Category>
+                </Categories>
+                <Severity>1</Severity>
+                <XPath>
+                    //contractPartDefinition/ancestor::*[contractDefinition or interfaceDefinition]//functionFallBackDefinition[not(stateMutability/payableType)]/ancestor-or-self::contractPartDefinition
+                </XPath>
+            </Pattern>
+            <!--Фиксирует ситуацию, когда в контракте нет fallback функции-->
+            <Pattern patternId="70ac56">
+                <Categories>
+                    <Category>Solidity</Category>
+                </Categories>
+                <Severity>1</Severity>
+                <XPath>
+                    //contractDefinition[not(contractPartDefinition/functionFallBackDefinition)]
+                </XPath>
+            </Pattern>
+            <!--Фиксирует ситуацию, когда в контракте есть payable fallback функция, которая содержит только throw или только revert()-->
+            <Pattern patternId="12fa3c">
+                <Categories>
+                    <Category>Solidity</Category>
+                </Categories>
+                <Severity>1</Severity>
+                <XPath>
+                    //contractDefinition//functionFallBackDefinition[stateMutability/payableType]/block[count(descendant-or-self::statement)=1]/statement/throwRevertStatement/ancestor-or-self::contractPartDefinition
+                </XPath>
+            </Pattern>
+        </Patterns>
+    </Rule>
+    <Rule>
         <RuleId>SOLIDITY_PRAGMAS_VERSION</RuleId>
         <Patterns>
             <!--Фиксируется определение pragma имеющее в версии знаки '^' | '>=' | '>' | '<' | '<='-->
@@ -246,6 +401,35 @@
                 </Categories>
                 <Severity>1</Severity>
                 <XPath>//stateVariableDeclaration/visibleType[text()[1]="private"]</XPath>
+            </Pattern>
+        </Patterns>
+    </Rule>
+    <Rule>
+        <RuleId>SOLIDITY_PURE_FUNCTION</RuleId>
+        <Patterns>
+            <Pattern patternId="11314f">
+                <Categories>
+                    <Category>Solidity</Category>
+                </Categories>
+                <Severity>0</Severity>
+                <XPath>
+                    //functionDefinition[stateMutability/pureType and block/descendant-or-self::*[
+                    <!--Accessing this.balance or <address>.balance: using .balance or this.balance-->
+                    environmentalVariableDefinition[matches(text()[1],"balance")]
+                    or environmentalVariableDefinition[matches(text()[1],"this.balance")]
+                    <!--Accessing any of the members of block, tx, msg (with the exception of msg.sig and msg.data)-->
+                    or environmentalVariableDefinition[matches(text()[1],"msg.value|msg.gas|msg.sender|block.timestamp|tx.origin|block.blockhash|block.coinbase|block.difficulty|block.gaslimit|block.number|block.blockhash|block.coinbase|tx.gasprice")]
+                    <!--Using selfdestruct and it's alias suicide:-->
+                    or functionCall/internalFunctionCall/functionName/identifier[matches(text()[1],"^selfdestruct|suicide$")]
+                    <!--Sending Ether via calls:-->
+                    or externalFunctionCallNotThis/functionNameAndArgs/functionName/identifier[matches(text()[1],"^send|transfer$")]
+                    <!--Using low-level calls:-->
+                    or externalFunctionCallNotThis/functionNameAndArgs/functionName/identifier[matches(text()[1],"^call|delegatecall|callcode$")]
+                    <!--Using inline assembly that contains certain opcodes:-->
+                    or inlineAssemblyStatement
+                    ]
+                    ]
+                </XPath>
             </Pattern>
         </Patterns>
     </Rule>
@@ -288,6 +472,22 @@
         </Patterns>
     </Rule>
     <Rule>
+        <RuleId>SOLIDITY_REVERT_REQUIRE</RuleId>
+        <Patterns>
+            <!--Фиксирует конструкцию: "if (...){revert(); или throw;}"-->
+            <Pattern patternId="c56b12">
+                <Categories>
+                    <Category>Solidity</Category>
+                </Categories>
+                <Severity>1</Severity>
+                <TruePositiveRate>3</TruePositiveRate>
+                <XPath>
+                    //ifStatement/block/statement/throwRevertStatement/ancestor-or-self::statement[2]
+                </XPath>
+            </Pattern>
+        </Patterns>
+    </Rule>
+    <Rule>
         <RuleId>SOLIDITY_SEND</RuleId>
         <Patterns>
             <!--Фиксируется использование функции send, в случаях: if (..send()){revert() или throw} и require или assert от send-->
@@ -300,6 +500,65 @@
                     //functionName/identifier[text()[1]="send"][ancestor::ifCondition/parent::*[block//statement/throwRevertStatement] or ancestor::internalFunctionCall/functionName/identifier[matches(text()[1],"^require|assert$")]]
                 </XPath>
             </Pattern>
+        </Patterns>
+    </Rule>
+    <Rule>
+        <RuleId>SOLIDITY_SHOULD_BE_PURE_BUT_IS_NOT</RuleId>
+        <Patterns>
+            <!-- пока отключаем -->
+            <!-- <Pattern patternId="bca409">
+                <Categories>
+                    <Category>Solidity</Category>
+                </Categories>
+                <Severity>0</Severity>
+                <XPath>
+                    //functionDefinition[not(identifier=//ancestor::*/contractDefinition/identifier)][not(stateMutability/pureType) and not(stateMutability/constantType) and not(stateMutability/viewType)][block][
+                        <!-Accessing this.balance or <address>.balance: using .balance or this.balance ->
+                        not(block/statement//functionCall//externalFunctionCallNotThis/functionNameAndArgs[matches(text()[1],"^.$")][functionName/identifier[matches(text()[1],"^balance$")]])
+                        and not(block/statement//environmentalVariableDefinition[matches(text()[1],"^this.balance$")])
+                        <!-Accessing any of the members of block, tx, msg (with the exception of msg.sig and msg.data) ->
+                        and not(block/statement//environmentalVariableDefinition[matches(text()[1],"^msg.value|msg.gas|msg.sender|block.timestamp|tx.origin|block.blockhash|block.coinbase
+                        |block.difficulty|block.gaslimit|block.number|block.blockhash|block.coinbase|tx.gasprice$")])
+                        <!-Using selfdestruct and it's alias suicide: ->
+                        and not(block/statement//functionCall/internalFunctionCall/functionName/identifier[matches(text()[1],"^selfdestruct|suicide$")])
+                        <!-Sending Ether via calls: ->
+                        and not(block/statement//functionCall//externalFunctionCallNotThis/functionNameAndArgs/functionName/identifier[matches(text()[1],"^send|transfer$")])
+                        <!-Using low-level calls: ->
+                        and not(block/statement//functionCall//externalFunctionCallNotThis/functionNameAndArgs/functionName/identifier[matches(text()[1],"^call|delegatecall|callcode$")])
+                        <!-Using inline assembly that contains certain opcodes: ->
+                        and not(block/statement//inlineAssemblyStatement)
+                    ]
+                </XPath>
+            </Pattern> -->
+        </Patterns>
+    </Rule>
+    <Rule>
+        <RuleId>SOLIDITY_SHOULD_BE_VIEW_BUT_IS_NOT</RuleId>
+        <Patterns>
+            <!-- пока отключаем -->
+            <!-- <Pattern patternId="ad1827">
+                <Categories>
+                    <Category>Solidity</Category>
+                </Categories>
+                <Severity>0</Severity>
+                <!-Writing to state variables - лучше сделать через флаги ->
+                <!-Emitting events - лучше сделать через флаги ->
+                <!-Creating other contracts - лучше сделать через флаги ->
+                <!-Calling any function not marked view or pure:- лучше сделать через флаги ->
+
+                <XPath>
+                    //functionDefinition[not(identifier=//ancestor::*/contractDefinition/identifier)][not(stateMutability/viewType) and not(stateMutability/constantType) and not(stateMutability/pureType)][block][
+                        <!-Using selfdestruct and it's alias suicide: ->
+                        not(block/statement//functionCall/internalFunctionCall/functionName/identifier[matches(text()[1],"^selfdestruct|suicide$")])
+                        <!-Sending Ether via calls: ->
+                        and not(block/statement//functionCall//externalFunctionCallNotThis/functionNameAndArgs/functionName/identifier[matches(text()[1],"^send|transfer$")])
+                        <!-Using low-level calls: ->
+                        and not(block/statement//functionCall//externalFunctionCallNotThis/functionNameAndArgs/functionName/identifier[matches(text()[1],"^call|delegatecall|callcode$")])
+                        <!-Using inline assembly that contains certain opcodes: ->
+                        and not(block/statement//inlineAssemblyStatement)
+                    ]
+                </XPath>
+            </Pattern> -->
         </Patterns>
     </Rule>
     <Rule>
@@ -387,294 +646,6 @@
         </Patterns>
     </Rule>
     <Rule>
-        <RuleId>SOLIDITY_VAR</RuleId>
-        <Patterns>
-            <!--Фиксируется случаи определения переменных, как var ...= число-->
-            <Pattern patternId="d28aa7">
-                <Categories>
-                    <Category>Solidity</Category>
-                </Categories>
-                <Severity>2</Severity>
-                <XPath>//variableDeclaration[typeName/elementaryTypeName[matches(text()[1],"^var$")]][expression//primaryExpression/numberLiteral[matches(text()[1],"^[0-9]+$")]]</XPath>
-            </Pattern>
-            <!--Фиксируется случаи определения переменных, как var имя переменной-->
-            <Pattern patternId="f77619">
-                <Categories>
-                    <Category>Solidity</Category>
-                </Categories>
-                <Severity>1</Severity>
-                <XPath>//variableDeclaration[typeName/elementaryTypeName[matches(text()[1],"^var$")]][expression/primaryExpression/identifier]</XPath>
-            </Pattern>
-        </Patterns>
-    </Rule>
-    <Rule>
-        <RuleId>SOLIDITY_VAR_IN_LOOP_FOR</RuleId>
-        <Patterns>
-            <!-- фиксирует конструкцию: "for (var ...; ... число более 255; ... ++)"-->
-            <Pattern patternId="f176ab">
-                <Categories>
-                    <Category>Solidity</Category>
-                </Categories>
-                <Severity>2</Severity>
-                <TruePositiveRate>3</TruePositiveRate>
-                <XPath>//forStatement[simpleStatement//typeName/elementaryTypeName[matches(text()[1],"^var$")]][expression/expression/primaryExpression[numberLiteral[matches(text()[1],"^[0-9]+$")]&gt; 255]][expression/twoPlusMinusOperator/incrementOperator]
-                </XPath>
-            </Pattern>
-        </Patterns>
-    </Rule>
-    <Rule>
-        <RuleId>SOLIDITY_VISIBILITY</RuleId>
-        <Patterns>
-            <!-- фиксирует ситуацию, когда для функции не определена видимость"-->
-            <Pattern patternId="910067">
-                <Categories>
-                    <Category>Solidity</Category>
-                </Categories>
-                <Severity>0</Severity>
-                <XPath>//contractPartDefinition/functionDefinition[not(visibleType)]</XPath>
-            </Pattern>
-            <!-- фиксирует ситуацию, когда для fallback функции не определена видимость"-->
-            <Pattern patternId="d67c21">
-                <Categories>
-                    <Category>Solidity</Category>
-                </Categories>
-                <Severity>0</Severity>
-                <XPath>//contractPartDefinition/functionFallBackDefinition[not(visibleType)]</XPath>
-            </Pattern>
-            <!-- фиксирует ситуацию, когда для переменной состояния не определена видимость"-->
-            <Pattern patternId="b51ce0">
-                <Categories>
-                    <Category>Solidity</Category>
-                </Categories>
-                <Severity>0</Severity>
-                <XPath>//contractPartDefinition/stateVariableDeclaration[not(visibleType)]</XPath>
-            </Pattern>
-        </Patterns>
-    </Rule>
-    <Rule>
-        <RuleId>SOLIDITY_VIEW_FUNCTION</RuleId>
-        <Patterns>
-            <Pattern patternId="189abf">
-                <Categories>
-                    <Category>Solidity</Category>
-                </Categories>
-                <Severity>0</Severity>
-                <!--Writing to state variables - лучше сделать через флаги-->
-                <!--Emitting events - лучше сделать через флаги-->
-                <!--Creating other contracts - лучше сделать через флаги-->
-                <!--Calling any function not marked view or pure:- лучше сделать через флаги-->
-                <XPath>
-                    //functionDefinition[stateMutability/viewType and block/descendant-or-self::*[
-                        <!--Using selfdestruct and it's alias suicide:-->
-                        functionCall/internalFunctionCall/functionName/identifier[matches(text()[1],"^selfdestruct|suicide$")]
-                        <!--Sending Ether via calls:-->
-                        or externalFunctionCallNotThis/functionNameAndArgs/functionName/identifier[matches(text()[1],"^send|transfer$")]
-                        <!--Using low-level calls:-->
-                        or externalFunctionCallNotThis/functionNameAndArgs/functionName/identifier[matches(text()[1],"^call|delegatecall|callcode$")]
-                        <!--Using inline assembly that contains certain opcodes:-->
-                        or inlineAssemblyStatement
-                    ]
-                    ]
-                </XPath>
-            </Pattern>
-        </Patterns>
-    </Rule>
-    <Rule>
-        <RuleId>SOLIDITY_SHOULD_BE_VIEW_BUT_IS_NOT</RuleId>
-        <Patterns>
-            <!-- пока отключаем -->
-            <!-- <Pattern patternId="ad1827">
-                <Categories>
-                    <Category>Solidity</Category>
-                </Categories>
-                <Severity>0</Severity>
-                <!-Writing to state variables - лучше сделать через флаги ->
-                <!-Emitting events - лучше сделать через флаги ->
-                <!-Creating other contracts - лучше сделать через флаги ->
-                <!-Calling any function not marked view or pure:- лучше сделать через флаги ->
-
-                <XPath>
-                    //functionDefinition[not(identifier=//ancestor::*/contractDefinition/identifier)][not(stateMutability/viewType) and not(stateMutability/constantType) and not(stateMutability/pureType)][block][
-                        <!-Using selfdestruct and it's alias suicide: ->
-                        not(block/statement//functionCall/internalFunctionCall/functionName/identifier[matches(text()[1],"^selfdestruct|suicide$")])
-                        <!-Sending Ether via calls: ->
-                        and not(block/statement//functionCall//externalFunctionCallNotThis/functionNameAndArgs/functionName/identifier[matches(text()[1],"^send|transfer$")])
-                        <!-Using low-level calls: ->
-                        and not(block/statement//functionCall//externalFunctionCallNotThis/functionNameAndArgs/functionName/identifier[matches(text()[1],"^call|delegatecall|callcode$")])
-                        <!-Using inline assembly that contains certain opcodes: ->
-                        and not(block/statement//inlineAssemblyStatement)
-                    ]
-                </XPath>
-            </Pattern> -->
-        </Patterns>
-    </Rule>
-    <Rule>
-        <RuleId>SOLIDITY_PURE_FUNCTION</RuleId>
-        <Patterns>
-            <Pattern patternId="11314f">
-                <Categories>
-                    <Category>Solidity</Category>
-                </Categories>
-                <Severity>0</Severity>
-                <XPath>
-                    //functionDefinition[stateMutability/pureType and block/descendant-or-self::*[
-                    <!--Accessing this.balance or <address>.balance: using .balance or this.balance-->
-                    environmentalVariableDefinition[matches(text()[1],"balance")]
-                    or environmentalVariableDefinition[matches(text()[1],"this.balance")]
-                    <!--Accessing any of the members of block, tx, msg (with the exception of msg.sig and msg.data)-->
-                    or environmentalVariableDefinition[matches(text()[1],"msg.value|msg.gas|msg.sender|block.timestamp|tx.origin|block.blockhash|block.coinbase|block.difficulty|block.gaslimit|block.number|block.blockhash|block.coinbase|tx.gasprice")]
-                    <!--Using selfdestruct and it's alias suicide:-->
-                    or functionCall/internalFunctionCall/functionName/identifier[matches(text()[1],"^selfdestruct|suicide$")]
-                    <!--Sending Ether via calls:-->
-                    or externalFunctionCallNotThis/functionNameAndArgs/functionName/identifier[matches(text()[1],"^send|transfer$")]
-                    <!--Using low-level calls:-->
-                    or externalFunctionCallNotThis/functionNameAndArgs/functionName/identifier[matches(text()[1],"^call|delegatecall|callcode$")]
-                    <!--Using inline assembly that contains certain opcodes:-->
-                    or inlineAssemblyStatement
-                    ]
-                    ]
-                </XPath>
-            </Pattern>
-        </Patterns>
-    </Rule>
-    <Rule>
-        <RuleId>SOLIDITY_SHOULD_BE_PURE_BUT_IS_NOT</RuleId>
-        <Patterns>
-            <!-- пока отключаем -->
-            <!-- <Pattern patternId="bca409">
-                <Categories>
-                    <Category>Solidity</Category>
-                </Categories>
-                <Severity>0</Severity>
-                <XPath>
-                    //functionDefinition[not(identifier=//ancestor::*/contractDefinition/identifier)][not(stateMutability/pureType) and not(stateMutability/constantType) and not(stateMutability/viewType)][block][
-                        <!-Accessing this.balance or <address>.balance: using .balance or this.balance ->
-                        not(block/statement//functionCall//externalFunctionCallNotThis/functionNameAndArgs[matches(text()[1],"^.$")][functionName/identifier[matches(text()[1],"^balance$")]])
-                        and not(block/statement//environmentalVariableDefinition[matches(text()[1],"^this.balance$")])
-                        <!-Accessing any of the members of block, tx, msg (with the exception of msg.sig and msg.data) ->
-                        and not(block/statement//environmentalVariableDefinition[matches(text()[1],"^msg.value|msg.gas|msg.sender|block.timestamp|tx.origin|block.blockhash|block.coinbase
-                        |block.difficulty|block.gaslimit|block.number|block.blockhash|block.coinbase|tx.gasprice$")])
-                        <!-Using selfdestruct and it's alias suicide: ->
-                        and not(block/statement//functionCall/internalFunctionCall/functionName/identifier[matches(text()[1],"^selfdestruct|suicide$")])
-                        <!-Sending Ether via calls: ->
-                        and not(block/statement//functionCall//externalFunctionCallNotThis/functionNameAndArgs/functionName/identifier[matches(text()[1],"^send|transfer$")])
-                        <!-Using low-level calls: ->
-                        and not(block/statement//functionCall//externalFunctionCallNotThis/functionNameAndArgs/functionName/identifier[matches(text()[1],"^call|delegatecall|callcode$")])
-                        <!-Using inline assembly that contains certain opcodes: ->
-                        and not(block/statement//inlineAssemblyStatement)
-                    ]
-                </XPath>
-            </Pattern> -->
-        </Patterns>
-    </Rule>
-    <Rule>
-        <RuleId>SOLIDITY_ADDRESS_HARDCODED</RuleId>
-            <Patterns>
-                <!-- фиксирует адреса длиной в 42 символа"-->
-                <Pattern patternId="adc165">
-                    <Categories>
-                         <Category>Solidity</Category>
-                    </Categories>
-                    <Severity>1</Severity>
-                    <TruePositiveRate>2</TruePositiveRate>
-                    <XPath>
-                        //addressContract[string-length(addressNumber)=42]
-                    </XPath>
-                </Pattern>
-                <!-- фиксирует адреса длиной менее чем 42 символа и не равные 0x0"-->
-                <Pattern patternId="b140cd">
-                    <Categories>
-                        <Category>Solidity</Category>
-                    </Categories>
-                    <Severity>1</Severity>
-                    <TruePositiveRate>2</TruePositiveRate>
-                    <XPath>
-                        //addressContract[string-length(addressNumber) lt 42 and not(addressNumber[matches(text()[1],"^0x0$")])]
-                    </XPath>
-                </Pattern>
-                <!-- фиксирует конструкции: address(numberLiteral), где numberLiteral не равно 0"-->
-                <Pattern patternId="f32db1">
-                    <Categories>
-                        <Category>Solidity</Category>
-                    </Categories>
-                    <Severity>1</Severity>
-                    <TruePositiveRate>2</TruePositiveRate>
-                    <XPath>
-                        //addressCall/expression[primaryExpression/numberLiteral][not(primaryExpression/numberLiteral[matches(text()[1],"^0$")]) and not(primaryExpression/identifier[matches(text()[1],"^this$")])]
-                    </XPath>
-                </Pattern>
-                <!-- фиксирует конструкции: address(0), кроме "!=address(0)", кроме Transfer(address(),...) в контракте, который называется или унаследован от token/erc20-->
-                <Pattern patternId="a91b18">
-                    <Categories>
-                        <Category>Solidity</Category>
-                    </Categories>
-                    <Severity>1</Severity>
-                    <TruePositiveRate>1</TruePositiveRate>
-                    <XPath>
-                        //expression[addressCall/expression/primaryExpression/numberLiteral[matches(text()[1],"^0$")]]
-                        /parent::*[not(matches(text()[1],"^!=$"))][not(ancestor::internalFunctionCall[1]/functionName/identifier[matches(text()[1],"^Transfer$")]/ancestor::contractDefinition[identifier[matches(text()[1],"token|erc20","i")] or inheritanceSpecifier/userDefinedTypeName/identifier[matches(text()[1],"token|erc20","i")]])]
-                    </XPath>
-                </Pattern>
-                <!-- фиксирует использование адреса 0x0, кроме "!=0x0", и кторе тех случаев, когда 0x0 внутри event(внутренняя функция, название которой начинается с большой буквы)-->
-                <Pattern patternId="c67a09">
-                    <Categories>
-                        <Category>Solidity</Category>
-                    </Categories>
-                    <Severity>1</Severity>
-                    <TruePositiveRate>1</TruePositiveRate>
-                    <XPath>
-                        //addressContract[addressNumber[matches(text()[1],"^0x0$")]]/parent::*[parent::*[parent::*[not(matches(text()[1],"^!=$"))]]][not(ancestor::internalFunctionCall[1]/functionName/identifier[matches(text()[1],"^[A-Z]")])]
-                    </XPath>
-                </Pattern>
-            </Patterns>
-    </Rule>
-
-    <Rule>
-        <RuleId>SOLIDITY_CONSTANT_FUNCTIONS</RuleId>
-        <Patterns>
-            <!-- фиксирует использование типа constant в определении функции-->
-            <Pattern patternId="28fa69">
-                <Categories>
-                    <Category>Solidity</Category>
-                </Categories>
-                <Severity>0</Severity>
-                <XPath>
-                    //functionDefinition[stateMutability/constantType]
-                </XPath>
-            </Pattern>
-        </Patterns>
-    </Rule>
-    <Rule>
-        <RuleId>SOLIDITY_DELETE_FOR_ARRAYS</RuleId>
-        <Patterns>
-            <!--Фиксирует ... .length=0-->
-            <Pattern patternId="792a6d">
-                <Categories>
-                    <Category>Solidity</Category>
-                </Categories>
-                <Severity>1</Severity>
-                <XPath>
-                    //simpleStatement/expressionStatement/expression[expression/environmentalVariableDefinition[matches(text()[1],"length")]][matches(text()[1],"^=$")][expression/primaryExpression/numberLiteral[matches(text()[1],"^0$")]]
-                </XPath>
-            </Pattern>
-        </Patterns>
-    </Rule>
-    <Rule>
-        <RuleId>SOLIDITY_DOS_WITH_REVERT</RuleId>
-        <Patterns>
-            <!--Фиксирует require(внешний вызов)-->
-            <Pattern patternId="15ac23">
-                <Categories>
-                    <Category>Solidity</Category>
-                </Categories>
-                <Severity>1</Severity>
-                <XPath>
-                    //statement//internalFunctionCall[functionName/identifier[matches(text()[1],"^require|assert$")]][callArguments/callArgument//functionCall/externalFunctionCall]
-                </XPath>
-            </Pattern>
-        </Patterns>
-    </Rule>
-    <Rule>
         <RuleId>SOLIDITY_UNCHECKED_MATH</RuleId>
         <Patterns>
             <!--Фиксирует все вхождения decrement, -, -=, ... -->
@@ -731,7 +702,6 @@
         </Patterns>
     </Rule>
     <Rule>
-
         <RuleId>SOLIDITY_UNDERFLOW_OVERFLOW</RuleId>
         <Patterns>
             <!--Фиксирует конструкцию: "for (...; i >= 0; ...) { ... }"-->
@@ -759,67 +729,16 @@
         </Patterns>
     </Rule>
     <Rule>
-        <RuleId>SOLIDITY_REVERT_REQUIRE</RuleId>
+        <RuleId>SOLIDITY_USING_BLOCKHASH</RuleId>
         <Patterns>
-            <!--Фиксирует конструкцию: "if (...){revert(); или throw;}"-->
-            <Pattern patternId="c56b12">
-                <Categories>
-                    <Category>Solidity</Category>
-                </Categories>
-                <Severity>1</Severity>
-                <TruePositiveRate>3</TruePositiveRate>
-                <XPath>
-                    //ifStatement/block/statement/throwRevertStatement/ancestor-or-self::statement[2]
-                </XPath>
-            </Pattern>
-        </Patterns>
-    </Rule>
-    <Rule>
-    <RuleId>SOLIDITY_FUNCTIONS_RETURNS_TYPE_AND_NO_RETURN</RuleId>
-    <Patterns>
-        <!--Фиксирует конструкцию: "function(...) ... returns (type) {...}" т.е. после type ничего нет и в теле функции нет return-->
-        <Pattern patternId="47acc2">
-            <Categories>
-                <Category>Solidity</Category>
-            </Categories>
-            <Severity>1</Severity>
-            <XPath>
-                //functionDefinition[block]/returnsParameters[not(parameterList/parameter/identifier)]/parent::*[not(block/statement//returnStatement)]
-            </XPath>
-        </Pattern>
-    </Patterns>
-    </Rule>
-    <Rule>
-        <RuleId>SOLIDITY_NO_PAYABLE_FALLBACK</RuleId>
-        <Patterns>
-            <!--Фиксирует ситуацию, когда в fallback функции нет "payable"-->
-            <Pattern patternId="86c34a">
+            <!--Фиксирует конструкцию: "blockhash"-->
+            <Pattern patternId="b629ad">
                 <Categories>
                     <Category>Solidity</Category>
                 </Categories>
                 <Severity>1</Severity>
                 <XPath>
-                    //contractPartDefinition/ancestor::*[contractDefinition or interfaceDefinition]//functionFallBackDefinition[not(stateMutability/payableType)]/ancestor-or-self::contractPartDefinition
-                </XPath>
-            </Pattern>
-            <!--Фиксирует ситуацию, когда в контракте нет fallback функции-->
-            <Pattern patternId="70ac56">
-                <Categories>
-                    <Category>Solidity</Category>
-                </Categories>
-                <Severity>1</Severity>
-                <XPath>
-                    //contractDefinition[not(contractPartDefinition/functionFallBackDefinition)]
-                </XPath>
-            </Pattern>
-            <!--Фиксирует ситуацию, когда в контракте есть payable fallback функция, которая содержит только throw или только revert()-->
-            <Pattern patternId="12fa3c">
-                <Categories>
-                    <Category>Solidity</Category>
-                </Categories>
-                <Severity>1</Severity>
-                <XPath>
-                    //contractDefinition//functionFallBackDefinition[stateMutability/payableType]/block[count(descendant-or-self::statement)=1]/statement/throwRevertStatement/ancestor-or-self::contractPartDefinition
+                    //expression[//environmentalVariableDefinition[matches(text()[1],"block.blockhash")]]
                 </XPath>
             </Pattern>
         </Patterns>
@@ -885,17 +804,95 @@
         </Patterns>
     </Rule>
     <Rule>
-        <RuleId>SOLIDITY_USING_BLOCKHASH</RuleId>
+        <RuleId>SOLIDITY_VAR</RuleId>
         <Patterns>
-            <!--Фиксирует конструкцию: "blockhash"-->
-            <Pattern patternId="b629ad">
+            <!--Фиксируется случаи определения переменных, как var ...= число-->
+            <Pattern patternId="d28aa7">
+                <Categories>
+                    <Category>Solidity</Category>
+                </Categories>
+                <Severity>2</Severity>
+                <XPath>//variableDeclaration[typeName/elementaryTypeName[matches(text()[1],"^var$")]][expression//primaryExpression/numberLiteral[matches(text()[1],"^[0-9]+$")]]</XPath>
+            </Pattern>
+            <!--Фиксируется случаи определения переменных, как var имя переменной-->
+            <Pattern patternId="f77619">
                 <Categories>
                     <Category>Solidity</Category>
                 </Categories>
                 <Severity>1</Severity>
-                <XPath>
-                    //expression[//environmentalVariableDefinition[matches(text()[1],"block.blockhash")]]
+                <XPath>//variableDeclaration[typeName/elementaryTypeName[matches(text()[1],"^var$")]][expression/primaryExpression/identifier]</XPath>
+            </Pattern>
+        </Patterns>
+    </Rule>
+    <Rule>
+        <RuleId>SOLIDITY_VAR_IN_LOOP_FOR</RuleId>
+        <Patterns>
+            <!-- фиксирует конструкцию: "for (var ...; ... число более 255; ... ++)"-->
+            <Pattern patternId="f176ab">
+                <Categories>
+                    <Category>Solidity</Category>
+                </Categories>
+                <Severity>2</Severity>
+                <TruePositiveRate>3</TruePositiveRate>
+                <XPath>//forStatement[simpleStatement//typeName/elementaryTypeName[matches(text()[1],"^var$")]][expression/expression/primaryExpression[numberLiteral[matches(text()[1],"^[0-9]+$")]&gt; 255]][expression/twoPlusMinusOperator/incrementOperator]
                 </XPath>
+            </Pattern>
+        </Patterns>
+    </Rule>
+    <Rule>
+        <RuleId>SOLIDITY_VIEW_FUNCTION</RuleId>
+        <Patterns>
+            <Pattern patternId="189abf">
+                <Categories>
+                    <Category>Solidity</Category>
+                </Categories>
+                <Severity>0</Severity>
+                <!--Writing to state variables - лучше сделать через флаги-->
+                <!--Emitting events - лучше сделать через флаги-->
+                <!--Creating other contracts - лучше сделать через флаги-->
+                <!--Calling any function not marked view or pure:- лучше сделать через флаги-->
+                <XPath>
+                    //functionDefinition[stateMutability/viewType and block/descendant-or-self::*[
+                        <!--Using selfdestruct and it's alias suicide:-->
+                        functionCall/internalFunctionCall/functionName/identifier[matches(text()[1],"^selfdestruct|suicide$")]
+                        <!--Sending Ether via calls:-->
+                        or externalFunctionCallNotThis/functionNameAndArgs/functionName/identifier[matches(text()[1],"^send|transfer$")]
+                        <!--Using low-level calls:-->
+                        or externalFunctionCallNotThis/functionNameAndArgs/functionName/identifier[matches(text()[1],"^call|delegatecall|callcode$")]
+                        <!--Using inline assembly that contains certain opcodes:-->
+                        or inlineAssemblyStatement
+                    ]
+                    ]
+                </XPath>
+            </Pattern>
+        </Patterns>
+    </Rule>
+    <Rule>
+        <RuleId>SOLIDITY_VISIBILITY</RuleId>
+        <Patterns>
+            <!-- фиксирует ситуацию, когда для функции не определена видимость"-->
+            <Pattern patternId="910067">
+                <Categories>
+                    <Category>Solidity</Category>
+                </Categories>
+                <Severity>0</Severity>
+                <XPath>//contractPartDefinition/functionDefinition[not(visibleType)]</XPath>
+            </Pattern>
+            <!-- фиксирует ситуацию, когда для fallback функции не определена видимость"-->
+            <Pattern patternId="d67c21">
+                <Categories>
+                    <Category>Solidity</Category>
+                </Categories>
+                <Severity>0</Severity>
+                <XPath>//contractPartDefinition/functionFallBackDefinition[not(visibleType)]</XPath>
+            </Pattern>
+            <!-- фиксирует ситуацию, когда для переменной состояния не определена видимость"-->
+            <Pattern patternId="b51ce0">
+                <Categories>
+                    <Category>Solidity</Category>
+                </Categories>
+                <Severity>0</Severity>
+                <XPath>//contractPartDefinition/stateVariableDeclaration[not(visibleType)]</XPath>
             </Pattern>
         </Patterns>
     </Rule>
