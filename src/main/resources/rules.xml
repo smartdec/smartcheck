@@ -36,7 +36,7 @@
                         //addressCall/expression[primaryExpression/numberLiteral][not(primaryExpression/numberLiteral[matches(text()[1],"^0$")]) and not(primaryExpression/identifier[matches(text()[1],"^this$")])]
                     </XPath>
                 </Pattern>
-                <!-- фиксирует конструкции: address(0), кроме "!=address(0)", кроме Transfer(address(),...) в контракте, который называется или унаследован от token/erc20-->
+                <!-- фиксирует использование адреса address(0), кроме "!=address(0)" и "==address(0)", и кторе тех случаев, когда address(0) внутри event(внутренняя функция, название которой начинается с большой буквы)-->
                 <Pattern patternId="a91b18">
                     <Categories>
                         <Category>Solidity</Category>
@@ -45,10 +45,10 @@
                     <TruePositiveRate>1</TruePositiveRate>
                     <XPath>
                         //expression[addressCall/expression/primaryExpression/numberLiteral[matches(text()[1],"^0$")]]
-                        /parent::*[not(matches(text()[1],"^!=$"))][not(ancestor::internalFunctionCall[1]/functionName/identifier[matches(text()[1],"^Transfer$")]/ancestor::contractDefinition[identifier[matches(text()[1],"token|erc20","i")] or inheritanceSpecifier/userDefinedTypeName/identifier[matches(text()[1],"token|erc20","i")]])]
+                        /parent::*[not(matches(text()[1],"^==|!=$"))][not(ancestor::internalFunctionCall[1]/functionName/identifier[matches(text()[1],"^[A-Z]")])]
                     </XPath>
                 </Pattern>
-                <!-- фиксирует использование адреса 0x0, кроме "!=0x0", и кторе тех случаев, когда 0x0 внутри event(внутренняя функция, название которой начинается с большой буквы)-->
+                <!-- фиксирует использование адреса 0x0, кроме "!=0x0" и "==0x0", и кторе тех случаев, когда 0x0 внутри event(внутренняя функция, название которой начинается с большой буквы)-->
                 <Pattern patternId="c67a09">
                     <Categories>
                         <Category>Solidity</Category>
@@ -56,7 +56,7 @@
                     <Severity>1</Severity>
                     <TruePositiveRate>1</TruePositiveRate>
                     <XPath>
-                        //addressContract[addressNumber[matches(text()[1],"^0x0$")]]/parent::*[parent::*[parent::*[not(matches(text()[1],"^!=$"))]]][not(ancestor::internalFunctionCall[1]/functionName/identifier[matches(text()[1],"^[A-Z]")])]
+                        //addressContract[addressNumber[matches(text()[1],"^0x0$")]]/parent::*[parent::*[parent::*[not(matches(text()[1],"^==|!=$"))]]][not(ancestor::internalFunctionCall[1]/functionName/identifier[matches(text()[1],"^[A-Z]")])]
                     </XPath>
                 </Pattern>
             </Patterns>
