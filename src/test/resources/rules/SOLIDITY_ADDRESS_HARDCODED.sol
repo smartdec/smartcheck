@@ -27,7 +27,7 @@ contract C {
         x = g(0x0);
     }
     
-    function gudPractice(address _token, uint balance) {
+    function goodPractice(address _token, uint balance) {
 
         if (address(0) == _token) or (0x0 == _token) {
             Transfer(address(0), balance);
