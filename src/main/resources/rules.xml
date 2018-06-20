@@ -345,7 +345,7 @@
                 <Categories>
                     <Category>Solidity</Category>
                 </Categories>
-                <Severity>2</Severity>
+                <Severity>1</Severity>
                 <XPath>//pragmaDirective/pragmaValue//versionOperator</XPath>
             </Pattern>
         </Patterns>
