@@ -77,7 +77,7 @@
         </Patterns>
     </Rule>
     <Rule>
-        <RuleId>SOLIDITY_BYTES_BYTE</RuleId>
+        <RuleId>SOLIDITY_BYTE_ARRAY_INSTEAD_BYTES</RuleId>
         <Patterns>
             <!-- фиксирует конструкцию: "byte[]"-->
             <Pattern patternId="f13a9f">
