@@ -449,65 +449,6 @@
         </Patterns>
     </Rule>
     <Rule>
-        <RuleId>SOLIDITY_SHOULD_BE_PURE_BUT_IS_NOT</RuleId>
-        <Patterns>
-            <!-- пока отключаем -->
-            <!-- <Pattern patternId="bca409">
-                <Categories>
-                    <Category>Solidity</Category>
-                </Categories>
-                <Severity>0</Severity>
-                <XPath>
-                    //functionDefinition[not(identifier=//ancestor::*/contractDefinition/identifier)][not(stateMutability/pureType) and not(stateMutability/constantType) and not(stateMutability/viewType)][block][
-                        <!-Accessing this.balance or <address>.balance: using .balance or this.balance ->
-                        not(block/statement//functionCall//externalFunctionCallNotThis/functionNameAndArgs[matches(text()[1],"^.$")][functionName/identifier[matches(text()[1],"^balance$")]])
-                        and not(block/statement//environmentalVariableDefinition[matches(text()[1],"^this.balance$")])
-                        <!-Accessing any of the members of block, tx, msg (with the exception of msg.sig and msg.data) ->
-                        and not(block/statement//environmentalVariableDefinition[matches(text()[1],"^msg.value|msg.gas|msg.sender|block.timestamp|tx.origin|block.blockhash|block.coinbase
-                        |block.difficulty|block.gaslimit|block.number|block.blockhash|block.coinbase|tx.gasprice$")])
-                        <!-Using selfdestruct and it's alias suicide: ->
-                        and not(block/statement//functionCall/internalFunctionCall/functionName/identifier[matches(text()[1],"^selfdestruct|suicide$")])
-                        <!-Sending Ether via calls: ->
-                        and not(block/statement//functionCall//externalFunctionCallNotThis/functionNameAndArgs/functionName/identifier[matches(text()[1],"^send|transfer$")])
-                        <!-Using low-level calls: ->
-                        and not(block/statement//functionCall//externalFunctionCallNotThis/functionNameAndArgs/functionName/identifier[matches(text()[1],"^call|delegatecall|callcode$")])
-                        <!-Using inline assembly that contains certain opcodes: ->
-                        and not(block/statement//inlineAssemblyStatement)
-                    ]
-                </XPath>
-            </Pattern> -->
-        </Patterns>
-    </Rule>
-    <Rule>
-        <RuleId>SOLIDITY_SHOULD_BE_VIEW_BUT_IS_NOT</RuleId>
-        <Patterns>
-            <!-- пока отключаем -->
-            <!-- <Pattern patternId="ad1827">
-                <Categories>
-                    <Category>Solidity</Category>
-                </Categories>
-                <Severity>0</Severity>
-                <!-Writing to state variables - лучше сделать через флаги ->
-                <!-Emitting events - лучше сделать через флаги ->
-                <!-Creating other contracts - лучше сделать через флаги ->
-                <!-Calling any function not marked view or pure:- лучше сделать через флаги ->
-
-                <XPath>
-                    //functionDefinition[not(identifier=//ancestor::*/contractDefinition/identifier)][not(stateMutability/viewType) and not(stateMutability/constantType) and not(stateMutability/pureType)][block][
-                        <!-Using selfdestruct and it's alias suicide: ->
-                        not(block/statement//functionCall/internalFunctionCall/functionName/identifier[matches(text()[1],"^selfdestruct|suicide$")])
-                        <!-Sending Ether via calls: ->
-                        and not(block/statement//functionCall//externalFunctionCallNotThis/functionNameAndArgs/functionName/identifier[matches(text()[1],"^send|transfer$")])
-                        <!-Using low-level calls: ->
-                        and not(block/statement//functionCall//externalFunctionCallNotThis/functionNameAndArgs/functionName/identifier[matches(text()[1],"^call|delegatecall|callcode$")])
-                        <!-Using inline assembly that contains certain opcodes: ->
-                        and not(block/statement//inlineAssemblyStatement)
-                    ]
-                </XPath>
-            </Pattern> -->
-        </Patterns>
-    </Rule>
-    <Rule>
         <RuleId>SOLIDITY_STYLE_GUIDE_VIOLATION</RuleId>
         <Patterns>
             <!--Фиксируется случаи, event определяется с маленькой буквы-->
