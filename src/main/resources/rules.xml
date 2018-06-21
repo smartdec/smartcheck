@@ -314,7 +314,7 @@
                 <Categories>
                     <Category>Solidity</Category>
                 </Categories>
-                <Severity>2</Severity>
+                <Severity>3</Severity>
                 <XPath>
                     //contractDefinition[contractPartDefinition[functionDefinition/stateMutability/payableType or functionFallBackDefinition/stateMutability/payableType]]
                     [not(contractPartDefinition/functionDefinition/block//functionCall/internalFunctionCall/functionName/identifier[matches(text()[1],"^suicide|selfdestruct$")])]
@@ -322,20 +322,6 @@
                     [not(contractPartDefinition/functionDefinition/block//functionCall/externalFunctionCall/externalFunctionCallNotThis/functionNameAndArgs/functionName/identifier[matches(text()[1],"^value$")])]
                 </XPath>
             </Pattern>
-        </Patterns>
-    </Rule>
-    <Rule>
-        <RuleId>SOLIDITY_MALICIOUS_LIBRARIES</RuleId>
-        <Patterns>
-            <!-- пока отключаем -->
-            <!--Фиксируется любое определение библиотек-->
-            <!-- <Pattern patternId="a0298c">
-                <Categories>
-                    <Category>Solidity</Category>
-                </Categories>
-                <Severity>1</Severity>
-                <XPath>//contractDefinition[text()[1]="library"]</XPath>
-            </Pattern> -->
         </Patterns>
     </Rule>
     <Rule>
