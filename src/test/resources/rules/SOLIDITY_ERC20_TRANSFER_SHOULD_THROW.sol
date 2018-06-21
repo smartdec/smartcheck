@@ -1,30 +1,27 @@
-pragma solidity 0.4.16;
+pragma solidity 0.4.24;
 
-contract fef is Token{
-    function transferFrom(address _spender, uint _value) returns (bool success) {
-    	require(_value > 10 wei);
-    	return x;
-    }
-    function transferFrom(address _spender, uint _value) returns (bool success) {
-    	if (_value < 20 wei) throw;
-    	return true;
-    }
-    function transfer(address _spender, uint _value) returns (bool success) {
-        if (!drpsToken.transfer(msg.sender, _value)) {
-            revert();
-        }
-    }
-    function transfer(address _to, uint256 _value) returns (bool success) {
-        if (balances[msg.sender] >= _value && _value > 0) {
-            return true;
-        }
-        else {require(_value > 10 wei); }
-    }
-    // <yes> <report> SOLIDITY_ERC20_TRANSFER_SHOULD_THROW 550a42
-    function transfer(address _to, uint256 _value) returns (bool success) {
-        if (balances[msg.sender] >= _value && _value > 0) {
-            return true;
-        }
-        else {return false;}
-    }
+interface ERC20 { function transfer(address to, uint value) public returns(bool succes); }
+
+contract CToken{
+	// <yes> <report> SOLIDITY_ERC20_TRANSFER_SHOULD_THROW 550a42
+	function transfer(uint256 _value) returns (bool success) {
+		if (_value > 0) {
+			return true;
+		}
+		else {return false;}
+	}
+	
+	function transfer(address _token, uint _value) returns (bool success) {
+		ERC20(_token).transfer(msg.sender, _value);
+	}
+	function transferFrom(uint _value) returns (bool success) {
+		require(_value > 10 wei);
+		return false;
+	}
+	function transferFrom(uint _value) returns (bool success) {
+		if (_value < 20 wei) {
+			revert();
+		}
+		return true;
+	}
 }

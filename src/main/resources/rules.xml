@@ -202,7 +202,7 @@
         <Patterns>
             <!--Фиксирует конструкции: имя контракта содержит token или erc20 либо наследуется от контракта содержащего такое в названии.
              В этом контракте есть определение функции, содержащей в названии transfer или transferFrom, возвращающей значение типа bool, которая не является интерфейсом.
-             В определении этой функции не содержатся функции revert, require, assert, throw-->
+             В определении этой функции не содержатся функции revert, require, assert, throw, кроме того нет любых вызовов функций-->
             <Pattern patternId="550a42">
                 <Categories>
                     <Category>Solidity</Category>
@@ -210,9 +210,10 @@
                 <Severity>1</Severity>
                 <XPath>
                     //contractDefinition[identifier[matches(text()[1],"token|erc20","i")] or inheritanceSpecifier/userDefinedTypeName/identifier[matches(text()[1],"token|erc20","i")]]
-                    //functionDefinition[block/statement][identifier[matches(text()[1],"^transfer(From)?$","i")]][returnsParameters/parameterList/parameter/typeName/elementaryTypeName[matches(text()[1],"bool")]]
-                    [count(descendant-or-self::*[functionCall[internalFunctionCall/functionName/identifier
-                    [matches(text()[1],"require|assert")]]] | descendant-or-self::*[statement/throwRevertStatement])=0]
+                    //functionDefinition[block/statement]
+                    [identifier[matches(text()[1],"^transfer(From)?$","i")]]
+                    [returnsParameters/parameterList/parameter/typeName/elementaryTypeName[matches(text()[1],"bool")]]
+                    [count(descendant-or-self::*[functionCall] | descendant-or-self::*[statement/throwRevertStatement])=0]
                 </XPath>
             </Pattern>
         </Patterns>
