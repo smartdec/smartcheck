@@ -307,20 +307,6 @@
         </Patterns>
     </Rule>
     <Rule>
-        <RuleId>SOLIDITY_INTEGER_DIVISION</RuleId>
-        <Patterns>
-            <!-- пока отключаем -->
-            <!--Фиксируется конструкция: целое число / целое число-->
-            <!-- <Pattern patternId="8e0621">
-                <Categories>
-                    <Category>Solidity</Category>
-                </Categories>
-                <Severity>1</Severity>
-                <XPath>//expression[expression[1]//numberLiteral][muldivOperator/divOperator][expression[2]//numberLiteral]</XPath>
-            </Pattern> -->
-        </Patterns>
-    </Rule>
-    <Rule>
         <RuleId>SOLIDITY_LOCKED_MONEY</RuleId>
         <Patterns>
             <!--Фиксируются ситуации, когда в контракте имеется функция типа payable, но нет функций suicide, selfdestruct, transfer, send, .value-->
