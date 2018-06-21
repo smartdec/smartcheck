@@ -338,7 +338,7 @@
         </Patterns>
     </Rule>
     <Rule>
-        <RuleId>SOLIDITY_PRIVATE_MODIFIER</RuleId>
+        <RuleId>SOLIDITY_PRIVATE_MODIFIER_DONT_HIDE_DATA</RuleId>
         <Patterns>
             <!--Фиксируется определение state переменных с типом видимости private-->
             <Pattern patternId="5616b2">
