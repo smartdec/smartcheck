@@ -1,7 +1,7 @@
 pragma solidity 0.4.24;
 
 contract TestToken {
-    /* <yes> <report> SOLIDITY_ERC20_FUNCTIONS_ALWAYS_RETURN_FALSE b180ca*/
+    // <yes> <report> SOLIDITY_ERC20_FUNCTIONS_ALWAYS_RETURN_FALSE b180ca
     function approve(address _spender, uint _value) returns (bool success) {
     	if (_value < 20 wei) throw;
     }
