@@ -449,6 +449,21 @@
         </Patterns>
     </Rule>
     <Rule>
+        <RuleId>SOLIDITY_SHOULD_RETURN_STRUCT</RuleId>
+        <Patterns>
+            <!--Фиксируются функции, у которых больше одного выходного параметра-->
+            <Pattern patternId="7d54ca">
+                <Categories>
+                    <Category>Solidity</Category>
+                </Categories>
+                <Severity>1</Severity>
+                <XPath>
+                    //functionDefinition/returnsParameters/parameterList[count(parameter)>1]
+                </XPath>
+            </Pattern>
+        </Patterns>
+    </Rule>
+    <Rule>
         <RuleId>SOLIDITY_TIMESTAMP_DEPENDENCE</RuleId>
         <Patterns>
             <!--Фиксируется случаи, когда выражение содержит "== or = block.timestamp or now"-->
