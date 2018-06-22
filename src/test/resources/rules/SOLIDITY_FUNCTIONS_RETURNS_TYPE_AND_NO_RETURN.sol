@@ -25,12 +25,12 @@ contract C {
     function remainBalanced() public constant returns (uint256){
         return balanceOf(this);
     }
-
+    
     function balance(address who)public view returns (uint256 _r);
 
     function execute3(address _to, uint _value, bytes _data) returns (uint256 _r) {
         _r = balanceOf(_to);
-    }
+    }    
     function execute4(address _to, uint _value, bytes _data) returns (uint256 _r) {
         return balanceOf(_to);
     }

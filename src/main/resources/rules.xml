@@ -250,7 +250,7 @@
                 //functionDefinition[block]/returnsParameters[not(parameterList/parameter/identifier)]/parent::*[not(block/statement//returnStatement)]
             </XPath>
         </Pattern>
-        <!--Фиксирует конструкцию: "function(...) ... returns (type name) {...}" - в теле функции нет присваивания "name=" и нет return-->
+        <!--Фиксирует конструкцию: "function(...) ... returns (type name) {...}" - в теле функции нет присваивания "name=" и нет return (в данной реализации если параметров на выходе несколько, то проверяется только первый)-->
         <Pattern patternId="58bdd3">
             <Categories>
                 <Category>Solidity</Category>
@@ -261,7 +261,7 @@
                 [block]
                 [not(block/statement//returnStatement)]
                 [returnsParameters/parameterList/parameter/identifier]
-                [not(block//expression[matches(text()[1],"=")]/expression[1]//identifier[matches(text()[1],ancestor::functionDefinition/returnsParameters/parameterList/parameter/identifier)])]
+                [not(block//expression[matches(text()[1],"=")]/expression[1]//identifier[matches(text()[1],ancestor::functionDefinition/returnsParameters/parameterList/parameter[1]/identifier)])]
             </XPath>
         </Pattern>
     </Patterns>
