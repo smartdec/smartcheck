@@ -449,27 +449,6 @@
         </Patterns>
     </Rule>
     <Rule>
-        <RuleId>SOLIDITY_STYLE_GUIDE_VIOLATION</RuleId>
-        <Patterns>
-            <!--Фиксируется случаи, event определяется с маленькой буквы-->
-            <Pattern patternId="343033">
-                <Categories>
-                    <Category>Solidity</Category>
-                </Categories>
-                <Severity>0</Severity>
-                <XPath>//eventDefinition/identifier[matches(text()[1],"^[a-z]")]</XPath>
-            </Pattern>
-            <!--Фиксируется случаи, когда функция определяется с большой буквы-->
-            <Pattern patternId="b0dbcd">
-                <Categories>
-                    <Category>Solidity</Category>
-                </Categories>
-                <Severity>0</Severity>
-                <XPath>//functionDefinition[identifier[matches(text()[1],"^[A-Z]")]][not(identifier =//ancestor::*/contractDefinition/identifier)]</XPath>
-            </Pattern>
-        </Patterns>
-    </Rule>
-    <Rule>
         <RuleId>SOLIDITY_TIMESTAMP_DEPENDENCE</RuleId>
         <Patterns>
             <!--Фиксируется случаи, когда выражение содержит "== or = block.timestamp or now"-->
