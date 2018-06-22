@@ -135,6 +135,21 @@
         </Patterns>
     </Rule>
     <Rule>
+        <RuleId>SOLIDITY_DEPRECATED_CONSTRUCTIONS</RuleId>
+        <Patterns>
+            <!--Фиксирует конструкцию: "suicide"-->
+            <Pattern patternId="27cb59">
+                <Categories>
+                    <Category>Solidity</Category>
+                </Categories>
+                <Severity>1</Severity>
+                <XPath>
+                    //functionName/identifier[matches(text()[1],"suicide")]
+                </XPath>
+            </Pattern>
+        </Patterns>
+    </Rule>
+    <Rule>
         <RuleId>SOLIDITY_DOS_WITH_REVERT</RuleId>
         <Patterns>
             <!--Фиксирует require(внешний вызов)-->
@@ -650,21 +665,6 @@
                 <Severity>2</Severity>
                 <XPath>
                     //functionName/identifier[matches(text()[1],"^sha3$")]
-                </XPath>
-            </Pattern>
-        </Patterns>
-    </Rule>
-    <Rule>
-        <RuleId>SOLIDITY_USING_SUICIDE</RuleId>
-        <Patterns>
-            <!--Фиксирует конструкцию: "suicide"-->
-            <Pattern patternId="27cb59">
-                <Categories>
-                    <Category>Solidity</Category>
-                </Categories>
-                <Severity>1</Severity>
-                <XPath>
-                    //functionName/identifier[matches(text()[1],"suicide")]
                 </XPath>
             </Pattern>
         </Patterns>
