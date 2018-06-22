@@ -157,6 +157,16 @@
                     //functionName/identifier[matches(text()[1],"^sha3$")]
                 </XPath>
             </Pattern>
+            <!--Фиксирует конструкцию: "throw"-->
+            <Pattern patternId="49bd2a">
+                <Categories>
+                    <Category>Solidity</Category>
+                </Categories>
+                <Severity>1</Severity>
+                <XPath>
+                    //statement/throwRevertStatement[matches(text()[1],"throw")]
+                </XPath>
+            </Pattern>
         </Patterns>
     </Rule>
     <Rule>
@@ -660,21 +670,6 @@
                 <Severity>1</Severity>
                 <XPath>
                     //statement/inlineAssemblyStatement/inlineAssemblyBlock/assemblyStatement[not(assemblyItem/assemblerLocalVariables[matches(text()[1],"^:=$")][functionalAssemblyExpression/identifier[matches(text()[1],"^extcodesize$")]])]/ancestor::inlineAssemblyStatement
-                </XPath>
-            </Pattern>
-        </Patterns>
-    </Rule>
-    <Rule>
-        <RuleId>SOLIDITY_USING_THROW</RuleId>
-        <Patterns>
-            <!--Фиксирует конструкцию: "throw"-->
-            <Pattern patternId="49bd2a">
-                <Categories>
-                    <Category>Solidity</Category>
-                </Categories>
-                <Severity>1</Severity>
-                <XPath>
-                    //statement/throwRevertStatement[matches(text()[1],"throw")]
                 </XPath>
             </Pattern>
         </Patterns>
