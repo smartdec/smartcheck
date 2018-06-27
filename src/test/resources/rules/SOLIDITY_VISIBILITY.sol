@@ -10,17 +10,17 @@ contract SolidityVisibility1 {
     function transfer() {
         x=0;
     }
-    
+
     function isServer(address sender) public constant returns (bool) {
         return sender == msg.sender;
     }
-   
+
     function transfernew() external {
     }
-    
+
     function internalAction() internal {
     }
-    
+
 // <yes> <report> SOLIDITY_VISIBILITY d67c21
     function () private {
     }
