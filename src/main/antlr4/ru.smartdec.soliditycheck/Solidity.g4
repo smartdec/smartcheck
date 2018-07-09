@@ -68,7 +68,9 @@ modifierDefinition : 'modifier' identifier parameterList? block ;
 
 functionDefinition
     : ('function' identifier '(' (variableDeclarationList |elementaryTypeName ','? )*')'
-    | 'function' identifier )
+    | 'function' identifier
+    | 'constructor' '(' (variableDeclarationList |elementaryTypeName ','? )*')')
+
     ( modifierList|identifier | stateMutability |visibleType|functionCall )*
       returnsParameters? block? ;
 
@@ -157,7 +159,7 @@ typeNameList :         '(' ( typeName  (',' typeName )* )? ')' ;
 //___functions_call
 functionCall:  internalFunctionCall |externalFunctionCall ;
 
-internalFunctionCall:functionName callArguments+;
+internalFunctionCall:'emit'? functionName callArguments+;
 
 externalFunctionCall:externalFunctionCallThis | externalFunctionCallNotThis;
 

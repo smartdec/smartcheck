@@ -22,6 +22,10 @@ contract SolidityVisibility1 {
 contract SolidityVisibility2 {
 
 // <yes> <report> SOLIDITY_VISIBILITY 910067
+    constructor () {
+        owner = msg.sender;
+    }
+// <yes> <report> SOLIDITY_VISIBILITY 910067
     function AccessManager(address _server, address _guardian) returns(address){
         return _server;
     }
