@@ -54,7 +54,6 @@ interface SolidityVisibility3 {
 
 interface SolidityVisibility4 {
 
-/* <yes> <report> SOLIDITY_VISIBILITY 23rt6g*/
 // <yes> <report> SOLIDITY_VISIBILITY d67c21
     function ();
 } 

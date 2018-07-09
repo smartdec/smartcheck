@@ -885,7 +885,7 @@
                     <Category>Solidity</Category>
                 </Categories>
                 <Severity>1</Severity>
-                <XPath>//contractPartDefinition/functionDefinition[not(visibleType)]</XPath>
+                <XPath>//functionDefinition[not(visibleType)]</XPath>
             </Pattern>
             <!-- фиксирует ситуацию, когда для fallback функции не определена видимость или она не external-->
             <Pattern patternId="d67c21">
@@ -893,7 +893,7 @@
                     <Category>Solidity</Category>
                 </Categories>
                 <Severity>1</Severity>
-                <XPath>//contractPartDefinition/functionFallBackDefinition[not(visibleType) or visibleType[not(matches(text()[1],"^external$"))]]</XPath>
+                <XPath>//functionFallBackDefinition[not(visibleType) or visibleType[not(matches(text()[1],"^external$"))]]</XPath>
             </Pattern>
             <!-- фиксирует ситуацию, когда для переменной состояния не определена видимость-->
             <Pattern patternId="b51ce0">
@@ -901,7 +901,7 @@
                     <Category>Solidity</Category>
                 </Categories>
                 <Severity>1</Severity>
-                <XPath>//contractPartDefinition/stateVariableDeclaration[not(visibleType)]</XPath>
+                <XPath>//stateVariableDeclaration[not(visibleType)]</XPath>
             </Pattern>
         </Patterns>
     </Rule>
