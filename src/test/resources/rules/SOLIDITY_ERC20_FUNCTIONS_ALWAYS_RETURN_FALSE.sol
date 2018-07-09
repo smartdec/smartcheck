@@ -15,4 +15,5 @@ contract TestToken {
     	return false;
     }
     function transfer(address _to, uint256 _value) returns (bool success) {}
+    function transfer(address _to, uint256 _value) returns (bool);
  }

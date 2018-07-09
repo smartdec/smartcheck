@@ -24,4 +24,7 @@ contract CToken{
 		}
 		return true;
 	}
+	function transfer(uint value) returns (bool success) {
+		return super.transfer(_token,_value);
+	}
 }

@@ -64,7 +64,7 @@
     <Rule>
         <RuleId>SOLIDITY_BALANCE_EQUALITY</RuleId>
         <Patterns>
-            <!-- фиксирует конструкцию: "this.balance=="-->
+            <!-- фиксирует конструкции: ".balance ==", ".balance !="-->
             <Pattern patternId="5094ad">
                 <Categories>
                     <Category>Solidity</Category>
@@ -227,7 +227,7 @@
                 <Severity>2</Severity>
                 <XPath>
                     //contractDefinition[identifier[matches(text()[1],"token|erc20","i")] or inheritanceSpecifier/userDefinedTypeName/identifier[matches(text()[1],"token|erc20","i")]]
-                    //functionDefinition[block/statement][identifier[matches(text()[1],"^approve$","i")]]
+                    //functionDefinition[block/statement][identifier[matches(text()[1],"^approve$")]]
                 </XPath>
             </Pattern>
         </Patterns>
@@ -245,7 +245,7 @@
                 <Severity>1</Severity>
                 <XPath>
                     //contractDefinition[identifier[matches(text()[1],"token|erc20","i")]  or inheritanceSpecifier/userDefinedTypeName/identifier[matches(text()[1],"token|erc20","i")]]
-                    //functionDefinition[block/statement][identifier[matches(text()[1],"^transfer|transferFrom|approve$","i")]][returnsParameters/parameterList/parameter/typeName/elementaryTypeName[matches(text()[1],"bool")]]
+                    //functionDefinition[block/statement][identifier[matches(text()[1],"^transfer|transferFrom|approve$")]][returnsParameters/parameterList/parameter/typeName/elementaryTypeName[matches(text()[1],"bool")]]
                     [count(descendant-or-self::*[returnStatement])=0]
                 </XPath>
             </Pattern>
@@ -265,7 +265,7 @@
                 <XPath>
                     //contractDefinition[identifier[matches(text()[1],"token|erc20","i")] or inheritanceSpecifier/userDefinedTypeName/identifier[matches(text()[1],"token|erc20","i")]]
                     //functionDefinition[block/statement]
-                    [identifier[matches(text()[1],"^transfer(From)?$","i")]]
+                    [identifier[matches(text()[1],"^transfer(From)?$")]]
                     [returnsParameters/parameterList/parameter/typeName/elementaryTypeName[matches(text()[1],"bool")]]
                     [count(descendant-or-self::*[functionCall] | descendant-or-self::*[statement/throwRevertStatement])=0]
                 </XPath>
@@ -493,7 +493,8 @@
                 </Categories>
                 <Severity>1</Severity>
                 <XPath>
-                    //functionDefinition/returnsParameters/parameterList[count(parameter)>1]
+                    //functionDefinition[(visibleType[matches(text()[1],"internal|private")])or(not(visibleType))]
+                    /returnsParameters/parameterList[count(parameter)>1]
                 </XPath>
             </Pattern>
         </Patterns>

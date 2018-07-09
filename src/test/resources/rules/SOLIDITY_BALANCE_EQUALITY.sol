@@ -20,5 +20,13 @@ contract C {
         }
         if (addr.balance <= 100 wei) {
         }
+        if (msg.sender.balance < 100 wei) {
+        }
+        if (foo(adr).balance >= 100 wei) {
+        }
+    }
+
+    function foo(address _adr) public returns(address) {
+        return _adr;
     }
 }
