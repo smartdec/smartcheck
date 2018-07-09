@@ -2,7 +2,7 @@ pragma solidity 0.4.16;
 
 contract TestToken {
 // <yes> <report> SOLIDITY_ERC20_APPROVE af782c
-    function Approve(address _spender, uint _value) returns (bool success) {
+    function approve(address _spender, uint _value) returns (bool success) {
     	require(_value > 10 wei);
     	return x;
     }
