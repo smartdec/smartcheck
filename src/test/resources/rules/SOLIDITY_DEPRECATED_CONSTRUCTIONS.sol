@@ -16,7 +16,9 @@ contract C {
     function kill() {
         uint r;
         assembly {
+            // <yes> <report> SOLIDITY_DEPRECATED_CONSTRUCTIONS  187b5a
             r := sha3(s)
+            // <yes> <report> SOLIDITY_DEPRECATED_CONSTRUCTIONS  27cb59
             suicide()
         }
     }
