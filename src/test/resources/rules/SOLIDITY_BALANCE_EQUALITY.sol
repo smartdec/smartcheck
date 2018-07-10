@@ -1,21 +1,32 @@
-pragma solidity ^0.4.11;
+pragma solidity 0.4.24;
 
-contract SoliditySendValue {
-    function comparingBalances(uint _amount) returns (bool) {
+contract C {
+    function badPrictice(address addr) {
         // <yes> <report> SOLIDITY_BALANCE_EQUALITY 5094ad
-        if (this.balance == 1543 wei) {
+        if (this.balance == 100 wei) {
         }
+        // <yes> <report> SOLIDITY_BALANCE_EQUALITY 5094ad
+        if (address(this).balance != 100 wei) {
+        }
+        // <yes> <report> SOLIDITY_BALANCE_EQUALITY 5094ad
+        if (addr.balance != 100 wei) {
+        }
+    }
 
-        // <yes> <report> SOLIDITY_BALANCE_EQUALITY 5094ad
-        if (_amount == this.balance) return false;
-        // <yes> <report> SOLIDITY_BALANCE_EQUALITY 5094ad
-        if (this.balance ==_amount) return false;
-        // <yes> <report> SOLIDITY_BALANCE_EQUALITY 58a5bd
-        if (this.balance !=_amount) return false;
-        if (this.balance > 100 wei) throw;
-        if (this.balance >= 100 wei) throw;
-        if (a != 100 wei) throw;
-        if (a == 100 wei) throw;
-        return true;
+    function goodPrictice(address addr) public {  
+        if (this.balance > 100 wei) {
+        }
+        if (address(this).balance >= 100 wei) {
+        }
+        if (addr.balance <= 100 wei) {
+        }
+        if (msg.sender.balance < 100 wei) {
+        }
+        if (foo(adr).balance >= 100 wei) {
+        }
+    }
+
+    function foo(address _adr) public returns(address) {
+        return _adr;
     }
 }
