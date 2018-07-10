@@ -12,7 +12,7 @@ contract C {
 	 b=2;
 	 }
 	// <yes> <report> SOLIDITY_SHOULD_RETURN_STRUCT 7d54ca
-	 function f1() returns(uint a, uint b) {
+	 function f1() returns(uint, uint) {
 	 a=1;
 	 b=2;
 	 }

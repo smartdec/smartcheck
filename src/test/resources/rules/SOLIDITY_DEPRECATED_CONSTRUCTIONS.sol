@@ -17,7 +17,7 @@ contract C {
         uint r;
         assembly {
             r := sha3(s)
-            suisade()
+            suicide()
         }
     }
 }

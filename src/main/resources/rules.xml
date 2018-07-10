@@ -144,7 +144,8 @@
                 </Categories>
                 <Severity>1</Severity>
                 <XPath>
-                    //functionName/identifier[matches(text()[1],"suicide")]
+                    //functionName/identifier[matches(text()[1],"suicide")] |
+                    //functionalAssemblyExpression/identifier[matches(text()[1],"suicide")]
                 </XPath>
             </Pattern>
             <!--Фиксирует конструкцию: "sha3"-->
@@ -152,9 +153,10 @@
                 <Categories>
                     <Category>Solidity</Category>
                 </Categories>
-                <Severity>2</Severity>
+                <Severity>1</Severity>
                 <XPath>
-                    //functionName/identifier[matches(text()[1],"^sha3$")]
+                    //functionName/identifier[matches(text()[1],"^sha3$")] |
+                    //functionalAssemblyExpression/identifier[matches(text()[1],"sha3")]
                 </XPath>
             </Pattern>
             <!--Фиксирует конструкцию: "throw"-->
@@ -242,11 +244,12 @@
                 <Categories>
                     <Category>Solidity</Category>
                 </Categories>
-                <Severity>1</Severity>
+                <Severity>2</Severity>
                 <XPath>
                     //contractDefinition[identifier[matches(text()[1],"token|erc20","i")]  or inheritanceSpecifier/userDefinedTypeName/identifier[matches(text()[1],"token|erc20","i")]]
                     //functionDefinition[block/statement][identifier[matches(text()[1],"^transfer|transferFrom|approve$")]][returnsParameters/parameterList/parameter/typeName/elementaryTypeName[matches(text()[1],"bool")]]
                     [count(descendant-or-self::*[returnStatement])=0]
+                    [not(block//expression[matches(text()[1],"=")]/expression[1]//identifier[matches(text()[1],ancestor::functionDefinition/returnsParameters/parameterList/parameter[1]/identifier)])]
                 </XPath>
             </Pattern>
         </Patterns>
