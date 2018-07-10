@@ -67,18 +67,14 @@ structDefinition : 'struct' identifier '{'(variableDeclaration ';'?)* '}' ;
 modifierDefinition : 'modifier' identifier parameterList? block ;
 
 functionDefinition
-    : ('function' identifier '(' (variableDeclarationList |elementaryTypeName ','? )*')'
-    | 'function' identifier
-    | 'constructor' '(' (variableDeclarationList |elementaryTypeName ','? )*')')
+    : ('function' identifier | 'constructor' ) parameterList
 
-    ( modifierList|identifier | stateMutability |visibleType|functionCall )*
+    ( modifierCall | stateMutability |visibleType|functionCall )*
       returnsParameters? block? ;
 
 returnsParameters: 'returns' parameterList;
 
-modifierList: modifierCall+;
-
-modifierCall: modifierName callArguments |identifier;
+modifierCall: modifierName callArguments?;
 
 modifierName:identifier;
 
@@ -304,7 +300,7 @@ indexedParameter: typeName 'indexed'? identifier?;
 
 parameterList : '(' (parameter','?)*')' ;
 
-parameter : typeName identifier?;
+parameter : typeName storageLocation? identifier?;
 
 storageLocation : 'memory' | 'storage' ;
 
