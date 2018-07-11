@@ -1,4 +1,4 @@
-pragma solidity ^0.4.19;
+pragma solidity 0.4.24;
 
 contract SolidityVisibility1 {
 
@@ -30,7 +30,7 @@ contract SolidityVisibility2 {
 
 // <yes> <report> SOLIDITY_VISIBILITY 910067
     constructor () {
-        owner = msg.sender;
+        address owner = msg.sender;
     }
 // <yes> <report> SOLIDITY_VISIBILITY 910067
     function AccessManager(address _server, address _guardian) returns(address){
@@ -50,7 +50,7 @@ interface SolidityVisibility3 {
 // <yes> <report> SOLIDITY_VISIBILITY 23rt6g
     function noVisibility2 () public;
 
-    function noVisibility2 () external;
+    function noVisibility3 () external;
 
     function () external;
 
@@ -70,7 +70,3 @@ library LibraryVisibility {
     function withVisibility () public {
     }
 }
-
-
-
-

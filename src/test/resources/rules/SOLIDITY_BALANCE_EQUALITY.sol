@@ -22,11 +22,11 @@ contract C {
         }
         if (msg.sender.balance < 100 wei) {
         }
-        if (foo(adr).balance >= 100 wei) {
+        if (foo(addr).balance >= 100 wei) {
         }
     }
 
-    function foo(address _adr) public returns(address) {
-        return _adr;
+    function foo(address _addr) public returns(address) {
+        return _addr;
     }
 }

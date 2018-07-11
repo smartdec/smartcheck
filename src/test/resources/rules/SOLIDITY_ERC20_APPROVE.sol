@@ -1,10 +1,10 @@
-pragma solidity 0.4.16;
+pragma solidity 0.4.24;
 
-contract TestToken {
+contract Token {
 // <yes> <report> SOLIDITY_ERC20_APPROVE af782c
     function approve(address _spender, uint _value) returns (bool success) {
     	require(_value > 10 wei);
-    	return x;
+    	return true;
     }
     function transferFrom(address _spender, uint _value) returns (bool success) {
     	if (_value < 20 wei) throw;
@@ -15,7 +15,7 @@ contract TestERC20new{
      // <yes> <report> SOLIDITY_ERC20_APPROVE af782c
     function approve(address _spender, uint _value) returns (bool success) {
         require(_value > 10 wei);
-     	return x;
+     	return true;
     }
     function transferFrom(address _spender, uint _value) returns (bool success) {
         if (_value < 20 wei) throw;
@@ -26,23 +26,23 @@ contract New is Token {
 // <yes> <report> SOLIDITY_ERC20_APPROVE af782c
     function approve(address _spender, uint _value) returns (bool success) {
         require(_value > 10 wei);
-       	return x;
+       	return true;
     }
     function transferFrom(address _spender, uint _value) returns (bool success) {
         if (_value < 20 wei) throw;
        	return true;
     }
 }
-contract New {
+contract New2 {
     function approve(address _spender, uint _value) returns (bool success) {
         require(_value > 10 wei);
-       	return x;
+       	return true;
     }
     function transferFrom(address _spender, uint _value) returns (bool success) {
         if (_value < 20 wei) throw;
        	return true;
     }
 }
-contract ERC20 is ERC20Basic {
+contract ERC20 {
     function approve(address spender, uint256 value) public returns (bool);
 }

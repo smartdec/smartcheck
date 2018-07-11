@@ -1,4 +1,4 @@
-pragma solidity ^0.4.19;
+pragma solidity 0.4.24;
 
 contract GoodMarketPlace {
 
@@ -63,5 +63,5 @@ contract GoodMarketPlace8 {
 
 library BadMarketPlace1 {
 
-    function foo() payable {}
+    function foo() {}
 }

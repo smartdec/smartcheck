@@ -7,28 +7,27 @@ contract C {
 	 b=2;
 	 }
 	// <yes> <report> SOLIDITY_SHOULD_RETURN_STRUCT 7d54ca
-	 function f1() private returns(uint a, uint b) {
+	 function f2() private returns(uint a, uint b) {
 	 a=1;
 	 b=2;
 	 }
 	// <yes> <report> SOLIDITY_SHOULD_RETURN_STRUCT 7d54ca
-	 function f1() returns(uint, uint) {
-	 a=1;
-	 b=2;
+	 function f3() returns(uint, uint) {
+	 return (1,2);
 	 }
 	// <yes> <report> SOLIDITY_SHOULD_RETURN_STRUCT 7d54ca
-	function f2() returns(uint a, uint b);
+	function f4() returns(uint a, uint b);
 
-	function f3() external returns(uint a, uint b) {
+	function f5() external returns(uint a, uint b) {
 	 a=1;
 	 b=2;
 	 }
 
-	 function f4() returns(uint a) {
+	 function f6() returns(uint a) {
 	 a=1;
 	 }
 
-	function f5() public returns(uint a, uint b) {
+	function f7() public returns(uint a, uint b) {
 	 a=1;
 	 b=2;
 	 }

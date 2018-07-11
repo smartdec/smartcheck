@@ -9,7 +9,8 @@ contract TestToken {
     function transferFrom(address _spender, uint _value) returns (bool) {
         require(_value > 10 wei);
     }
-
+}
+contract TestToken2 {
     function approve(address _spender, uint _value) returns (bool success) {
     	if (_value < 20 wei) throw;
         success = true;
@@ -17,7 +18,9 @@ contract TestToken {
     function transferFrom(address _spender, uint _value) returns (bool success) {
         require(_value > 10 wei);
         return true;
-    }    
+    }  
+}
+contract TestToken3 {
     function transferFrom(address _spender, uint _value) returns (bool) {
         require(_value > 10 wei);
         return true;
@@ -26,6 +29,5 @@ contract TestToken {
     	if (_value < 20 wei) revert();
     	return false;
     }
-    function transfer(address _to, uint256 _value) returns (bool success) {}
-    function transfer(address _to, uint256 _value) returns (bool);
+    function approve(address _to, uint256 _value) returns (bool);
  }

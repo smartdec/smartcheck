@@ -29,10 +29,10 @@ contract C {
     
     function goodPractice(address _token, uint balance) {
 
-        if (address(0) == _token) or (0x0 == _token) {
+        if ((address(0) == _token)||(0x0 == _token)) {
             Transfer(address(0), balance);
         }
-        if (address(0) != _token) or (0x0 != _token) {
+        if ((address(0) != _token)||(0x0 != _token)) {
             Transfer(0x0, balance);
         }      
     }
