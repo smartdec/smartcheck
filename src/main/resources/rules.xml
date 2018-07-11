@@ -145,7 +145,7 @@
                 <Severity>1</Severity>
                 <XPath>
                     //functionName/identifier[matches(text()[1],"suicide")] |
-                    //functionalAssemblyExpression/identifier[matches(text()[1],"suicide")]
+                    //assemblyItem/identifier[matches(text()[1],"suicide")]
                 </XPath>
             </Pattern>
             <!--Фиксирует конструкцию: "sha3"-->
