@@ -19,3 +19,10 @@ contract C3 {
         }
     }
 }
+contract C4 {
+    address a;
+    function() payable {
+        a = msg.sender;
+        revert();
+    }
+}

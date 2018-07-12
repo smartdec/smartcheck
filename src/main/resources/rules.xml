@@ -172,21 +172,6 @@
         </Patterns>
     </Rule>
     <Rule>
-        <RuleId>SOLIDITY_DOS_WITH_REVERT</RuleId>
-        <Patterns>
-            <!--Фиксирует require(внешний вызов)-->
-            <Pattern patternId="15ac23">
-                <Categories>
-                    <Category>Solidity</Category>
-                </Categories>
-                <Severity>1</Severity>
-                <XPath>
-                    //statement//internalFunctionCall[functionName/identifier[matches(text()[1],"^require|assert$")]][callArguments/callArgument//functionCall/externalFunctionCall]
-                </XPath>
-            </Pattern>
-        </Patterns>
-    </Rule>
-    <Rule>
         <RuleId>SOLIDITY_DOS_WITH_THROW</RuleId>
         <Patterns>
             <!-- пока отключаем -->
@@ -239,7 +224,7 @@
         <Patterns>
             <!--Фиксирует конструкции: имя контракта содержит token или erc20 либо наследуется от контракта содержащего такое в названии.
             В этом контракте есть определение функции с названием transfer,transferFrom или approve, которая возвращающает значение типа bool и не является интерфейсом.
-            В определении этой функции не содержит return-->
+            В определении этой функции не содержится return или присваивание возвращаемого параметра (в текущей реализации проверяется присваивание только для первого возращаемого параметра)-->
             <Pattern patternId="b180ca">
                 <Categories>
                     <Category>Solidity</Category>
@@ -278,14 +263,14 @@
     <Rule>
     <RuleId>SOLIDITY_FUNCTIONS_RETURNS_TYPE_AND_NO_RETURN</RuleId>
     <Patterns>
-        <!--Фиксирует конструкцию: "function(...) ... returns (type) {...}" т.е. после type ничего нет и в теле функции нет return-->
+        <!--Фиксирует функции, у которых есть возвращаемые параметры без идентификатора(returns(uint,...)), и в теле функции нет return-->
         <Pattern patternId="47acc2">
             <Categories>
                 <Category>Solidity</Category>
             </Categories>
             <Severity>1</Severity>
             <XPath>
-                //functionDefinition[block]/returnsParameters[not(parameterList/parameter/identifier)]/parent::*[not(block/statement//returnStatement)]
+                //functionDefinition[block]/returnsParameters[count(parameterList/parameter) > count(parameterList/parameter/identifier)]/parent::*[not(block/statement//returnStatement)]
             </XPath>
         </Pattern>
         <!--Фиксирует конструкцию: "function(...) ... returns (type name) {...}" - в теле функции нет присваивания "name=" и нет return (в данной реализации если параметров на выходе несколько, то проверяется только первый)-->
@@ -298,7 +283,7 @@
                 //functionDefinition
                 [block]
                 [not(block/statement//returnStatement)]
-                [returnsParameters/parameterList/parameter/identifier]
+                [returnsParameters/parameterList/parameter[1]/identifier]
                 [not(block//expression[matches(text()[1],"=")]/expression[1]//identifier[matches(text()[1],ancestor::functionDefinition/returnsParameters/parameterList/parameter[1]/identifier)])]
             </XPath>
         </Pattern>
@@ -420,13 +405,16 @@
     <Rule>
         <RuleId>SOLIDITY_REDUNDANT_FALLBACK_REJECT</RuleId>
         <Patterns>
-            <!--Фиксируется случаи, когда версия компилятора больше или равна 0.4.0, контракт содержит fallback функцию типа payable, в определении которой есть throw или revert() -->
+            <!--Фиксируется случаи, когда версия компилятора больше или равна 0.4.0, контракт содержит fallback функцию типа payable, в определении которой есть только один statement: throw или revert() -->
             <Pattern patternId="b85a32">
                 <Categories>
                     <Category>Solidity</Category>
                 </Categories>
                 <Severity>1</Severity>
-                <XPath>//sourceUnit[pragmaDirective/pragmaValue/version/versionConstraint[versionLiteral &gt;= "0.4.0"]]/contractDefinition/contractPartDefinition/functionFallBackDefinition[block/statement/throwRevertStatement]</XPath>
+                <XPath>
+                    //sourceUnit[pragmaDirective/pragmaValue/version/versionConstraint[versionLiteral &gt;= "0.4.0"]]/contractDefinition/contractPartDefinition/functionFallBackDefinition/block[count(descendant-or-self::statement)=1]
+                    [statement/throwRevertStatement]
+                </XPath>
             </Pattern>
         </Patterns>
     </Rule>
@@ -489,7 +477,7 @@
     <Rule>
         <RuleId>SOLIDITY_SHOULD_RETURN_STRUCT</RuleId>
         <Patterns>
-            <!--Фиксируются функции, у которых больше одного выходного параметра-->
+            <!--Фиксируются internal или private функции, у которых больше одного выходного параметра-->
             <Pattern patternId="7d54ca">
                 <Categories>
                     <Category>Solidity</Category>
