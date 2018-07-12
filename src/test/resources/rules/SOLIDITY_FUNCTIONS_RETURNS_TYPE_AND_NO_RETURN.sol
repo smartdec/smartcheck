@@ -5,7 +5,7 @@ contract C {
     function remainBalanced1() public constant returns (uint256){
         uint a =1000;
     }
-    /* <yes> <report> SOLIDITY_FUNCTIONS_RETURNS_TYPE_AND_NO_RETURN 47acc2 */
+    // <yes> <report> SOLIDITY_FUNCTIONS_RETURNS_TYPE_AND_NO_RETURN 47acc2
     function remainBalanced2() public constant returns (uint , uint256 a){
         a =1000;
     }
