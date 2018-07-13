@@ -22,4 +22,8 @@ contract C {
             suicide(0x0)
         }
     }
+    // <yes> <report> SOLIDITY_CONSTANT_FUNCTIONS 28fa69
+    function returnSenderBalance(uint a) constant returns (uint){
+            return a;
+        }
 }
