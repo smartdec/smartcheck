@@ -105,21 +105,6 @@
         </Patterns>
     </Rule>
     <Rule>
-        <RuleId>SOLIDITY_CONSTANT_FUNCTIONS</RuleId>
-        <Patterns>
-            <!-- фиксирует использование типа constant в определении функции-->
-            <Pattern patternId="28fa69">
-                <Categories>
-                    <Category>Solidity</Category>
-                </Categories>
-                <Severity>0</Severity>
-                <XPath>
-                    //functionDefinition[stateMutability/constantType]
-                </XPath>
-            </Pattern>
-        </Patterns>
-    </Rule>
-    <Rule>
         <RuleId>SOLIDITY_DELETE_FOR_ARRAYS</RuleId>
         <Patterns>
             <!--Фиксирует ... .length=0-->
@@ -167,6 +152,16 @@
                 <Severity>1</Severity>
                 <XPath>
                     //statement/throwRevertStatement[matches(text()[1],"throw")]
+                </XPath>
+            </Pattern>
+            <!-- фиксирует использование типа constant в определении функции-->
+            <Pattern patternId="28fa69">
+                <Categories>
+                    <Category>Solidity</Category>
+                </Categories>
+                <Severity>1</Severity>
+                <XPath>
+                    //functionDefinition[stateMutability/constantType]
                 </XPath>
             </Pattern>
         </Patterns>
