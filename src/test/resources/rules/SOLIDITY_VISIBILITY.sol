@@ -1,5 +1,6 @@
 pragma solidity 0.4.24;
 
+
 contract SolidityVisibility1 {
 
 // <yes> <report> SOLIDITY_VISIBILITY b51ce0
@@ -18,6 +19,9 @@ contract SolidityVisibility1 {
     function transfernew() external {
     }
 
+    function transfernew2() private {
+    }
+
     function internalAction() internal {
     }
 
@@ -25,6 +29,7 @@ contract SolidityVisibility1 {
     function () private {
     }
 }
+
 
 contract SolidityVisibility2 {
 
@@ -37,10 +42,11 @@ contract SolidityVisibility2 {
         return _server;
     }
 
-// <yes> <report> SOLIDITY_VISIBILITY d67c21
+// <yes> <report> SOLIDITY_VISIBILITY 910067
     function () {
     }
 }
+
 
 interface SolidityVisibility3 {
 
@@ -50,17 +56,57 @@ interface SolidityVisibility3 {
 // <yes> <report> SOLIDITY_VISIBILITY 23rt6g
     function noVisibility2 () public;
 
-    function noVisibility3 () external;
+// <yes> <report> SOLIDITY_VISIBILITY 23rt6g
+    function noVisibility3 () private;
+
+// <yes> <report> SOLIDITY_VISIBILITY 23rt6g
+    function noVisibility4 () internal;
+
+    function noVisibility5 () external;
 
     function () external;
 
 } 
 
-interface SolidityVisibility4 {
+
+contract SolidityVisibility4 {
+
+    function () public {
+    }
+}
+
+
+contract SolidityVisibility5 {
+
+    function () external {
+    }
+}
+
+
+contract SolidityVisibility6 {
 
 // <yes> <report> SOLIDITY_VISIBILITY d67c21
+    function () internal {
+    }
+}
+
+interface SolidityVisibility7 {
+// <yes> <report> SOLIDITY_VISIBILITY 23rt6g
+    function () public;
+} 
+
+
+interface SolidityVisibility8 {
+// <yes> <report> SOLIDITY_VISIBILITY 910067
     function ();
 } 
+
+
+interface SolidityVisibility9 {
+// <yes> <report> SOLIDITY_VISIBILITY 23rt6g
+    function () private;
+} 
+
 
 library LibraryVisibility {
 // <yes> <report> SOLIDITY_VISIBILITY 910067
