@@ -414,31 +414,6 @@
         </Patterns>
     </Rule>
     <Rule>
-        <RuleId>SOLIDITY_REENTRANCY_EXTERNAL_CALL</RuleId>
-        <Patterns>
-            <!--Фиксируется случаи, когда внутри определения функции после внешних вызовов есть внутренние-->
-            <Pattern patternId="de222d">
-                <Categories>
-                    <Category>Solidity</Category>
-                </Categories>
-                <Severity>3</Severity>
-                <XPath>
-                    //contractDefinition[contractPartDefinition/usingForDeclaration[identifier[text()[1]="SafeMath"]]]//functionDefinition//externalFunctionCall[not(externalFunctionCallNotThis/functionNameAndArgs/functionName/identifier[matches(text()[1],"^add|sub|mul|div$")])][ancestor::statement[1]/following-sibling::statement[count(descendant-or-self::*[functionCall/externalFunctionCall[not(externalFunctionCallNotThis/functionNameAndArgs/functionName/identifier[matches(text()[1],"^add|sub|mul|div$")])]])=0]]
-                </XPath>
-            </Pattern>
-            <!--Фиксируется случаи, когда внутри определения функции после внешних вызовов есть внутренние-->
-            <Pattern patternId="252f1c">
-                <Categories>
-                    <Category>Solidity</Category>
-                </Categories>
-                <Severity>3</Severity>
-                <XPath>
-                    //contractDefinition[not(contractPartDefinition/usingForDeclaration/identifier[text()[1]="SafeMath"])]//functionDefinition//externalFunctionCall[ancestor::statement[1]/following-sibling::statement[count(descendant-or-self::*[functionCall/externalFunctionCall])=0]]
-                </XPath>
-            </Pattern>
-        </Patterns>
-    </Rule>
-    <Rule>
         <RuleId>SOLIDITY_REVERT_REQUIRE</RuleId>
         <Patterns>
             <!--Фиксирует конструкцию: "if (...){revert(); или throw;}"-->
