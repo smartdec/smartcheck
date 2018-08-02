@@ -103,8 +103,6 @@ environmentalVariableDefinition:('this.balance'
                       |'msg.value'
                       |'msg.gas'
                       |'msg.sender'
-                      |(identifier| identifier '[' identifier ']'|'.')* '.' 'length'
-                      |(identifier| identifier '[' identifier ']'|'.')* '.' 'balance'
                       |'block.timestamp'
                       |'tx.origin'
                       | 'block.blockhash'
@@ -246,7 +244,9 @@ typeConversion: elementaryTypeName ('[' expression? ']')? '(' expression? ')';
 
 expression:   environmentalVariableDefinition
               | addressCall
-              | typeConversion
+              | typeConversion expression
+              | expression '.length'
+              | expression '.balance'
               | functionCall
               | expression twoPlusMinusOperator
               | 'new' typeName //('(' (expression ','?)* ')')?
