@@ -244,7 +244,7 @@ typeConversion: elementaryTypeName ('[' expression? ']')? '(' expression? ')';
 
 expression:   environmentalVariableDefinition
               | addressCall
-              | typeConversion expression
+              | typeConversion
               | expression '.length'
               | expression '.balance'
               | functionCall
