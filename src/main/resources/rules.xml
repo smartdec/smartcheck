@@ -71,7 +71,7 @@
                 </Categories>
                 <Severity>1</Severity>
                 <XPath>
-                //expression[expression//environmentalVariableDefinition[matches(text()[1],".balance$")]][matches(text()[1],"^==|!=$")]
+                //expression[expression[matches(text()[1],".balance$")]][matches(text()[1],"^==|!=$")]
                 </XPath>
             </Pattern>
         </Patterns>
@@ -114,7 +114,7 @@
                 </Categories>
                 <Severity>1</Severity>
                 <XPath>
-                    //simpleStatement/expressionStatement/expression[expression/environmentalVariableDefinition[matches(text()[1],"length")]][matches(text()[1],"^=$")][expression/primaryExpression/numberLiteral[matches(text()[1],"^0$")]]
+                    //simpleStatement/expressionStatement/expression[expression[matches(text()[1],".length")]][matches(text()[1],"^=$")][expression/primaryExpression/numberLiteral[matches(text()[1],"^0$")]]
                 </XPath>
             </Pattern>
         </Patterns>
@@ -378,9 +378,8 @@
                 <Severity>0</Severity>
                 <XPath>
                     //functionDefinition[stateMutability/pureType and block/descendant-or-self::*[
-                    <!--Accessing this.balance or <address>.balance: using .balance or this.balance-->
-                    environmentalVariableDefinition[matches(text()[1],"balance")]
-                    or environmentalVariableDefinition[matches(text()[1],"this.balance")]
+                    <!--Accessing <address>.balance: using .balance-->
+                    expression[matches(text()[1],".balance")]
                     <!--Accessing any of the members of block, tx, msg (with the exception of msg.sig and msg.data)-->
                     or environmentalVariableDefinition[matches(text()[1],"msg.value|msg.gas|msg.sender|block.timestamp|tx.origin|block.blockhash|block.coinbase|block.difficulty|block.gaslimit|block.number|block.blockhash|block.coinbase|tx.gasprice")]
                     <!--Using selfdestruct and it's alias suicide:-->
