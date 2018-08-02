@@ -353,7 +353,7 @@ returnStatement : 'return' '('? (expression ','?)* ')'? ;
 
 throwRevertStatement : 'throw'|'revert' '(' ')' ;
 
-simpleStatement : variableDeclarationStatement expressionStatement?
+simpleStatement : variableDeclarationStatement
                 | expressionStatement
                 ;
 
