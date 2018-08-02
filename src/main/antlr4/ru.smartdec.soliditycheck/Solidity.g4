@@ -99,7 +99,7 @@ eventDefinition
 enumDefinition
     : 'enum' identifier '{' enumValue? (',' enumValue)* '}' ;
 
-environmentalVariableDefinition:('this.balance'
+environmentalVariableDefinition:('this'
                       |'msg.value'
                       |'msg.gas'
                       |'msg.sender'
