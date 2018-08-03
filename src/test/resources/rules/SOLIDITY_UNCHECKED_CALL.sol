@@ -12,22 +12,22 @@ contract SolidityUncheckedSend {
         a.callcode(w);
     }
     function delegatecallSetN(address _e, uint _n) {
-        if (!_e.delegatecall(bytes(sha3("setN(uint256)"), u))) throw;
+        if (!_e.delegatecall(bytes(sha3("setN(uint256)")), u)) throw;
     }
     function delegatecallSetN(address _e, uint _n) {
-        if (!_e.call(bytes(sha3("setN(uint256)"), u))) throw;
+        if (!_e.call(bytes(sha3("setN(uint256)")), u)) throw;
     }
     function delegatecallSetN(address _e, uint _n) {
-        if (!_e.send(bytes(sha3("setN(uint256)"), u))) throw;
+        if (!_e.send(bytes(sha3("setN(uint256)")), u)) throw;
     }
     function delegatecallSetN(address _e, uint _n) {
-        require(e.call(bytes(sha3("setN(uint256)"), u)));
+        require(e.call(bytes(sha3("setN(uint256)")), u));
     }
     function delegatecallSetN(address _e, uint _n) {
-        assert(_e.send(bytes(sha3("setN(uint256)"), u)));
+        assert(_e.send(bytes(sha3("setN(uint256)")), u));
     }
     function delegatecallSetN(address _e, uint _n) {
-            assert(_e.callcode(bytes(sha3("setN(uint256)"), u)));
+            assert(_e.callcode(bytes(sha3("setN(uint256)")), u));
     }
     function returnSend(address a) returns (bool) {
         return a.send(1);
