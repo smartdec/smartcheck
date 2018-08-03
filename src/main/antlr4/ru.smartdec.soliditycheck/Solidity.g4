@@ -230,7 +230,7 @@ addressContract : addressNumber ;
 
 addressNumber : HexNumber ;
 
-callArguments : '(' (callArgument ','? )* ')' ;
+callArguments : '(' (callArgument (',' callArgument)* )? ')' ;
 
 functionName : (identifier arrayLiteral? ) | newExpression ;
 
@@ -297,7 +297,7 @@ indexedParameterList : '(' ( indexedParameter (',' indexedParameter)* )? ')' ;
 
 indexedParameter : typeName 'indexed'? identifier?;
 
-parameterList : '(' (parameter ','? )* ')' ;
+parameterList : '(' (parameter (',' parameter)* )? ')' ;
 
 parameter : typeName storageLocation? identifier? ;
 
@@ -428,7 +428,7 @@ nameValueList : identifier ':' expression (',' identifier ':' expression)* ;
 
 comparison : '==' | '!=' ;
 
-identifierList : '(' (identifier? ',')* identifier? ')' ;
+identifierList : '(' identifier? (',' identifier? )* ')' ;
 
 identifier : Identifier | placeholderStatement | 'value' | 'from' | 'this' | 'balance' | 'sender' | 'msg' | 'gas'
     | 'length' | 'block' | 'timestamp' | 'tx' | 'origin' | 'blockhash' | 'coinbase' | 'difficulty'| 'gaslimit'
