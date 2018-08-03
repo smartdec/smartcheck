@@ -348,7 +348,12 @@ continueStatement : 'continue' ';'? ;
 
 breakStatement : 'break' ';'? ;
 
-returnStatement : 'return' '('? (expression ','? )* ')'? ;
+returnStatement : 'return'
+    ( expression?
+    | '(' expression ','? ')'
+    | '(' expression  (',' expression)+ ')'
+    )
+    ;
 
 throwRevertStatement : 'throw' | 'revert' '(' ')' ;
 
