@@ -60,14 +60,18 @@ functionDefinition : ('function' identifier | 'constructor') parameterList
 
 returnsParameters : 'returns' parameterList ;
 
+// TODO remove it. use `functionCall` and `identifier` instead
 modifierCall : modifierName callArguments? ;
 
 modifierName : identifier ;
 
 variableDeclarationList : ((variableDeclaration | stateVariableDeclaration) ','? )+ ;
 
+// TODO simplify as hell
 variableDeclaration : typeName storageLocation? identifier
     ('=' 'new'? (typeConversion | identifier '(')? expression ')'? )? ;
+//variableDeclaration : typeName identifier ('=' expression )?
+
 
 stateVariableDeclaration : (typeName (visibleType | constantType)* identifier ('='? expression | (identifier '(' expression ')') )? | typeName '(' numberLiteral ')') ';' ;
 
@@ -139,7 +143,7 @@ mappingSt : 'mapping' '(' typeName '=>' typeName ')' ;
 typeNameList : '(' (typeName  (',' typeName)* )? ')' ;
 
 //___functions_call
-
+// TODO replace whis shit with simple structure below
 functionCall:  internalFunctionCall | externalFunctionCall ;
 
 internalFunctionCall : 'emit'? functionName callArguments+ ;
@@ -159,6 +163,12 @@ functionNameAndArgs
     )+
     ;
 
+// proper ___functions_call
+// functionCall : identifier (value | gas)* '(' callArguments ')';
+//value : '.' 'value' '(' expression ')';
+//gas : '.' 'gas' '(' expression ')';
+
+// TODO remove this callObject shit
 callObjectExpression : callObjectExpressionComplicated | callObjectExpressionSimple ;
 
 callObjectExpressionSimple
@@ -230,8 +240,18 @@ addressContract : addressNumber ;
 
 addressNumber : HexNumber ;
 
+// TODO replace
 callArguments : '(' (callArgument (',' callArgument)* )? ')' ;
+// should be
+//callArguments
+//    : // empty list
+//    | callArgument (',' callArgument)*
+//    | '{' nameValueList? '}'
+//    ;
 
+
+// WTF is that?
+// TODO remove this tag (part of `functionCall` rework)
 functionName : (identifier arrayLiteral? ) | newExpression ;
 
 callArgument : (expression | '{' nameValueList? '}' ) ;
@@ -246,12 +266,15 @@ expression
     | expression '.' 'balance'
     | functionCall
     | expression twoPlusMinusOperator
+    // TODO replace with `newContractExpression` and 'newDynamicArrayExpression'
     | 'new' typeName //('(' (expression ','?)* ')')?
     | '(' typeName ')' '(' expression ')'
     | expression '[' expression ']'
     | '(' expression ')'
     | twoPlusMinusOperator expression
     | plusminusOperator expression
+    // TODO let's remove 'after' - looks like it's just reserved but never used
+    // TODO maybe we should make separate `deleteExpression`, otherwise I don't know how to write xpath
     | ('after' | 'delete') expression
     | '!' expression
     | '~' expression
@@ -268,7 +291,8 @@ expression
     | expression '?' expression ':' expression
     | expression ('=' | powerOperator | lvalueOperator) expression
     | variableDeclaration
-    | expression '(' callArguments ')'
+// TODO investigate this
+    | expression '(' callArguments ')'// WTF is that?
     | moneyExpression
     | timeExpression
     | primaryExpression
@@ -326,7 +350,16 @@ statement
     | expressionStatement  ';'?
     ;
 
+// TODO check if this expression also create dynamic arrays: `uint[] memory a = new uint[](7);`
 creatingContractViaNewStatement : identifier arrayLiteral? '=' 'new' identifier arrayLiteral? callArguments ';'? ;
+// should be part of expression
+//newContractExpression : 'new' functionCall ;
+
+// TODO add new dynamic array as expression
+//newDynamicArrayExpression : 'new' typeName '(' expression ')';
+// maybe it should be like
+//newDynamicArrayExpression : 'new' typeName '[' ']' '(' expression ')';
+
 
 ifStatement : 'if' '(' ifCondition ')' block ('else' block)? ;
 
@@ -361,6 +394,8 @@ simpleStatement : variableDeclarationStatement | expressionStatement ;
 
 functionCallStatement : functionCall ';'? ;
 
+// WTF is that? used inside `statement`
+// TODO check if possible to remove
 functionFallBackCall : 'function' parameterList
     ( functionCall | identifier | stateMutability | visibleType )*
     returnsParameters? ';'? ;
@@ -423,6 +458,7 @@ tupleExpression
     | '[' ( expression? ( ',' expression? )+ )? ']'
     ;
 
+// TODO remove
 newExpression : 'new' typeName ;
 
 elementaryTypeNameExpression : elementaryTypeName ;
