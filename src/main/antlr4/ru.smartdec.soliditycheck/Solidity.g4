@@ -1,12 +1,8 @@
 grammar Solidity;
 
-sourceUnit
-    : (pragmaDirective | importDirective | contractDefinition | libraryDefinition | interfaceDefinition)* EOF
-    ;
+sourceUnit : (pragmaDirective | importDirective | contractDefinition | libraryDefinition | interfaceDefinition)* EOF ;
 
-pragmaDirective
-    : 'pragma' pragmaName pragmaValue ';'
-    ;
+pragmaDirective : 'pragma' pragmaName pragmaValue ';' ;
 
 pragmaName : identifier ;
 
@@ -18,33 +14,25 @@ versionConstraint : versionOperator? versionLiteral ;
 
 versionOperator : '^' | '>=' | '>' | '<' | '<=' ;
 
-versionLiteral: VersionLiteral;
+versionLiteral: VersionLiteral ;
 
 importDirective
     : 'import' StringLiteral ('as' identifier)? ';'
     | 'import' ('*' | identifier) ('as' identifier)? 'from' StringLiteral ';'
-    | 'import' '{' importDeclaration ( ',' importDeclaration )* '}' 'from' StringLiteral ';'
+    | 'import' '{' importDeclaration ( ',' importDeclaration)* '}' 'from' StringLiteral ';'
     ;
 
 importDeclaration : identifier ('as' identifier)? ;
 
-contractDefinition
-    : 'contract' identifier
-        ( 'is' inheritanceSpecifier (',' inheritanceSpecifier )* )?
-            '{' (contractPartDefinition ';'? )* '}'
-    ;
-libraryDefinition
-    :'library' identifier
-        '{' (contractPartDefinition ';'? )* '}'
-    ;
+contractDefinition : 'contract' identifier ('is' inheritanceSpecifier (',' inheritanceSpecifier)* )?
+    '{' (contractPartDefinition ';'? )* '}' ;
 
-interfaceDefinition
-    :'interface' identifier
-        ( 'is' inheritanceSpecifier (',' inheritanceSpecifier )* )?
-            '{' (contractPartDefinition ';'? )* '}'
-    ;
+libraryDefinition : 'library' identifier '{' (contractPartDefinition ';'? )* '}' ;
 
-inheritanceSpecifier : userDefinedTypeName ( '(' expression ( ',' expression )* ')' )? ;
+interfaceDefinition : 'interface' identifier ('is' inheritanceSpecifier (',' inheritanceSpecifier)* )?
+    '{' (contractPartDefinition ';'? )* '}' ;
+
+inheritanceSpecifier : userDefinedTypeName ('(' expression (',' expression)* ')')? ;
 
 //____DEFINITION____
 contractPartDefinition
@@ -62,69 +50,68 @@ contractPartDefinition
 
 usingForDeclaration : 'using' identifier 'for' ('*' | typeName) ';' ;
 
-structDefinition : 'struct' identifier '{'(variableDeclaration ';'?)* '}' ;
+structDefinition : 'struct' identifier '{' (variableDeclaration ';'? )* '}' ;
 
 modifierDefinition : 'modifier' identifier parameterList? block ;
 
-functionDefinition
-    : ('function' identifier | 'constructor' ) parameterList
+functionDefinition : ('function' identifier | 'constructor') parameterList
+    (modifierCall | stateMutability | visibleType | functionCall)*
+    returnsParameters? block? ;
 
-    ( modifierCall | stateMutability |visibleType|functionCall )*
-      returnsParameters? block? ;
+returnsParameters : 'returns' parameterList ;
 
-returnsParameters: 'returns' parameterList;
+modifierCall : modifierName callArguments? ;
 
-modifierCall: modifierName callArguments?;
+modifierName : identifier ;
 
-modifierName:identifier;
+variableDeclarationList : ((variableDeclaration | stateVariableDeclaration) ','? )+ ;
 
-variableDeclarationList:((variableDeclaration|stateVariableDeclaration) ','?)+;
+variableDeclaration : typeName storageLocation? identifier
+    ('=' 'new'? (typeConversion | identifier '(')? expression ')'? )? ;
 
-variableDeclaration : typeName storageLocation? identifier ( '=' 'new'?(typeConversion|identifier '(')? expression ')'?)? ;
+stateVariableDeclaration : (typeName (visibleType | constantType)* identifier ('='? expression | (identifier '(' expression ')') )? | typeName '(' numberLiteral ')') ';' ;
 
-stateVariableDeclaration : (typeName ( visibleType | constantType )* identifier ('='? expression|(identifier'(' expression ')'))? |typeName '(' numberLiteral ')')';' ;
+addressDeclaration : 'address'  (visibleType | constantType)* identifier ('='? (addressContract | expression | (identifier '(' expression ')') ) )? ';' ;
 
-addressDeclaration: 'address'  ( visibleType | constantType )* identifier ('='? (addressContract |expression|(identifier'(' expression ')')))? ';' ;
+addressCall :'address' '(' expression ')' ;
 
-addressCall:'address' '('expression')';
+functionFallBackDefinition : 'function' parameterList
+    ( functionCall | identifier | stateMutability |visibleType )*
+    returnsParameters? ( block )? ;
 
-functionFallBackDefinition
-    : 'function' parameterList
-      ( functionCall | identifier | stateMutability |visibleType )*
-      returnsParameters? ( block )? ;
+eventDefinition : 'event' identifier indexedParameterList 'anonymous'? ';'? ;
 
-eventDefinition
-    : 'event' identifier indexedParameterList 'anonymous'? ';'? ;
+enumDefinition : 'enum' identifier '{' enumValue? (',' enumValue)* '}' ;
 
-enumDefinition
-    : 'enum' identifier '{' enumValue? (',' enumValue)* '}' ;
-
-environmentalVariableDefinition:('this'
-                      |'msg.value'
-                      |'msg.gas'
-                      |'msg.sender'
-                      |'block.timestamp'
-                      |'tx.origin'
-                      | 'block.blockhash'
-                      | 'block.coinbase'
-                      | 'block.difficulty'
-                      | 'block.gaslimit'
-                      | 'block.number'
-                      | 'block.blockhash' '(' argument ')'
-                      | 'block.coinbase' '(' argument ')'
-                      | 'msg.data'
-                      | 'msg.sig'
-                      | 'now'
-                      | 'tx.gasprice')+
-                      ;
+environmentalVariableDefinition
+    :
+    ( 'this'
+    | 'msg.value'
+    | 'msg.gas'
+    | 'msg.sender'
+    | 'block.timestamp'
+    | 'tx.origin'
+    | 'block.blockhash'
+    | 'block.coinbase'
+    | 'block.difficulty'
+    | 'block.gaslimit'
+    | 'block.number'
+    | 'block.blockhash' '(' argument ')'
+    | 'block.coinbase' '(' argument ')'
+    | 'msg.data'
+    | 'msg.sig'
+    | 'now'
+    | 'tx.gasprice'
+    )+
+    ;
 
 //___Types___
 
-visibleType:'public' | 'internal' | 'external' | 'private';
+visibleType : 'public' | 'internal' | 'external' | 'private' ;
 
-constantType:'constant';
+constantType : 'constant' ;
 
-payableType:'payable';
+payableType : 'payable' ;
 
 typeName
     : elementaryTypeName
@@ -135,10 +122,11 @@ typeName
     | typeName '(' expression? ')'
     | functionTypeName
     ;
-userDefinedTypeName : identifier ( '.' identifier )* ;
 
-functionTypeName : 'function' typeNameList ( visibleType | stateMutability )*
-                   ( 'returns' typeNameList )? ;
+userDefinedTypeName : identifier ('.' identifier )* ;
+
+functionTypeName : 'function' typeNameList (visibleType | stateMutability)*
+    ('returns' typeNameList)? ;
 
 stateMutability : pureType | constantType | viewType | payableType;
 
@@ -148,165 +136,176 @@ viewType : 'view';
 
 mappingSt : 'mapping' '(' typeName '=>' typeName ')' ;
 
-typeNameList :         '(' ( typeName  (',' typeName )* )? ')' ;
+typeNameList : '(' (typeName  (',' typeName)* )? ')' ;
 
 //___functions_call
-functionCall:  internalFunctionCall |externalFunctionCall ;
 
-internalFunctionCall:'emit'? functionName callArguments+;
+functionCall:  internalFunctionCall | externalFunctionCall ;
 
-externalFunctionCall:externalFunctionCallThis | externalFunctionCallNotThis;
+internalFunctionCall : 'emit'? functionName callArguments+ ;
 
-externalFunctionCallThis:'this' functionNameAndArgs;
+externalFunctionCall : externalFunctionCallThis | externalFunctionCallNotThis ;
 
-externalFunctionCallNotThis:callObjectExpression functionNameAndArgs;
+externalFunctionCallThis : 'this' functionNameAndArgs ;
 
-functionNameAndArgs:
-                       ('.' functionName callArguments*|'.' 'value' ('(' callArguments* ')')?| '.' 'gas' ('(' callArguments* ')')?|callArguments)+
-                    ;
-callObjectExpression:callObjectExpressionComplicated|callObjectExpressionSimple;
-callObjectExpressionSimple: environmentalVariableDefinition
-                          | addressCall
-                          | '(' 'new' callObject ')' callObject?
-                          | internalFunctionCall
-                          | identifier
-                          | (identifier? arrayLiteral)+
-                          | (identifier? arrayLiteral)+ '('+ identifier? arrayLiteral ')'* ')'
-                          | identifier '[' identifier ']'
-                          | addressContract
-                          ;
+externalFunctionCallNotThis : callObjectExpression functionNameAndArgs ;
 
-callObjectExpressionComplicated: '(' callObject ')'
-                               ;
-
-callObject:callObjectExpressionSimple
-          | environmentalVariableDefinition
-          | addressCall
-          |  '(' 'new' callObject ')' callObject?
-          | identifier
-          | (identifier? arrayLiteral)+
-          | (identifier? arrayLiteral)+ '('+ identifier? arrayLiteral ')'* ')'
-          | identifier '[' identifier ']'
-          | addressContract
-          | plusminusOperator callObject
-          | callObject (muldivOperator|plusminusOperator|'<<' | '>>'|'&' |'^'|'|'|'<' | '>' | '<=' | '>='|'==' | '!=') callObject
-          | callObject ('&&'|'||') callObject
-          | moneyExpression
-          | timeExpression
-          | primaryExpression
-          | callObject  twoPlusMinusOperator
-          | twoPlusMinusOperator expression
-          | '!' callObject
-          | '~' callObject
-          | callObject '[' callObject ']'
-          | '{'(identifier ':' callObject ','?)+'}'
-          | callObject '(' callArguments ')'
-          | callObject '?' callObject ':' callObject
-          | '(' callObject ')'
-          | externalFunctionCall
-          | internalFunctionCall
-          ;
-plusminusOperator:minusOperator |plusOperator;
-
-minusOperator:'-';
-
-plusOperator:'+';
-
-twoPlusMinusOperator:decrementOperator | incrementOperator;
-
-decrementOperator:'--';
-
-incrementOperator:'++';
-
-muldivOperator: mulOperator | divOperator | divRemOperator| powerOperator;
-
-divRemOperator:'%';
-
-powerOperator:'**';
-
-mulOperator:'*';
-
-divOperator:'/';
-
-addressContract:addressNumber ;
-
-addressNumber: HexNumber;
-
-callArguments:'('(callArgument ','?)*')';
-
-functionName:(identifier arrayLiteral?)| newExpression;
-
-callArgument
-    :  (expression|'{' nameValueList? '}')
+functionNameAndArgs
+    :
+    ( '.' functionName callArguments*
+    | '.' 'value' ('(' callArguments* ')')?
+    | '.' 'gas' ('(' callArguments* ')')?
+    | callArguments
+    )+
     ;
 
-typeConversion: elementaryTypeName ('[' expression? ']')? '(' expression? ')';
+callObjectExpression : callObjectExpressionComplicated | callObjectExpressionSimple ;
 
-expression:   environmentalVariableDefinition
-              | addressCall
-              | typeConversion
-              | expression '.length'
-              | expression '.balance'
-              | functionCall
-              | expression twoPlusMinusOperator
-              | 'new' typeName //('(' (expression ','?)* ')')?
-              | '(' typeName ')' '(' expression ')'
-              | expression '[' expression ']'
-              | '(' expression ')'
-              | twoPlusMinusOperator expression
-              | plusminusOperator expression
-              | ('after' | 'delete') expression
-              | '!' expression
-              | '~' expression
-              | expression muldivOperator expression
-              | expression plusminusOperator expression
-              | expression ('<<' | '>>') expression
-              | expression '&' expression
-              | expression '^' expression
-              | expression '|' expression
-              | expression ('<' | '>' | '<=' | '>=') expression (plusminusOperator)?
-              | expression ('==' | '!=') expression
-              | expression '&&' expression
-              | expression '||' expression
-              | expression '?' expression ':' expression
-              | expression ('=' | powerOperator | lvalueOperator) expression
-              | variableDeclaration
-              | expression '(' callArguments ')'
-              | moneyExpression
-              | timeExpression
-              | primaryExpression
-              | '{'(identifier ':' expression ','?)+'}'
-             ;
+callObjectExpressionSimple
+    : environmentalVariableDefinition
+    | addressCall
+    | '(' 'new' callObject ')' callObject?
+    | internalFunctionCall
+    | identifier
+    | (identifier? arrayLiteral)+
+    | (identifier? arrayLiteral)+ '('+ identifier? arrayLiteral ')'* ')'
+    | identifier '[' identifier ']'
+    | addressContract
+    ;
 
-lvalueOperator: '|=' | '^=' | '&=' | plusLvalueOperator | minusLvalueOperator | mulLvalueOperator | divLvalueOperator | divRemLvalueOperator|'<<=' | '>>=' ;
+callObjectExpressionComplicated : '(' callObject ')' ;
 
-plusLvalueOperator:'+=';
+callObject
+    : callObjectExpressionSimple
+    | environmentalVariableDefinition
+    | addressCall
+    | '(' 'new' callObject ')' callObject?
+    | identifier
+    | (identifier? arrayLiteral)+
+    | (identifier? arrayLiteral)+ '('+ identifier? arrayLiteral ')'* ')'
+    | identifier '[' identifier ']'
+    | addressContract
+    | plusminusOperator callObject
+    | callObject (muldivOperator | plusminusOperator | '<<' | '>>' | '&' | '^' | '|' | '<' | '>' | '<=' | '>=' | '==' | '!=') callObject
+    | callObject ('&&' | '||') callObject
+    | moneyExpression
+    | timeExpression
+    | primaryExpression
+    | callObject twoPlusMinusOperator
+    | twoPlusMinusOperator expression
+    | '!' callObject
+    | '~' callObject
+    | callObject '[' callObject ']'
+    | '{'(identifier ':' callObject ','? )+ '}'
+    | callObject '(' callArguments ')'
+    | callObject '?' callObject ':' callObject
+    | '(' callObject ')'
+    | externalFunctionCall
+    | internalFunctionCall
+    ;
 
-minusLvalueOperator:'-=';
+plusminusOperator : minusOperator | plusOperator ;
 
-divLvalueOperator: '/=';
+minusOperator : '-' ;
 
-mulLvalueOperator: '*=';
-divRemLvalueOperator: '%=';
+plusOperator : '+' ;
 
-argument: identifier|addressContract|numberLiteral|stringLiteral|environmentalVariableDefinition;
+twoPlusMinusOperator : decrementOperator | incrementOperator ;
+
+decrementOperator : '--' ;
+
+incrementOperator : '++' ;
+
+muldivOperator : mulOperator | divOperator | divRemOperator| powerOperator ;
+
+divRemOperator : '%' ;
+
+powerOperator : '**' ;
+
+mulOperator : '*' ;
+
+divOperator : '/' ;
+
+addressContract : addressNumber ;
+
+addressNumber : HexNumber ;
+
+callArguments : '(' (callArgument ','? )* ')' ;
+
+functionName : (identifier arrayLiteral? ) | newExpression ;
+
+callArgument : (expression | '{' nameValueList? '}' ) ;
+
+typeConversion : elementaryTypeName ('[' expression? ']')? '(' expression? ')' ;
+
+expression
+    : environmentalVariableDefinition
+    | addressCall
+    | typeConversion
+    | expression '.length'
+    | expression '.balance'
+    | functionCall
+    | expression twoPlusMinusOperator
+    | 'new' typeName //('(' (expression ','?)* ')')?
+    | '(' typeName ')' '(' expression ')'
+    | expression '[' expression ']'
+    | '(' expression ')'
+    | twoPlusMinusOperator expression
+    | plusminusOperator expression
+    | ('after' | 'delete') expression
+    | '!' expression
+    | '~' expression
+    | expression muldivOperator expression
+    | expression plusminusOperator expression
+    | expression ('<<' | '>>') expression
+    | expression '&' expression
+    | expression '^' expression
+    | expression '|' expression
+    | expression ('<' | '>' | '<=' | '>=') expression (plusminusOperator)?
+    | expression ('==' | '!=') expression
+    | expression '&&' expression
+    | expression '||' expression
+    | expression '?' expression ':' expression
+    | expression ('=' | powerOperator | lvalueOperator) expression
+    | variableDeclaration
+    | expression '(' callArguments ')'
+    | moneyExpression
+    | timeExpression
+    | primaryExpression
+    | '{' (identifier ':' expression ','? )+ '}'
+    ;
+
+lvalueOperator : '|=' | '^=' | '&=' | plusLvalueOperator | minusLvalueOperator | mulLvalueOperator | divLvalueOperator | divRemLvalueOperator | '<<=' | '>>=' ;
+
+plusLvalueOperator : '+=' ;
+
+minusLvalueOperator : '-=' ;
+
+divLvalueOperator : '/=' ;
+
+mulLvalueOperator : '*=' ;
+
+divRemLvalueOperator : '%=' ;
+
+argument : identifier | addressContract | numberLiteral | stringLiteral | environmentalVariableDefinition ;
 
 //___Parameters_and_others__
 
 enumValue : identifier ;
 
 indexedParameterList : '(' ( indexedParameter (',' indexedParameter)* )? ')' ;
-indexedParameter: typeName 'indexed'? identifier?;
 
-parameterList : '(' (parameter','?)*')' ;
+indexedParameter : typeName 'indexed'? identifier?;
 
-parameter : typeName storageLocation? identifier?;
+parameterList : '(' (parameter ','? )* ')' ;
+
+parameter : typeName storageLocation? identifier? ;
 
 storageLocation : 'memory' | 'storage' ;
 
 //___Statements___
 
-block: statement|'{' (statement)* '}' ;
+block: statement | '{' (statement)* '}' ;
 
 statement
     : addressDeclaration
@@ -327,77 +326,75 @@ statement
     | expressionStatement  ';'?
     ;
 
-creatingContractViaNewStatement: identifier arrayLiteral? '=' 'new' identifier arrayLiteral? callArguments ';'?;
+creatingContractViaNewStatement : identifier arrayLiteral? '=' 'new' identifier arrayLiteral? callArguments ';'? ;
 
-ifStatement : 'if' '(' ifCondition ')' block ( 'else' block )? ;
+ifStatement : 'if' '(' ifCondition ')' block ('else' block)? ;
 
-ifCondition:  (expression) identifier? comparison? (expression)? identifier?;
+ifCondition : (expression) identifier? comparison? (expression)? identifier? ;
 
 whileStatement : 'while' '(' whileCondition ')' block ;
 
-whileCondition: expression;
+whileCondition: expression ;
 
-forStatement : 'for' '(' simpleStatement? ( expression? ';' )* (expression)? ')' block ;
+forStatement : 'for' '(' simpleStatement? (expression? ';')* (expression)? ')' block ;
 
 inlineAssemblyStatement : 'assembly' inlineAssemblyBlock ;
 
-doWhileStatement : 'do' block 'while' '(' expression ')';
+doWhileStatement : 'do' block 'while' '(' expression ')' ;
 
 placeholderStatement : '_' ;
 
-continueStatement : 'continue' ';'?;
+continueStatement : 'continue' ';'? ;
 
-breakStatement : 'break' ';'?;
+breakStatement : 'break' ';'? ;
 
-returnStatement : 'return' '('? (expression ','?)* ')'? ;
+returnStatement : 'return' '('? (expression ','? )* ')'? ;
 
-throwRevertStatement : 'throw'|'revert' '(' ')' ;
+throwRevertStatement : 'throw' | 'revert' '(' ')' ;
 
-simpleStatement : variableDeclarationStatement
-                | expressionStatement
-                ;
+simpleStatement : variableDeclarationStatement | expressionStatement ;
 
 functionCallStatement : functionCall ';'? ;
 
-functionFallBackCall
-    : 'function' parameterList
-      ( functionCall | identifier | stateMutability | visibleType )*
-      returnsParameters? ';'? ;
+functionFallBackCall : 'function' parameterList
+    ( functionCall | identifier | stateMutability | visibleType )*
+    returnsParameters? ';'? ;
 
-expressionStatement : expression+  ';' ;
+expressionStatement : expression+ ';' ;
 
-variableDeclarationStatement : ( 'var' identifierList | variableDeclaration ) ;
+variableDeclarationStatement : ('var' identifierList | variableDeclaration) ;
 
 //___Assembler___
+
 inlineAssemblyBlock : '{' assemblyStatement* '}' ;
 
-assemblyStatement:assemblyItem;
+assemblyStatement : assemblyItem ;
 
-assemblyItem : identifier| assemblyItemCase|assemblySwitchStatement|assemblyItemDefault | functionalAssemblyExpression
-             | inlineAssemblyBlock | assemblyLabels| assemblyFunctionCall | assemblerLocalVariables | assemblerLoopAndLocalVariables | addressContract
-             | numberLiteral | StringLiteral | HexLiteral| '(' assemblyItem ')';
+assemblyItem : identifier | assemblyItemCase | assemblySwitchStatement | assemblyItemDefault | functionalAssemblyExpression
+    | inlineAssemblyBlock | assemblyLabels | assemblyFunctionCall | assemblerLocalVariables | assemblerLoopAndLocalVariables
+    | addressContract | numberLiteral | StringLiteral | HexLiteral | '(' assemblyItem ')' ;
 
-assemblyItemCase: 'case' primaryExpression ':'? inlineAssemblyBlock;
+assemblyItemCase : 'case' primaryExpression ':'? inlineAssemblyBlock ;
 
-assemblyItemDefault:'default' ':'? inlineAssemblyBlock;
+assemblyItemDefault : 'default' ':'? inlineAssemblyBlock ;
 
-assemblySwitchStatement: 'switch' (primaryExpression|functionalAssemblyExpression);
+assemblySwitchStatement : 'switch' (primaryExpression | functionalAssemblyExpression);
 
-assemblyLabels : 'let' (identifier| '('identifier')') ':=' (functionalAssemblyExpression|primaryExpression );
+assemblyLabels : 'let' (identifier | '(' identifier ')') ':=' (functionalAssemblyExpression | primaryExpression);
 
-assemblerLocalVariables : identifier ':=' (elementaryTypeNameAssemblyExpression|functionalAssemblyExpression|primaryExpression) | '=:' identifier ;
+assemblerLocalVariables : identifier ':=' (elementaryTypeNameAssemblyExpression | functionalAssemblyExpression | primaryExpression) | '=:' identifier ;
 
-assemblerLoopAndLocalVariables: 'for' '{'assemblyLabels'}' functionalAssemblyExpression inlineAssemblyBlock*;
+assemblerLoopAndLocalVariables : 'for' '{' assemblyLabels '}' functionalAssemblyExpression inlineAssemblyBlock* ;
 
-functionalAssemblyExpression : (identifier|'return') ('('  (assemblyItem ','?)* ')')? ('=:' identifier)?;
+functionalAssemblyExpression : (identifier | 'return') ('('  (assemblyItem ','? )* ')')? ('=:' identifier)? ;
 
-elementaryTypeNameAssemblyExpression : (elementaryTypeName) ('('  (assemblyItem ','?)* ')')? ('=:' identifier)?;
+elementaryTypeNameAssemblyExpression : (elementaryTypeName) ('('  (assemblyItem ','? )* ')')? ('=:' identifier)? ;
 
-assemblyFunctionCall: 'function' identifier '(' (assemblyItem ','?)* ')' '->' identifier inlineAssemblyBlock;
+assemblyFunctionCall : 'function' identifier '(' (assemblyItem ','? )* ')' '->' identifier inlineAssemblyBlock ;
 
 //___expressions___
 
-timeExpression:primaryExpression ('seconds'|'minutes'|'hours'|'days'|'years'|'weeks');
+timeExpression : primaryExpression ('seconds' | 'minutes' | 'hours' | 'days' | 'years' | 'weeks') ;
 
 primaryExpression
     : arrayLiteral
@@ -405,43 +402,41 @@ primaryExpression
     | hexLiteral
     | stringLiteral
     | identifier
-	| tupleExpression
+    | tupleExpression
     | elementaryTypeNameExpression
     | addressContract
     | numberLiteral
     | environmentalVariableDefinition
     ;
 
-moneyExpression: primaryExpression
-                (  'wei'| 'kwei' | 'ada' | 'femtoether' | 'mwei' | 'babbage' | 'picoether' | 'gwei' | 'shannon' | 'nanoether' | 'nano'
-                 | 'microether' | 'micro' | 'szabo' | 'finney' | 'milliether' | 'milli' | 'ether'| 'kether' | 'grand' | 'einstein'
-                 | 'mether' | 'gether' | 'tether');
+moneyExpression : primaryExpression ('wei' | 'kwei' | 'ada' | 'femtoether' | 'mwei' | 'babbage' | 'picoether' | 'gwei'
+    | 'shannon' | 'nanoether' | 'nano' | 'microether' | 'micro' | 'szabo' | 'finney' | 'milliether' | 'milli' | 'ether'
+    | 'kether' | 'grand' | 'einstein' | 'mether' | 'gether' | 'tether') ;
 
 tupleExpression
-  : '(' ( expression? ( ',' expression? )+ )? ')'
-  | '[' ( expression? ( ',' expression? )+ )? ']' ;
+    : '(' ( expression? ( ',' expression? )+ )? ')'
+    | '[' ( expression? ( ',' expression? )+ )? ']'
+    ;
 
 newExpression : 'new' typeName ;
 
 elementaryTypeNameExpression : elementaryTypeName ;
 
 //___auxiliary parameters___
+
 nameValueList : identifier ':' expression (',' identifier ':' expression)* ;
 
-comparison:'==' | '!=';
+comparison : '==' | '!=' ;
 
-identifierList
-  : '(' ( identifier? ',' )* identifier? ')' ;
+identifierList : '(' (identifier? ',')* identifier? ')' ;
 
-identifier
-    : Identifier | placeholderStatement| 'value'|'from'|'this'|'balance'|'sender'|'msg'|'gas'|'length'|'block'|'timestamp'|'tx'|'origin'|'blockhash'|'coinbase'
-    | 'difficulty'| 'gaslimit'|'number'|'data'|'sig'|'now'|'gasprice';
+identifier : Identifier | placeholderStatement | 'value' | 'from' | 'this' | 'balance' | 'sender' | 'msg' | 'gas'
+    | 'length' | 'block' | 'timestamp' | 'tx' | 'origin' | 'blockhash' | 'coinbase' | 'difficulty'| 'gaslimit'
+    |'number' | 'data' | 'sig' | 'now' | 'gasprice' ;
 
-Identifier
-  : IdentifierStart IdentifierPart* ;
+Identifier : IdentifierStart IdentifierPart* ;
 
-elementaryTypeName
-    : 'address' | 'bool' | 'string' | 'var'
+elementaryTypeName : 'address' | 'bool' | 'string' | 'var'
     |'int' | 'int8' | 'int16' | 'int24' | 'int32' | 'int40' | 'int48' | 'int56' | 'int64' | 'int72'
     | 'int80' | 'int88' | 'int96' | 'int104' | 'int112' | 'int120' | 'int128' | 'int136' | 'int144' | 'int152' | 'int160' | 'int168'
     | 'int176' | 'int184' | 'int192' | 'int200' | 'int208' | 'int216' | 'int224' | 'int232' | 'int240' | 'int248' | 'int256' |'uint'
@@ -584,13 +579,14 @@ elementaryTypeName
     | 'ufixed224x16' | 'ufixed224x24' | 'ufixed224x32' | 'ufixed232x8' | 'ufixed232x16' | 'ufixed232x24' | 'ufixed240x8' | 'ufixed240x16' | 'ufixed248x8' ;
 
 //___literals___
-arrayLiteral : ('[' arrayElement? ( ',' arrayElement )* ']')+ ;
 
-arrayElement: expression;
+arrayLiteral : ('[' arrayElement? (',' arrayElement)* ']')+ ;
+
+arrayElement: expression ;
 
 numberLiteral : (DecimalNumber) NumberUnit? ;
 
-VersionLiteral : [0-9]+ (' ')? '.' [0-9]+  (' ')?'.' [0-9]+ ;
+VersionLiteral : [0-9]+ (' ')? '.' [0-9]+  (' ')? '.' [0-9]+ ;
 
 booleanLiteral : 'true' | 'false' ;
 
@@ -598,12 +594,11 @@ DecimalNumber : [0-9]+ ( '.' [0-9]+ )? ( ('e'|'E') [0-9]+ )? ;
 
 HexNumber : '0x' HexCharacter+ ;
 
-NumberUnit : 'wei' | 'szabo' | 'finney' | 'ether'
-           | 'seconds' | 'minutes' | 'hours' | 'days' | 'weeks' | 'years' ;
+NumberUnit : 'wei' | 'szabo' | 'finney' | 'ether' | 'seconds' | 'minutes' | 'hours' | 'days' | 'weeks' | 'years' ;
 
 HexLiteral : 'hex' ('"' HexPair* '"' | '\'' HexPair* '\'') ;
 
-hexLiteral:HexLiteral;
+hexLiteral : HexLiteral;
 
 fragment
 HexPair : HexCharacter HexCharacter ;
@@ -622,7 +617,7 @@ StringLiteral
     | '\'' SingleQuotedStringCharacter* '\''
     ;
 
-stringLiteral:StringLiteral;
+stringLiteral : StringLiteral ;
 
 fragment
 DoubleQuotedStringCharacter : ~["\r\n\\] | ('\\' .) ;
@@ -630,13 +625,8 @@ DoubleQuotedStringCharacter : ~["\r\n\\] | ('\\' .) ;
 fragment
 SingleQuotedStringCharacter : ~['\r\n\\] | ('\\' .) ;
 
-WS  :  [ \t\r\n\u000C]+ -> skip
-    ;
+WS : [ \t\r\n\u000C]+ -> skip ;
 
-COMMENT
-    :   '/*' .*? '*/' -> channel(HIDDEN)
-    ;
+COMMENT :   '/*' .*? '*/' -> channel(HIDDEN) ;
 
-LINE_COMMENT
-    :   '//' ~[\r\n]* -> channel(HIDDEN)
-    ;
+LINE_COMMENT : '//' ~[\r\n]* -> channel(HIDDEN) ;
