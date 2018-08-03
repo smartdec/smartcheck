@@ -242,8 +242,8 @@ expression
     : environmentalVariableDefinition
     | addressCall
     | typeConversion
-    | expression '.length'
-    | expression '.balance'
+    | expression '.' 'length'
+    | expression '.' 'balance'
     | functionCall
     | expression twoPlusMinusOperator
     | 'new' typeName //('(' (expression ','?)* ')')?
