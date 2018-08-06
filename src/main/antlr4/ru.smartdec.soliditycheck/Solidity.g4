@@ -421,9 +421,9 @@ assemblyItemCase : 'case' primaryExpression ':'? inlineAssemblyBlock ;
 
 assemblyItemDefault : 'default' ':'? inlineAssemblyBlock ;
 
-assemblySwitchStatement : 'switch' (primaryExpression | functionalAssemblyExpression);
+assemblySwitchStatement : 'switch' (primaryExpression | functionalAssemblyExpression) ;
 
-assemblyLabels : 'let' (identifier | '(' identifier ')') ':=' (functionalAssemblyExpression | primaryExpression);
+assemblyLabels : 'let' (identifier | '(' identifier ')') ':=' (functionalAssemblyExpression | primaryExpression) ;
 
 assemblerLocalVariables : identifier ':=' (elementaryTypeNameAssemblyExpression | functionalAssemblyExpression | primaryExpression) | '=:' identifier ;
 
