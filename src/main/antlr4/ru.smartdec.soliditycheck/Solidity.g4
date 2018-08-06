@@ -264,6 +264,7 @@ expression
     | typeConversion
     | expression '.' 'length'
     | expression '.' 'balance'
+    | primaryExpression
     | functionCall
     | expression twoPlusMinusOperator
     // TODO replace with `newContractExpression` and 'newDynamicArrayExpression'
