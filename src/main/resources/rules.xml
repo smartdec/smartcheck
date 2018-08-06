@@ -64,7 +64,7 @@
     <Rule>
         <RuleId>SOLIDITY_ARRAY_LENGTH_MANIPULATION</RuleId>
         <Patterns>
-            <!-- фиксирует операции с длинной динамического массива ".length": =, +=, -=, *=, /=, минус-минус -->
+            <!-- фиксирует операции с длиной динамического массива ".length": =, +=, -=, *=, /=, минус-минус -->
             <Pattern patternId="872bdd">
                 <Categories>
                     <Category>Solidity</Category>
