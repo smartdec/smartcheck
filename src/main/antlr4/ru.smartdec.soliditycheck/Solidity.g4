@@ -295,7 +295,6 @@ expression
     | expression '(' callArguments ')'// WTF is that?
     | moneyExpression
     | timeExpression
-    | primaryExpression
     | '{' (identifier ':' expression ','? )+ '}'
     ;
 
@@ -333,19 +332,19 @@ block: statement | '{' (statement)* '}' ;
 
 statement
     : addressDeclaration
-    | creatingContractViaNewStatement ';'?
+    | creatingContractViaNewStatement ';'
     | ifStatement ';'?
     | whileStatement ';'?
     | forStatement ';'?
     | inlineAssemblyStatement ';'?
     | doWhileStatement ';'?
-    | placeholderStatement ';'?
-    | continueStatement
-    | breakStatement
-    | returnStatement ';'?
-    | throwRevertStatement ';'?
+    | placeholderStatement ';'
+    | continueStatement ';'
+    | breakStatement ';'
+    | returnStatement ';'
+    | throwRevertStatement ';'
     | simpleStatement ';'?
-    | functionCallStatement
+    | functionCallStatement ';'
     | functionFallBackCall ';'?
     | expressionStatement  ';'?
     ;
@@ -400,7 +399,7 @@ functionFallBackCall : 'function' parameterList
     ( functionCall | identifier | stateMutability | visibleType )*
     returnsParameters? ';'? ;
 
-expressionStatement : expression+ ';' ;
+expressionStatement : expression ';' ;
 
 variableDeclarationStatement : ('var' identifierList | variableDeclaration) ;
 
