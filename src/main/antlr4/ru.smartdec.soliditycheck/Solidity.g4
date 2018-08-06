@@ -402,7 +402,10 @@ functionFallBackCall : 'function' parameterList
 
 expressionStatement : expression ';' ;
 
-variableDeclarationStatement : ('var' identifierList | variableDeclaration) ;
+variableDeclarationStatement
+    : ('var' identifierList ('=' expression )? )
+    | variableDeclaration
+    ;
 
 //___Assembler___
 
