@@ -62,6 +62,33 @@
             </Patterns>
     </Rule>
     <Rule>
+        <RuleId>SOLIDITY_ARRAY_LENGTH_MANIPULATION</RuleId>
+        <Patterns>
+            <!-- фиксирует операции с длинной динамического массива ".length": =, +=, -=, *=, /=, минус-минус -->
+            <Pattern patternId="872bdd">
+                <Categories>
+                    <Category>Solidity</Category>
+                </Categories>
+                <Severity>1</Severity>
+                <XPath>
+                //expression[expression[1]//environmentalVariableDefinition[matches(text()[1],".length$")]]
+                [matches(text()[1],"^=$") or twoPlusMinusOperator/decrementOperator or lvalueOperator[mulLvalueOperator or minusLvalueOperator or plusLvalueOperator or divLvalueOperator]]
+                </XPath>
+            </Pattern>
+            <!-- фиксирует конструкцию ".length++"-->
+            <Pattern patternId="43ba1c">
+                <Categories>
+                    <Category>Solidity</Category>
+                </Categories>
+                <Severity>1</Severity>
+                <XPath>
+                //expression[expression[1]//environmentalVariableDefinition[matches(text()[1],".length$")]]
+                [twoPlusMinusOperator/incrementOperator]
+                </XPath>
+            </Pattern>
+        </Patterns>
+    </Rule>
+    <Rule>
         <RuleId>SOLIDITY_BALANCE_EQUALITY</RuleId>
         <Patterns>
             <!-- фиксирует конструкции: ".balance ==", ".balance !="-->
