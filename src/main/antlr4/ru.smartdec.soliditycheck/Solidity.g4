@@ -198,8 +198,6 @@ callObject
     | plusminusOperator callObject
     | callObject (muldivOperator | plusminusOperator | '<<' | '>>' | '&' | '^' | '|' | '<' | '>' | '<=' | '>=' | '==' | '!=') callObject
     | callObject ('&&' | '||') callObject
-    | moneyExpression
-    | timeExpression
     | primaryExpression
     | callObject twoPlusMinusOperator
     | twoPlusMinusOperator expression
@@ -294,8 +292,6 @@ expression
     | variableDeclaration
 // TODO investigate this
     | expression '(' callArguments ')'// WTF is that?
-    | moneyExpression
-    | timeExpression
     | '{' (identifier ':' expression ','? )+ '}'
     ;
 
@@ -437,8 +433,6 @@ assemblyFunctionCall : 'function' identifier '(' (assemblyItem ','? )* ')' '->' 
 
 //___expressions___
 
-timeExpression : primaryExpression ('seconds' | 'minutes' | 'hours' | 'days' | 'years' | 'weeks') ;
-
 primaryExpression
     : arrayLiteral
     | booleanLiteral
@@ -451,10 +445,6 @@ primaryExpression
     | numberLiteral
     | environmentalVariableDefinition
     ;
-
-moneyExpression : primaryExpression ('wei' | 'kwei' | 'ada' | 'femtoether' | 'mwei' | 'babbage' | 'picoether' | 'gwei'
-    | 'shannon' | 'nanoether' | 'nano' | 'microether' | 'micro' | 'szabo' | 'finney' | 'milliether' | 'milli' | 'ether'
-    | 'kether' | 'grand' | 'einstein' | 'mether' | 'gether' | 'tether') ;
 
 tupleExpression
     : '(' ( expression? ( ',' expression? )+ )? ')'
@@ -628,17 +618,19 @@ arrayLiteral : ('[' arrayElement? (',' arrayElement)* ']')+ ;
 
 arrayElement: expression ;
 
-numberLiteral : (DecimalNumber) NumberUnit? ;
+numberLiteral : decimalNumber numberUnit? ;
+
+decimalNumber : DecimalNumber ;
 
 VersionLiteral : [0-9]+ (' ')? '.' [0-9]+  (' ')? '.' [0-9]+ ;
 
 booleanLiteral : 'true' | 'false' ;
 
+numberUnit : 'wei' | 'szabo' | 'finney' | 'ether' | 'seconds' | 'minutes' | 'hours' | 'days' | 'weeks' | 'years' ;
+
 DecimalNumber : [0-9]+ ( '.' [0-9]+ )? ( ('e'|'E') [0-9]+ )? ;
 
 HexNumber : '0x' HexCharacter+ ;
-
-NumberUnit : 'wei' | 'szabo' | 'finney' | 'ether' | 'seconds' | 'minutes' | 'hours' | 'days' | 'weeks' | 'years' ;
 
 HexLiteral : 'hex' ('"' HexPair* '"' | '\'' HexPair* '\'') ;
 
