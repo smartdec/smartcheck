@@ -287,7 +287,7 @@
     <Rule>
         <RuleId>SOLIDITY_GAS_LIMIT_IN_LOOPS</RuleId>
         <Patterns>
-            <!-- for (<инициализация счетчика>; <счетчик меньше чем не numberLiteral; <увеличение счетчика>)-->
+            <!-- for (<инициализация счетчика>; <счетчик меньше чем не numberLiteral; <увеличение счетчика>) {меняющися адрес или интерфейс, или внешний вызов}-->
             <Pattern patternId="f6f853">
                 <Categories>
                     <Category>Solidity</Category>
@@ -296,9 +296,11 @@
                 <XPath>
                     //forStatement[expression[1][matches(text()[1],"&lt;|&lt; =")]/expression[2][not(primaryExpression/numberLiteral)]]
                     [expression[2][twoPlusMinusOperator/incrementOperator or lvalueOperator/plusLvalueOperator or expression[2]/plusminusOperator/plusOperator or //functionName/identifier[matches(text()[1],"^add$")]]]
+                    [block//expression[matches(text()[1],"^=$")]/expression[1]//identifier[text()[1]=(ancestor::functionDefinition//addressDeclaration/identifier) or text()[1]=(ancestor::functionDefinition//variableDeclaration[typeName/userDefinedTypeName]/identifier)] or
+                    block//externalFunctionCallNotThis/callObjectExpression//identifier[text()[1]=(ancestor::functionDefinition//addressDeclaration/identifier) or text()[1]=(ancestor::contractDefinition//variableDeclaration[typeName/userDefinedTypeName]/identifier)]]
                 </XPath>
             </Pattern>
-            <!-- for (<инициализация счетчика не числом>; <счетчик больше чем что угодно>; <уменьшение счетчика>)-->
+            <!-- for (<инициализация счетчика не числом>; <счетчик больше чем что угодно>; <уменьшение счетчика>) {меняющися адрес или интерфейс, или внешний вызов}-->
             <Pattern patternId="12cf32">
                 <Categories>
                     <Category>Solidity</Category>
@@ -306,6 +308,8 @@
                 <Severity>2</Severity>
                 <XPath>
                     //forStatement[simpleStatement[not(variableDeclarationStatement/variableDeclaration/expression/primaryExpression/numberLiteral)]][expression[1][matches(text()[1],"&gt;|&gt; =")]][expression[2][twoPlusMinusOperator/decrementOperator or lvalueOperator/minusLvalueOperator or expression[2]/plusminusOperator/minusOperator or //functionName/identifier[matches(text()[1],"^sub$")]]]
+                    [block//expression[matches(text()[1],"^=$")]/expression[1]//identifier[text()[1]=(ancestor::functionDefinition//addressDeclaration/identifier) or text()[1]=(ancestor::functionDefinition//variableDeclaration[typeName/userDefinedTypeName]/identifier)] or
+                    block//externalFunctionCallNotThis/callObjectExpression//identifier[text()[1]=(ancestor::functionDefinition//addressDeclaration/identifier) or text()[1]=(ancestor::contractDefinition//variableDeclaration[typeName/userDefinedTypeName]/identifier)]]
                 </XPath>
             </Pattern>
             <!--Фиксируется конструкция: while (в условии все, кроме вызова функции и числа)-->
@@ -323,32 +327,6 @@
                 </Categories>
                 <Severity>2</Severity>
                 <XPath>//whileStatement[whileCondition/descendant::functionCall]</XPath>
-            </Pattern>
-            <!--Фиксируется циклы с меняющимся адресом и внешним вызовом-->
-            <Pattern patternId="a7c89c">
-                <Categories>
-                    <Category>Solidity</Category>
-                </Categories>
-                <Severity>2</Severity>
-                <XPath>
-                    //forStatement
-                    [ancestor::functionDefinition//addressDeclaration/identifier]
-                    [block//expression[matches(text()[1],"^=$")]/expression[1]//identifier[text()[1]=(ancestor::functionDefinition//addressDeclaration/identifier)]]
-                    [block//externalFunctionCallNotThis/callObjectExpression//identifier[text()[1]=(ancestor::functionDefinition//addressDeclaration/identifier)]]
-                </XPath>
-            </Pattern>
-            <!--Фиксируется циклы с меняющимся адресом-интерфейсом и внешним вызовом-->
-            <Pattern patternId="a8cb21">
-                <Categories>
-                    <Category>Solidity</Category>
-                </Categories>
-                <Severity>2</Severity>
-                <XPath>
-                    //forStatement
-                    [ancestor::functionDefinition//variableDeclaration/typeName/userDefinedTypeName]
-                    [block//expression[matches(text()[1],"^=$")]/expression[1]//identifier[text()[1]=(ancestor::functionDefinition//variableDeclaration[typeName/userDefinedTypeName]/identifier)]]
-                    [block//externalFunctionCallNotThis/callObjectExpression//identifier[text()[1]=(ancestor::functionDefinition//variableDeclaration[typeName/userDefinedTypeName]/identifier)]]
-                </XPath>
             </Pattern>
         </Patterns>
     </Rule>

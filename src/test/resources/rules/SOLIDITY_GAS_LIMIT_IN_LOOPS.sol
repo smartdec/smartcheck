@@ -51,43 +51,44 @@ contract GasLimitAndLoops {
     function test_for() public {
         uint x=0;
         uint[] memory y;
+        Foo addr = Foo(0x0);
         // <yes> <report> SOLIDITY_GAS_LIMIT_IN_LOOPS f6f853
         for (uint i = 0; i < y.length; i.add(1)){
-            x=8;
+            addr.foo();
         }
         // <yes> <report> SOLIDITY_GAS_LIMIT_IN_LOOPS f6f853
         for (i = 0; i < y.length; i++){
-            x=8;
+            addr.foo();
         }
         // <yes> <report> SOLIDITY_GAS_LIMIT_IN_LOOPS f6f853
         for (i = 0; i < y.length; i=i+1){
-            x=8;
+            addr.foo();
         }
         // <yes> <report> SOLIDITY_GAS_LIMIT_IN_LOOPS f6f853
         for (i = y.length; i <= max(y.length, 4); i += y.length){
-            x=8;
+            addr.foo();
         }
         // <yes> <report> SOLIDITY_GAS_LIMIT_IN_LOOPS 12cf32
         for (i = y.length; i > 0 ; i.sub(1)){
-            x=8;
+            addr.foo();
         }
         // <yes> <report> SOLIDITY_GAS_LIMIT_IN_LOOPS 12cf32
         for (i = y.length; i > 0 ; i--){
-            x=8;
+            addr.foo();
         }
         // <yes> <report> SOLIDITY_GAS_LIMIT_IN_LOOPS 12cf32
         for (i = y.length; i > 0 ; i=i-1){
-            x=8;
+            addr.foo();
         }
         // <yes> <report> SOLIDITY_GAS_LIMIT_IN_LOOPS 12cf32
         for (x = y.length; x > max(y.length, max(1,2)); x -= y.length){
-            x=8;
+            addr.foo();
         }
         for (i = y.length; i < 100; i--){
-            x=8;
+            addr.foo();
         }
         for (i = y.length; i < 100; i++){
-            x=8;
+            addr.foo();
         }
     }
 
@@ -96,14 +97,14 @@ contract GasLimitAndLoops {
     }
 
     function heavyLoops(address[] _addr, uint amount) public {
-        address addr;
-        // <yes> <report> SOLIDITY_GAS_LIMIT_IN_LOOPS a7c89c
+        address addr1;
+        // <yes> <report> SOLIDITY_GAS_LIMIT_IN_LOOPS f6f853
         for (uint i = 0; i < _addr.length; i++) {
-            addr = _addr[i];
-            addr.transfer(amount);
+            addr1 = _addr[i];
+            addr1.transfer(amount);
         }
         Foo addr2;
-        // <yes> <report> SOLIDITY_GAS_LIMIT_IN_LOOPS a8cb21
+        // <yes> <report> SOLIDITY_GAS_LIMIT_IN_LOOPS f6f853
         for (i = 0; i < _addr.length; i++) {
             addr2 = Foo(_addr[i]);
             addr2.foo();
