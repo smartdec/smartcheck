@@ -279,7 +279,7 @@
                 //functionDefinition
                 [block]
                 [not(block/statement//returnStatement)]
-                [returnsParameters/parameterList/parameter/identifier[not(text()[1]=(ancestor::functionDefinition/block//expression[matches(text()[1],"=")]/expression[1]//identifier))] or returnsParameters/parameterList/parameter[not(identifier)]]
+                [returnsParameters/parameterList/parameter/identifier[not(text()[1]=(ancestor::functionDefinition/block//expression[matches(text()[1],"=")]/expression[1]//identifier))]]
             </XPath>
         </Pattern>
     </Patterns>
