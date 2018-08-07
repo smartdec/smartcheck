@@ -103,7 +103,7 @@ contract GasLimitAndLoops {
             addr.transfer(amount);
         }
         Foo addr2;
-        // <yes> <report> SOLIDITY_GAS_LIMIT_IN_LOOPS a7c89c
+        // <yes> <report> SOLIDITY_GAS_LIMIT_IN_LOOPS a8cb21
         for (i = 0; i < _addr.length; i++) {
             addr2 = Foo(_addr[i]);
             addr2.foo();
