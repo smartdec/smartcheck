@@ -736,6 +736,16 @@
                 <Severity>1</Severity>
                 <XPath>//stateVariableDeclaration[not(visibleType)]</XPath>
             </Pattern>
+            <!-- фиксирует ситуацию, когда у конструктора видимость external или private-->
+            <Pattern patternId="321aca">
+                <Categories>
+                    <Category>Solidity</Category>
+                </Categories>
+                <Severity>1</Severity>
+                <XPath>
+                    //functionDefinition[text()[1]="constructor"][visibleType[text()[1]="external" or text()[1]="private"]]
+                </XPath>
+            </Pattern>
         </Patterns>
     </Rule>
 </Rules>
