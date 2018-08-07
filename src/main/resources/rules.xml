@@ -25,7 +25,7 @@
                         //addressContract[string-length(addressNumber) lt 42 and not(addressNumber[matches(text()[1],"^0x0$")])]
                     </XPath>
                 </Pattern>
-                <!-- фиксирует конструкции: address(numberLiteral), где numberLiteral не равно 0"-->
+                <!-- фиксирует конструкции: address(numberLiteral/decimalNumber), где numberLiteral/decimalNumber не равно 0"-->
                 <Pattern patternId="f32db1">
                     <Categories>
                         <Category>Solidity</Category>
@@ -33,7 +33,7 @@
                     <Severity>1</Severity>
                     <TruePositiveRate>2</TruePositiveRate>
                     <XPath>
-                        //addressCall/expression[primaryExpression/numberLiteral][not(primaryExpression/numberLiteral[matches(text()[1],"^0$")]) and not(primaryExpression/identifier[matches(text()[1],"^this$")])]
+                        //addressCall/expression[primaryExpression/numberLiteral/decimalNumber][not(primaryExpression/numberLiteral/decimalNumber[matches(text()[1],"^0$")]) and not(primaryExpression/identifier[matches(text()[1],"^this$")])]
                     </XPath>
                 </Pattern>
                 <!-- фиксирует использование адреса address(0), кроме "!=address(0)" и "==address(0)", и кторе тех случаев, когда address(0) внутри event(внутренняя функция, название которой начинается с большой буквы)-->
@@ -44,7 +44,7 @@
                     <Severity>1</Severity>
                     <TruePositiveRate>1</TruePositiveRate>
                     <XPath>
-                        //expression[addressCall/expression/primaryExpression/numberLiteral[matches(text()[1],"^0$")]]
+                        //expression[addressCall/expression/primaryExpression/numberLiteral/decimalNumber[matches(text()[1],"^0$")]]
                         /parent::*[not(matches(text()[1],"^==|!=$"))][not(ancestor::internalFunctionCall[1]/functionName/identifier[matches(text()[1],"^[A-Z]")])]
                     </XPath>
                 </Pattern>
@@ -114,7 +114,7 @@
                 </Categories>
                 <Severity>1</Severity>
                 <XPath>
-                    //simpleStatement/expressionStatement/expression[expression[matches(text()[1],".length")]][matches(text()[1],"^=$")][expression/primaryExpression/numberLiteral[matches(text()[1],"^0$")]]
+                    //simpleStatement/expressionStatement/expression[expression[matches(text()[1],".length")]][matches(text()[1],"^=$")][expression/primaryExpression/numberLiteral/decimalNumber[matches(text()[1],"^0$")]]
                 </XPath>
             </Pattern>
         </Patterns>
@@ -287,14 +287,14 @@
     <Rule>
         <RuleId>SOLIDITY_GAS_LIMIT_AND_LOOPS</RuleId>
         <Patterns>
-            <!-- for (<инициализация счетчика>; <счетчик меньше чем не numberLiteral; <увеличение счетчика>)-->
+            <!-- for (<инициализация счетчика>; <счетчик меньше чем не numberLiteral/decimalNumber; <увеличение счетчика>)-->
             <Pattern patternId="f6f853">
                 <Categories>
                     <Category>Solidity</Category>
                 </Categories>
                 <Severity>2</Severity>
                 <XPath>
-                    //forStatement[expression[1][matches(text()[1],"&lt;|&lt; =")]/expression[2][not(primaryExpression/numberLiteral)]][expression[2][twoPlusMinusOperator/incrementOperator or lvalueOperator/plusLvalueOperator or expression[2]/plusminusOperator/plusOperator]]
+                    //forStatement[expression[1][matches(text()[1],"&lt;|&lt; =")]/expression[2][not(primaryExpression/numberLiteral/decimalNumber)]][expression[2][twoPlusMinusOperator/incrementOperator or lvalueOperator/plusLvalueOperator or expression[2]/plusminusOperator/plusOperator]]
                 </XPath>
             </Pattern>
             <!-- for (<инициализация счетчика не числом>; <счетчик больше чем что угодно>; <уменьшение счетчика>)-->
@@ -304,7 +304,7 @@
                 </Categories>
                 <Severity>2</Severity>
                 <XPath>
-                    //forStatement[simpleStatement[not(variableDeclarationStatement/variableDeclaration/expression/primaryExpression/numberLiteral)]][expression[1][matches(text()[1],"&gt;|&gt; =")]][expression[2][twoPlusMinusOperator/decrementOperator or lvalueOperator/minusLvalueOperator or expression[2]/plusminusOperator/minusOperator]]
+                    //forStatement[simpleStatement[not(variableDeclarationStatement/variableDeclaration/expression/primaryExpression/numberLiteral/decimalNumber)]][expression[1][matches(text()[1],"&gt;|&gt; =")]][expression[2][twoPlusMinusOperator/decrementOperator or lvalueOperator/minusLvalueOperator or expression[2]/plusminusOperator/minusOperator]]
                 </XPath>
             </Pattern>
             <!--Фиксируется конструкция: while (в условии все, кроме вызова функции и числа)-->
@@ -313,7 +313,7 @@
                     <Category>Solidity</Category>
                 </Categories>
                 <Severity>1</Severity>
-                <XPath>//whileStatement/whileCondition[not(descendant-or-self::functionCall) and not(expression/expression/primaryExpression/numberLiteral)]</XPath>            </Pattern>
+                <XPath>//whileStatement/whileCondition[not(descendant-or-self::functionCall) and not(expression/expression/primaryExpression/numberLiteral/decimalNumber)]</XPath>            </Pattern>
             <!--Фиксируется конструкция: while (в условии вызов функции)-->
             <Pattern patternId="38f6c7">
                 <Categories>
@@ -553,7 +553,7 @@
                 </Categories>
                 <Severity>0</Severity>
                 <XPath>
-                    //expression[ancestor::contractDefinition[not(identifier[matches(text()[1],"SafeMath")])] or ancestor::libraryDefinition[not(identifier[matches(text()[1],"SafeMath")])]][last()][descendant-or-self::*[plusminusOperator[plusOperator]/parent::*[expression/primaryExpression/numberLiteral] or lvalueOperator[plusLvalueOperator]/parent::*[expression/primaryExpression/numberLiteral] or incrementOperator]]/ancestor-or-self::expression[last()]
+                    //expression[ancestor::contractDefinition[not(identifier[matches(text()[1],"SafeMath")])] or ancestor::libraryDefinition[not(identifier[matches(text()[1],"SafeMath")])]][last()][descendant-or-self::*[plusminusOperator[plusOperator]/parent::*[expression/primaryExpression/numberLiteral/decimalNumber] or lvalueOperator[plusLvalueOperator]/parent::*[expression/primaryExpression/numberLiteral/decimalNumber] or incrementOperator]]/ancestor-or-self::expression[last()]
                 </XPath>
             </Pattern> -->
             <!--Фиксирует все вхождения +, += где нет сложения с константой-->
@@ -563,7 +563,7 @@
                 </Categories>
                 <Severity>1</Severity>
                 <XPath>
-                    //expression[ancestor::contractDefinition[not(identifier[matches(text()[1],"SafeMath")])] or ancestor::libraryDefinition[not(identifier[matches(text()[1],"SafeMath")])]][last()][descendant-or-self::*[plusminusOperator[plusOperator]/parent::*[not(expression/primaryExpression/numberLiteral)] or lvalueOperator[plusLvalueOperator]/parent::*[not(expression/primaryExpression/numberLiteral)]]]/ancestor-or-self::expression[last()]
+                    //expression[ancestor::contractDefinition[not(identifier[matches(text()[1],"SafeMath")])] or ancestor::libraryDefinition[not(identifier[matches(text()[1],"SafeMath")])]][last()][descendant-or-self::*[plusminusOperator[plusOperator]/parent::*[not(expression/primaryExpression/numberLiteral/decimalNumber)] or lvalueOperator[plusLvalueOperator]/parent::*[not(expression/primaryExpression/numberLiteral/decimalNumber)]]]/ancestor-or-self::expression[last()]
                 </XPath>
             </Pattern>
             <!--Фиксирует все вхождения *,**,*=-->
@@ -589,7 +589,7 @@
             <Severity>1</Severity>
             <TruePositiveRate>3</TruePositiveRate>
             <XPath>
-                //forStatement/expression[matches(text()[1],">=")][expression/primaryExpression/numberLiteral[matches(text()[1],"^0$")]]
+                //forStatement/expression[matches(text()[1],">=")][expression/primaryExpression/numberLiteral/decimalNumber[matches(text()[1],"^0$")]]
             </XPath>
         </Pattern>
             <!--Фиксирует конструкцию: "...>=0"-->
@@ -600,7 +600,7 @@
                 <Severity>2</Severity>
                 <TruePositiveRate>3</TruePositiveRate>
                 <XPath>
-                    //expression[matches(text()[1],">=")][expression/primaryExpression/numberLiteral[matches(text()[1],"^0$")]]/ancestor-or-self::statement
+                    //expression[matches(text()[1],">=")][expression/primaryExpression/numberLiteral/decimalNumber[matches(text()[1],"^0$")]]/ancestor-or-self::statement
                 </XPath>
             </Pattern>
         </Patterns>
@@ -644,7 +644,7 @@
                     <Category>Solidity</Category>
                 </Categories>
                 <Severity>2</Severity>
-                <XPath>//variableDeclaration[typeName/elementaryTypeName[matches(text()[1],"^var$")]][expression//primaryExpression/numberLiteral[matches(text()[1],"^[0-9]+$")]]</XPath>
+                <XPath>//variableDeclaration[typeName/elementaryTypeName[matches(text()[1],"^var$")]][expression//primaryExpression/numberLiteral/decimalNumber[matches(text()[1],"^[0-9]+$")]]</XPath>
             </Pattern>
             <!--Фиксируется случаи определения переменных, как var имя переменной-->
             <Pattern patternId="f77619">
@@ -666,7 +666,7 @@
                 </Categories>
                 <Severity>2</Severity>
                 <TruePositiveRate>3</TruePositiveRate>
-                <XPath>//forStatement[simpleStatement//typeName/elementaryTypeName[matches(text()[1],"^var$")]][expression/expression/primaryExpression[numberLiteral[matches(text()[1],"^[0-9]+$")]&gt; 255]][expression/twoPlusMinusOperator/incrementOperator]
+                <XPath>//forStatement[simpleStatement//typeName/elementaryTypeName[matches(text()[1],"^var$")]][expression/expression/primaryExpression[numberLiteral/decimalNumber[matches(text()[1],"^[0-9]+$")]&gt; 255]][expression/twoPlusMinusOperator/incrementOperator]
                 </XPath>
             </Pattern>
         </Patterns>
