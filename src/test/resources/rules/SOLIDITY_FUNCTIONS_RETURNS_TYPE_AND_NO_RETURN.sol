@@ -20,7 +20,8 @@ contract C {
         _value = _r;
     }
     // <yes> <report> SOLIDITY_FUNCTIONS_RETURNS_TYPE_AND_NO_RETURN 58bdd3
-    function execute2(address _to, uint _value, bytes _data) returns (uint256 _r) {
+    function execute2(address _to, uint _value, bytes _data) returns (bool flag, uint256 _r) {
+        flag = true;
         _value = balanceOf(address(_r));
     }
 

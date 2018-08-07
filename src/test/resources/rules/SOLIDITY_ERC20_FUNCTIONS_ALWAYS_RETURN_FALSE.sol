@@ -11,15 +11,22 @@ contract TestToken {
     }
 }
 contract TestToken2 {
-    function approve(address _spender, uint _value) returns (bool success) {
+    // <yes> <report> SOLIDITY_ERC20_FUNCTIONS_ALWAYS_RETURN_FALSE b180ca
+    function approve(address _spender, uint _value) returns (bool success, bool flag) {
     	if (_value < 20 wei) throw;
+        success = true;
+    }
+    // <yes> <report> SOLIDITY_ERC20_FUNCTIONS_ALWAYS_RETURN_FALSE b180ca
+    function transfer(address _spender, uint _value) returns (bool success, bool) {
+        if (_value < 20 wei) throw;
         success = true;
     }
     function transferFrom(address _spender, uint _value) returns (bool success) {
         require(_value > 10 wei);
-        return true;
+        success = true;
     }  
 }
+
 contract TestToken3 {
     function transferFrom(address _spender, uint _value) returns (bool) {
         require(_value > 10 wei);

@@ -219,7 +219,7 @@
         <Patterns>
             <!--Фиксирует конструкции: имя контракта содержит token или erc20 либо наследуется от контракта содержащего такое в названии.
             В этом контракте есть определение функции с названием transfer,transferFrom или approve, которая возвращающает значение типа bool и не является интерфейсом.
-            В определении этой функции не содержится return или присваивание возвращаемого параметра (в текущей реализации проверяется присваивание только для первого возращаемого параметра)-->
+            В определении этой функции не содержится return или присваивание возвращаемого параметра.-->
             <Pattern patternId="b180ca">
                 <Categories>
                     <Category>Solidity</Category>
@@ -227,9 +227,10 @@
                 <Severity>2</Severity>
                 <XPath>
                     //contractDefinition[identifier[matches(text()[1],"token|erc20","i")]  or inheritanceSpecifier/userDefinedTypeName/identifier[matches(text()[1],"token|erc20","i")]]
-                    //functionDefinition[block/statement][identifier[matches(text()[1],"^transfer|transferFrom|approve$")]][returnsParameters/parameterList/parameter/typeName/elementaryTypeName[matches(text()[1],"bool")]]
+                    //functionDefinition[block/statement][identifier[matches(text()[1],"^transfer|transferFrom|approve$")]]
+                    [returnsParameters/parameterList/parameter/typeName/elementaryTypeName[matches(text()[1],"bool")]]
                     [count(descendant-or-self::*[returnStatement])=0]
-                    [not(block//expression[matches(text()[1],"=")]/expression[1]//identifier[matches(text()[1],ancestor::functionDefinition/returnsParameters/parameterList/parameter[1]/identifier)])]
+                    [returnsParameters/parameterList/parameter/identifier[not(text()[1]=(ancestor::functionDefinition/block//expression[matches(text()[1],"=")]/expression[1]//identifier))] or returnsParameters/parameterList/parameter[not(identifier)]]
                 </XPath>
             </Pattern>
         </Patterns>
@@ -268,7 +269,7 @@
                 //functionDefinition[block]/returnsParameters[count(parameterList/parameter) > count(parameterList/parameter/identifier)]/parent::*[not(block/statement//returnStatement)]
             </XPath>
         </Pattern>
-        <!--Фиксирует конструкцию: "function(...) ... returns (type name) {...}" - в теле функции нет присваивания "name=" и нет return (в данной реализации если параметров на выходе несколько, то проверяется только первый)-->
+        <!--Фиксирует конструкцию: "function(...) ... returns (type name) {...}" - в теле функции нет присваивания "name=" и нет return.-->
         <Pattern patternId="58bdd3">
             <Categories>
                 <Category>Solidity</Category>
@@ -278,8 +279,7 @@
                 //functionDefinition
                 [block]
                 [not(block/statement//returnStatement)]
-                [returnsParameters/parameterList/parameter[1]/identifier]
-                [not(block//expression[matches(text()[1],"=")]/expression[1]//identifier[matches(text()[1],ancestor::functionDefinition/returnsParameters/parameterList/parameter[1]/identifier)])]
+                [returnsParameters/parameterList/parameter/identifier[not(text()[1]=(ancestor::functionDefinition/block//expression[matches(text()[1],"=")]/expression[1]//identifier))] or returnsParameters/parameterList/parameter[not(identifier)]]
             </XPath>
         </Pattern>
     </Patterns>
