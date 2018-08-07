@@ -340,10 +340,9 @@ statement
     | breakStatement ';'
     | returnStatement ';'
     | throwRevertStatement ';'
-    | simpleStatement ';'?
+    | simpleStatement ';'
     | functionCallStatement ';'
     | functionFallBackCall ';'?
-    | expressionStatement  ';'?
     ;
 
 // TODO check if this expression also create dynamic arrays: `uint[] memory a = new uint[](7);`
@@ -396,7 +395,7 @@ functionFallBackCall : 'function' parameterList
     ( functionCall | identifier | stateMutability | visibleType )*
     returnsParameters? ';'? ;
 
-expressionStatement : expression ';' ;
+expressionStatement : expression ;
 
 variableDeclarationStatement
     : ('var' identifierList ('=' expression )? )
