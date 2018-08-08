@@ -19,18 +19,18 @@ versionLiteral: VersionLiteral ;
 importDirective
     : 'import' StringLiteral ('as' identifier)? ';'
     | 'import' ('*' | identifier) ('as' identifier)? 'from' StringLiteral ';'
-    | 'import' '{' importDeclaration ( ',' importDeclaration)* '}' 'from' StringLiteral ';'
+    | 'import' '{' importDeclaration (',' importDeclaration)* '}' 'from' StringLiteral ';'
     ;
 
 importDeclaration : identifier ('as' identifier)? ;
 
 contractDefinition : 'contract' identifier ('is' inheritanceSpecifier (',' inheritanceSpecifier)* )?
-    '{' (contractPartDefinition)* '}' ;
+    '{' contractPartDefinition* '}' ;
 
-libraryDefinition : 'library' identifier '{' (contractPartDefinition)* '}' ;
+libraryDefinition : 'library' identifier '{' contractPartDefinition* '}' ;
 
 interfaceDefinition : 'interface' identifier ('is' inheritanceSpecifier (',' inheritanceSpecifier)* )?
-    '{' (contractPartDefinition)* '}' ;
+    '{' contractPartDefinition* '}' ;
 
 inheritanceSpecifier : userDefinedTypeName ('(' expression (',' expression)* ')')? ;
 
@@ -65,8 +65,6 @@ modifierCall : modifierName callArguments? ;
 
 modifierName : identifier ;
 
-variableDeclarationList : ((variableDeclaration | stateVariableDeclaration) ','? )+ ;
-
 // TODO simplify as hell
 variableDeclaration : typeName storageLocation? identifier
     ('=' 'new'? (typeConversion | identifier '(')? expression ')'? )? ;
@@ -75,21 +73,21 @@ variableDeclaration : typeName storageLocation? identifier
 
 stateVariableDeclaration : (typeName (visibleType | constantType)* identifier ('='? expression | (identifier '(' expression ')') )? | typeName '(' numberLiteral ')') ';' ;
 
-addressDeclaration : 'address'  (visibleType | constantType)* identifier ('='? (addressContract | expression | (identifier '(' expression ')') ) )? ';' ;
+addressDeclaration : 'address'  (visibleType | constantType)* identifier ('='? (addressNumber | expression | (identifier '(' expression ')') ) )? ';' ;
 
 addressCall :'address' '(' expression ')' ;
 
 functionFallBackDefinition : 'function' parameterList
-    (functionCall | identifier | stateMutability |visibleType)*
-    returnsParameters? (block | ';')? ;
+    (stateMutability |visibleType)*
+    (block | ';')? ;
 
 eventDefinition : 'event' identifier indexedParameterList 'anonymous'? ';' ;
 
 enumDefinition : 'enum' identifier '{' enumValue? (',' enumValue)* '}' ;
 
-environmentalVariableDefinition
+environmentalVariable
     :
-    ( 'this'
+    'this'
     | 'msg.value'
     | 'msg.gas'
     | 'msg.sender'
@@ -106,7 +104,6 @@ environmentalVariableDefinition
     | 'msg.sig'
     | 'now'
     | 'tx.gasprice'
-    )+
     ;
 
 //___Types___
@@ -172,7 +169,7 @@ functionNameAndArgs
 callObjectExpression : callObjectExpressionComplicated | callObjectExpressionSimple ;
 
 callObjectExpressionSimple
-    : environmentalVariableDefinition
+    : environmentalVariable
     | addressCall
     | '(' 'new' callObject ')' callObject?
     | internalFunctionCall
@@ -180,21 +177,21 @@ callObjectExpressionSimple
     | (identifier? arrayLiteral)+
     | (identifier? arrayLiteral)+ '('+ identifier? arrayLiteral ')'* ')'
     | identifier '[' identifier ']'
-    | addressContract
+    | addressNumber
     ;
 
 callObjectExpressionComplicated : '(' callObject ')' ;
 
 callObject
     : callObjectExpressionSimple
-    | environmentalVariableDefinition
+    | environmentalVariable
     | addressCall
     | '(' 'new' callObject ')' callObject?
     | identifier
     | (identifier? arrayLiteral)+
     | (identifier? arrayLiteral)+ '('+ identifier? arrayLiteral ')'* ')'
     | identifier '[' identifier ']'
-    | addressContract
+    | addressNumber
     | plusminusOperator callObject
     | callObject (muldivOperator | plusminusOperator | '<<' | '>>' | '&' | '^' | '|' | '<' | '>' | '<=' | '>=' | '==' | '!=') callObject
     | callObject ('&&' | '||') callObject
@@ -236,8 +233,6 @@ mulOperator : '*' ;
 
 divOperator : '/' ;
 
-addressContract : addressNumber ;
-
 addressNumber : HexNumber ;
 
 // TODO replace
@@ -254,12 +249,12 @@ callArguments : '(' (callArgument (',' callArgument)* )? ')' ;
 // TODO remove this tag (part of `functionCall` rework)
 functionName : (identifier arrayLiteral? ) | newExpression ;
 
-callArgument : (expression | '{' nameValueList? '}' ) ;
+callArgument : expression | '{' nameValueList? '}' ;
 
 typeConversion : elementaryTypeName ('[' expression? ']')? '(' expression? ')' ;
 
 expression
-    : environmentalVariableDefinition
+    : environmentalVariable
     | addressCall
     | typeConversion
     | expression '.' 'length'
@@ -296,7 +291,7 @@ expression
     | expression '(' callArguments ')'// WTF is that?
     | moneyExpression
     | timeExpression
-    | '{' (identifier ':' expression ','? )+ '}'
+    | '{' nameValueList '}'
     ;
 
 lvalueOperator : '|=' | '^=' | '&=' | plusLvalueOperator | minusLvalueOperator | mulLvalueOperator | divLvalueOperator | divRemLvalueOperator | '<<=' | '>>=' ;
@@ -311,7 +306,7 @@ mulLvalueOperator : '*=' ;
 
 divRemLvalueOperator : '%=' ;
 
-argument : identifier | addressContract | numberLiteral | stringLiteral | environmentalVariableDefinition ;
+argument : identifier | addressNumber | numberLiteral | stringLiteral | environmentalVariable ;
 
 //___Parameters_and_others__
 
@@ -329,7 +324,7 @@ storageLocation : 'memory' | 'storage' ;
 
 //___Statements___
 
-block: statement | '{' (statement)* '}' ;
+block: statement | '{' block* '}' ;
 
 statement
     : addressDeclaration
@@ -344,7 +339,7 @@ statement
     | breakStatement ';'
     | returnStatement ';'
     | throwRevertStatement ';'
-    | simpleStatement
+    | simpleStatement ';'
     | functionCallStatement ';'
     | functionFallBackCall ';'?
     | expressionStatement  ';'?
@@ -400,11 +395,11 @@ functionFallBackCall : 'function' parameterList
     ( functionCall | identifier | stateMutability | visibleType )*
     returnsParameters? ';'? ;
 
-expressionStatement : expression ';' ;
+expressionStatement : expression ;
 
 variableDeclarationStatement
-    : ('var' identifierList ('=' expression )? ';')
-    | variableDeclaration ';'
+    : ('var' identifierList ('=' expression )? )
+    | variableDeclaration
     ;
 
 //___Assembler___
@@ -415,7 +410,7 @@ assemblyStatement : assemblyItem ;
 
 assemblyItem : identifier | assemblyItemCase | assemblySwitchStatement | assemblyItemDefault | functionalAssemblyExpression
     | inlineAssemblyBlock | assemblyLabels | assemblyFunctionCall | assemblerLocalVariables | assemblerLoopAndLocalVariables
-    | addressContract | numberLiteral | StringLiteral | HexLiteral | '(' assemblyItem ')' ;
+    | addressNumber | numberLiteral | StringLiteral | HexLiteral | '(' assemblyItem ')' ;
 
 assemblyItemCase : 'case' primaryExpression ':'? inlineAssemblyBlock ;
 
@@ -447,9 +442,9 @@ primaryExpression
     | identifier
     | tupleExpression
     | elementaryTypeNameExpression
-    | addressContract
+    | addressNumber
     | numberLiteral
-    | environmentalVariableDefinition
+    | environmentalVariable
     ;
 
 moneyExpression : primaryExpression ('wei' | 'kwei' | 'ada' | 'femtoether' | 'mwei' | 'babbage' | 'picoether' | 'gwei'
@@ -474,9 +469,7 @@ comparison : '==' | '!=' ;
 
 identifierList : '(' identifier? (',' identifier? )* ')' ;
 
-identifier : Identifier | placeholderStatement | 'value' | 'from' | 'this' | 'balance' | 'sender' | 'msg' | 'gas'
-    | 'length' | 'block' | 'timestamp' | 'tx' | 'origin' | 'blockhash' | 'coinbase' | 'difficulty'| 'gaslimit'
-    |'number' | 'data' | 'sig' | 'now' | 'gasprice' ;
+identifier : Identifier ;
 
 Identifier : IdentifierStart IdentifierPart* ;
 
