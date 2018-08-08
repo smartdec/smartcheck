@@ -83,7 +83,7 @@ functionFallBackDefinition : 'function' parameterList
 
 eventDefinition : 'event' identifier indexedParameterList 'anonymous'? ';' ;
 
-enumDefinition : 'enum' identifier '{' enumValue? (',' enumValue)* '}' ;
+enumDefinition : 'enum' identifier '{' enumValue (',' enumValue)* '}' ;
 
 environmentalVariable
     :
