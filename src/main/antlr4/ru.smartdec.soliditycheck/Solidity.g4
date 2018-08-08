@@ -369,7 +369,7 @@ whileStatement : 'while' '(' whileCondition ')' block ;
 
 whileCondition: expression ;
 
-forStatement : 'for' '(' simpleStatement? ';' expression? ';' expression? ')' block ;
+forStatement : 'for' '(' simpleStatement? expression? ';' expression? ')' block ;
 
 inlineAssemblyStatement : 'assembly' inlineAssemblyBlock ;
 
@@ -403,7 +403,7 @@ functionFallBackCall : 'function' parameterList
 expressionStatement : expression ';' ;
 
 variableDeclarationStatement
-    : ('var' identifierList ('=' expression )? )
+    : ('var' identifierList ('=' expression )? ';')
     | variableDeclaration
     ;
 
