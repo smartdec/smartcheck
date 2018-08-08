@@ -50,7 +50,7 @@ contractPartDefinition
 
 usingForDeclaration : 'using' identifier 'for' ('*' | typeName) ';' ;
 
-structDefinition : 'struct' identifier '{' (variableDeclaration)* '}' ;
+structDefinition : 'struct' identifier '{' (variableDeclaration ';')* '}' ;
 
 modifierDefinition : 'modifier' identifier parameterList? block ;
 
@@ -69,7 +69,7 @@ variableDeclarationList : ((variableDeclaration | stateVariableDeclaration) ','?
 
 // TODO simplify as hell
 variableDeclaration : typeName storageLocation? identifier
-    ('=' 'new'? (typeConversion | identifier '(')? expression ')'? )? ';' ;
+    ('=' 'new'? (typeConversion | identifier '(')? expression ')'? )? ;
 //variableDeclaration : typeName identifier ('=' expression )?
 
 
@@ -344,7 +344,7 @@ statement
     | breakStatement ';'
     | returnStatement ';'
     | throwRevertStatement ';'
-    | simpleStatement ';'?
+    | simpleStatement
     | functionCallStatement ';'
     | functionFallBackCall ';'?
     | expressionStatement  ';'?
@@ -369,7 +369,7 @@ whileStatement : 'while' '(' whileCondition ')' block ;
 
 whileCondition: expression ;
 
-forStatement : 'for' '(' simpleStatement? expression? ';' expression? ')' block ;
+forStatement : 'for' '(' expression? ';' expression? ';' expression? ')' block ;
 
 inlineAssemblyStatement : 'assembly' inlineAssemblyBlock ;
 
@@ -404,7 +404,7 @@ expressionStatement : expression ';' ;
 
 variableDeclarationStatement
     : ('var' identifierList ('=' expression )? ';')
-    | variableDeclaration
+    | variableDeclaration ';'
     ;
 
 //___Assembler___
