@@ -25,12 +25,12 @@ importDirective
 importDeclaration : identifier ('as' identifier)? ;
 
 contractDefinition : 'contract' identifier ('is' inheritanceSpecifier (',' inheritanceSpecifier)* )?
-    '{' (contractPartDefinition ';'? )* '}' ;
+    '{' (contractPartDefinition)* '}' ;
 
-libraryDefinition : 'library' identifier '{' (contractPartDefinition ';'? )* '}' ;
+libraryDefinition : 'library' identifier '{' (contractPartDefinition)* '}' ;
 
 interfaceDefinition : 'interface' identifier ('is' inheritanceSpecifier (',' inheritanceSpecifier)* )?
-    '{' (contractPartDefinition ';'? )* '}' ;
+    '{' (contractPartDefinition)* '}' ;
 
 inheritanceSpecifier : userDefinedTypeName ('(' expression (',' expression)* ')')? ;
 
@@ -46,17 +46,17 @@ contractPartDefinition
     | enumDefinition
     ;
 
-//___Definitions_and_deckarations___
+//___Definitions_and_declarations___
 
 usingForDeclaration : 'using' identifier 'for' ('*' | typeName) ';' ;
 
-structDefinition : 'struct' identifier '{' (variableDeclaration ';'? )* '}' ;
+structDefinition : 'struct' identifier '{' (variableDeclaration)* '}' ;
 
 modifierDefinition : 'modifier' identifier parameterList? block ;
 
 functionDefinition : ('function' identifier | 'constructor') parameterList
     (modifierCall | stateMutability | visibleType | functionCall)*
-    returnsParameters? block? ;
+    returnsParameters? (block | ';') ;
 
 returnsParameters : 'returns' parameterList ;
 
@@ -69,7 +69,7 @@ variableDeclarationList : ((variableDeclaration | stateVariableDeclaration) ','?
 
 // TODO simplify as hell
 variableDeclaration : typeName storageLocation? identifier
-    ('=' 'new'? (typeConversion | identifier '(')? expression ')'? )? ;
+    ('=' 'new'? (typeConversion | identifier '(')? expression ')'? )? ';' ;
 //variableDeclaration : typeName identifier ('=' expression )?
 
 
@@ -80,10 +80,10 @@ addressDeclaration : 'address'  (visibleType | constantType)* identifier ('='? (
 addressCall :'address' '(' expression ')' ;
 
 functionFallBackDefinition : 'function' parameterList
-    ( functionCall | identifier | stateMutability |visibleType )*
-    returnsParameters? ( block )? ;
+    (functionCall | identifier | stateMutability |visibleType)*
+    returnsParameters? (block | ';')? ;
 
-eventDefinition : 'event' identifier indexedParameterList 'anonymous'? ';'? ;
+eventDefinition : 'event' identifier indexedParameterList 'anonymous'? ';' ;
 
 enumDefinition : 'enum' identifier '{' enumValue? (',' enumValue)* '}' ;
 
