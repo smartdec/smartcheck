@@ -363,13 +363,13 @@ creatingContractViaNewStatement : identifier arrayLiteral? '=' 'new' identifier 
 
 ifStatement : 'if' '(' ifCondition ')' block ('else' block)? ;
 
-ifCondition : (expression) identifier? comparison? (expression)? identifier? ;
+ifCondition : expression identifier? comparison? expression? identifier? ;
 
 whileStatement : 'while' '(' whileCondition ')' block ;
 
 whileCondition: expression ;
 
-forStatement : 'for' '(' simpleStatement? (expression? ';')* (expression)? ')' block ;
+forStatement : 'for' '(' simpleStatement? ';' expression? ';' expression? ')' block ;
 
 inlineAssemblyStatement : 'assembly' inlineAssemblyBlock ;
 
