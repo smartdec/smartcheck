@@ -11,7 +11,7 @@
                     <Severity>1</Severity>
                     <TruePositiveRate>2</TruePositiveRate>
                     <XPath>
-                        //addressContract[string-length(addressNumber)=42]
+                        //addressNumber[string-length()=42]
                     </XPath>
                 </Pattern>
                 <!-- фиксирует адреса длиной менее чем 42 символа и не равные 0x0"-->
@@ -22,7 +22,7 @@
                     <Severity>1</Severity>
                     <TruePositiveRate>2</TruePositiveRate>
                     <XPath>
-                        //addressContract[string-length(addressNumber) lt 42 and not(addressNumber[matches(text()[1],"^0x0$")])]
+                        //addressNumber[string-length() lt 42 and not(matches(text()[1],"^0x0$"))]
                     </XPath>
                 </Pattern>
                 <!-- фиксирует конструкции: address(numberLiteral), где numberLiteral не равно 0"-->
@@ -56,7 +56,7 @@
                     <Severity>1</Severity>
                     <TruePositiveRate>1</TruePositiveRate>
                     <XPath>
-                        //addressContract[addressNumber[matches(text()[1],"^0x0$")]]/parent::*[parent::*[parent::*[not(matches(text()[1],"^==|!=$"))]]][not(ancestor::internalFunctionCall[1]/functionName/identifier[matches(text()[1],"^[A-Z]")])]
+                        //addressNumber[matches(text()[1],"^0x0$")]/parent::*[parent::*[parent::*[not(matches(text()[1],"^==|!=$"))]]][not(ancestor::internalFunctionCall[1]/functionName/identifier[matches(text()[1],"^[A-Z]")])]
                     </XPath>
                 </Pattern>
             </Patterns>
@@ -381,7 +381,7 @@
                     <!--Accessing <address>.balance: using .balance-->
                     expression[matches(text()[1],".balance")]
                     <!--Accessing any of the members of block, tx, msg (with the exception of msg.sig and msg.data)-->
-                    or environmentalVariableDefinition[matches(text()[1],"msg.value|msg.gas|msg.sender|block.timestamp|tx.origin|block.blockhash|block.coinbase|block.difficulty|block.gaslimit|block.number|block.blockhash|block.coinbase|tx.gasprice")]
+                    or environmentalVariable[matches(text()[1],"msg.value|msg.gas|msg.sender|block.timestamp|tx.origin|block.blockhash|block.coinbase|block.difficulty|block.gaslimit|block.number|block.blockhash|block.coinbase|tx.gasprice")]
                     <!--Using selfdestruct and it's alias suicide:-->
                     or functionCall/internalFunctionCall/functionName/identifier[matches(text()[1],"^selfdestruct|suicide$")]
                     <!--Sending Ether via calls:-->
@@ -468,7 +468,7 @@
                     <Category>Solidity</Category>
                 </Categories>
                 <Severity>2</Severity>
-                <XPath>//expression[matches(text()[1],"^==|!=$") and expression//environmentalVariableDefinition[matches(text()[1],"^block.timestamp|now$")]]</XPath>
+                <XPath>//expression[matches(text()[1],"^==|!=$") and expression//environmentalVariable[matches(text()[1],"^block.timestamp|now$")]]</XPath>
             </Pattern>
             <!--Фиксируется случаи, когда в вызове функции в качестве аргусентов передаются block.timestamp или now. А также, когда в выражении используется "= и далее выражение содержащее  block.timestamp или now" -->
             <Pattern patternId="cd1537">
@@ -477,8 +477,8 @@
                 </Categories>
                 <Severity>2</Severity>
                 <XPath>
-                    //statement[simpleStatement//functionCall[internalFunctionCall or externalFunctionCall]//callArguments[ not(callArgument//expression[matches(text()[1],"^>=|>|&lt;|&lt;=$")]) and callArgument//expression[environmentalVariableDefinition[matches(text()[1],"^block.timestamp|now$")]]]
-                    or simpleStatement/expressionStatement//expression[matches(text()[1],"^=$") and expression//environmentalVariableDefinition[matches(text()[1],"^block.timestamp|now$")]]]
+                    //statement[simpleStatement//functionCall[internalFunctionCall or externalFunctionCall]//callArguments[ not(callArgument//expression[matches(text()[1],"^>=|>|&lt;|&lt;=$")]) and callArgument//expression[environmentalVariable[matches(text()[1],"^block.timestamp|now$")]]]
+                    or simpleStatement/expressionStatement//expression[matches(text()[1],"^=$") and expression//environmentalVariable[matches(text()[1],"^block.timestamp|now$")]]]
                 </XPath>
             </Pattern>
             <!-- пока отключаем -->
@@ -489,7 +489,7 @@
                 </Categories>
                 <Severity>0</Severity>
                 <XPath>
-                    //expression/environmentalVariableDefinition[matches(text()[1],"block.timestamp|now")]/ancestor-or-self::statement
+                    //expression/environmentalVariable[matches(text()[1],"block.timestamp|now")]/ancestor-or-self::statement
                 </XPath>
             </Pattern> -->
         </Patterns>
@@ -503,7 +503,7 @@
                     <Category>Solidity</Category>
                 </Categories>
                 <Severity>2</Severity>
-                <XPath>//environmentalVariableDefinition[matches(text()[1],"^tx.origin$")]/parent::*[parent::*[not(matches(text()[1],"^==|!=$") and expression/environmentalVariableDefinition[matches(text()[1],"^msg.sender$")])]]</XPath>
+                <XPath>//environmentalVariable[matches(text()[1],"^tx.origin$")]/parent::*[parent::*[not(matches(text()[1],"^==|!=$") and expression/environmentalVariable[matches(text()[1],"^msg.sender$")])]]</XPath>
             </Pattern>
         </Patterns>
     </Rule>
@@ -615,7 +615,7 @@
                 </Categories>
                 <Severity>1</Severity>
                 <XPath>
-                    //expression[//environmentalVariableDefinition[matches(text()[1],"block.blockhash")]]
+                    //expression[//environmentalVariable[matches(text()[1],"block.blockhash")]]
                 </XPath>
             </Pattern>
         </Patterns>
