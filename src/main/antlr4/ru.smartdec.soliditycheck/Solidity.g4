@@ -634,7 +634,7 @@ VersionLiteral : [0-9]+ (' ')? '.' [0-9]+  (' ')? '.' [0-9]+ ;
 
 booleanLiteral : 'true' | 'false' ;
 
-DecimalNumber : [0-9]+ ( '.' [0-9]+ )? ( ('e'|'E') [0-9]+ )? ;
+DecimalNumber : ( [0-9]+ ('.' [0-9]* )? | '.' [0-9]+ ) ( ('e'|'E') [0-9]+ )? ;
 
 HexNumber : '0x' HexCharacter+ ;
 
@@ -642,7 +642,7 @@ NumberUnit : 'wei' | 'szabo' | 'finney' | 'ether' | 'seconds' | 'minutes' | 'hou
 
 HexLiteral : 'hex' ('"' HexPair* '"' | '\'' HexPair* '\'') ;
 
-hexLiteral : HexLiteral;
+hexLiteral : HexLiteral ;
 
 fragment
 HexPair : HexCharacter HexCharacter ;
@@ -671,6 +671,6 @@ SingleQuotedStringCharacter : ~['\r\n\\] | ('\\' .) ;
 
 WS : [ \t\r\n\u000C]+ -> skip ;
 
-COMMENT :   '/*' .*? '*/' -> channel(HIDDEN) ;
+COMMENT : '/*' .*? '*/' -> channel(HIDDEN) ;
 
 LINE_COMMENT : '//' ~[\r\n]* -> channel(HIDDEN) ;
