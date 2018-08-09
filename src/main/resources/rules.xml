@@ -439,7 +439,7 @@
                 </Categories>
                 <Severity>1</Severity>
                 <XPath>
-                    //usingForDeclaration[identifier[matches(text()[1],"^SafeMath|Safemath|safemath$")]]    
+                    //usingForDeclaration[identifier[matches(text()[1],"^SafeMath$","i")]]    
                 </XPath>
             </Pattern>
         </Patterns>

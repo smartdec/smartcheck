@@ -8,10 +8,10 @@ library SafeMath {
 }
 
 contract MyToken {
-	// <yes> <report> SOLIDITY_SAFEMATH 837cac
-	using SafeMath for uint256;	
+    // <yes> <report> SOLIDITY_SAFEMATH 837cac
+    using SafeMath for uint256;
 
-	function sub(uint a, uint b) public returns(uint) {
-		return(a.sub(b));
-	}
+    function sub(uint a, uint b) public returns(uint) {
+        return(a.sub(b));
+    }
 }
