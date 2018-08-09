@@ -4,7 +4,7 @@ contract C {
     function f(uint a, uint b, uint c, uint d, uint e){
 // <yes> <report> SOLIDITY_UNCHECKED_MATH 61c5ab  <yes> <report> SOLIDITY_UNCHECKED_MATH 7dc23a
         d = a * (b + c);
-
+// <yes> <report> SOLIDITY_UNCHECKED_MATH 7dc23a
         d = a * (b + 5 years);
 // <yes> <report> SOLIDITY_UNCHECKED_MATH 61c5ab
         if (a < b + c){
