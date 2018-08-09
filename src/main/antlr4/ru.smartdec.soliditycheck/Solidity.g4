@@ -25,12 +25,12 @@ importDirective
 importDeclaration : identifier ('as' identifier)? ;
 
 contractDefinition : 'contract' identifier ('is' inheritanceSpecifier (',' inheritanceSpecifier)* )?
-    '{' (contractPartDefinition ';'? )* '}' ;
+    '{' (contractPartDefinition)* '}' ;
 
-libraryDefinition : 'library' identifier '{' (contractPartDefinition ';'? )* '}' ;
+libraryDefinition : 'library' identifier '{' (contractPartDefinition)* '}' ;
 
 interfaceDefinition : 'interface' identifier ('is' inheritanceSpecifier (',' inheritanceSpecifier)* )?
-    '{' (contractPartDefinition ';'? )* '}' ;
+    '{' (contractPartDefinition)* '}' ;
 
 inheritanceSpecifier : userDefinedTypeName ('(' expression (',' expression)* ')')? ;
 
@@ -46,28 +46,32 @@ contractPartDefinition
     | enumDefinition
     ;
 
-//___Definitions_and_deckarations___
+//___Definitions_and_declarations___
 
 usingForDeclaration : 'using' identifier 'for' ('*' | typeName) ';' ;
 
-structDefinition : 'struct' identifier '{' (variableDeclaration ';'? )* '}' ;
+structDefinition : 'struct' identifier '{' (variableDeclaration ';')* '}' ;
 
 modifierDefinition : 'modifier' identifier parameterList? block ;
 
 functionDefinition : ('function' identifier | 'constructor') parameterList
     (modifierCall | stateMutability | visibleType | functionCall)*
-    returnsParameters? block? ;
+    returnsParameters? (block | ';') ;
 
 returnsParameters : 'returns' parameterList ;
 
+// TODO remove it. use `functionCall` and `identifier` instead
 modifierCall : modifierName callArguments? ;
 
 modifierName : identifier ;
 
 variableDeclarationList : ((variableDeclaration | stateVariableDeclaration) ','? )+ ;
 
+// TODO simplify as hell
 variableDeclaration : typeName storageLocation? identifier
     ('=' 'new'? (typeConversion | identifier '(')? expression ')'? )? ;
+//variableDeclaration : typeName identifier ('=' expression )?
+
 
 stateVariableDeclaration : (typeName (visibleType | constantType)* identifier ('='? expression | (identifier '(' expression ')') )? | typeName '(' numberLiteral ')') ';' ;
 
@@ -76,10 +80,10 @@ addressDeclaration : 'address'  (visibleType | constantType)* identifier ('='? (
 addressCall :'address' '(' expression ')' ;
 
 functionFallBackDefinition : 'function' parameterList
-    ( functionCall | identifier | stateMutability |visibleType )*
-    returnsParameters? ( block )? ;
+    (functionCall | identifier | stateMutability |visibleType)*
+    returnsParameters? (block | ';')? ;
 
-eventDefinition : 'event' identifier indexedParameterList 'anonymous'? ';'? ;
+eventDefinition : 'event' identifier indexedParameterList 'anonymous'? ';' ;
 
 enumDefinition : 'enum' identifier '{' enumValue? (',' enumValue)* '}' ;
 
@@ -139,7 +143,7 @@ mappingSt : 'mapping' '(' typeName '=>' typeName ')' ;
 typeNameList : '(' (typeName  (',' typeName)* )? ')' ;
 
 //___functions_call
-
+// TODO replace whis shit with simple structure below
 functionCall:  internalFunctionCall | externalFunctionCall ;
 
 internalFunctionCall : 'emit'? functionName callArguments+ ;
@@ -159,6 +163,12 @@ functionNameAndArgs
     )+
     ;
 
+// proper ___functions_call
+// functionCall : identifier (value | gas)* '(' callArguments ')';
+//value : '.' 'value' '(' expression ')';
+//gas : '.' 'gas' '(' expression ')';
+
+// TODO remove this callObject shit
 callObjectExpression : callObjectExpressionComplicated | callObjectExpressionSimple ;
 
 callObjectExpressionSimple
@@ -230,8 +240,18 @@ addressContract : addressNumber ;
 
 addressNumber : HexNumber ;
 
-callArguments : '(' (callArgument ','? )* ')' ;
+// TODO replace
+callArguments : '(' (callArgument (',' callArgument)* )? ')' ;
+// should be
+//callArguments
+//    : // empty list
+//    | callArgument (',' callArgument)*
+//    | '{' nameValueList? '}'
+//    ;
 
+
+// WTF is that?
+// TODO remove this tag (part of `functionCall` rework)
 functionName : (identifier arrayLiteral? ) | newExpression ;
 
 callArgument : (expression | '{' nameValueList? '}' ) ;
@@ -242,16 +262,20 @@ expression
     : environmentalVariableDefinition
     | addressCall
     | typeConversion
-    | expression '.length'
-    | expression '.balance'
+    | expression '.' 'length'
+    | expression '.' 'balance'
+    | primaryExpression
     | functionCall
     | expression twoPlusMinusOperator
+    // TODO replace with `newContractExpression` and 'newDynamicArrayExpression'
     | 'new' typeName //('(' (expression ','?)* ')')?
     | '(' typeName ')' '(' expression ')'
     | expression '[' expression ']'
     | '(' expression ')'
     | twoPlusMinusOperator expression
     | plusminusOperator expression
+    // TODO let's remove 'after' - looks like it's just reserved but never used
+    // TODO maybe we should make separate `deleteExpression`, otherwise I don't know how to write xpath
     | ('after' | 'delete') expression
     | '!' expression
     | '~' expression
@@ -268,10 +292,10 @@ expression
     | expression '?' expression ':' expression
     | expression ('=' | powerOperator | lvalueOperator) expression
     | variableDeclaration
-    | expression '(' callArguments ')'
+// TODO investigate this
+    | expression '(' callArguments ')'// WTF is that?
     | moneyExpression
     | timeExpression
-    | primaryExpression
     | '{' (identifier ':' expression ','? )+ '}'
     ;
 
@@ -297,7 +321,7 @@ indexedParameterList : '(' ( indexedParameter (',' indexedParameter)* )? ')' ;
 
 indexedParameter : typeName 'indexed'? identifier?;
 
-parameterList : '(' (parameter ','? )* ')' ;
+parameterList : '(' (parameter (',' parameter)* )? ')' ;
 
 parameter : typeName storageLocation? identifier? ;
 
@@ -309,34 +333,43 @@ block: statement | '{' (statement)* '}' ;
 
 statement
     : addressDeclaration
-    | creatingContractViaNewStatement ';'?
+    | creatingContractViaNewStatement ';'
     | ifStatement ';'?
     | whileStatement ';'?
     | forStatement ';'?
     | inlineAssemblyStatement ';'?
     | doWhileStatement ';'?
     | placeholderStatement ';'?
-    | continueStatement
-    | breakStatement
-    | returnStatement ';'?
-    | throwRevertStatement ';'?
-    | simpleStatement ';'?
-    | functionCallStatement
+    | continueStatement ';'
+    | breakStatement ';'
+    | returnStatement ';'
+    | throwRevertStatement ';'
+    | simpleStatement
+    | functionCallStatement ';'
     | functionFallBackCall ';'?
     | expressionStatement  ';'?
     ;
 
+// TODO check if this expression also create dynamic arrays: `uint[] memory a = new uint[](7);`
 creatingContractViaNewStatement : identifier arrayLiteral? '=' 'new' identifier arrayLiteral? callArguments ';'? ;
+// should be part of expression
+//newContractExpression : 'new' functionCall ;
+
+// TODO add new dynamic array as expression
+//newDynamicArrayExpression : 'new' typeName '(' expression ')';
+// maybe it should be like
+//newDynamicArrayExpression : 'new' typeName '[' ']' '(' expression ')';
+
 
 ifStatement : 'if' '(' ifCondition ')' block ('else' block)? ;
 
-ifCondition : (expression) identifier? comparison? (expression)? identifier? ;
+ifCondition : expression identifier? comparison? expression? identifier? ;
 
 whileStatement : 'while' '(' whileCondition ')' block ;
 
 whileCondition: expression ;
 
-forStatement : 'for' '(' simpleStatement? (expression? ';')* (expression)? ')' block ;
+forStatement : 'for' '(' expression? ';' expression? ';' expression? ')' block ;
 
 inlineAssemblyStatement : 'assembly' inlineAssemblyBlock ;
 
@@ -348,7 +381,12 @@ continueStatement : 'continue' ';'? ;
 
 breakStatement : 'break' ';'? ;
 
-returnStatement : 'return' '('? (expression ','? )* ')'? ;
+returnStatement : 'return'
+    ( expression?
+    | '(' expression ','? ')'
+    | '(' expression  (',' expression)+ ')'
+    )
+    ;
 
 throwRevertStatement : 'throw' | 'revert' '(' ')' ;
 
@@ -356,13 +394,18 @@ simpleStatement : variableDeclarationStatement | expressionStatement ;
 
 functionCallStatement : functionCall ';'? ;
 
+// WTF is that? used inside `statement`
+// TODO check if possible to remove
 functionFallBackCall : 'function' parameterList
     ( functionCall | identifier | stateMutability | visibleType )*
     returnsParameters? ';'? ;
 
-expressionStatement : expression+ ';' ;
+expressionStatement : expression ';' ;
 
-variableDeclarationStatement : ('var' identifierList | variableDeclaration) ;
+variableDeclarationStatement
+    : ('var' identifierList ('=' expression )? ';')
+    | variableDeclaration ';'
+    ;
 
 //___Assembler___
 
@@ -378,9 +421,9 @@ assemblyItemCase : 'case' primaryExpression ':'? inlineAssemblyBlock ;
 
 assemblyItemDefault : 'default' ':'? inlineAssemblyBlock ;
 
-assemblySwitchStatement : 'switch' (primaryExpression | functionalAssemblyExpression);
+assemblySwitchStatement : 'switch' (primaryExpression | functionalAssemblyExpression) ;
 
-assemblyLabels : 'let' (identifier | '(' identifier ')') ':=' (functionalAssemblyExpression | primaryExpression);
+assemblyLabels : 'let' (identifier | '(' identifier ')') ':=' (functionalAssemblyExpression | primaryExpression) ;
 
 assemblerLocalVariables : identifier ':=' (elementaryTypeNameAssemblyExpression | functionalAssemblyExpression | primaryExpression) | '=:' identifier ;
 
@@ -418,6 +461,7 @@ tupleExpression
     | '[' ( expression? ( ',' expression? )+ )? ']'
     ;
 
+// TODO remove
 newExpression : 'new' typeName ;
 
 elementaryTypeNameExpression : elementaryTypeName ;
@@ -428,7 +472,7 @@ nameValueList : identifier ':' expression (',' identifier ':' expression)* ;
 
 comparison : '==' | '!=' ;
 
-identifierList : '(' (identifier? ',')* identifier? ')' ;
+identifierList : '(' identifier? (',' identifier? )* ')' ;
 
 identifier : Identifier | placeholderStatement | 'value' | 'from' | 'this' | 'balance' | 'sender' | 'msg' | 'gas'
     | 'length' | 'block' | 'timestamp' | 'tx' | 'origin' | 'blockhash' | 'coinbase' | 'difficulty'| 'gaslimit'
