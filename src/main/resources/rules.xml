@@ -229,7 +229,8 @@
                     //contractDefinition[identifier[matches(text()[1],"token|erc20","i")]  or inheritanceSpecifier/userDefinedTypeName/identifier[matches(text()[1],"token|erc20","i")]]
                     //functionDefinition[block/statement][identifier[matches(text()[1],"^transfer|transferFrom|approve$")]]
                     [returnsParameters/parameterList/parameter/typeName/elementaryTypeName[matches(text()[1],"bool")]]
-                    [count(descendant-or-self::*[returnStatement])=0]
+                    [not(block/statement//returnStatement)]
+                    [count(returnsParameters/parameterList/parameter)=1]
                     [returnsParameters/parameterList/parameter/identifier[not(text()[1]=(ancestor::functionDefinition/block//expression[matches(text()[1],"=")]/expression[1]//identifier))] or returnsParameters/parameterList/parameter[not(identifier)]]
                 </XPath>
             </Pattern>
@@ -266,7 +267,10 @@
             </Categories>
             <Severity>1</Severity>
             <XPath>
-                //functionDefinition[block]/returnsParameters[count(parameterList/parameter) > count(parameterList/parameter/identifier)]/parent::*[not(block/statement//returnStatement)]
+                //functionDefinition
+                [block]
+                [not(block/statement//returnStatement)]
+                [returnsParameters/parameterList/parameter[not(identifier)]]
             </XPath>
         </Pattern>
         <!--Фиксирует конструкцию: "function(...) ... returns (type name) {...}" - в теле функции нет присваивания "name=" и нет return.-->
