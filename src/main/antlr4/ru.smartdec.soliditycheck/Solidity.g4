@@ -324,8 +324,9 @@ storageLocation : 'memory' | 'storage' ;
 
 //___Statements___
 
-block: statement | '{' block* '}' ;
+block: statement | '{' statement* '}' ; // TODO replace with "block: '{' statement* '}' ;"
 
+//TODO add block |
 statement
     : addressDeclaration
     | creatingContractViaNewStatement ';'
@@ -356,19 +357,19 @@ creatingContractViaNewStatement : identifier arrayLiteral? '=' 'new' identifier 
 //newDynamicArrayExpression : 'new' typeName '[' ']' '(' expression ')';
 
 
-ifStatement : 'if' '(' ifCondition ')' block ('else' block)? ;
+ifStatement : 'if' '(' ifCondition ')' block ('else' block)? ; // TODO block -> statement
 
 ifCondition : expression identifier? comparison? expression? identifier? ;
 
-whileStatement : 'while' '(' whileCondition ')' block ;
+whileStatement : 'while' '(' whileCondition ')' block ; // TODO block -> statement
 
 whileCondition: expression ;
 
-forStatement : 'for' '(' expression? ';' expression? ';' expression? ')' block ;
+forStatement : 'for' '(' expression? ';' expression? ';' expression? ')' block ; // TODO block -> statement
 
 inlineAssemblyStatement : 'assembly' inlineAssemblyBlock ;
 
-doWhileStatement : 'do' block 'while' '(' expression ')' ;
+doWhileStatement : 'do' block 'while' '(' expression ')' ; // TODO block -> statement
 
 placeholderStatement : '_' ;
 
@@ -621,6 +622,7 @@ arrayLiteral : ('[' arrayElement? (',' arrayElement)* ']')+ ;
 
 arrayElement: expression ;
 
+// TODO replace with (DecimalNumber | HexNumber) NumberUnit? ;
 numberLiteral : (DecimalNumber) NumberUnit? ;
 
 VersionLiteral : [0-9]+ (' ')? '.' [0-9]+  (' ')? '.' [0-9]+ ;
