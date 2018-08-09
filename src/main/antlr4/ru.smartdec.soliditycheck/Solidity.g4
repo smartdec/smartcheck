@@ -73,7 +73,7 @@ variableDeclaration : typeName storageLocation? identifier
 
 stateVariableDeclaration : (typeName (visibleType | constantType)* identifier ('='? expression | (identifier '(' expression ')') )? | typeName '(' numberLiteral ')') ';' ;
 
-addressDeclaration : 'address'  (visibleType | constantType)* identifier ('='? (addressNumber | expression | (identifier '(' expression ')') ) )? ';' ;
+addressDeclaration : 'address'  (visibleType | constantType)* identifier ('='? (addressNumber | expression | (identifier '(' expression ')') ) )? ;
 
 addressCall :'address' '(' expression ')' ;
 
@@ -328,26 +328,24 @@ block: statement | '{' statement* '}' ; // TODO replace with "block: '{' stateme
 
 //TODO add block |
 statement
-    : addressDeclaration
+    : addressDeclaration ';'
     | creatingContractViaNewStatement ';'
-    | ifStatement ';'?
-    | whileStatement ';'?
-    | forStatement ';'?
-    | inlineAssemblyStatement ';'?
-    | doWhileStatement ';'?
-    | placeholderStatement ';'?
+    | ifStatement
+    | whileStatement
+    | forStatement
+    | inlineAssemblyStatement
+    | doWhileStatement
+    | placeholderStatement ';'
     | continueStatement ';'
     | breakStatement ';'
     | returnStatement ';'
     | throwRevertStatement ';'
     | simpleStatement ';'
     | functionCallStatement ';'
-    | functionFallBackCall ';'?
-    | expressionStatement  ';'?
     ;
 
 // TODO check if this expression also create dynamic arrays: `uint[] memory a = new uint[](7);`
-creatingContractViaNewStatement : identifier arrayLiteral? '=' 'new' identifier arrayLiteral? callArguments ';'? ;
+creatingContractViaNewStatement : identifier arrayLiteral? '=' 'new' identifier arrayLiteral? callArguments ;
 // should be part of expression
 //newContractExpression : 'new' functionCall ;
 
@@ -373,9 +371,9 @@ doWhileStatement : 'do' block 'while' '(' expression ')' ; // TODO block -> stat
 
 placeholderStatement : '_' ;
 
-continueStatement : 'continue' ';'? ;
+continueStatement : 'continue' ;
 
-breakStatement : 'break' ';'? ;
+breakStatement : 'break' ;
 
 returnStatement : 'return'
     ( expression?
@@ -388,13 +386,7 @@ throwRevertStatement : 'throw' | 'revert' '(' ')' ;
 
 simpleStatement : variableDeclarationStatement | expressionStatement ;
 
-functionCallStatement : functionCall ';'? ;
-
-// WTF is that? used inside `statement`
-// TODO check if possible to remove
-functionFallBackCall : 'function' parameterList
-    ( functionCall | identifier | stateMutability | visibleType )*
-    returnsParameters? ';'? ;
+functionCallStatement : functionCall ;
 
 expressionStatement : expression ;
 
@@ -470,7 +462,10 @@ comparison : '==' | '!=' ;
 
 identifierList : '(' identifier? (',' identifier? )* ')' ;
 
-identifier : Identifier ;
+//items after Identifier are listed for lexer to understand that these words can be used as identifier
+identifier : Identifier | placeholderStatement | 'value' | 'from' | 'this' | 'balance' | 'sender' | 'msg' | 'gas'
+    | 'length' | 'block' | 'timestamp' | 'tx' | 'origin' | 'blockhash' | 'coinbase' | 'difficulty' | 'gaslimit'
+    |'number' | 'data' | 'sig' | 'now' | 'gasprice' | 'emit' | 'constructor';
 
 Identifier : IdentifierStart IdentifierPart* ;
 
