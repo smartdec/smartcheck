@@ -98,7 +98,7 @@
                 </Categories>
                 <Severity>1</Severity>
                 <XPath>
-                //expression[expression//environmentalVariableDefinition[matches(text()[1],".balance$")]][matches(text()[1],"^==|!=$")]
+                //expression[expression[matches(text()[1],".balance$")]][matches(text()[1],"^==|!=$")]
                 </XPath>
             </Pattern>
         </Patterns>
@@ -141,7 +141,7 @@
                 </Categories>
                 <Severity>1</Severity>
                 <XPath>
-                    //simpleStatement/expressionStatement/expression[expression/environmentalVariableDefinition[matches(text()[1],"length")]][matches(text()[1],"^=$")][expression/primaryExpression/numberLiteral[matches(text()[1],"^0$")]]
+                    //simpleStatement/expressionStatement/expression[expression[matches(text()[1],".length")]][matches(text()[1],"^=$")][expression/primaryExpression/numberLiteral[matches(text()[1],"^0$")]]
                 </XPath>
             </Pattern>
         </Patterns>
@@ -321,7 +321,7 @@
                 </Categories>
                 <Severity>2</Severity>
                 <XPath>
-                    //forStatement[expression[1][matches(text()[1],"&lt;|&lt; =")]/expression[2][not(primaryExpression/numberLiteral)]][expression[2][twoPlusMinusOperator/incrementOperator or lvalueOperator/plusLvalueOperator or expression[2]/plusminusOperator/plusOperator]]
+                    //forStatement[expression[2][matches(text()[1],"&lt;|&lt; =")]/expression[2][not(primaryExpression/numberLiteral)]][expression[3][twoPlusMinusOperator/incrementOperator or lvalueOperator/plusLvalueOperator or expression[2]/plusminusOperator/plusOperator]]
                 </XPath>
             </Pattern>
             <!-- for (<инициализация счетчика не числом>; <счетчик больше чем что угодно>; <уменьшение счетчика>)-->
@@ -331,7 +331,7 @@
                 </Categories>
                 <Severity>2</Severity>
                 <XPath>
-                    //forStatement[simpleStatement[not(variableDeclarationStatement/variableDeclaration/expression/primaryExpression/numberLiteral)]][expression[1][matches(text()[1],"&gt;|&gt; =")]][expression[2][twoPlusMinusOperator/decrementOperator or lvalueOperator/minusLvalueOperator or expression[2]/plusminusOperator/minusOperator]]
+                    //forStatement[expression[1][not(variableDeclaration/expression/primaryExpression/numberLiteral)]][expression[2][matches(text()[1],"&gt;|&gt; =")]][expression[3][twoPlusMinusOperator/decrementOperator or lvalueOperator/minusLvalueOperator or expression[2]/plusminusOperator/minusOperator]]
                 </XPath>
             </Pattern>
             <!--Фиксируется конструкция: while (в условии все, кроме вызова функции и числа)-->
@@ -405,9 +405,8 @@
                 <Severity>0</Severity>
                 <XPath>
                     //functionDefinition[stateMutability/pureType and block/descendant-or-self::*[
-                    <!--Accessing this.balance or <address>.balance: using .balance or this.balance-->
-                    environmentalVariableDefinition[matches(text()[1],"balance")]
-                    or environmentalVariableDefinition[matches(text()[1],"this.balance")]
+                    <!--Accessing <address>.balance: using .balance-->
+                    expression[matches(text()[1],".balance")]
                     <!--Accessing any of the members of block, tx, msg (with the exception of msg.sig and msg.data)-->
                     or environmentalVariableDefinition[matches(text()[1],"msg.value|msg.gas|msg.sender|block.timestamp|tx.origin|block.blockhash|block.coinbase|block.difficulty|block.gaslimit|block.number|block.blockhash|block.coinbase|tx.gasprice")]
                     <!--Using selfdestruct and it's alias suicide:-->
@@ -694,7 +693,7 @@
                 </Categories>
                 <Severity>2</Severity>
                 <TruePositiveRate>3</TruePositiveRate>
-                <XPath>//forStatement[simpleStatement//typeName/elementaryTypeName[matches(text()[1],"^var$")]][expression/expression/primaryExpression[numberLiteral[matches(text()[1],"^[0-9]+$")]&gt; 255]][expression/twoPlusMinusOperator/incrementOperator]
+                <XPath>//forStatement[expression[1]//typeName/elementaryTypeName[matches(text()[1],"^var$")]][expression[2]/expression/primaryExpression[numberLiteral[matches(text()[1],"^[0-9]+$")]&gt; 255]][expression[3]/twoPlusMinusOperator/incrementOperator]
                 </XPath>
             </Pattern>
         </Patterns>

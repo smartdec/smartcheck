@@ -13,7 +13,7 @@ contract f{
 contract f{
     function a(){
     // <yes> <report> SOLIDITY_REVERT_REQUIRE c56b12
-        if (x>y) { throw(); }
+        if (x>y) { throw; }
         if (tokensToSend > 0) {
             allocatedTokens -= tokensToSend;
     // <yes> <report> SOLIDITY_REVERT_REQUIRE c56b12
