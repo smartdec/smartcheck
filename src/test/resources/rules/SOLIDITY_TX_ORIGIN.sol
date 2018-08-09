@@ -12,7 +12,7 @@ contract SolidityTxOrigin {
         if (msg.sender != tx.origin){
             throw;
         }
-        require(tx.origin == msg.sender)
+        require(tx.origin == msg.sender);
         // <yes> <report> SOLIDITY_TX_ORIGIN 12e802
         tx.origin = owner;
     }
