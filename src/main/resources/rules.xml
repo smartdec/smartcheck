@@ -71,7 +71,7 @@
                 </Categories>
                 <Severity>1</Severity>
                 <XPath>
-                //expression[expression[1]//environmentalVariableDefinition[matches(text()[1],".length$")]]
+                //expression[expression[1][matches(text()[1],".length$")]]
                 [matches(text()[1],"^=$") or twoPlusMinusOperator/decrementOperator or lvalueOperator[mulLvalueOperator or minusLvalueOperator or plusLvalueOperator or divLvalueOperator]]
                 </XPath>
             </Pattern>
@@ -82,7 +82,7 @@
                 </Categories>
                 <Severity>1</Severity>
                 <XPath>
-                //expression[expression[1]//environmentalVariableDefinition[matches(text()[1],".length$")]]
+                //expression[expression[1][matches(text()[1],".length$")]]
                 [twoPlusMinusOperator/incrementOperator]
                 </XPath>
             </Pattern>
