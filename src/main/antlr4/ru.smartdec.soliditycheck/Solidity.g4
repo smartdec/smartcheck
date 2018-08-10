@@ -449,7 +449,7 @@ elementaryTypeNameExpression : elementaryTypeName ;
 
 //___auxiliary parameters___
 
-nameValueList : identifier ':' expression (',' identifier ':' expression)* ;
+nameValueList : identifier ':' expression (',' identifier ':' expression)* ','? ; // trailing comma compiled until 0.4.11
 
 comparison : '==' | '!=' ;
 
