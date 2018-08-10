@@ -274,6 +274,7 @@ expression
     | ('after' | 'delete') expression
     | '!' expression
     | '~' expression
+    | expression powerOperator expression
     | expression muldivOperator expression
     | expression plusminusOperator expression
     | expression ('<<' | '>>') expression
@@ -285,7 +286,7 @@ expression
     | expression '&&' expression
     | expression '||' expression
     | expression '?' expression ':' expression
-    | expression ('=' | powerOperator | lvalueOperator) expression
+    | expression ('=' | lvalueOperator) expression
     | variableDeclaration
 // TODO investigate this
     | expression '(' callArguments ')'// WTF is that?
