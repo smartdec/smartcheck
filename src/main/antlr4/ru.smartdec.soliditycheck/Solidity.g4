@@ -123,85 +123,21 @@ userDefinedTypeName : identifier ('.' identifier )* ;
 functionTypeName : 'function' parameterList (visibleType | stateMutability)*
     ('returns' parameterList)? ;
 
-stateMutability : pureType | constantType | viewType | payableType;
+stateMutability : pureType | constantType | viewType | payableType ;
 
-pureType : 'pure';
+pureType : 'pure' ;
 
-viewType : 'view';
+viewType : 'view' ;
 
 mappingSt : 'mapping' '(' typeName '=>' typeName ')' ;
 
 //___functions_call
-// TODO replace whis shit with simple structure below
-functionCall:  internalFunctionCall | externalFunctionCall ;
 
-internalFunctionCall : 'emit'? functionName callArguments+ ;
+functionCall: 'emit'? identifier (value | gas)* callArguments ;
 
-externalFunctionCall : externalFunctionCallThis | externalFunctionCallNotThis ;
+value : '.' 'value' '(' expression ')' ;
 
-externalFunctionCallThis : 'this' functionNameAndArgs ;
-
-externalFunctionCallNotThis : callObjectExpression functionNameAndArgs ;
-
-functionNameAndArgs
-    :
-    ( '.' functionName callArguments*
-    | '.' 'value' ('(' callArguments* ')')?
-    | '.' 'gas' ('(' callArguments* ')')?
-    | callArguments
-    )+
-    ;
-
-// proper ___functions_call
-// functionCall : identifier (value | gas)* '(' callArguments ')';
-//value : '.' 'value' '(' expression ')';
-//gas : '.' 'gas' '(' expression ')';
-
-// TODO remove this callObject shit
-callObjectExpression : callObjectExpressionComplicated | callObjectExpressionSimple ;
-
-callObjectExpressionSimple
-    : environmentalVariable
-    | addressCall
-    | '(' 'new' callObject ')' callObject?
-    | internalFunctionCall
-    | identifier
-    | (identifier? arrayLiteral)+
-    | (identifier? arrayLiteral)+ '('+ identifier? arrayLiteral ')'* ')'
-    | identifier '[' identifier ']'
-    | addressNumber
-    ;
-
-callObjectExpressionComplicated : '(' callObject ')' ;
-
-callObject
-    : callObjectExpressionSimple
-    | environmentalVariable
-    | addressCall
-    | '(' 'new' callObject ')' callObject?
-    | identifier
-    | (identifier? arrayLiteral)+
-    | (identifier? arrayLiteral)+ '('+ identifier? arrayLiteral ')'* ')'
-    | identifier '[' identifier ']'
-    | addressNumber
-    | plusminusOperator callObject
-    | callObject (muldivOperator | plusminusOperator | '<<' | '>>' | '&' | '^' | '|' | '<' | '>' | '<=' | '>=' | '==' | '!=') callObject
-    | callObject ('&&' | '||') callObject
-    | moneyExpression
-    | timeExpression
-    | primaryExpression
-    | callObject twoPlusMinusOperator
-    | twoPlusMinusOperator expression
-    | '!' callObject
-    | '~' callObject
-    | callObject '[' callObject ']'
-    | '{'(identifier ':' callObject ','? )+ '}'
-    | callObject '(' callArguments ')'
-    | callObject '?' callObject ':' callObject
-    | '(' callObject ')'
-    | externalFunctionCall
-    | internalFunctionCall
-    ;
+gas : '.' 'gas' '(' expression ')' ;
 
 plusminusOperator : minusOperator | plusOperator ;
 
@@ -215,7 +151,7 @@ decrementOperator : '--' ;
 
 incrementOperator : '++' ;
 
-muldivOperator : mulOperator | divOperator | divRemOperator| powerOperator ;
+muldivOperator : mulOperator | divOperator | divRemOperator ;
 
 divRemOperator : '%' ;
 
@@ -227,21 +163,13 @@ divOperator : '/' ;
 
 addressNumber : HexNumber ;
 
-// TODO replace
-callArguments : '(' (callArgument (',' callArgument)* )? ')' ;
-// should be
-//callArguments
-//    : // empty list
-//    | callArgument (',' callArgument)*
-//    | '{' nameValueList? '}'
-//    ;
-
-
-// WTF is that?
-// TODO remove this tag (part of `functionCall` rework)
-functionName : (identifier arrayLiteral? ) | newExpression ;
-
-callArgument : expression | '{' nameValueList? '}' ;
+callArguments
+    : '('
+    ( // empty list
+    | expression (',' expression)*
+    | '{' nameValueList? '}'
+    )
+    ')' ;
 
 typeConversion : elementaryTypeName ('[' expression? ']')? '(' expression? ')' ;
 
@@ -252,7 +180,7 @@ expression
     | expression '.' 'length'
     | expression '.' 'balance'
     | primaryExpression
-    | functionCall
+    | expression '.' functionCall
     | expression twoPlusMinusOperator
     // TODO replace with `newContractExpression` and 'newDynamicArrayExpression'
     | 'new' typeName //('(' (expression ','?)* ')')?
@@ -441,9 +369,6 @@ tupleExpression
     : '(' ( expression? ( ',' expression? )+ )? ')'
     | '[' ( expression? ( ',' expression? )+ )? ']'
     ;
-
-// TODO remove
-newExpression : 'new' typeName ;
 
 elementaryTypeNameExpression : elementaryTypeName ;
 
