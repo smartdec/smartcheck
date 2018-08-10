@@ -294,10 +294,13 @@
                 </Categories>
                 <Severity>2</Severity>
                 <XPath>
-                    //forStatement[expression[2][matches(text()[1],"&lt;|&lt; =")]/expression[2][not(primaryExpression/numberLiteral)]]
-                    [expression[3][twoPlusMinusOperator/incrementOperator or lvalueOperator/plusLvalueOperator or expression[2]/plusminusOperator/plusOperator or //functionName/identifier[matches(text()[1],"^add$")]]]
-                    [block//expression[matches(text()[1],"^=$")]/expression[1]//identifier[text()[1]=(ancestor::functionDefinition//addressDeclaration/identifier) or text()[1]=(ancestor::functionDefinition//variableDeclaration[typeName/userDefinedTypeName]/identifier)] or
-                    block//externalFunctionCallNotThis/callObjectExpression//identifier[text()[1]=(ancestor::functionDefinition//addressDeclaration/identifier) or text()[1]=(ancestor::contractDefinition//variableDeclaration[typeName/userDefinedTypeName]/identifier)]]
+                    //forStatement
+                    [expression[2][matches(text()[1],"&lt;|&lt; =")]/expression[2][not(primaryExpression/numberLiteral)]] <!-- счетчик меньше чем не numberLiteral -->
+                    [expression[3][twoPlusMinusOperator/incrementOperator or lvalueOperator/plusLvalueOperator or expression[2]/plusminusOperator/plusOperator or //functionName/identifier[matches(text()[1],"^add$")]]] <!-- увеличение счетчика -->
+                    [block//expression[matches(text()[1],"^=$")]/expression[1]//identifier[text()[1]=(ancestor::functionDefinition//addressDeclaration/identifier) <!-- присваивание локальному адресу внутри цикла -->
+                    or text()[1]=(ancestor::functionDefinition//variableDeclaration[typeName/userDefinedTypeName]/identifier)] <!-- присваивание локальному интерфейсу(пользовательский тип) -->
+                    or block//externalFunctionCallNotThis/callObjectExpression//identifier[text()[1]=(ancestor::functionDefinition//addressDeclaration/identifier) <!-- внешний вызов локального адреса -->
+                    or text()[1]=(ancestor::contractDefinition//variableDeclaration[typeName/userDefinedTypeName]/identifier)]] <!-- внешний вызов локального интерфейса(пользовательский тип) -->
                 </XPath>
             </Pattern>
             <!-- for (<инициализация счетчика не числом>; <счетчик больше чем что угодно>; <уменьшение счетчика>) {меняющися адрес или интерфейс, или внешний вызов}-->
@@ -307,9 +310,14 @@
                 </Categories>
                 <Severity>2</Severity>
                 <XPath>
-                    //forStatement[expression[1][not(variableDeclaration/expression/primaryExpression/numberLiteral)]][expression[2][matches(text()[1],"&gt;|&gt; =")]][expression[3][twoPlusMinusOperator/decrementOperator or lvalueOperator/minusLvalueOperator or expression[2]/plusminusOperator/minusOperator or //functionName/identifier[matches(text()[1],"^sub$")]]]
-                    [block//expression[matches(text()[1],"^=$")]/expression[1]//identifier[text()[1]=(ancestor::functionDefinition//addressDeclaration/identifier) or text()[1]=(ancestor::functionDefinition//variableDeclaration[typeName/userDefinedTypeName]/identifier)] or
-                    block//externalFunctionCallNotThis/callObjectExpression//identifier[text()[1]=(ancestor::functionDefinition//addressDeclaration/identifier) or text()[1]=(ancestor::contractDefinition//variableDeclaration[typeName/userDefinedTypeName]/identifier)]]
+                    //forStatement
+                    [expression[1][not(variableDeclaration/expression/primaryExpression/numberLiteral)]] <!-- инициализация счетчика не числом -->
+                    [expression[2][matches(text()[1],"&gt;|&gt; =")]] <!-- счетчик больше чем что угодно -->
+                    [expression[3][twoPlusMinusOperator/decrementOperator or lvalueOperator/minusLvalueOperator or expression[2]/plusminusOperator/minusOperator or //functionName/identifier[matches(text()[1],"^sub$")]]] <!-- уменьшение счетчика -->
+                    [block//expression[matches(text()[1],"^=$")]/expression[1]//identifier[text()[1]=(ancestor::functionDefinition//addressDeclaration/identifier) <!-- присваивание локальному адресу внутри цикла -->
+                    or text()[1]=(ancestor::functionDefinition//variableDeclaration[typeName/userDefinedTypeName]/identifier)] <!-- присваивание локальному интерфейсу(пользовательский тип) -->
+                    or block//externalFunctionCallNotThis/callObjectExpression//identifier[text()[1]=(ancestor::functionDefinition//addressDeclaration/identifier) <!-- внешний вызов локального адреса -->
+                    or text()[1]=(ancestor::contractDefinition//variableDeclaration[typeName/userDefinedTypeName]/identifier)]] <!-- внешний вызов локального интерфейса(пользовательский тип) -->
                 </XPath>
             </Pattern>
             <!--Фиксируется конструкция: while (в условии все, кроме вызова функции и числа)-->
