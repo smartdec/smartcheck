@@ -458,7 +458,7 @@ identifierList : '(' identifier? (',' identifier? )* ')' ;
 //items after Identifier are listed for lexer to understand that these words can be used as identifier
 identifier : Identifier | placeholderStatement | 'value' | 'from' | 'this' | 'balance' | 'sender' | 'msg' | 'gas'
     | 'length' | 'block' | 'timestamp' | 'tx' | 'origin' | 'blockhash' | 'coinbase' | 'difficulty' | 'gaslimit'
-    |'number' | 'data' | 'sig' | 'now' | 'gasprice' | 'emit' | 'constructor';
+    | 'number' | 'data' | 'sig' | 'now' | 'gasprice' | 'emit' | 'constructor' ;
 
 Identifier : IdentifierStart IdentifierPart* ;
 
