@@ -327,7 +327,7 @@ statement
     | whileStatement
     | forStatement
     | inlineAssemblyStatement
-    | doWhileStatement
+    | doWhileStatement ';'
     | placeholderStatement ';'?
     | continueStatement ';'
     | breakStatement ';'
