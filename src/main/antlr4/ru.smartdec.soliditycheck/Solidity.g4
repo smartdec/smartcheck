@@ -81,8 +81,7 @@ eventDefinition : 'event' identifier indexedParameterList 'anonymous'? ';' ;
 enumDefinition : 'enum' identifier '{' enumValue (',' enumValue)* '}' ;
 
 environmentalVariable
-    :
-    'this'
+    : 'this'
     | 'msg.value'
     | 'msg.gas'
     | 'msg.sender'
