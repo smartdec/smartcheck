@@ -375,7 +375,7 @@ returnStatement : 'return'
     )
     ;
 
-throwRevertStatement : 'throw' | 'revert' '(' ')' ;
+throwRevertStatement : 'throw' | 'revert' ('(' stringLiteral? ')')? ;
 
 simpleStatement : variableDeclarationStatement | expressionStatement ;
 
