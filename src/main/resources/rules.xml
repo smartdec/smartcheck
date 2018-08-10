@@ -62,6 +62,33 @@
             </Patterns>
     </Rule>
     <Rule>
+        <RuleId>SOLIDITY_ARRAY_LENGTH_MANIPULATION</RuleId>
+        <Patterns>
+            <!-- фиксирует операции с длиной динамического массива ".length": =, +=, -=, *=, /=, минус-минус -->
+            <Pattern patternId="872bdd">
+                <Categories>
+                    <Category>Solidity</Category>
+                </Categories>
+                <Severity>1</Severity>
+                <XPath>
+                //expression[expression[1][matches(text()[1],".length$")]]
+                [matches(text()[1],"^=$") or twoPlusMinusOperator/decrementOperator or lvalueOperator[mulLvalueOperator or minusLvalueOperator or plusLvalueOperator or divLvalueOperator]]
+                </XPath>
+            </Pattern>
+            <!-- фиксирует конструкцию ".length++"-->
+            <Pattern patternId="43ba1c">
+                <Categories>
+                    <Category>Solidity</Category>
+                </Categories>
+                <Severity>1</Severity>
+                <XPath>
+                //expression[expression[1][matches(text()[1],".length$")]]
+                [twoPlusMinusOperator/incrementOperator]
+                </XPath>
+            </Pattern>
+        </Patterns>
+    </Rule>
+    <Rule>
         <RuleId>SOLIDITY_BALANCE_EQUALITY</RuleId>
         <Patterns>
             <!-- фиксирует конструкции: ".balance ==", ".balance !="-->
@@ -219,7 +246,7 @@
         <Patterns>
             <!--Фиксирует конструкции: имя контракта содержит token или erc20 либо наследуется от контракта содержащего такое в названии.
             В этом контракте есть определение функции с названием transfer,transferFrom или approve, которая возвращающает значение типа bool и не является интерфейсом.
-            В определении этой функции не содержится return или присваивание возвращаемого параметра (в текущей реализации проверяется присваивание только для первого возращаемого параметра)-->
+            В определении этой функции не содержится return или присваивание возвращаемого параметра.-->
             <Pattern patternId="b180ca">
                 <Categories>
                     <Category>Solidity</Category>
@@ -227,9 +254,11 @@
                 <Severity>2</Severity>
                 <XPath>
                     //contractDefinition[identifier[matches(text()[1],"token|erc20","i")]  or inheritanceSpecifier/userDefinedTypeName/identifier[matches(text()[1],"token|erc20","i")]]
-                    //functionDefinition[block/statement][identifier[matches(text()[1],"^transfer|transferFrom|approve$")]][returnsParameters/parameterList/parameter/typeName/elementaryTypeName[matches(text()[1],"bool")]]
-                    [count(descendant-or-self::*[returnStatement])=0]
-                    [not(block//expression[matches(text()[1],"=")]/expression[1]//identifier[matches(text()[1],ancestor::functionDefinition/returnsParameters/parameterList/parameter[1]/identifier)])]
+                    //functionDefinition[block/statement][identifier[matches(text()[1],"^transfer|transferFrom|approve$")]]
+                    [returnsParameters/parameterList/parameter/typeName/elementaryTypeName[matches(text()[1],"bool")]]
+                    [not(block/statement//returnStatement)]
+                    [count(returnsParameters/parameterList/parameter)=1]
+                    [returnsParameters/parameterList/parameter/identifier[not(text()[1]=(ancestor::functionDefinition/block//expression[matches(text()[1],"=")]/expression[1]//identifier))] or returnsParameters/parameterList/parameter[not(identifier)]]
                 </XPath>
             </Pattern>
         </Patterns>
@@ -265,10 +294,13 @@
             </Categories>
             <Severity>1</Severity>
             <XPath>
-                //functionDefinition[block]/returnsParameters[count(parameterList/parameter) > count(parameterList/parameter/identifier)]/parent::*[not(block/statement//returnStatement)]
+                //functionDefinition
+                [block]
+                [not(block/statement//returnStatement)]
+                [returnsParameters/parameterList/parameter[not(identifier)]]
             </XPath>
         </Pattern>
-        <!--Фиксирует конструкцию: "function(...) ... returns (type name) {...}" - в теле функции нет присваивания "name=" и нет return (в данной реализации если параметров на выходе несколько, то проверяется только первый)-->
+        <!--Фиксирует конструкцию: "function(...) ... returns (type name) {...}" - в теле функции нет присваивания "name=" и нет return.-->
         <Pattern patternId="58bdd3">
             <Categories>
                 <Category>Solidity</Category>
@@ -278,8 +310,7 @@
                 //functionDefinition
                 [block]
                 [not(block/statement//returnStatement)]
-                [returnsParameters/parameterList/parameter[1]/identifier]
-                [not(block//expression[matches(text()[1],"=")]/expression[1]//identifier[matches(text()[1],ancestor::functionDefinition/returnsParameters/parameterList/parameter[1]/identifier)])]
+                [returnsParameters/parameterList/parameter/identifier[not(text()[1]=(ancestor::functionDefinition/block//expression[matches(text()[1],"=")]/expression[1]//identifier))]]
             </XPath>
         </Pattern>
     </Patterns>
@@ -294,7 +325,7 @@
                 </Categories>
                 <Severity>2</Severity>
                 <XPath>
-                    //forStatement[expression[1][matches(text()[1],"&lt;|&lt; =")]/expression[2][not(primaryExpression/numberLiteral/decimalNumber)]][expression[2][twoPlusMinusOperator/incrementOperator or lvalueOperator/plusLvalueOperator or expression[2]/plusminusOperator/plusOperator]]
+                    //forStatement[expression[2][matches(text()[1],"&lt;|&lt; =")]/expression[2][not(primaryExpression/numberLiteral/decimalNumber)]][expression[3][twoPlusMinusOperator/incrementOperator or lvalueOperator/plusLvalueOperator or expression[2]/plusminusOperator/plusOperator]]
                 </XPath>
             </Pattern>
             <!-- for (<инициализация счетчика не числом>; <счетчик больше чем что угодно>; <уменьшение счетчика>)-->
@@ -304,7 +335,7 @@
                 </Categories>
                 <Severity>2</Severity>
                 <XPath>
-                    //forStatement[simpleStatement[not(variableDeclarationStatement/variableDeclaration/expression/primaryExpression/numberLiteral/decimalNumber)]][expression[1][matches(text()[1],"&gt;|&gt; =")]][expression[2][twoPlusMinusOperator/decrementOperator or lvalueOperator/minusLvalueOperator or expression[2]/plusminusOperator/minusOperator]]
+                    //forStatement[expression[1][not(variableDeclaration/expression/primaryExpression/numberLiteral/decimalNumber)]][expression[2][matches(text()[1],"&gt;|&gt; =")]][expression[3][twoPlusMinusOperator/decrementOperator or lvalueOperator/minusLvalueOperator or expression[2]/plusminusOperator/minusOperator]]
                 </XPath>
             </Pattern>
             <!--Фиксируется конструкция: while (в условии все, кроме вызова функции и числа)-->
@@ -666,7 +697,7 @@
                 </Categories>
                 <Severity>2</Severity>
                 <TruePositiveRate>3</TruePositiveRate>
-                <XPath>//forStatement[simpleStatement//typeName/elementaryTypeName[matches(text()[1],"^var$")]][expression/expression/primaryExpression[numberLiteral/decimalNumber[matches(text()[1],"^[0-9]+$")]&gt; 255]][expression/twoPlusMinusOperator/incrementOperator]
+                <XPath>//forStatement[expression[1]//typeName/elementaryTypeName[matches(text()[1],"^var$")]][expression[2]/expression/primaryExpression[numberLiteral/decimalNumber[matches(text()[1],"^[0-9]+$")]&gt; 255]][expression[3]/twoPlusMinusOperator/incrementOperator]
                 </XPath>
             </Pattern>
         </Patterns>

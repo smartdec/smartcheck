@@ -25,12 +25,12 @@ importDirective
 importDeclaration : identifier ('as' identifier)? ;
 
 contractDefinition : 'contract' identifier ('is' inheritanceSpecifier (',' inheritanceSpecifier)* )?
-    '{' (contractPartDefinition ';'? )* '}' ;
+    '{' (contractPartDefinition)* '}' ;
 
-libraryDefinition : 'library' identifier '{' (contractPartDefinition ';'? )* '}' ;
+libraryDefinition : 'library' identifier '{' (contractPartDefinition)* '}' ;
 
 interfaceDefinition : 'interface' identifier ('is' inheritanceSpecifier (',' inheritanceSpecifier)* )?
-    '{' (contractPartDefinition ';'? )* '}' ;
+    '{' (contractPartDefinition)* '}' ;
 
 inheritanceSpecifier : userDefinedTypeName ('(' expression (',' expression)* ')')? ;
 
@@ -46,17 +46,17 @@ contractPartDefinition
     | enumDefinition
     ;
 
-//___Definitions_and_deckarations___
+//___Definitions_and_declarations___
 
 usingForDeclaration : 'using' identifier 'for' ('*' | typeName) ';' ;
 
-structDefinition : 'struct' identifier '{' (variableDeclaration ';'? )* '}' ;
+structDefinition : 'struct' identifier '{' (variableDeclaration ';')* '}' ;
 
 modifierDefinition : 'modifier' identifier parameterList? block ;
 
 functionDefinition : ('function' identifier | 'constructor') parameterList
     (modifierCall | stateMutability | visibleType | functionCall)*
-    returnsParameters? block? ;
+    returnsParameters? (block | ';') ;
 
 returnsParameters : 'returns' parameterList ;
 
@@ -80,10 +80,10 @@ addressDeclaration : 'address'  (visibleType | constantType)* identifier ('='? (
 addressCall :'address' '(' expression ')' ;
 
 functionFallBackDefinition : 'function' parameterList
-    ( functionCall | identifier | stateMutability |visibleType )*
-    returnsParameters? ( block )? ;
+    (functionCall | identifier | stateMutability |visibleType)*
+    returnsParameters? (block | ';')? ;
 
-eventDefinition : 'event' identifier indexedParameterList 'anonymous'? ';'? ;
+eventDefinition : 'event' identifier indexedParameterList 'anonymous'? ';' ;
 
 enumDefinition : 'enum' identifier '{' enumValue? (',' enumValue)* '}' ;
 
@@ -358,13 +358,13 @@ creatingContractViaNewStatement : identifier arrayLiteral? '=' 'new' identifier 
 
 ifStatement : 'if' '(' ifCondition ')' block ('else' block)? ;
 
-ifCondition : (expression) identifier? comparison? (expression)? identifier? ;
+ifCondition : expression identifier? comparison? expression? identifier? ;
 
 whileStatement : 'while' '(' whileCondition ')' block ;
 
 whileCondition: expression ;
 
-forStatement : 'for' '(' simpleStatement? (expression? ';')* (expression)? ')' block ;
+forStatement : 'for' '(' expression? ';' expression? ';' expression? ')' block ;
 
 inlineAssemblyStatement : 'assembly' inlineAssemblyBlock ;
 
@@ -627,13 +627,13 @@ booleanLiteral : 'true' | 'false' ;
 
 numberUnit : 'wei' | 'szabo' | 'finney' | 'ether' | 'seconds' | 'minutes' | 'hours' | 'days' | 'weeks' | 'years' ;
 
-DecimalNumber : [0-9]+ ( '.' [0-9]+ )? ( ('e'|'E') [0-9]+ )? ;
+DecimalNumber : ( [0-9]+ ('.' [0-9]* )? | '.' [0-9]+ ) ( ('e'|'E') [0-9]+ )? ;
 
 HexNumber : ('0x'|'0X') HexCharacter+ ;
 
 HexLiteral : 'hex' ('"' HexPair* '"' | '\'' HexPair* '\'') ;
 
-hexLiteral : HexLiteral;
+hexLiteral : HexLiteral ;
 
 fragment
 HexPair : HexCharacter HexCharacter ;
@@ -662,6 +662,6 @@ SingleQuotedStringCharacter : ~['\r\n\\] | ('\\' .) ;
 
 WS : [ \t\r\n\u000C]+ -> skip ;
 
-COMMENT :   '/*' .*? '*/' -> channel(HIDDEN) ;
+COMMENT : '/*' .*? '*/' -> channel(HIDDEN) ;
 
 LINE_COMMENT : '//' ~[\r\n]* -> channel(HIDDEN) ;
