@@ -245,11 +245,11 @@ storageLocation : 'memory' | 'storage' ;
 
 //___Statements___
 
-block: statement | '{' statement* '}' ; // TODO replace with "block: '{' statement* '}' ;"
+block: '{' statement* '}' ;
 
-//TODO add block |
 statement
-    : addressDeclaration ';'
+    : block
+    | addressDeclaration ';'
     | creatingContractViaNewStatement ';'
     | ifStatement
     | whileStatement
@@ -276,19 +276,19 @@ creatingContractViaNewStatement : identifier arrayLiteral? '=' 'new' identifier 
 //newDynamicArrayExpression : 'new' typeName '[' ']' '(' expression ')';
 
 
-ifStatement : 'if' '(' ifCondition ')' block ('else' block)? ; // TODO block -> statement
+ifStatement : 'if' '(' ifCondition ')' statement ('else' statement)? ;
 
 ifCondition : expression identifier? comparison? expression? identifier? ;
 
-whileStatement : 'while' '(' whileCondition ')' block ; // TODO block -> statement
+whileStatement : 'while' '(' whileCondition ')' statement ;
 
 whileCondition: expression ;
 
-forStatement : 'for' '(' expression? ';' expression? ';' expression? ')' block ; // TODO block -> statement
+forStatement : 'for' '(' expression? ';' expression? ';' expression? ')' statement ;
 
 inlineAssemblyStatement : 'assembly' inlineAssemblyBlock ;
 
-doWhileStatement : 'do' block 'while' '(' expression ')' ; // TODO block -> statement
+doWhileStatement : 'do' statement 'while' '(' expression ')' ;
 
 placeholderStatement : '_' ;
 
