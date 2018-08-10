@@ -55,15 +55,10 @@ structDefinition : 'struct' identifier '{' (variableDeclaration ';')* '}' ;
 modifierDefinition : 'modifier' identifier parameterList? block ;
 
 functionDefinition : ('function' identifier | 'constructor') parameterList
-    (modifierCall | stateMutability | visibleType | functionCall)*
+    (stateMutability | visibleType | functionCall | identifier)*
     returnsParameters? (block | ';') ;
 
 returnsParameters : 'returns' parameterList ;
-
-// TODO remove it. use `functionCall` and `identifier` instead
-modifierCall : modifierName callArguments? ;
-
-modifierName : identifier ;
 
 // TODO simplify as hell
 variableDeclaration : typeName storageLocation? identifier
@@ -78,8 +73,8 @@ addressDeclaration : 'address'  (visibleType | constantType)* identifier ('='? (
 addressCall :'address' '(' expression ')' ;
 
 functionFallBackDefinition : 'function' parameterList
-    (stateMutability |visibleType)*
-    (block | ';')? ;
+    (stateMutability |visibleType | functionCall | identifier)*
+    (block | ';') ;
 
 eventDefinition : 'event' identifier indexedParameterList 'anonymous'? ';' ;
 
