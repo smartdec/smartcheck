@@ -120,8 +120,8 @@ typeName
 
 userDefinedTypeName : identifier ('.' identifier )* ;
 
-functionTypeName : 'function' typeNameList (visibleType | stateMutability)*
-    ('returns' typeNameList)? ;
+functionTypeName : 'function' parameterList (visibleType | stateMutability)*
+    ('returns' parameterList)? ;
 
 stateMutability : pureType | constantType | viewType | payableType;
 
@@ -130,8 +130,6 @@ pureType : 'pure';
 viewType : 'view';
 
 mappingSt : 'mapping' '(' typeName '=>' typeName ')' ;
-
-typeNameList : '(' (typeName  (',' typeName)* )? ')' ;
 
 //___functions_call
 // TODO replace whis shit with simple structure below
