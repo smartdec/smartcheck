@@ -187,8 +187,6 @@ callObject
     | plusminusOperator callObject
     | callObject (muldivOperator | plusminusOperator | '<<' | '>>' | '&' | '^' | '|' | '<' | '>' | '<=' | '>=' | '==' | '!=') callObject
     | callObject ('&&' | '||') callObject
-    | moneyExpression
-    | timeExpression
     | primaryExpression
     | callObject twoPlusMinusOperator
     | twoPlusMinusOperator expression
@@ -282,8 +280,6 @@ expression
     | variableDeclaration
 // TODO investigate this
     | expression '(' callArguments ')'// WTF is that?
-    | moneyExpression
-    | timeExpression
     | '{' nameValueList '}'
     ;
 
@@ -317,9 +313,9 @@ storageLocation : 'memory' | 'storage' ;
 
 //___Statements___
 
-block: statement | '{' statement* '}' ; // TODO replace with "block: '{' statement* '}' ;"
+block: statement | '{' statement* '}' ;
 
-//TODO add block |
+
 statement
     : addressDeclaration ';'
     | creatingContractViaNewStatement ';'
@@ -338,7 +334,7 @@ statement
     ;
 
 // TODO check if this expression also create dynamic arrays: `uint[] memory a = new uint[](7);`
-creatingContractViaNewStatement : identifier arrayLiteral? '=' 'new' identifier arrayLiteral? callArguments ;
+creatingContractViaNewStatement : identifier arrayLiteral? '=' 'new' identifier arrayLiteral? callArguments ';'? ;
 // should be part of expression
 //newContractExpression : 'new' functionCall ;
 
@@ -348,19 +344,19 @@ creatingContractViaNewStatement : identifier arrayLiteral? '=' 'new' identifier 
 //newDynamicArrayExpression : 'new' typeName '[' ']' '(' expression ')';
 
 
-ifStatement : 'if' '(' ifCondition ')' block ('else' block)? ; // TODO block -> statement
+ifStatement : 'if' '(' ifCondition ')' block ('else' block)? ;
 
 ifCondition : expression identifier? comparison? expression? identifier? ;
 
-whileStatement : 'while' '(' whileCondition ')' block ; // TODO block -> statement
+whileStatement : 'while' '(' whileCondition ')' block ;
 
 whileCondition: expression ;
 
-forStatement : 'for' '(' expression? ';' expression? ';' expression? ')' block ; // TODO block -> statement
+forStatement : 'for' '(' expression? ';' expression? ';' expression? ')' block ;
 
 inlineAssemblyStatement : 'assembly' inlineAssemblyBlock ;
 
-doWhileStatement : 'do' block 'while' '(' expression ')' ; // TODO block -> statement
+doWhileStatement : 'do' block 'while' '(' expression ')' ;
 
 placeholderStatement : '_' ;
 
@@ -418,8 +414,6 @@ assemblyFunctionCall : 'function' identifier '(' (assemblyItem ','? )* ')' '->' 
 
 //___expressions___
 
-timeExpression : primaryExpression ('seconds' | 'minutes' | 'hours' | 'days' | 'years' | 'weeks') ;
-
 primaryExpression
     : arrayLiteral
     | booleanLiteral
@@ -432,10 +426,6 @@ primaryExpression
     | numberLiteral
     | environmentalVariable
     ;
-
-moneyExpression : primaryExpression ('wei' | 'kwei' | 'ada' | 'femtoether' | 'mwei' | 'babbage' | 'picoether' | 'gwei'
-    | 'shannon' | 'nanoether' | 'nano' | 'microether' | 'micro' | 'szabo' | 'finney' | 'milliether' | 'milli' | 'ether'
-    | 'kether' | 'grand' | 'einstein' | 'mether' | 'gether' | 'tether') ;
 
 tupleExpression
     : '(' ( expression? ( ',' expression? )+ )? ')'
@@ -611,17 +601,19 @@ arrayLiteral : ('[' arrayElement? (',' arrayElement)* ']')+ ;
 arrayElement: expression ;
 
 // TODO replace with (DecimalNumber | HexNumber) NumberUnit? ;
-numberLiteral : (DecimalNumber) NumberUnit? ;
+numberLiteral : decimalNumber numberUnit? ;
+
+decimalNumber : DecimalNumber ;
 
 VersionLiteral : [0-9]+ (' ')? '.' [0-9]+  (' ')? '.' [0-9]+ ;
 
 booleanLiteral : 'true' | 'false' ;
 
+numberUnit : 'wei' | 'szabo' | 'finney' | 'ether' | 'seconds' | 'minutes' | 'hours' | 'days' | 'weeks' | 'years' ;
+
 DecimalNumber : ( [0-9]+ ('.' [0-9]* )? | '.' [0-9]+ ) ( ('e'|'E') [0-9]+ )? ;
 
-HexNumber : '0x' HexCharacter+ ;
-
-NumberUnit : 'wei' | 'szabo' | 'finney' | 'ether' | 'seconds' | 'minutes' | 'hours' | 'days' | 'weeks' | 'years' ;
+HexNumber : ('0x'|'0X') HexCharacter+ ;
 
 HexLiteral : 'hex' ('"' HexPair* '"' | '\'' HexPair* '\'') ;
 
