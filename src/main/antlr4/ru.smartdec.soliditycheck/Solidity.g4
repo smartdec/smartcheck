@@ -370,9 +370,11 @@ continueStatement : 'continue' ;
 breakStatement : 'break' ;
 
 returnStatement : 'return'
-    ( expression?
-    | '(' expression ','? ')'
-    | '(' expression  (',' expression)+ ')'
+    ( // no return value
+    | expression // expression without parentheses
+    | '(' ')' // empty parentheses
+    | '(' expression ','? ')' // one expression with trailing comma is allowed
+    | '(' expression  (',' expression)+ ')' // list of expressions
     )
     ;
 
