@@ -32,7 +32,12 @@ libraryDefinition : 'library' identifier '{' contractPartDefinition* '}' ;
 interfaceDefinition : 'interface' identifier ('is' inheritanceSpecifier (',' inheritanceSpecifier)* )?
     '{' contractPartDefinition* '}' ;
 
-inheritanceSpecifier : userDefinedTypeName ('(' expression (',' expression)* ')')? ;
+inheritanceSpecifier : userDefinedTypeName
+    ( // no arguments
+    | '(' ')' // empty parentheses are always allowed
+    | '(' expression (',' expression)* ')'
+    )
+    ;
 
 //____DEFINITION____
 contractPartDefinition
