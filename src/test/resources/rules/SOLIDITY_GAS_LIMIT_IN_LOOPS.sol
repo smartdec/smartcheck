@@ -1,42 +1,16 @@
 pragma solidity 0.4.24;
 
-library SafeMath {
-  function mul(uint256 a, uint256 b) internal pure returns (uint256) {
-    if (a == 0) {
-      return 0;
+contract GasLimitInLoops {
+
+    function foo() public returns(uint) {
+        return(100);
     }
-    uint256 c = a * b;
-    assert(c / a == b);
-    return c;
-  }
-  function div(uint256 a, uint256 b) internal pure returns (uint256) {
-    uint256 c = a / b;
-    return c;
-  }
-  function sub(uint256 a, uint256 b) internal pure returns (uint256) {
-    assert(b <= a);
-    return a - b;
-  }
-  function add(uint256 a, uint256 b) internal pure returns (uint256) {
-    uint256 c = a + b;
-    assert(c >= a);
-    return c;
-  }
-}
-
-interface Foo {
-    function foo() public returns (uint);
-}
-
-contract GasLimitAndLoops {
-    using SafeMath for uint256;
 
     function test_while() public {
         uint x=0;
-        Foo addr = Foo(0x0);
         uint[] memory y;
         // <yes> <report> SOLIDITY_GAS_LIMIT_IN_LOOPS 38f6c7
-        while ( x < addr.foo()) { 
+        while ( x < foo()) { 
             x++;
         }
         while ( x > 100) {
@@ -48,66 +22,38 @@ contract GasLimitAndLoops {
         }
     }
 
-    function test_for() public {
-        uint x=0;
-        uint[] memory y;
-        Foo addr = Foo(0x0);
-        // <yes> <report> SOLIDITY_GAS_LIMIT_IN_LOOPS f6f853
-        for (uint i = 0; i < y.length; i.add(1)){
-            addr.foo();
-        }
-        // <yes> <report> SOLIDITY_GAS_LIMIT_IN_LOOPS f6f853
-        for (i = 0; i < y.length; i++){
-            addr.foo();
-        }
-        // <yes> <report> SOLIDITY_GAS_LIMIT_IN_LOOPS f6f853
-        for (i = 0; i < y.length; i=i+1){
-            addr.foo();
-        }
-        // <yes> <report> SOLIDITY_GAS_LIMIT_IN_LOOPS f6f853
-        for (i = y.length; i <= max(y.length, 4); i += y.length){
-            addr.foo();
-        }
-        // <yes> <report> SOLIDITY_GAS_LIMIT_IN_LOOPS 12cf32
-        for (i = y.length; i > 0 ; i.sub(1)){
-            addr.foo();
-        }
-        // <yes> <report> SOLIDITY_GAS_LIMIT_IN_LOOPS 12cf32
-        for (i = y.length; i > 0 ; i--){
-            addr.foo();
-        }
-        // <yes> <report> SOLIDITY_GAS_LIMIT_IN_LOOPS 12cf32
-        for (i = y.length; i > 0 ; i=i-1){
-            addr.foo();
-        }
-        // <yes> <report> SOLIDITY_GAS_LIMIT_IN_LOOPS 12cf32
-        for (x = y.length; x > max(y.length, max(1,2)); x -= y.length){
-            addr.foo();
-        }
-        for (i = y.length; i < 100; i--){
-            addr.foo();
-        }
-        for (i = y.length; i < 100; i++){
-            addr.foo();
-        }
-    }
+    function test_for(address[] _addr, uint amount) public {
 
-    function max(uint x,uint y) internal returns (uint){
-        return x;
-    }
-
-    function heavyLoops(address[] _addr, uint amount) public {
-        address addr1;
         // <yes> <report> SOLIDITY_GAS_LIMIT_IN_LOOPS f6f853
         for (uint i = 0; i < _addr.length; i++) {
-            addr1 = _addr[i];
-            addr1.transfer(amount);
+            _addr[i].transfer(100);
         }
-        Foo addr2;
+
+        uint n = _addr.length;
         // <yes> <report> SOLIDITY_GAS_LIMIT_IN_LOOPS f6f853
-        for (i = 0; i < _addr.length; i++) {
-            addr2 = Foo(_addr[i]);
-            addr2.foo();
+        for (i = 0; i < n; i++) {
+            _addr[i].transfer(100);
+        }
+
+        uint m;
+        m = _addr.length;
+        // <yes> <report> SOLIDITY_GAS_LIMIT_IN_LOOPS f6f853
+        for (i = 0; i < m; i++) {
+            _addr[i].transfer(100);
+        }
+
+        // <yes> <report> SOLIDITY_GAS_LIMIT_IN_LOOPS f6f853
+        for (uint k ; k < _addr.length; k++) {
+            _addr[k].transfer(100);
+        }
+
+        // <yes> <report> SOLIDITY_GAS_LIMIT_IN_LOOPS 12cf32
+        for (i = _addr.length; i > 0 ; i--){
+            _addr[i].transfer(100);
+        }
+        // <yes> <report> SOLIDITY_GAS_LIMIT_IN_LOOPS 12cf32
+        for (uint j = _addr.length; j > 0 ; j--){
+            _addr[j].transfer(100);
         }
     }
 }
