@@ -32,7 +32,12 @@ libraryDefinition : 'library' identifier '{' contractPartDefinition* '}' ;
 interfaceDefinition : 'interface' identifier ('is' inheritanceSpecifier (',' inheritanceSpecifier)* )?
     '{' contractPartDefinition* '}' ;
 
-inheritanceSpecifier : userDefinedTypeName ('(' expression (',' expression)* ')')? ;
+inheritanceSpecifier : userDefinedTypeName
+    ( // no arguments
+    | '(' ')' // empty parentheses are always allowed
+    | '(' expression (',' expression)* ')'
+    )
+    ;
 
 //____DEFINITION____
 contractPartDefinition
@@ -210,8 +215,6 @@ expression
     | variableDeclaration
 // TODO investigate this
     | expression '(' callArguments ')'// WTF is that?
-    | moneyExpression
-    | timeExpression
     | '{' nameValueList '}'
     ;
 
@@ -255,7 +258,7 @@ statement
     | whileStatement
     | forStatement
     | inlineAssemblyStatement
-    | doWhileStatement
+    | doWhileStatement ';'
     | placeholderStatement ';'?
     | continueStatement ';'
     | breakStatement ';'
@@ -266,7 +269,7 @@ statement
     ;
 
 // TODO check if this expression also create dynamic arrays: `uint[] memory a = new uint[](7);`
-creatingContractViaNewStatement : identifier arrayLiteral? '=' 'new' identifier arrayLiteral? callArguments ;
+creatingContractViaNewStatement : identifier arrayLiteral? '=' 'new' identifier arrayLiteral? callArguments ';'? ;
 // should be part of expression
 //newContractExpression : 'new' functionCall ;
 
@@ -297,13 +300,15 @@ continueStatement : 'continue' ;
 breakStatement : 'break' ;
 
 returnStatement : 'return'
-    ( expression?
-    | '(' expression ','? ')'
-    | '(' expression  (',' expression)+ ')'
+    ( // no return value
+    | expression // expression without parentheses
+    | '(' ')' // empty parentheses
+    | '(' expression ','? ')' // one expression with trailing comma is allowed
+    | '(' expression  (',' expression)+ ')' // list of expressions
     )
     ;
 
-throwRevertStatement : 'throw' | 'revert' '(' ')' ;
+throwRevertStatement : 'throw' | 'revert' ('(' stringLiteral? ')')? ;
 
 simpleStatement : variableDeclarationStatement | expressionStatement ;
 
@@ -346,8 +351,6 @@ assemblyFunctionCall : 'function' identifier '(' (assemblyItem ','? )* ')' '->' 
 
 //___expressions___
 
-timeExpression : primaryExpression ('seconds' | 'minutes' | 'hours' | 'days' | 'years' | 'weeks') ;
-
 primaryExpression
     : arrayLiteral
     | booleanLiteral
@@ -361,10 +364,6 @@ primaryExpression
     | environmentalVariable
     ;
 
-moneyExpression : primaryExpression ('wei' | 'kwei' | 'ada' | 'femtoether' | 'mwei' | 'babbage' | 'picoether' | 'gwei'
-    | 'shannon' | 'nanoether' | 'nano' | 'microether' | 'micro' | 'szabo' | 'finney' | 'milliether' | 'milli' | 'ether'
-    | 'kether' | 'grand' | 'einstein' | 'mether' | 'gether' | 'tether') ;
-
 tupleExpression
     : '(' ( expression? ( ',' expression? )+ )? ')'
     | '[' ( expression? ( ',' expression? )+ )? ']'
@@ -374,7 +373,7 @@ elementaryTypeNameExpression : elementaryTypeName ;
 
 //___auxiliary parameters___
 
-nameValueList : identifier ':' expression (',' identifier ':' expression)* ;
+nameValueList : identifier ':' expression (',' identifier ':' expression)* ','? ; // trailing comma compiled until 0.4.11
 
 comparison : '==' | '!=' ;
 
@@ -383,7 +382,7 @@ identifierList : '(' identifier? (',' identifier? )* ')' ;
 //items after Identifier are listed for lexer to understand that these words can be used as identifier
 identifier : Identifier | placeholderStatement | 'value' | 'from' | 'this' | 'balance' | 'sender' | 'msg' | 'gas'
     | 'length' | 'block' | 'timestamp' | 'tx' | 'origin' | 'blockhash' | 'coinbase' | 'difficulty' | 'gaslimit'
-    |'number' | 'data' | 'sig' | 'now' | 'gasprice' | 'emit' | 'constructor';
+    | 'number' | 'data' | 'sig' | 'now' | 'gasprice' | 'emit' | 'constructor' ;
 
 Identifier : IdentifierStart IdentifierPart* ;
 
@@ -536,17 +535,19 @@ arrayLiteral : ('[' arrayElement? (',' arrayElement)* ']')+ ;
 arrayElement: expression ;
 
 // TODO replace with (DecimalNumber | HexNumber) NumberUnit? ;
-numberLiteral : (DecimalNumber) NumberUnit? ;
+numberLiteral : decimalNumber numberUnit? ;
+
+decimalNumber : DecimalNumber ;
 
 VersionLiteral : [0-9]+ (' ')? '.' [0-9]+  (' ')? '.' [0-9]+ ;
 
 booleanLiteral : 'true' | 'false' ;
 
+numberUnit : 'wei' | 'szabo' | 'finney' | 'ether' | 'seconds' | 'minutes' | 'hours' | 'days' | 'weeks' | 'years' ;
+
 DecimalNumber : ( [0-9]+ ('.' [0-9]* )? | '.' [0-9]+ ) ( ('e'|'E') [0-9]+ )? ;
 
-HexNumber : '0x' HexCharacter+ ;
-
-NumberUnit : 'wei' | 'szabo' | 'finney' | 'ether' | 'seconds' | 'minutes' | 'hours' | 'days' | 'weeks' | 'years' ;
+HexNumber : ('0x'|'0X') HexCharacter+ ;
 
 HexLiteral : 'hex' ('"' HexPair* '"' | '\'' HexPair* '\'') ;
 
