@@ -11,15 +11,12 @@ contract TestToken {
     }
 }
 contract TestToken2 {
-    function approve(address _spender, uint _value) returns (bool success) {
-    	if (_value < 20 wei) throw;
-        success = true;
-    }
     function transferFrom(address _spender, uint _value) returns (bool success) {
         require(_value > 10 wei);
-        return true;
+        success = true;
     }  
 }
+
 contract TestToken3 {
     function transferFrom(address _spender, uint _value) returns (bool) {
         require(_value > 10 wei);
