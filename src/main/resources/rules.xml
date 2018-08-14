@@ -11,7 +11,7 @@
                     <Severity>1</Severity>
                     <TruePositiveRate>2</TruePositiveRate>
                     <XPath>
-                        //addressContract[string-length(addressNumber)=42]
+                        //addressNumber[string-length()=42]
                     </XPath>
                 </Pattern>
                 <!-- фиксирует адреса длиной менее чем 42 символа и не равные 0x0"-->
@@ -22,10 +22,10 @@
                     <Severity>1</Severity>
                     <TruePositiveRate>2</TruePositiveRate>
                     <XPath>
-                        //addressContract[string-length(addressNumber) lt 42 and not(addressNumber[matches(text()[1],"^0x0$")])]
+                        //addressNumber[string-length() lt 42 and not(matches(text()[1],"^0x0$"))]
                     </XPath>
                 </Pattern>
-                <!-- фиксирует конструкции: address(numberLiteral), где numberLiteral не равно 0"-->
+                <!-- фиксирует конструкции: address(numberLiteral/decimalNumber), где numberLiteral/decimalNumber не равно 0"-->
                 <Pattern patternId="f32db1">
                     <Categories>
                         <Category>Solidity</Category>
@@ -33,7 +33,7 @@
                     <Severity>1</Severity>
                     <TruePositiveRate>2</TruePositiveRate>
                     <XPath>
-                        //addressCall/expression[primaryExpression/numberLiteral][not(primaryExpression/numberLiteral[matches(text()[1],"^0$")]) and not(primaryExpression/identifier[matches(text()[1],"^this$")])]
+                        //addressCall/expression[primaryExpression/numberLiteral/decimalNumber][not(primaryExpression/numberLiteral/decimalNumber[matches(text()[1],"^0$")]) and not(primaryExpression/identifier[matches(text()[1],"^this$")])]
                     </XPath>
                 </Pattern>
                 <!-- фиксирует использование адреса address(0), кроме "!=address(0)" и "==address(0)", и кторе тех случаев, когда address(0) внутри event(внутренняя функция, название которой начинается с большой буквы)-->
@@ -44,7 +44,7 @@
                     <Severity>1</Severity>
                     <TruePositiveRate>1</TruePositiveRate>
                     <XPath>
-                        //expression[addressCall/expression/primaryExpression/numberLiteral[matches(text()[1],"^0$")]]
+                        //expression[addressCall/expression/primaryExpression/numberLiteral/decimalNumber[matches(text()[1],"^0$")]]
                         /parent::*[not(matches(text()[1],"^==|!=$"))][not(ancestor::internalFunctionCall[1]/functionName/identifier[matches(text()[1],"^[A-Z]")])]
                     </XPath>
                 </Pattern>
@@ -56,10 +56,37 @@
                     <Severity>1</Severity>
                     <TruePositiveRate>1</TruePositiveRate>
                     <XPath>
-                        //addressContract[addressNumber[matches(text()[1],"^0x0$")]]/parent::*[parent::*[parent::*[not(matches(text()[1],"^==|!=$"))]]][not(ancestor::internalFunctionCall[1]/functionName/identifier[matches(text()[1],"^[A-Z]")])]
+                        //addressNumber[matches(text()[1],"^0x0$")]/parent::*[parent::*[parent::*[not(matches(text()[1],"^==|!=$"))]]][not(ancestor::internalFunctionCall[1]/functionName/identifier[matches(text()[1],"^[A-Z]")])]
                     </XPath>
                 </Pattern>
             </Patterns>
+    </Rule>
+    <Rule>
+        <RuleId>SOLIDITY_ARRAY_LENGTH_MANIPULATION</RuleId>
+        <Patterns>
+            <!-- фиксирует операции с длиной динамического массива ".length": =, +=, -=, *=, /=, минус-минус -->
+            <Pattern patternId="872bdd">
+                <Categories>
+                    <Category>Solidity</Category>
+                </Categories>
+                <Severity>1</Severity>
+                <XPath>
+                //expression[expression[1][matches(text()[1],".length$")]]
+                [matches(text()[1],"^=$") or twoPlusMinusOperator/decrementOperator or lvalueOperator[mulLvalueOperator or minusLvalueOperator or plusLvalueOperator or divLvalueOperator]]
+                </XPath>
+            </Pattern>
+            <!-- фиксирует конструкцию ".length++"-->
+            <Pattern patternId="43ba1c">
+                <Categories>
+                    <Category>Solidity</Category>
+                </Categories>
+                <Severity>1</Severity>
+                <XPath>
+                //expression[expression[1][matches(text()[1],".length$")]]
+                [twoPlusMinusOperator/incrementOperator]
+                </XPath>
+            </Pattern>
+        </Patterns>
     </Rule>
     <Rule>
         <RuleId>SOLIDITY_BALANCE_EQUALITY</RuleId>
@@ -71,7 +98,7 @@
                 </Categories>
                 <Severity>1</Severity>
                 <XPath>
-                //expression[expression//environmentalVariableDefinition[matches(text()[1],".balance$")]][matches(text()[1],"^==|!=$")]
+                //expression[expression[matches(text()[1],".balance$")]][matches(text()[1],"^==|!=$")]
                 </XPath>
             </Pattern>
         </Patterns>
@@ -114,7 +141,7 @@
                 </Categories>
                 <Severity>1</Severity>
                 <XPath>
-                    //simpleStatement/expressionStatement/expression[expression/environmentalVariableDefinition[matches(text()[1],"length")]][matches(text()[1],"^=$")][expression/primaryExpression/numberLiteral[matches(text()[1],"^0$")]]
+                    //simpleStatement/expressionStatement/expression[expression[matches(text()[1],".length")]][matches(text()[1],"^=$")][expression/primaryExpression/numberLiteral/decimalNumber[matches(text()[1],"^0$")]]
                 </XPath>
             </Pattern>
         </Patterns>
@@ -219,7 +246,7 @@
         <Patterns>
             <!--Фиксирует конструкции: имя контракта содержит token или erc20 либо наследуется от контракта содержащего такое в названии.
             В этом контракте есть определение функции с названием transfer,transferFrom или approve, которая возвращающает значение типа bool и не является интерфейсом.
-            В определении этой функции не содержится return или присваивание возвращаемого параметра (в текущей реализации проверяется присваивание только для первого возращаемого параметра)-->
+            В определении этой функции не содержится return или присваивание возвращаемого параметра.-->
             <Pattern patternId="b180ca">
                 <Categories>
                     <Category>Solidity</Category>
@@ -227,9 +254,11 @@
                 <Severity>2</Severity>
                 <XPath>
                     //contractDefinition[identifier[matches(text()[1],"token|erc20","i")]  or inheritanceSpecifier/userDefinedTypeName/identifier[matches(text()[1],"token|erc20","i")]]
-                    //functionDefinition[block/statement][identifier[matches(text()[1],"^transfer|transferFrom|approve$")]][returnsParameters/parameterList/parameter/typeName/elementaryTypeName[matches(text()[1],"bool")]]
-                    [count(descendant-or-self::*[returnStatement])=0]
-                    [not(block//expression[matches(text()[1],"=")]/expression[1]//identifier[matches(text()[1],ancestor::functionDefinition/returnsParameters/parameterList/parameter[1]/identifier)])]
+                    //functionDefinition[block/statement][identifier[matches(text()[1],"^transfer|transferFrom|approve$")]]
+                    [returnsParameters/parameterList/parameter/typeName/elementaryTypeName[matches(text()[1],"bool")]]
+                    [not(block/statement//returnStatement)]
+                    [count(returnsParameters/parameterList/parameter)=1]
+                    [returnsParameters/parameterList/parameter/identifier[not(text()[1]=(ancestor::functionDefinition/block//expression[matches(text()[1],"=")]/expression[1]//identifier))] or returnsParameters/parameterList/parameter[not(identifier)]]
                 </XPath>
             </Pattern>
         </Patterns>
@@ -265,10 +294,13 @@
             </Categories>
             <Severity>1</Severity>
             <XPath>
-                //functionDefinition[block]/returnsParameters[count(parameterList/parameter) > count(parameterList/parameter/identifier)]/parent::*[not(block/statement//returnStatement)]
+                //functionDefinition
+                [block]
+                [not(block/statement//returnStatement)]
+                [returnsParameters/parameterList/parameter[not(identifier)]]
             </XPath>
         </Pattern>
-        <!--Фиксирует конструкцию: "function(...) ... returns (type name) {...}" - в теле функции нет присваивания "name=" и нет return (в данной реализации если параметров на выходе несколько, то проверяется только первый)-->
+        <!--Фиксирует конструкцию: "function(...) ... returns (type name) {...}" - в теле функции нет присваивания "name=" и нет return.-->
         <Pattern patternId="58bdd3">
             <Categories>
                 <Category>Solidity</Category>
@@ -278,8 +310,7 @@
                 //functionDefinition
                 [block]
                 [not(block/statement//returnStatement)]
-                [returnsParameters/parameterList/parameter[1]/identifier]
-                [not(block//expression[matches(text()[1],"=")]/expression[1]//identifier[matches(text()[1],ancestor::functionDefinition/returnsParameters/parameterList/parameter[1]/identifier)])]
+                [returnsParameters/parameterList/parameter/identifier[not(text()[1]=(ancestor::functionDefinition/block//expression[matches(text()[1],"=")]/expression[1]//identifier))]]
             </XPath>
         </Pattern>
     </Patterns>
@@ -287,14 +318,14 @@
     <Rule>
         <RuleId>SOLIDITY_GAS_LIMIT_AND_LOOPS</RuleId>
         <Patterns>
-            <!-- for (<инициализация счетчика>; <счетчик меньше чем не numberLiteral; <увеличение счетчика>)-->
+            <!-- for (<инициализация счетчика>; <счетчик меньше чем не numberLiteral/decimalNumber; <увеличение счетчика>)-->
             <Pattern patternId="f6f853">
                 <Categories>
                     <Category>Solidity</Category>
                 </Categories>
                 <Severity>2</Severity>
                 <XPath>
-                    //forStatement[expression[1][matches(text()[1],"&lt;|&lt; =")]/expression[2][not(primaryExpression/numberLiteral)]][expression[2][twoPlusMinusOperator/incrementOperator or lvalueOperator/plusLvalueOperator or expression[2]/plusminusOperator/plusOperator]]
+                    //forStatement[expression[2][matches(text()[1],"&lt;|&lt; =")]/expression[2][not(primaryExpression/numberLiteral/decimalNumber)]][expression[3][twoPlusMinusOperator/incrementOperator or lvalueOperator/plusLvalueOperator or expression[2]/plusminusOperator/plusOperator]]
                 </XPath>
             </Pattern>
             <!-- for (<инициализация счетчика не числом>; <счетчик больше чем что угодно>; <уменьшение счетчика>)-->
@@ -304,7 +335,7 @@
                 </Categories>
                 <Severity>2</Severity>
                 <XPath>
-                    //forStatement[simpleStatement[not(variableDeclarationStatement/variableDeclaration/expression/primaryExpression/numberLiteral)]][expression[1][matches(text()[1],"&gt;|&gt; =")]][expression[2][twoPlusMinusOperator/decrementOperator or lvalueOperator/minusLvalueOperator or expression[2]/plusminusOperator/minusOperator]]
+                    //forStatement[expression[1][not(variableDeclaration/expression/primaryExpression/numberLiteral/decimalNumber)]][expression[2][matches(text()[1],"&gt;|&gt; =")]][expression[3][twoPlusMinusOperator/decrementOperator or lvalueOperator/minusLvalueOperator or expression[2]/plusminusOperator/minusOperator]]
                 </XPath>
             </Pattern>
             <!--Фиксируется конструкция: while (в условии все, кроме вызова функции и числа)-->
@@ -313,7 +344,7 @@
                     <Category>Solidity</Category>
                 </Categories>
                 <Severity>1</Severity>
-                <XPath>//whileStatement/whileCondition[not(descendant-or-self::functionCall) and not(expression/expression/primaryExpression/numberLiteral)]</XPath>            </Pattern>
+                <XPath>//whileStatement/whileCondition[not(descendant-or-self::functionCall) and not(expression/expression/primaryExpression/numberLiteral/decimalNumber)]</XPath>            </Pattern>
             <!--Фиксируется конструкция: while (в условии вызов функции)-->
             <Pattern patternId="38f6c7">
                 <Categories>
@@ -378,11 +409,10 @@
                 <Severity>0</Severity>
                 <XPath>
                     //functionDefinition[stateMutability/pureType and block/descendant-or-self::*[
-                    <!--Accessing this.balance or <address>.balance: using .balance or this.balance-->
-                    environmentalVariableDefinition[matches(text()[1],"balance")]
-                    or environmentalVariableDefinition[matches(text()[1],"this.balance")]
+                    <!--Accessing <address>.balance: using .balance-->
+                    expression[matches(text()[1],".balance")]
                     <!--Accessing any of the members of block, tx, msg (with the exception of msg.sig and msg.data)-->
-                    or environmentalVariableDefinition[matches(text()[1],"msg.value|msg.gas|msg.sender|block.timestamp|tx.origin|block.blockhash|block.coinbase|block.difficulty|block.gaslimit|block.number|block.blockhash|block.coinbase|tx.gasprice")]
+                    or environmentalVariable[matches(text()[1],"msg.value|msg.gas|msg.sender|block.timestamp|tx.origin|block.blockhash|block.coinbase|block.difficulty|block.gaslimit|block.number|block.blockhash|block.coinbase|tx.gasprice")]
                     <!--Using selfdestruct and it's alias suicide:-->
                     or functionCall/internalFunctionCall/functionName/identifier[matches(text()[1],"^selfdestruct|suicide$")]
                     <!--Sending Ether via calls:-->
@@ -439,7 +469,7 @@
                 </Categories>
                 <Severity>1</Severity>
                 <XPath>
-                    //usingForDeclaration[identifier[matches(text()[1],"^SafeMath$","i")]]    
+                    //usingForDeclaration[identifier[matches(text()[1],"^SafeMath$","i")]]
                 </XPath>
             </Pattern>
         </Patterns>
@@ -484,7 +514,7 @@
                     <Category>Solidity</Category>
                 </Categories>
                 <Severity>2</Severity>
-                <XPath>//expression[matches(text()[1],"^==|!=$") and expression//environmentalVariableDefinition[matches(text()[1],"^block.timestamp|now$")]]</XPath>
+                <XPath>//expression[matches(text()[1],"^==|!=$") and expression//environmentalVariable[matches(text()[1],"^block.timestamp|now$")]]</XPath>
             </Pattern>
             <!--Фиксируется случаи, когда в вызове функции в качестве аргусентов передаются block.timestamp или now. А также, когда в выражении используется "= и далее выражение содержащее  block.timestamp или now" -->
             <Pattern patternId="cd1537">
@@ -493,8 +523,8 @@
                 </Categories>
                 <Severity>2</Severity>
                 <XPath>
-                    //statement[simpleStatement//functionCall[internalFunctionCall or externalFunctionCall]//callArguments[ not(callArgument//expression[matches(text()[1],"^>=|>|&lt;|&lt;=$")]) and callArgument//expression[environmentalVariableDefinition[matches(text()[1],"^block.timestamp|now$")]]]
-                    or simpleStatement/expressionStatement//expression[matches(text()[1],"^=$") and expression//environmentalVariableDefinition[matches(text()[1],"^block.timestamp|now$")]]]
+                    //statement[simpleStatement//functionCall[internalFunctionCall or externalFunctionCall]//callArguments[ not(callArgument//expression[matches(text()[1],"^>=|>|&lt;|&lt;=$")]) and callArgument//expression[environmentalVariable[matches(text()[1],"^block.timestamp|now$")]]]
+                    or simpleStatement/expressionStatement//expression[matches(text()[1],"^=$") and expression//environmentalVariable[matches(text()[1],"^block.timestamp|now$")]]]
                 </XPath>
             </Pattern>
             <!-- пока отключаем -->
@@ -505,7 +535,7 @@
                 </Categories>
                 <Severity>0</Severity>
                 <XPath>
-                    //expression/environmentalVariableDefinition[matches(text()[1],"block.timestamp|now")]/ancestor-or-self::statement
+                    //expression/environmentalVariable[matches(text()[1],"block.timestamp|now")]/ancestor-or-self::statement
                 </XPath>
             </Pattern> -->
         </Patterns>
@@ -519,7 +549,7 @@
                     <Category>Solidity</Category>
                 </Categories>
                 <Severity>2</Severity>
-                <XPath>//environmentalVariableDefinition[matches(text()[1],"^tx.origin$")]/parent::*[parent::*[not(matches(text()[1],"^==|!=$") and expression/environmentalVariableDefinition[matches(text()[1],"^msg.sender$")])]]</XPath>
+                <XPath>//environmentalVariable[matches(text()[1],"^tx.origin$")]/parent::*[parent::*[not(matches(text()[1],"^==|!=$") and expression/environmentalVariable[matches(text()[1],"^msg.sender$")])]]</XPath>
             </Pattern>
         </Patterns>
     </Rule>
@@ -549,7 +579,7 @@
             <Severity>1</Severity>
             <TruePositiveRate>3</TruePositiveRate>
             <XPath>
-                //forStatement/expression[matches(text()[1],">=")][expression/primaryExpression/numberLiteral[matches(text()[1],"^0$")]]
+                //forStatement/expression[matches(text()[1],">=")][expression/primaryExpression/numberLiteral/decimalNumber[matches(text()[1],"^0$")]]
             </XPath>
         </Pattern>
             <!--Фиксирует конструкцию: "...>=0"-->
@@ -560,7 +590,7 @@
                 <Severity>2</Severity>
                 <TruePositiveRate>3</TruePositiveRate>
                 <XPath>
-                    //expression[matches(text()[1],">=")][expression/primaryExpression/numberLiteral[matches(text()[1],"^0$")]]/ancestor-or-self::statement
+                    //expression[matches(text()[1],">=")][expression/primaryExpression/numberLiteral/decimalNumber[matches(text()[1],"^0$")]]/ancestor-or-self::statement
                 </XPath>
             </Pattern>
         </Patterns>
@@ -575,7 +605,7 @@
                 </Categories>
                 <Severity>1</Severity>
                 <XPath>
-                    //expression[//environmentalVariableDefinition[matches(text()[1],"block.blockhash")]]
+                    //expression[//environmentalVariable[matches(text()[1],"block.blockhash")]]
                 </XPath>
             </Pattern>
         </Patterns>
@@ -604,7 +634,7 @@
                     <Category>Solidity</Category>
                 </Categories>
                 <Severity>2</Severity>
-                <XPath>//variableDeclaration[typeName/elementaryTypeName[matches(text()[1],"^var$")]][expression//primaryExpression/numberLiteral[matches(text()[1],"^[0-9]+$")]]</XPath>
+                <XPath>//variableDeclaration[typeName/elementaryTypeName[matches(text()[1],"^var$")]][expression//primaryExpression/numberLiteral/decimalNumber[matches(text()[1],"^[0-9]+$")]]</XPath>
             </Pattern>
             <!--Фиксируется случаи определения переменных, как var имя переменной-->
             <Pattern patternId="f77619">
@@ -626,7 +656,7 @@
                 </Categories>
                 <Severity>2</Severity>
                 <TruePositiveRate>3</TruePositiveRate>
-                <XPath>//forStatement[simpleStatement//typeName/elementaryTypeName[matches(text()[1],"^var$")]][expression/expression/primaryExpression[numberLiteral[matches(text()[1],"^[0-9]+$")]&gt; 255]][expression/twoPlusMinusOperator/incrementOperator]
+                <XPath>//forStatement[expression[1]//typeName/elementaryTypeName[matches(text()[1],"^var$")]][expression[2]/expression/primaryExpression[numberLiteral/decimalNumber[matches(text()[1],"^[0-9]+$")]&gt; 255]][expression[3]/twoPlusMinusOperator/incrementOperator]
                 </XPath>
             </Pattern>
         </Patterns>
