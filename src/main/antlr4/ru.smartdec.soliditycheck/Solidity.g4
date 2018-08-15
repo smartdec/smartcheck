@@ -176,7 +176,7 @@ callArguments
     )
     ')' ;
 
-typeConversion : elementaryTypeName ('[' expression? ']')? '(' expression? ')' ;
+typeConversion : typeName '(' expression ')' ;
 
 expression
     : environmentalVariable
@@ -231,8 +231,6 @@ divLvalueOperator : '/=' ;
 mulLvalueOperator : '*=' ;
 
 divRemLvalueOperator : '%=' ;
-
-argument : identifier | addressNumber | numberLiteral | stringLiteral | environmentalVariable ;
 
 //___Parameters_and_others__
 
