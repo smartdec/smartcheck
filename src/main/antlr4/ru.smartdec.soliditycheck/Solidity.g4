@@ -261,7 +261,7 @@ statement
     | forStatement
     | inlineAssemblyStatement
     | doWhileStatement ';'
-    | placeholderStatement ';'?
+    | placeholderStatement ';'? // semicolon is not necessary in old compiler versions
     | continueStatement ';'
     | breakStatement ';'
     | returnStatement ';'
