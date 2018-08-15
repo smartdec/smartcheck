@@ -97,8 +97,8 @@ environmentalVariable
     | 'block.difficulty'
     | 'block.gaslimit'
     | 'block.number'
-    | 'block.blockhash' '(' argument ')'
-    | 'block.coinbase' '(' argument ')'
+    | 'block.blockhash' ('(' expression ')')?
+    | 'block.coinbase' ('(' expression ')')?
     | 'msg.data'
     | 'msg.sig'
     | 'now'
