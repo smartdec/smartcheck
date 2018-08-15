@@ -45,7 +45,7 @@
                     <TruePositiveRate>1</TruePositiveRate>
                     <XPath>
                         //expression[addressCall/expression/primaryExpression/numberLiteral/decimalNumber[matches(text()[1],"^0$")]]
-                        /parent::*[not(matches(text()[1],"^==|!=$"))][not(ancestor::internalFunctionCall[1]/functionName/identifier[matches(text()[1],"^[A-Z]")])]
+                        /parent::*[not(matches(text()[1],"^==|!=$"))][not(ancestor::functionCall[1]/identifier[matches(text()[1],"^[A-Z]")])]
                     </XPath>
                 </Pattern>
                 <!-- фиксирует использование адреса 0x0, кроме "!=0x0" и "==0x0", и кторе тех случаев, когда 0x0 внутри event(внутренняя функция, название которой начинается с большой буквы)-->
@@ -56,7 +56,7 @@
                     <Severity>1</Severity>
                     <TruePositiveRate>1</TruePositiveRate>
                     <XPath>
-                        //addressNumber[matches(text()[1],"^0x0$")]/parent::*[parent::*[parent::*[not(matches(text()[1],"^==|!=$"))]]][not(ancestor::internalFunctionCall[1]/functionName/identifier[matches(text()[1],"^[A-Z]")])]
+                        //addressNumber[matches(text()[1],"^0x0$")]/parent::*[parent::*[parent::*[not(matches(text()[1],"^==|!=$"))]]][not(ancestor::functionCall[1]/identifier[matches(text()[1],"^[A-Z]")])]
                     </XPath>
                 </Pattern>
             </Patterns>
@@ -126,7 +126,7 @@
                 </Categories>
                 <Severity>3</Severity>
                 <XPath>
-                    //externalFunctionCall/externalFunctionCallNotThis/functionNameAndArgs[functionName/identifier[matches(text()[1],"^call$")] and functionName/identifier[matches(text()[1],"^value$")] and not(callArguments/callArgument)]
+                    //functionCall[identifier[matches(text()[1],"^call$")] and value[matches(text()[1],"\(\)$")] and callArguments[matches(text()[1],"^\(\)$")]]
                 </XPath>
             </Pattern>
         </Patterns>
@@ -156,7 +156,7 @@
                 </Categories>
                 <Severity>1</Severity>
                 <XPath>
-                    //functionName/identifier[matches(text()[1],"suicide")] |
+                    //functionCall/identifier[matches(text()[1],"suicide")] |
                     //assemblyItem/identifier[matches(text()[1],"suicide")]
                 </XPath>
             </Pattern>
@@ -167,7 +167,7 @@
                 </Categories>
                 <Severity>1</Severity>
                 <XPath>
-                    //functionName/identifier[matches(text()[1],"^sha3$")] |
+                    //functionCall/identifier[matches(text()[1],"^sha3$")] |
                     //functionalAssemblyExpression/identifier[matches(text()[1],"sha3")]
                 </XPath>
             </Pattern>
@@ -366,9 +366,9 @@
                 <Severity>3</Severity>
                 <XPath>
                     //contractDefinition[contractPartDefinition[functionDefinition/stateMutability/payableType or functionFallBackDefinition/stateMutability/payableType]]
-                    [not(contractPartDefinition/functionDefinition/block//functionCall/internalFunctionCall/functionName/identifier[matches(text()[1],"^suicide|selfdestruct$")])]
-                    [not(contractPartDefinition/functionDefinition/block//functionCall/externalFunctionCall/externalFunctionCallNotThis/functionNameAndArgs/functionName/identifier[matches(text()[1],"^transfer|send$")])]
-                    [not(contractPartDefinition/functionDefinition/block//functionCall/externalFunctionCall/externalFunctionCallNotThis/functionNameAndArgs/functionName/identifier[matches(text()[1],"^value$")])]
+                    [not(contractPartDefinition/functionDefinition/block//functionCall/identifier[matches(text()[1],"^suicide|selfdestruct$")])]
+                    [not(contractPartDefinition/functionDefinition/block//functionCall/identifier[matches(text()[1],"^transfer|send$")])]
+                    [not(contractPartDefinition/functionDefinition/block//functionCall/value)]
                 </XPath>
             </Pattern>
         </Patterns>
@@ -454,7 +454,7 @@
                 <Severity>1</Severity>
                 <TruePositiveRate>3</TruePositiveRate>
                 <XPath>
-                    //ifStatement/block/statement/throwRevertStatement/ancestor-or-self::statement[2]
+                    //ifStatement[statement[not(descendant::ifStatement)]//throwRevertStatement]
                 </XPath>
             </Pattern>
         </Patterns>
@@ -469,7 +469,7 @@
                 </Categories>
                 <Severity>3</Severity>
                 <XPath>
-                    //functionName/identifier[text()[1]="send"][ancestor::ifCondition/parent::*[block//statement/throwRevertStatement] or ancestor::internalFunctionCall/functionName/identifier[matches(text()[1],"^require|assert$")]]
+                    //functionCall/identifier[text()[1]="send"][ancestor::ifCondition/parent::*[statement//throwRevertStatement] or ancestor::functionCall/identifier[matches(text()[1],"^require|assert$")]]
                 </XPath>
             </Pattern>
         </Patterns>
@@ -499,7 +499,9 @@
                     <Category>Solidity</Category>
                 </Categories>
                 <Severity>2</Severity>
-                <XPath>//expression[matches(text()[1],"^==|!=$") and expression//environmentalVariable[matches(text()[1],"^block.timestamp|now$")]]</XPath>
+                <XPath>
+                    //expression[matches(text()[1],"^==|!=$") and expression//environmentalVariable[matches(text()[1],"^block.timestamp|now$")]]
+                </XPath>
             </Pattern>
             <!--Фиксируется случаи, когда в вызове функции в качестве аргусентов передаются block.timestamp или now. А также, когда в выражении используется "= и далее выражение содержащее  block.timestamp или now" -->
             <Pattern patternId="cd1537">
@@ -508,7 +510,7 @@
                 </Categories>
                 <Severity>2</Severity>
                 <XPath>
-                    //statement[simpleStatement//functionCall[internalFunctionCall or externalFunctionCall]//callArguments[ not(callArgument//expression[matches(text()[1],"^>=|>|&lt;|&lt;=$")]) and callArgument//expression[environmentalVariable[matches(text()[1],"^block.timestamp|now$")]]]
+                    //statement[simpleStatement//functionCall[not(callArguments//expression[matches(text()[1],"^>=|>|&lt;|&lt;=$")]) and callArguments//expression[environmentalVariable[matches(text()[1],"^block.timestamp|now$")]]]
                     or simpleStatement/expressionStatement//expression[matches(text()[1],"^=$") and expression//environmentalVariable[matches(text()[1],"^block.timestamp|now$")]]]
                 </XPath>
             </Pattern>
@@ -548,7 +550,7 @@
                 </Categories>
                 <Severity>3</Severity>
                 <XPath>
-                    //externalFunctionCall/externalFunctionCallNotThis[functionNameAndArgs/functionName/identifier[matches(text()[1],"^call|delegatecall|send|callcode$")] and not(ancestor::ifCondition) and not(ancestor::internalFunctionCall[functionName/identifier[matches(text()[1],"^require|assert$")]]) and not(ancestor::returnStatement) and not(ancestor::functionCall[2]) and not(ancestor::variableDeclarationStatement)]
+                    //functionCall[identifier[matches(text()[1],"^call|delegatecall|send|callcode$")] and not(ancestor::ifCondition) and not(ancestor::functionCall[identifier[matches(text()[1],"^require|assert$")]]) and not(ancestor::returnStatement) and not(ancestor::functionCall) and not(ancestor::variableDeclarationStatement)]
                 </XPath>
             </Pattern>
         </Patterns>
@@ -717,11 +719,11 @@
                 <XPath>
                     //functionDefinition[stateMutability/viewType and block/descendant-or-self::*[
                         <!--Using selfdestruct and it's alias suicide:-->
-                        functionCall/internalFunctionCall/functionName/identifier[matches(text()[1],"^selfdestruct|suicide$")]
+                        functionCall/identifier[matches(text()[1],"^selfdestruct|suicide$")]
                         <!--Sending Ether via calls:-->
-                        or externalFunctionCallNotThis/functionNameAndArgs/functionName/identifier[matches(text()[1],"^send|transfer$")]
+                        or functionCall/identifier[matches(text()[1],"^send|transfer$")]
                         <!--Using low-level calls:-->
-                        or externalFunctionCallNotThis/functionNameAndArgs/functionName/identifier[matches(text()[1],"^call|delegatecall|callcode$")]
+                        or functionCall/identifier[matches(text()[1],"^call|delegatecall|callcode$")]
                         <!--Using inline assembly that contains certain opcodes:-->
                         or inlineAssemblyStatement
                     ]
