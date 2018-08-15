@@ -140,9 +140,9 @@ mappingSt : 'mapping' '(' typeName '=>' typeName ')' ;
 
 functionCall: 'emit'? identifier (value | gas)* callArguments ;
 
-value : '.' 'value' '(' expression ')' ;
+value : '.' 'value' '(' expression? ')' ;
 
-gas : '.' 'gas' '(' expression ')' ;
+gas : '.' 'gas' '(' expression? ')' ;
 
 plusminusOperator : minusOperator | plusOperator ;
 
@@ -186,6 +186,8 @@ expression
     | expression '.' 'balance'
     | primaryExpression
     | expression '.' functionCall
+    | functionCall
+    | expression '.' identifier
     | expression twoPlusMinusOperator
     // TODO replace with `newContractExpression` and 'newDynamicArrayExpression'
     | 'new' typeName //('(' (expression ','?)* ')')?
