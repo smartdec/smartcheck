@@ -33,7 +33,7 @@
                     <Severity>1</Severity>
                     <TruePositiveRate>2</TruePositiveRate>
                     <XPath>
-                        //addressCall/expression[primaryExpression/numberLiteral/decimalNumber][not(primaryExpression/numberLiteral/decimalNumber[matches(text()[1],"^0$")]) and not(primaryExpression/identifier[matches(text()[1],"^this$")])]
+                        //typeConversion/typeName[elementaryTypeName[matches(text()[1],"^address$")]]/expression[primaryExpression/numberLiteral/decimalNumber][not(primaryExpression/numberLiteral/decimalNumber[matches(text()[1],"^0$")]) and not(primaryExpression/identifier[matches(text()[1],"^this$")])]
                     </XPath>
                 </Pattern>
                 <!-- фиксирует использование адреса address(0), кроме "!=address(0)" и "==address(0)", и кторе тех случаев, когда address(0) внутри event(внутренняя функция, название которой начинается с большой буквы)-->
@@ -44,7 +44,7 @@
                     <Severity>1</Severity>
                     <TruePositiveRate>1</TruePositiveRate>
                     <XPath>
-                        //expression[addressCall/expression/primaryExpression/numberLiteral/decimalNumber[matches(text()[1],"^0$")]]
+                        //expression[typeConversion/typeName[elementaryTypeName[matches(text()[1],"^address$")]]/expression/primaryExpression/numberLiteral/decimalNumber[matches(text()[1],"^0$")]]
                         /parent::*[not(matches(text()[1],"^==|!=$"))][not(ancestor::functionCall[1]/identifier[matches(text()[1],"^[A-Z]")])]
                     </XPath>
                 </Pattern>
@@ -56,7 +56,7 @@
                     <Severity>1</Severity>
                     <TruePositiveRate>1</TruePositiveRate>
                     <XPath>
-                        //addressNumber[matches(text()[1],"^0x0$")]/parent::*[parent::*[parent::*[not(matches(text()[1],"^==|!=$"))]]][not(ancestor::functionCall[1]/identifier[matches(text()[1],"^[A-Z]")])]
+                        //addressNumber[matches(text()[1],"^0x0$")]/parent::*[parent::*[parent::*[not(matches(text()[1],"^==|!=$"))]]][not(ancestor::functionCall[1]/functionName//identifier[matches(text()[1],"^[A-Z]")])]
                     </XPath>
                 </Pattern>
             </Patterns>
@@ -126,7 +126,7 @@
                 </Categories>
                 <Severity>3</Severity>
                 <XPath>
-                    //functionCall[identifier[matches(text()[1],"^call$")] and value[matches(text()[1],"\(\)$")] and callArguments[matches(text()[1],"^\(\)$")]]
+                    //functionCall[functionName//identifier[matches(text()[1],"^call$")] and value[matches(text()[1],"\(\)$")] and callArguments[matches(text()[1],"^\(\)$")]]
                 </XPath>
             </Pattern>
         </Patterns>
@@ -156,7 +156,7 @@
                 </Categories>
                 <Severity>1</Severity>
                 <XPath>
-                    //functionCall/identifier[matches(text()[1],"suicide")] |
+                    //functionCall/functionName//identifier[matches(text()[1],"suicide")] |
                     //assemblyItem/identifier[matches(text()[1],"suicide")]
                 </XPath>
             </Pattern>
@@ -366,8 +366,8 @@
                 <Severity>3</Severity>
                 <XPath>
                     //contractDefinition[contractPartDefinition[functionDefinition/stateMutability/payableType or functionFallBackDefinition/stateMutability/payableType]]
-                    [not(contractPartDefinition/functionDefinition/block//functionCall/identifier[matches(text()[1],"^suicide|selfdestruct$")])]
-                    [not(contractPartDefinition/functionDefinition/block//functionCall/identifier[matches(text()[1],"^transfer|send$")])]
+                    [not(contractPartDefinition/functionDefinition/block//functionCall/functionName//identifier[matches(text()[1],"^suicide|selfdestruct$")])]
+                    [not(contractPartDefinition/functionDefinition/block//functionCall/functionName//identifier[matches(text()[1],"^transfer|send$")])]
                     [not(contractPartDefinition/functionDefinition/block//functionCall/value)]
                 </XPath>
             </Pattern>
@@ -414,11 +414,11 @@
                     <!--Accessing any of the members of block, tx, msg (with the exception of msg.sig and msg.data)-->
                     or environmentalVariable[matches(text()[1],"msg.value|msg.gas|msg.sender|block.timestamp|tx.origin|block.blockhash|block.coinbase|block.difficulty|block.gaslimit|block.number|block.blockhash|block.coinbase|tx.gasprice")]
                     <!--Using selfdestruct and it's alias suicide:-->
-                    or functionCall/internalFunctionCall/functionName/identifier[matches(text()[1],"^selfdestruct|suicide$")]
+                    or functionCall/functionName//identifier[matches(text()[1],"^selfdestruct|suicide$")]
                     <!--Sending Ether via calls:-->
-                    or externalFunctionCallNotThis/functionNameAndArgs/functionName/identifier[matches(text()[1],"^send|transfer$")]
+                    or functionCall/functionName//identifier[matches(text()[1],"^send|transfer$")]
                     <!--Using low-level calls:-->
-                    or externalFunctionCallNotThis/functionNameAndArgs/functionName/identifier[matches(text()[1],"^call|delegatecall|callcode$")]
+                    or functionCall/functionName//identifier[matches(text()[1],"^call|delegatecall|callcode$")]
                     <!--Using inline assembly that contains certain opcodes:-->
                     or inlineAssemblyStatement
                     ]
@@ -469,7 +469,7 @@
                 </Categories>
                 <Severity>3</Severity>
                 <XPath>
-                    //functionCall/identifier[text()[1]="send"][ancestor::ifCondition/parent::*[statement//throwRevertStatement] or ancestor::functionCall/identifier[matches(text()[1],"^require|assert$")]]
+                    //functionCall/functionName//identifier[text()[1]="send"][ancestor::ifCondition/parent::*[statement//throwRevertStatement] or ancestor::functionCall/functionName//identifier[matches(text()[1],"^require|assert$")]]
                 </XPath>
             </Pattern>
         </Patterns>
@@ -550,7 +550,7 @@
                 </Categories>
                 <Severity>3</Severity>
                 <XPath>
-                    //functionCall[identifier[matches(text()[1],"^call|delegatecall|send|callcode$")] and not(ancestor::ifCondition) and not(ancestor::functionCall[identifier[matches(text()[1],"^require|assert$")]]) and not(ancestor::returnStatement) and not(ancestor::functionCall) and not(ancestor::variableDeclarationStatement)]
+                    //functionCall[functionName//identifier[matches(text()[1],"^call|delegatecall|send|callcode$")] and not(ancestor::ifCondition) and not(ancestor::functionCall[functionName//identifier[matches(text()[1],"^require|assert$")]]) and not(ancestor::returnStatement) and not(ancestor::functionCall) and not(ancestor::variableDeclarationStatement)]
                 </XPath>
             </Pattern>
         </Patterns>

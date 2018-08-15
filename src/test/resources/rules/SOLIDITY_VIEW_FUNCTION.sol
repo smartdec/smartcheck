@@ -3,12 +3,12 @@ pragma solidity ^0.4.11;
 contract SolidityUncheckedSend {
 // <yes> <report> SOLIDITY_VIEW_FUNCTION 189abf
     function unseatKing(address a, uint w) view returns (uint){
-        selfdestruct(address);
+        selfdestruct(a);
         }
 
 // <yes> <report> SOLIDITY_VIEW_FUNCTION 189abf
     function unseatKing(address a, uint w) view returns (uint){
-        suicide(adress);
+        suicide(a);
         }
 
     // <yes> <report> SOLIDITY_VIEW_FUNCTION 189abf
