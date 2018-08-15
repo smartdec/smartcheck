@@ -65,20 +65,12 @@ functionDefinition : ('function' identifier | 'constructor') parameterList
 
 returnsParameters : 'returns' parameterList ;
 
-// TODO simplify as hell
-variableDeclaration : typeName storageLocation? identifier
-    ('=' 'new'? (typeConversion | identifier '(')? expression ')'? )? ;
-//variableDeclaration : typeName identifier ('=' expression )?
+variableDeclaration : typeName storageLocation? identifier ('=' expression)? ;
 
-
-stateVariableDeclaration : (typeName (visibleType | constantType)* identifier ('='? expression | (identifier '(' expression ')') )? | typeName '(' numberLiteral ')') ';' ;
-
-addressDeclaration : 'address'  (visibleType | constantType)* identifier ('='? (addressNumber | expression | (identifier '(' expression ')') ) )? ;
-
-addressCall :'address' '(' expression ')' ;
+stateVariableDeclaration : typeName (visibleType | constantType)* identifier ('=' expression)? ';' ;
 
 functionFallBackDefinition : 'function' parameterList
-    (stateMutability |visibleType | functionCall | identifier)*
+    (stateMutability | visibleType | functionCall | identifier)*
     (block | ';') ;
 
 eventDefinition : 'event' identifier indexedParameterList 'anonymous'? ';' ;
@@ -86,23 +78,23 @@ eventDefinition : 'event' identifier indexedParameterList 'anonymous'? ';' ;
 enumDefinition : 'enum' identifier '{' enumValue (',' enumValue)* '}' ;
 
 environmentalVariable
-    : 'this'
-    | 'msg.value'
-    | 'msg.gas'
-    | 'msg.sender'
-    | 'block.timestamp'
-    | 'tx.origin'
-    | 'block.blockhash'
-    | 'block.coinbase'
-    | 'block.difficulty'
-    | 'block.gaslimit'
-    | 'block.number'
-    | 'block.blockhash' ('(' expression ')')?
-    | 'block.coinbase' ('(' expression ')')?
-    | 'msg.data'
-    | 'msg.sig'
+    : 'block' '.' 'coinbase'
+    | 'block' '.' 'difficulty'
+    | 'block' '.' 'gaslimit'
+    | 'block' '.' 'number'
+    | 'block' '.' 'timestamp'
+    | 'block' '.' 'blockhash' '(' expression ')'
+    | 'block' '.' 'coinbase' '(' expression ')'
+    | 'blockhash' '(' expression ')'
+    | 'msg' '.' 'data'
+    | 'msg' '.' 'gas'
+    | 'msg' '.' 'sender'
+    | 'msg' '.' 'sig'
+    | 'msg' '.' 'value'
     | 'now'
-    | 'tx.gasprice'
+    | 'this'
+    | 'tx' '.' 'origin'
+    | 'tx' '.' 'gasprice'
     ;
 
 //___Types___
@@ -114,8 +106,8 @@ constantType : 'constant' ;
 payableType : 'payable' ;
 
 typeName
-    : elementaryTypeName
-    | functionCall
+    : '(' typeName ')'
+    | elementaryTypeName
     | userDefinedTypeName
     | mappingSt
     | typeName '[' expression? ']'
@@ -138,7 +130,11 @@ mappingSt : 'mapping' '(' typeName '=>' typeName ')' ;
 
 //___functions_call
 
-functionCall: 'emit'? identifier (value | gas)* callArguments ;
+functionCall: functionName (value | gas)* callArguments ;
+
+functionName : identifier | newConrtact | '(' functionName ')' ;
+
+newConrtact : 'new' identifier ;
 
 value : '.' 'value' '(' expression? ')' ;
 
@@ -180,7 +176,6 @@ typeConversion : typeName '(' expression ')' ;
 
 expression
     : environmentalVariable
-    | addressCall
     | typeConversion
     | expression '.' 'length'
     | expression '.' 'balance'
@@ -189,16 +184,13 @@ expression
     | functionCall
     | expression '.' identifier
     | expression twoPlusMinusOperator
-    // TODO replace with `newContractExpression` and 'newDynamicArrayExpression'
-    | 'new' typeName //('(' (expression ','?)* ')')?
-    | '(' typeName ')' '(' expression ')'
+    | newDynamicArrayExpression
     | expression '[' expression ']'
     | '(' expression ')'
     | twoPlusMinusOperator expression
     | plusminusOperator expression
-    // TODO let's remove 'after' - looks like it's just reserved but never used
     // TODO maybe we should make separate `deleteExpression`, otherwise I don't know how to write xpath
-    | ('after' | 'delete') expression
+    | 'delete' expression
     | '!' expression
     | '~' expression
     | expression powerOperator expression
@@ -208,17 +200,17 @@ expression
     | expression '&' expression
     | expression '^' expression
     | expression '|' expression
-    | expression ('<' | '>' | '<=' | '>=') expression (plusminusOperator)?
-    | expression ('==' | '!=') expression
+    | expression ('<' | '>' | '<=' | '>=') expression
+    | expression comparison expression
     | expression '&&' expression
     | expression '||' expression
     | expression '?' expression ':' expression
     | expression ('=' | lvalueOperator) expression
     | variableDeclaration
-// TODO investigate this
-    | expression '(' callArguments ')'// WTF is that?
     | '{' nameValueList '}'
     ;
+
+newDynamicArrayExpression : 'new' typeName '[' ']' ('(' expression ')')? ;
 
 lvalueOperator : '|=' | '^=' | '&=' | plusLvalueOperator | minusLvalueOperator | mulLvalueOperator | divLvalueOperator | divRemLvalueOperator | '<<=' | '>>=' ;
 
@@ -252,8 +244,6 @@ block: '{' statement* '}' ;
 
 statement
     : block
-    | addressDeclaration ';'
-    | creatingContractViaNewStatement ';'
     | ifStatement
     | whileStatement
     | forStatement
@@ -266,22 +256,14 @@ statement
     | throwRevertStatement ';'
     | simpleStatement ';'
     | functionCallStatement ';'
+    | emitEventStatement ';'
     ;
 
-// TODO check if this expression also create dynamic arrays: `uint[] memory a = new uint[](7);`
-creatingContractViaNewStatement : identifier arrayLiteral? '=' 'new' identifier arrayLiteral? callArguments ';'? ;
-// should be part of expression
-//newContractExpression : 'new' functionCall ;
-
-// TODO add new dynamic array as expression
-//newDynamicArrayExpression : 'new' typeName '(' expression ')';
-// maybe it should be like
-//newDynamicArrayExpression : 'new' typeName '[' ']' '(' expression ')';
-
+emitEventStatement : 'emit' functionName callArguments? ;
 
 ifStatement : 'if' '(' ifCondition ')' statement ('else' statement)? ;
 
-ifCondition : expression identifier? comparison? expression? identifier? ;
+ifCondition : expression ;
 
 whileStatement : 'while' '(' whileCondition ')' statement ;
 
@@ -358,7 +340,6 @@ primaryExpression
     | stringLiteral
     | identifier
     | tupleExpression
-    | elementaryTypeNameExpression
     | addressNumber
     | numberLiteral
     | environmentalVariable
@@ -368,8 +349,6 @@ tupleExpression
     : '(' ( expression? ( ',' expression? )+ )? ')'
     | '[' ( expression? ( ',' expression? )+ )? ']'
     ;
-
-elementaryTypeNameExpression : elementaryTypeName ;
 
 //___auxiliary parameters___
 
@@ -534,8 +513,7 @@ arrayLiteral : ('[' arrayElement? (',' arrayElement)* ']')+ ;
 
 arrayElement: expression ;
 
-// TODO replace with (DecimalNumber | HexNumber) NumberUnit? ;
-numberLiteral : decimalNumber numberUnit? ;
+numberLiteral : (decimalNumber | hexNumber) numberUnit? ;
 
 decimalNumber : DecimalNumber ;
 
@@ -546,6 +524,8 @@ booleanLiteral : 'true' | 'false' ;
 numberUnit : 'wei' | 'szabo' | 'finney' | 'ether' | 'seconds' | 'minutes' | 'hours' | 'days' | 'weeks' | 'years' ;
 
 DecimalNumber : ( [0-9]+ ('.' [0-9]* )? | '.' [0-9]+ ) ( ('e'|'E') [0-9]+ )? ;
+
+hexNumber : HexNumber;
 
 HexNumber : ('0x'|'0X') HexCharacter+ ;
 
