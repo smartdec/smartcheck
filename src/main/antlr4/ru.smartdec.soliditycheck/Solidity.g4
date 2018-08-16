@@ -176,12 +176,12 @@ typeConversion : typeName '(' expression ')' ;
 
 expression
     : environmentalVariable
-    | typeConversion
     | expression '.' 'length'
     | expression '.' 'balance'
     | primaryExpression
     | expression '.' functionCall
     | functionCall
+    | typeConversion
     | expression '.' identifier
     | expression twoPlusMinusOperator
     | newDynamicArrayExpression
