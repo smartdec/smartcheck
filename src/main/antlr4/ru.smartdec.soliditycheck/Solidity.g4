@@ -12,7 +12,7 @@ version : versionConstraint versionConstraint? ;
 
 versionConstraint : versionOperator? versionLiteral ;
 
-versionOperator : '^' | '>=' | '>' | '<' | '<=' ;
+versionOperator : '~' | '^' | '>=' | '>' | '<' | '<=' ;
 
 versionLiteral: VersionLiteral ;
 
