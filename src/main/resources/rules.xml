@@ -33,7 +33,7 @@
                     <Severity>1</Severity>
                     <TruePositiveRate>2</TruePositiveRate>
                     <XPath>
-                        //typeConversion/typeName[elementaryTypeName[matches(text()[1],"^address$")]]/expression[primaryExpression/numberLiteral/decimalNumber][not(primaryExpression/numberLiteral/decimalNumber[matches(text()[1],"^0$")]) and not(primaryExpression/identifier[matches(text()[1],"^this$")])]
+                        //typeConversion[typeName[elementaryTypeName[matches(text()[1],"^address$")]]]/expression[primaryExpression/numberLiteral/decimalNumber][not(primaryExpression/numberLiteral/decimalNumber[matches(text()[1],"^0$")]) and not(primaryExpression/identifier[matches(text()[1],"^this$")])]
                     </XPath>
                 </Pattern>
                 <!-- фиксирует использование адреса address(0), кроме "!=address(0)" и "==address(0)", и кторе тех случаев, когда address(0) внутри event(внутренняя функция, название которой начинается с большой буквы)-->
@@ -44,8 +44,8 @@
                     <Severity>1</Severity>
                     <TruePositiveRate>1</TruePositiveRate>
                     <XPath>
-                        //expression[typeConversion/typeName[elementaryTypeName[matches(text()[1],"^address$")]]/expression/primaryExpression/numberLiteral/decimalNumber[matches(text()[1],"^0$")]]
-                        /parent::*[not(matches(text()[1],"^==|!=$"))][not(ancestor::functionCall[1]/identifier[matches(text()[1],"^[A-Z]")])]
+                        //expression[typeConversion[typeName[elementaryTypeName[matches(text()[1],"^address$")]]]/expression/primaryExpression/numberLiteral/decimalNumber[matches(text()[1],"^0$")]]
+                        /parent::*[not(comparison)][not(ancestor::functionCall[1]/functionName//identifier[matches(text()[1],"^[A-Z]")])]
                     </XPath>
                 </Pattern>
                 <!-- фиксирует использование адреса 0x0, кроме "!=0x0" и "==0x0", и кторе тех случаев, когда 0x0 внутри event(внутренняя функция, название которой начинается с большой буквы)-->
@@ -56,7 +56,7 @@
                     <Severity>1</Severity>
                     <TruePositiveRate>1</TruePositiveRate>
                     <XPath>
-                        //addressNumber[matches(text()[1],"^0x0$")]/parent::*[parent::*[parent::*[not(matches(text()[1],"^==|!=$"))]]][not(ancestor::functionCall[1]/functionName//identifier[matches(text()[1],"^[A-Z]")])]
+                        //addressNumber[matches(text()[1],"^0x0$")]/parent::*[parent::*[parent::*[not(comparison)]]][not(ancestor::functionCall[1]/functionName//identifier[matches(text()[1],"^[A-Z]")])]
                     </XPath>
                 </Pattern>
             </Patterns>
@@ -98,7 +98,7 @@
                 </Categories>
                 <Severity>1</Severity>
                 <XPath>
-                //expression[expression[matches(text()[1],".balance$")]][matches(text()[1],"^==|!=$")]
+                //expression[expression[matches(text()[1],".balance$")]][comparison]
                 </XPath>
             </Pattern>
         </Patterns>
@@ -167,7 +167,7 @@
                 </Categories>
                 <Severity>1</Severity>
                 <XPath>
-                    //functionCall/identifier[matches(text()[1],"^sha3$")] |
+                    //functionCall/functionName//identifier[matches(text()[1],"^sha3$")] |
                     //functionalAssemblyExpression/identifier[matches(text()[1],"sha3")]
                 </XPath>
             </Pattern>
@@ -500,7 +500,7 @@
                 </Categories>
                 <Severity>2</Severity>
                 <XPath>
-                    //expression[matches(text()[1],"^==|!=$") and expression//environmentalVariable[matches(text()[1],"^block.timestamp|now$")]]
+                    //expression[comparison and expression//environmentalVariable[matches(text()[1],"^block.timestamp|now$")]]
                 </XPath>
             </Pattern>
             <!--Фиксируется случаи, когда в вызове функции в качестве аргусентов передаются block.timestamp или now. А также, когда в выражении используется "= и далее выражение содержащее  block.timestamp или now" -->
@@ -536,7 +536,7 @@
                     <Category>Solidity</Category>
                 </Categories>
                 <Severity>2</Severity>
-                <XPath>//environmentalVariable[matches(text()[1],"^tx.origin$")]/parent::*[parent::*[not(matches(text()[1],"^==|!=$") and expression/environmentalVariable[matches(text()[1],"^msg.sender$")])]]</XPath>
+                <XPath>//environmentalVariable[matches(text()[1],"^tx.origin$")]/parent::*[parent::*[not(comparison and expression/environmentalVariable[matches(text()[1],"^msg.sender$")])]]</XPath>
             </Pattern>
         </Patterns>
     </Rule>
@@ -719,11 +719,11 @@
                 <XPath>
                     //functionDefinition[stateMutability/viewType and block/descendant-or-self::*[
                         <!--Using selfdestruct and it's alias suicide:-->
-                        functionCall/identifier[matches(text()[1],"^selfdestruct|suicide$")]
+                        functionCall/functionName//identifier[matches(text()[1],"^selfdestruct|suicide$")]
                         <!--Sending Ether via calls:-->
-                        or functionCall/identifier[matches(text()[1],"^send|transfer$")]
+                        or functionCall/functionName//identifier[matches(text()[1],"^send|transfer$")]
                         <!--Using low-level calls:-->
-                        or functionCall/identifier[matches(text()[1],"^call|delegatecall|callcode$")]
+                        or functionCall/functionName//identifier[matches(text()[1],"^call|delegatecall|callcode$")]
                         <!--Using inline assembly that contains certain opcodes:-->
                         or inlineAssemblyStatement
                     ]
