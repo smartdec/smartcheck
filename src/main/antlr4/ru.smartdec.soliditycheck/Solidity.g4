@@ -210,7 +210,7 @@ expression
     | '{' nameValueList '}'
     ;
 
-newDynamicArrayExpression : 'new' typeName '[' ']' ('(' expression ')')? ;
+newDynamicArrayExpression : 'new' (typeName '[' ']' | 'string' | 'bytes') ('(' expression ')')? ;
 
 lvalueOperator : '|=' | '^=' | '&=' | plusLvalueOperator | minusLvalueOperator | mulLvalueOperator | divLvalueOperator | divRemLvalueOperator | '<<=' | '>>=' ;
 
