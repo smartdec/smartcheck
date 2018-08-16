@@ -255,7 +255,6 @@ statement
     | returnStatement ';'
     | throwRevertStatement ';'
     | simpleStatement ';'
-    | functionCallStatement ';'
     | emitEventStatement ';'
     ;
 
@@ -293,8 +292,6 @@ returnStatement : 'return'
 throwRevertStatement : 'throw' | 'revert' ('(' stringLiteral? ')')? ;
 
 simpleStatement : variableDeclarationStatement | expressionStatement ;
-
-functionCallStatement : functionCall ;
 
 expressionStatement : expression ;
 
