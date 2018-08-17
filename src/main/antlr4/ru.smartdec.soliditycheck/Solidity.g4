@@ -302,31 +302,64 @@ variableDeclarationStatement
 
 //___Assembler___
 
-inlineAssemblyBlock : '{' assemblyStatement* '}' ;
+inlineAssemblyBlock : '{' assemblyItem* '}' ;
 
-assemblyStatement : assemblyItem ;
+assemblyItem
+    : identifier
+    | inlineAssemblyBlock
+    | assemblyExpression
+    | assemblyLocalDefinition
+    | assemblyAssignment
+    | assemblyStackAssignment
+    | labelDefinition
+    | assemblySwitch
+    | assemblyFunctionDefinition
+    | assemblyFor
+    | assemblyIf
+    | 'break'
+    | 'continue'
+    | subAssembly
+    | numberLiteral
+    | StringLiteral
+    | HexLiteral
+    ;
 
-assemblyItem : identifier | assemblyItemCase | assemblySwitchStatement | assemblyItemDefault | functionalAssemblyExpression
-    | inlineAssemblyBlock | assemblyLabels | assemblyFunctionCall | assemblerLocalVariables | assemblerLoopAndLocalVariables
-    | addressNumber | numberLiteral | StringLiteral | HexLiteral | '(' assemblyItem ')' ;
+assemblyExpression : assemblyCall | assemblyLiteral ;
 
-assemblyItemCase : 'case' primaryExpression ':'? inlineAssemblyBlock ;
+assemblyCall : ('return' | 'address' | 'byte' | 'revert' | identifier) ('(' assemblyExpression? (',' assemblyExpression)* ')')? ;
 
-assemblyItemDefault : 'default' ':'? inlineAssemblyBlock ;
+assemblyLocalDefinition : 'let' assemblyIdentifierOrList (':=' assemblyExpression)? ;
 
-assemblySwitchStatement : 'switch' (primaryExpression | functionalAssemblyExpression) ;
+assemblyAssignment : assemblyIdentifierOrList ':=' assemblyExpression ;
 
-assemblyLabels : 'let' (identifier | '(' identifier ')') ':=' (functionalAssemblyExpression | primaryExpression) ;
+assemblyIdentifierOrList : identifier | '(' assemblyIdentifierList ')' ;
 
-assemblerLocalVariables : identifier ':=' (elementaryTypeNameAssemblyExpression | functionalAssemblyExpression | primaryExpression) | '=:' identifier ;
+assemblyIdentifierList : identifier (',' identifier)* ;
 
-assemblerLoopAndLocalVariables : 'for' '{' assemblyLabels '}' functionalAssemblyExpression inlineAssemblyBlock* ;
+assemblyStackAssignment : '=:' identifier ;
 
-functionalAssemblyExpression : (identifier | 'return') ('('  (assemblyItem ','? )* ')')? ('=:' identifier)? ;
+labelDefinition : identifier ':' ;
 
-elementaryTypeNameAssemblyExpression : (elementaryTypeName) ('('  (assemblyItem ','? )* ')')? ('=:' identifier)? ;
+assemblySwitch : 'switch' assemblyExpression assemblyCase* ;
 
-assemblyFunctionCall : 'function' identifier '(' (assemblyItem ','? )* ')' '->' identifier inlineAssemblyBlock ;
+assemblyCase
+    : 'case' assemblyLiteral inlineAssemblyBlock
+    | 'default' inlineAssemblyBlock
+    ;
+
+assemblyFunctionDefinition : 'function' identifier '(' assemblyIdentifierList? ')'
+    assemblyFunctionReturns? inlineAssemblyBlock ;
+
+assemblyFunctionReturns : ('->' assemblyIdentifierList) ;
+
+assemblyFor : 'for' (inlineAssemblyBlock | assemblyExpression)
+    assemblyExpression (inlineAssemblyBlock | assemblyExpression) inlineAssemblyBlock ;
+
+assemblyIf : 'if' assemblyExpression inlineAssemblyBlock ;
+
+assemblyLiteral : StringLiteral | DecimalNumber | HexNumber | HexLiteral ;
+
+subAssembly : 'assembly' identifier inlineAssemblyBlock ;
 
 //___expressions___
 
