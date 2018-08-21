@@ -437,7 +437,7 @@
                 </Categories>
                 <Severity>1</Severity>
                 <XPath>
-                    //sourceUnit[pragmaDirective/pragmaValue/version/versionConstraint[versionLiteral &gt;= "0.4.0"]]/contractDefinition/contractPartDefinition/functionFallBackDefinition/block[count(descendant-or-self::statement)=1]
+                    //sourceUnit[pragmaDirective/pragmaValue/version[versionLiteral &gt;= "0.4.0"]]/contractDefinition/contractPartDefinition/functionFallBackDefinition/block[count(descendant-or-self::statement)=1]
                     [statement/throwRevertStatement]
                 </XPath>
             </Pattern>
