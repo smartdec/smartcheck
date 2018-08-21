@@ -8,13 +8,9 @@ pragmaName : identifier ;
 
 pragmaValue : version | expression ;
 
-version : versionConstraint versionConstraint? ;
-
-versionConstraint : versionOperator? versionLiteral ;
+version : versionOperator? versionLiteral ;
 
 versionOperator : '~' | '^' | '>=' | '>' | '<' | '<=' ;
-
-versionLiteral: VersionLiteral ;
 
 importDirective
     : 'import' StringLiteral ('as' identifier)? ';'
@@ -394,8 +390,6 @@ identifier : Identifier | placeholderStatement | 'value' | 'from' | 'this' | 'ba
     | 'length' | 'block' | 'timestamp' | 'tx' | 'origin' | 'blockhash' | 'coinbase' | 'difficulty' | 'gaslimit'
     | 'number' | 'data' | 'sig' | 'now' | 'gasprice' | 'emit' | 'constructor' ;
 
-Identifier : IdentifierStart IdentifierPart* ;
-
 elementaryTypeName : 'address' | 'bool' | 'string' | 'var'
     |'int' | 'int8' | 'int16' | 'int24' | 'int32' | 'int40' | 'int48' | 'int56' | 'int64' | 'int72'
     | 'int80' | 'int88' | 'int96' | 'int104' | 'int112' | 'int120' | 'int128' | 'int136' | 'int144' | 'int152' | 'int160' | 'int168'
@@ -548,15 +542,19 @@ numberLiteral : (decimalNumber | hexNumber) numberUnit? ;
 
 decimalNumber : DecimalNumber ;
 
-VersionLiteral : [0-9]+ (' ')? '.' [0-9]+  (' ')? '.' [0-9]+ ;
+DecimalNumber : (Digits | Digits '.' | '.' Digits | Digits '.' Digits) (('e'|'E') Digits)?;
+
+Identifier : IdentifierStart IdentifierPart* ;
+
+Digits : [0-9]+ ;
+
+versionLiteral : DecimalNumber  ('.'? DecimalNumber)? ('.'? DecimalNumber)? ;
 
 booleanLiteral : 'true' | 'false' ;
 
 numberUnit : 'wei' | 'szabo' | 'finney' | 'ether' | 'seconds' | 'minutes' | 'hours' | 'days' | 'weeks' | 'years' ;
 
-DecimalNumber : ( [0-9]+ ('.' [0-9]* )? | '.' [0-9]+ ) ( ('e'|'E') [0-9]+ )? ;
-
-hexNumber : HexNumber;
+hexNumber : HexNumber ;
 
 HexNumber : ('0x'|'0X') HexCharacter+ ;
 
