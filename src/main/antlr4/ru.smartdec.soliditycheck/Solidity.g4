@@ -331,7 +331,7 @@ assemblyCall : ('return' | 'address' | 'byte' | 'revert' | identifier) ('(' asse
 
 assemblyLocalDefinition : 'let' assemblyIdentifierOrList (':=' assemblyExpression)? ;
 
-assemblyAssignment : assemblyIdentifierOrList ':=' assemblyExpression ;
+assemblyAssignment : assemblyIdentifierOrList (':' '=' | ':=') assemblyExpression ;
 
 assemblyIdentifierOrList : identifier | '(' assemblyIdentifierList ')' ;
 
