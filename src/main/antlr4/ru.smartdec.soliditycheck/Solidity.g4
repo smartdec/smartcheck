@@ -71,7 +71,7 @@ stateVariableDeclaration : typeName (visibleType | constantType)* identifier ('=
 
 functionFallBackDefinition : 'function' parameterList
     (stateMutability | visibleType | functionCall | identifier)*
-    (block | ';') ;
+    returnsParameters? (block | ';') ;
 
 eventDefinition : 'event' identifier indexedParameterList 'anonymous'? ';' ;
 
@@ -181,6 +181,7 @@ expression
     | primaryExpression
     | expression '.' functionCall
     | functionCall
+    | expression callArguments
     | typeConversion
     | expression '.' identifier
     | expression twoPlusMinusOperator
