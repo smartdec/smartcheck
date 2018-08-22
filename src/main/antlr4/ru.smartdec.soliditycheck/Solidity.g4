@@ -174,9 +174,9 @@ expression
     : environmentalVariable
     | expression '.' 'length'
     | expression '.' 'balance'
-    | primaryExpression
     | expression '.' functionCall
     | functionCall
+    | primaryExpression
     | expression callArguments
     | typeConversion
     | expression '.' identifier
