@@ -2,7 +2,7 @@ grammar Solidity;
 
 sourceUnit : (pragmaDirective | importDirective | contractDefinition | libraryDefinition | interfaceDefinition)* EOF ;
 
-pragmaDirective : 'pragma' pragmaName pragmaValue ';' ;
+pragmaDirective : 'pragma' pragmaName pragmaValue+ ';' ;
 
 pragmaName : identifier ;
 
@@ -279,6 +279,7 @@ breakStatement : 'break' ;
 
 returnStatement : 'return'
     ( // no return value
+    | throwRevertStatement // return revert() is possible!
     | expression // expression without parentheses
     | '(' ')' // empty parentheses
     | '(' expression ','? ')' // one expression with trailing comma is allowed
@@ -589,6 +590,6 @@ SingleQuotedStringCharacter : ~['\r\n\\] | ('\\' .) ;
 
 WS : [ \t\r\n\u000C]+ -> skip ;
 
-COMMENT : '/*' .*? '*/' -> channel(HIDDEN) ;
+COMMENT : '/*' .*? ('*/'|EOF) -> channel(HIDDEN) ;
 
 LINE_COMMENT : '//' ~[\r\n]* -> channel(HIDDEN) ;
