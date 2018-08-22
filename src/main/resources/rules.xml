@@ -157,7 +157,7 @@
                 <Severity>1</Severity>
                 <XPath>
                     //functionCall/functionName//identifier[matches(text()[1],"suicide")] |
-                    //assemblyItem//identifier[matches(text()[1],"suicide")]
+                    //assemblyCall/identifier[matches(text()[1],"suicide")]
                 </XPath>
             </Pattern>
             <!--Фиксирует конструкцию: "sha3"-->
@@ -168,7 +168,7 @@
                 <Severity>1</Severity>
                 <XPath>
                     //functionCall/functionName//identifier[matches(text()[1],"^sha3$")] |
-                    //functionalAssemblyExpression/identifier[matches(text()[1],"sha3")]
+                    //assemblyCall/identifier[matches(text()[1],"sha3")]
                 </XPath>
             </Pattern>
             <!--Фиксирует конструкцию: "throw"-->
@@ -622,7 +622,9 @@
                 </Categories>
                 <Severity>1</Severity>
                 <XPath>
-                    //statement/inlineAssemblyStatement/inlineAssemblyBlock/assemblyStatement[not(assemblyItem/assemblerLocalVariables[matches(text()[1],"^:=$")][functionalAssemblyExpression/identifier[matches(text()[1],"^extcodesize$")]])]/ancestor::inlineAssemblyStatement
+                    //statement/inlineAssemblyStatement/inlineAssemblyBlock
+                        [not(assemblyItem/assemblyAssignment[assemblyExpression/assemblyCall/identifier[matches(text()[1],"^extcodesize$")]])]
+                    /ancestor::inlineAssemblyStatement
                 </XPath>
             </Pattern>
         </Patterns>
