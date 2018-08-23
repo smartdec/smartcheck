@@ -117,21 +117,6 @@
         </Patterns>
     </Rule>
     <Rule>
-        <RuleId>SOLIDITY_CALL_VALUE</RuleId>
-        <Patterns>
-            <!-- фиксирует конструкцию: "call.value()()"-->
-            <Pattern patternId="cc2e04">
-                <Categories>
-                    <Category>Solidity</Category>
-                </Categories>
-                <Severity>3</Severity>
-                <XPath>
-                    //functionCall[functionName//identifier[matches(text()[1],"^call$")] and value[matches(text()[1],"\(\)$")] and callArguments[matches(text()[1],"^\(\)$")]]
-                </XPath>
-            </Pattern>
-        </Patterns>
-    </Rule>
-    <Rule>
         <RuleId>SOLIDITY_DELETE_FOR_ARRAYS</RuleId>
         <Patterns>
             <!--Фиксирует ... .length=0-->
