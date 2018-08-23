@@ -203,7 +203,7 @@
                     <Category>Solidity</Category>
                 </Categories>
                 <Severity>3</Severity>
-                <XPath>//ifStatement[ifCondition//externalFunctionCall][block/statement//throwRevertStatement]</XPath>
+                <XPath>//ifStatement[condition//externalFunctionCall][block/statement//throwRevertStatement]</XPath>
             </Pattern> -->
             <!-- пока отключаем -->
             <!-- фиксирует конструкцию: "for (... внешний вызов ...)"-->
@@ -325,7 +325,7 @@
                 </Categories>
                 <Severity>2</Severity>
                 <XPath>
-                    //forStatement[expression[2][matches(text()[1],"&lt;|&lt; =")]/expression[2][not(primaryExpression/numberLiteral/decimalNumber)]][expression[3][twoPlusMinusOperator/incrementOperator or lvalueOperator/plusLvalueOperator or expression[2]/plusminusOperator/plusOperator]]
+                    //forStatement[condition/expression[matches(text()[1],"&lt;|&lt; =")]/expression[2][not(primaryExpression/numberLiteral/decimalNumber)]][expression[2][twoPlusMinusOperator/incrementOperator or lvalueOperator/plusLvalueOperator or expression[2]/plusminusOperator/plusOperator]]
                 </XPath>
             </Pattern>
             <!-- for (<инициализация счетчика не числом>; <счетчик больше чем что угодно>; <уменьшение счетчика>)-->
@@ -335,7 +335,7 @@
                 </Categories>
                 <Severity>2</Severity>
                 <XPath>
-                    //forStatement[expression[1][not(variableDeclaration/expression/primaryExpression/numberLiteral/decimalNumber)]][expression[2][matches(text()[1],"&gt;|&gt; =")]][expression[3][twoPlusMinusOperator/decrementOperator or lvalueOperator/minusLvalueOperator or expression[2]/plusminusOperator/minusOperator]]
+                    //forStatement[expression[1][not(variableDeclaration/expression/primaryExpression/numberLiteral/decimalNumber)]][condition/expression[matches(text()[1],"&gt;|&gt; =")]][expression[2][twoPlusMinusOperator/decrementOperator or lvalueOperator/minusLvalueOperator or expression[2]/plusminusOperator/minusOperator]]
                 </XPath>
             </Pattern>
             <!--Фиксируется конструкция: while (в условии все, кроме вызова функции и числа)-->
@@ -344,14 +344,14 @@
                     <Category>Solidity</Category>
                 </Categories>
                 <Severity>1</Severity>
-                <XPath>//whileStatement/whileCondition[not(descendant-or-self::functionCall) and not(expression/expression/primaryExpression/numberLiteral/decimalNumber)]</XPath>            </Pattern>
+                <XPath>//whileStatement/condition[not(descendant-or-self::functionCall) and not(expression/expression/primaryExpression/numberLiteral/decimalNumber)]</XPath>            </Pattern>
             <!--Фиксируется конструкция: while (в условии вызов функции)-->
             <Pattern patternId="38f6c7">
                 <Categories>
                     <Category>Solidity</Category>
                 </Categories>
                 <Severity>2</Severity>
-                <XPath>//whileStatement[whileCondition/descendant::functionCall]</XPath>
+                <XPath>//whileStatement[condition/descendant::functionCall]</XPath>
             </Pattern>
         </Patterns>
     </Rule>
@@ -382,7 +382,7 @@
                     <Category>Solidity</Category>
                 </Categories>
                 <Severity>1</Severity>
-                <XPath>//pragmaDirective/pragmaValue//versionOperator</XPath>
+                <XPath>//pragmaDirective/pragmaSolidity//versionOperator</XPath>
             </Pattern>
         </Patterns>
     </Rule>
@@ -437,7 +437,7 @@
                 </Categories>
                 <Severity>1</Severity>
                 <XPath>
-                    //sourceUnit[pragmaDirective/pragmaValue/version[versionLiteral &gt;= "0.4.0"]]/contractDefinition/contractPartDefinition/functionFallBackDefinition/block[count(descendant-or-self::statement)=1]
+                    //sourceUnit[pragmaDirective/pragmaSolidity/version[versionLiteral &gt;= "0.4.0"]]/contractDefinition/contractPartDefinition/functionFallBackDefinition/block[count(descendant-or-self::statement)=1]
                     [statement/throwRevertStatement]
                 </XPath>
             </Pattern>
@@ -484,7 +484,7 @@
                 </Categories>
                 <Severity>3</Severity>
                 <XPath>
-                    //functionCall/functionName//identifier[text()[1]="send"][ancestor::ifCondition/parent::*[statement//throwRevertStatement] or ancestor::functionCall/functionName//identifier[matches(text()[1],"^require|assert$")]]
+                    //functionCall/functionName//identifier[text()[1]="send"][ancestor::ifStatement/condition/parent::*[statement//throwRevertStatement] or ancestor::functionCall/functionName//identifier[matches(text()[1],"^require|assert$")]]
                 </XPath>
             </Pattern>
         </Patterns>
@@ -565,7 +565,7 @@
                 </Categories>
                 <Severity>3</Severity>
                 <XPath>
-                    //functionCall[functionName//identifier[matches(text()[1],"^call|delegatecall|send|callcode$")] and not(ancestor::ifCondition) and not(ancestor::functionCall[functionName//identifier[matches(text()[1],"^require|assert$")]]) and not(ancestor::returnStatement) and not(ancestor::functionCall) and not(ancestor::variableDeclarationStatement)]
+                    //functionCall[functionName//identifier[matches(text()[1],"^call|delegatecall|send|callcode$")] and not(ancestor::ifStatement) and not(ancestor::functionCall[functionName//identifier[matches(text()[1],"^require|assert$")]]) and not(ancestor::returnStatement) and not(ancestor::functionCall) and not(ancestor::variableDeclarationStatement)]
                 </XPath>
             </Pattern>
         </Patterns>
@@ -581,7 +581,7 @@
             <Severity>1</Severity>
             <TruePositiveRate>3</TruePositiveRate>
             <XPath>
-                //forStatement/expression[matches(text()[1],">=")][expression/primaryExpression/numberLiteral/decimalNumber[matches(text()[1],"^0$")]]
+                //forStatement/condition/expression[matches(text()[1],">=")][expression[2]/primaryExpression/numberLiteral/decimalNumber[matches(text()[1],"^0$")]]
             </XPath>
         </Pattern>
             <!--Фиксирует конструкцию: "...>=0"-->
@@ -660,7 +660,7 @@
                 </Categories>
                 <Severity>2</Severity>
                 <TruePositiveRate>3</TruePositiveRate>
-                <XPath>//forStatement[expression[1]//typeName/elementaryTypeName[matches(text()[1],"^var$")]][expression[2]/expression/primaryExpression[numberLiteral/decimalNumber[matches(text()[1],"^[0-9]+$")]&gt; 255]][expression[3]/twoPlusMinusOperator/incrementOperator]
+                <XPath>//forStatement[expression[1]//typeName/elementaryTypeName[matches(text()[1],"^var$")]][condition/expression/expression/primaryExpression[numberLiteral/decimalNumber[matches(text()[1],"^[0-9]+$")]&gt; 255]][expression[2]/twoPlusMinusOperator/incrementOperator]
                 </XPath>
             </Pattern>
         </Patterns>
