@@ -279,7 +279,6 @@ breakStatement : 'break' ;
 
 returnStatement : 'return'
     ( // no return value
-    | throwRevertStatement // return revert() is possible!
     | expression // expression without parentheses
     | '(' ')' // empty parentheses
     | '(' expression ','? ')' // one expression with trailing comma is allowed
@@ -389,7 +388,7 @@ identifierList : '(' identifier? (',' identifier? )* ')' ;
 //items after Identifier are listed for lexer to understand that these words can be used as identifier
 identifier : Identifier | placeholderStatement | 'value' | 'from' | 'this' | 'balance' | 'sender' | 'msg' | 'gas'
     | 'length' | 'block' | 'timestamp' | 'tx' | 'origin' | 'blockhash' | 'coinbase' | 'difficulty' | 'gaslimit'
-    | 'number' | 'data' | 'sig' | 'now' | 'gasprice' | 'emit' | 'constructor' ;
+    | 'number' | 'data' | 'sig' | 'now' | 'gasprice' | 'emit' | 'constructor' | 'revert' ;
 
 elementaryTypeName : 'address' | 'bool' | 'string' | 'var'
     |'int' | 'int8' | 'int16' | 'int24' | 'int32' | 'int40' | 'int48' | 'int56' | 'int64' | 'int72'
