@@ -131,9 +131,9 @@ functionName : identifier | newConrtact | '(' functionName ')' ;
 
 newConrtact : 'new' identifier ;
 
-value : '.' 'value' '(' expression? ')' ;
+value : '.' 'value' '(' expression ')' ;
 
-gas : '.' 'gas' '(' expression? ')' ;
+gas : '.' 'gas' '(' expression ')' ;
 
 plusminusOperator : minusOperator | plusOperator ;
 
@@ -254,9 +254,7 @@ statement
     | emitEventStatement ';'
     ;
 
-emitEventStatement : 'emit' functionName callArguments? ;
-
-ifStatement : 'if' '(' ifCondition ')' statement ('else' statement)? ;
+emitEventStatement : 'emit' functionName callArguments ;
 
 ifStatement : 'if' '(' condition ')' statement ('else' statement)? ;
 
