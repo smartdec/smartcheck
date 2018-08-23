@@ -2,13 +2,13 @@ grammar Solidity;
 
 sourceUnit : (pragmaDirective | importDirective | contractDefinition | libraryDefinition | interfaceDefinition)* EOF ;
 
-pragmaDirective : 'pragma' pragmaName pragmaValue+ ';' ;
+pragmaDirective : 'pragma' (pragmaSolidity | pragmaExperimental) ';' ;
 
-pragmaName : identifier ;
+pragmaSolidity : 'solidity' version+;
 
-pragmaValue : version | expression ;
+pragmaExperimental : 'experimental' expression;
 
-version : versionOperator? versionLiteral ;
+version : versionOperator? (versionLiteral | StringLiteral ) ;
 
 versionOperator : '~' | '^' | '>=' | '>' | '<' | '<=' ;
 
@@ -258,17 +258,17 @@ emitEventStatement : 'emit' functionName callArguments? ;
 
 ifStatement : 'if' '(' ifCondition ')' statement ('else' statement)? ;
 
-ifCondition : expression ;
+ifStatement : 'if' '(' condition ')' statement ('else' statement)? ;
 
-whileStatement : 'while' '(' whileCondition ')' statement ;
+whileStatement : 'while' '(' condition ')' statement ;
 
-whileCondition: expression ;
-
-forStatement : 'for' '(' expression? ';' expression? ';' expression? ')' statement ;
+forStatement : 'for' '(' expression? ';' condition? ';' expression? ')' statement ;
 
 inlineAssemblyStatement : 'assembly' inlineAssemblyBlock ;
 
-doWhileStatement : 'do' statement 'while' '(' expression ')' ;
+doWhileStatement : 'do' statement 'while' '(' condition ')' ;
+
+condition : expression ;
 
 placeholderStatement : '_' ;
 
@@ -387,7 +387,7 @@ identifierList : '(' identifier? (',' identifier? )* ')' ;
 //items after Identifier are listed for lexer to understand that these words can be used as identifier
 identifier : Identifier | placeholderStatement | 'value' | 'from' | 'this' | 'balance' | 'sender' | 'msg' | 'gas'
     | 'length' | 'block' | 'timestamp' | 'tx' | 'origin' | 'blockhash' | 'coinbase' | 'difficulty' | 'gaslimit'
-    | 'number' | 'data' | 'sig' | 'now' | 'gasprice' | 'emit' | 'constructor' | 'revert' ;
+    | 'number' | 'data' | 'sig' | 'now' | 'gasprice' | 'emit' | 'constructor' | 'revert' | 'solidity' | 'experimental' ;
 
 elementaryTypeName : 'address' | 'bool' | 'string' | 'var'
     |'int' | 'int8' | 'int16' | 'int24' | 'int32' | 'int40' | 'int48' | 'int56' | 'int64' | 'int72'
