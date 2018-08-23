@@ -67,7 +67,7 @@ stateVariableDeclaration : typeName (visibleType | constantType)* identifier ('=
 
 functionFallBackDefinition : 'function' parameterList
     (stateMutability | visibleType | functionCall | identifier)*
-    returnsParameters? (block | ';') ;
+    returnsParameters? (block | ';') ; // returnsParameters? added for compatibility with old compiler versions
 
 eventDefinition : 'event' identifier indexedParameterList 'anonymous'? ';' ;
 
@@ -102,12 +102,11 @@ constantType : 'constant' ;
 payableType : 'payable' ;
 
 typeName
-    : '(' typeName ')'
+    : '(' typeName ')' // ignored parentheses for typeConversion, e.g. uint x = (uint)(y);
     | elementaryTypeName
     | userDefinedTypeName
     | mappingSt
     | typeName '[' expression? ']'
-    | typeName '(' expression? ')'
     | functionTypeName
     ;
 
