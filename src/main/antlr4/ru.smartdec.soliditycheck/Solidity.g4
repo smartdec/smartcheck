@@ -2,19 +2,15 @@ grammar Solidity;
 
 sourceUnit : (pragmaDirective | importDirective | contractDefinition | libraryDefinition | interfaceDefinition)* EOF ;
 
-pragmaDirective : 'pragma' pragmaName pragmaValue ';' ;
+pragmaDirective : 'pragma' (pragmaSolidity | pragmaExperimental) ';' ;
 
-pragmaName : identifier ;
+pragmaSolidity : 'solidity' version+;
 
-pragmaValue : version | expression ;
+pragmaExperimental : 'experimental' expression;
 
-version : versionConstraint versionConstraint? ;
+version : versionOperator? (versionLiteral | StringLiteral ) ;
 
-versionConstraint : versionOperator? versionLiteral ;
-
-versionOperator : '^' | '>=' | '>' | '<' | '<=' ;
-
-versionLiteral: VersionLiteral ;
+versionOperator : '~' | '^' | '>=' | '>' | '<' | '<=' ;
 
 importDirective
     : 'import' StringLiteral ('as' identifier)? ';'
@@ -65,44 +61,36 @@ functionDefinition : ('function' identifier | 'constructor') parameterList
 
 returnsParameters : 'returns' parameterList ;
 
-// TODO simplify as hell
-variableDeclaration : typeName storageLocation? identifier
-    ('=' 'new'? (typeConversion | identifier '(')? expression ')'? )? ;
-//variableDeclaration : typeName identifier ('=' expression )?
+variableDeclaration : typeName storageLocation? identifier ('=' expression)? ;
 
-
-stateVariableDeclaration : (typeName (visibleType | constantType)* identifier ('='? expression | (identifier '(' expression ')') )? | typeName '(' numberLiteral ')') ';' ;
-
-addressDeclaration : 'address'  (visibleType | constantType)* identifier ('='? (addressNumber | expression | (identifier '(' expression ')') ) )? ;
-
-addressCall :'address' '(' expression ')' ;
+stateVariableDeclaration : typeName (visibleType | constantType)* identifier ('=' expression)? ';' ;
 
 functionFallBackDefinition : 'function' parameterList
-    (stateMutability |visibleType | functionCall | identifier)*
-    (block | ';') ;
+    (stateMutability | visibleType | functionCall | identifier)*
+    returnsParameters? (block | ';') ; // returnsParameters? added for compatibility with old compiler versions
 
 eventDefinition : 'event' identifier indexedParameterList 'anonymous'? ';' ;
 
 enumDefinition : 'enum' identifier '{' enumValue (',' enumValue)* '}' ;
 
 environmentalVariable
-    : 'this'
-    | 'msg.value'
-    | 'msg.gas'
-    | 'msg.sender'
-    | 'block.timestamp'
-    | 'tx.origin'
-    | 'block.blockhash'
-    | 'block.coinbase'
-    | 'block.difficulty'
-    | 'block.gaslimit'
-    | 'block.number'
-    | 'block.blockhash' '(' argument ')'
-    | 'block.coinbase' '(' argument ')'
-    | 'msg.data'
-    | 'msg.sig'
+    : 'block' '.' 'coinbase'
+    | 'block' '.' 'difficulty'
+    | 'block' '.' 'gaslimit'
+    | 'block' '.' 'number'
+    | 'block' '.' 'timestamp'
+    | 'block' '.' 'blockhash' '(' expression ')'
+    | 'block' '.' 'coinbase' '(' expression ')'
+    | 'blockhash' '(' expression ')'
+    | 'msg' '.' 'data'
+    | 'msg' '.' 'gas'
+    | 'msg' '.' 'sender'
+    | 'msg' '.' 'sig'
+    | 'msg' '.' 'value'
     | 'now'
-    | 'tx.gasprice'
+    | 'this'
+    | 'tx' '.' 'origin'
+    | 'tx' '.' 'gasprice'
     ;
 
 //___Types___
@@ -114,12 +102,11 @@ constantType : 'constant' ;
 payableType : 'payable' ;
 
 typeName
-    : elementaryTypeName
-    | functionCall
+    : '(' typeName ')' // ignored parentheses for typeConversion, e.g. uint x = (uint)(y);
+    | elementaryTypeName
     | userDefinedTypeName
     | mappingSt
     | typeName '[' expression? ']'
-    | typeName '(' expression? ')'
     | functionTypeName
     ;
 
@@ -128,83 +115,25 @@ userDefinedTypeName : identifier ('.' identifier )* ;
 functionTypeName : 'function' parameterList (visibleType | stateMutability)*
     ('returns' parameterList)? ;
 
-stateMutability : pureType | constantType | viewType | payableType;
+stateMutability : pureType | constantType | viewType | payableType ;
 
-pureType : 'pure';
+pureType : 'pure' ;
 
-viewType : 'view';
+viewType : 'view' ;
 
 mappingSt : 'mapping' '(' typeName '=>' typeName ')' ;
 
 //___functions_call
-// TODO replace whis shit with simple structure below
-functionCall:  internalFunctionCall | externalFunctionCall ;
 
-internalFunctionCall : 'emit'? functionName callArguments+ ;
+functionCall: functionName (value | gas)* callArguments ;
 
-externalFunctionCall : externalFunctionCallThis | externalFunctionCallNotThis ;
+functionName : identifier | newConrtact | '(' functionName ')' ;
 
-externalFunctionCallThis : 'this' functionNameAndArgs ;
+newConrtact : 'new' identifier ;
 
-externalFunctionCallNotThis : callObjectExpression functionNameAndArgs ;
+value : '.' 'value' '(' expression ')' ;
 
-functionNameAndArgs
-    :
-    ( '.' functionName callArguments*
-    | '.' 'value' ('(' callArguments* ')')?
-    | '.' 'gas' ('(' callArguments* ')')?
-    | callArguments
-    )+
-    ;
-
-// proper ___functions_call
-// functionCall : identifier (value | gas)* '(' callArguments ')';
-//value : '.' 'value' '(' expression ')';
-//gas : '.' 'gas' '(' expression ')';
-
-// TODO remove this callObject shit
-callObjectExpression : callObjectExpressionComplicated | callObjectExpressionSimple ;
-
-callObjectExpressionSimple
-    : environmentalVariable
-    | addressCall
-    | '(' 'new' callObject ')' callObject?
-    | internalFunctionCall
-    | identifier
-    | (identifier? arrayLiteral)+
-    | (identifier? arrayLiteral)+ '('+ identifier? arrayLiteral ')'* ')'
-    | identifier '[' identifier ']'
-    | addressNumber
-    ;
-
-callObjectExpressionComplicated : '(' callObject ')' ;
-
-callObject
-    : callObjectExpressionSimple
-    | environmentalVariable
-    | addressCall
-    | '(' 'new' callObject ')' callObject?
-    | identifier
-    | (identifier? arrayLiteral)+
-    | (identifier? arrayLiteral)+ '('+ identifier? arrayLiteral ')'* ')'
-    | identifier '[' identifier ']'
-    | addressNumber
-    | plusminusOperator callObject
-    | callObject (muldivOperator | plusminusOperator | '<<' | '>>' | '&' | '^' | '|' | '<' | '>' | '<=' | '>=' | '==' | '!=') callObject
-    | callObject ('&&' | '||') callObject
-    | primaryExpression
-    | callObject twoPlusMinusOperator
-    | twoPlusMinusOperator expression
-    | '!' callObject
-    | '~' callObject
-    | callObject '[' callObject ']'
-    | '{'(identifier ':' callObject ','? )+ '}'
-    | callObject '(' callArguments ')'
-    | callObject '?' callObject ':' callObject
-    | '(' callObject ')'
-    | externalFunctionCall
-    | internalFunctionCall
-    ;
+gas : '.' 'gas' '(' expression ')' ;
 
 plusminusOperator : minusOperator | plusOperator ;
 
@@ -218,7 +147,7 @@ decrementOperator : '--' ;
 
 incrementOperator : '++' ;
 
-muldivOperator : mulOperator | divOperator | divRemOperator| powerOperator ;
+muldivOperator : mulOperator | divOperator | divRemOperator ;
 
 divRemOperator : '%' ;
 
@@ -230,43 +159,34 @@ divOperator : '/' ;
 
 addressNumber : HexNumber ;
 
-// TODO replace
-callArguments : '(' (callArgument (',' callArgument)* )? ')' ;
-// should be
-//callArguments
-//    : // empty list
-//    | callArgument (',' callArgument)*
-//    | '{' nameValueList? '}'
-//    ;
+callArguments
+    : '('
+    ( // empty list
+    | expression (',' expression)*
+    | '{' nameValueList? '}'
+    )
+    ')' ;
 
-
-// WTF is that?
-// TODO remove this tag (part of `functionCall` rework)
-functionName : (identifier arrayLiteral? ) | newExpression ;
-
-callArgument : expression | '{' nameValueList? '}' ;
-
-typeConversion : elementaryTypeName ('[' expression? ']')? '(' expression? ')' ;
+typeConversion : typeName '(' expression ')' ;
 
 expression
     : environmentalVariable
-    | addressCall
-    | typeConversion
     | expression '.' 'length'
     | expression '.' 'balance'
-    | primaryExpression
+    | expression '.' functionCall
     | functionCall
+    | primaryExpression
+    | expression callArguments
+    | typeConversion
+    | expression '.' identifier
     | expression twoPlusMinusOperator
-    // TODO replace with `newContractExpression` and 'newDynamicArrayExpression'
-    | 'new' typeName //('(' (expression ','?)* ')')?
-    | '(' typeName ')' '(' expression ')'
+    | newDynamicArrayExpression
     | expression '[' expression ']'
     | '(' expression ')'
     | twoPlusMinusOperator expression
     | plusminusOperator expression
-    // TODO let's remove 'after' - looks like it's just reserved but never used
     // TODO maybe we should make separate `deleteExpression`, otherwise I don't know how to write xpath
-    | ('after' | 'delete') expression
+    | 'delete' expression
     | '!' expression
     | '~' expression
     | expression powerOperator expression
@@ -276,17 +196,17 @@ expression
     | expression '&' expression
     | expression '^' expression
     | expression '|' expression
-    | expression ('<' | '>' | '<=' | '>=') expression (plusminusOperator)?
-    | expression ('==' | '!=') expression
+    | expression ('<' | '>' | '<=' | '>=') expression
+    | expression comparison expression
     | expression '&&' expression
     | expression '||' expression
     | expression '?' expression ':' expression
     | expression ('=' | lvalueOperator) expression
     | variableDeclaration
-// TODO investigate this
-    | expression '(' callArguments ')'// WTF is that?
     | '{' nameValueList '}'
     ;
+
+newDynamicArrayExpression : 'new' (typeName '[' ']' | 'string' | 'bytes') ('(' expression ')')? ;
 
 lvalueOperator : '|=' | '^=' | '&=' | plusLvalueOperator | minusLvalueOperator | mulLvalueOperator | divLvalueOperator | divRemLvalueOperator | '<<=' | '>>=' ;
 
@@ -299,8 +219,6 @@ divLvalueOperator : '/=' ;
 mulLvalueOperator : '*=' ;
 
 divRemLvalueOperator : '%=' ;
-
-argument : identifier | addressNumber | numberLiteral | stringLiteral | environmentalVariable ;
 
 //___Parameters_and_others__
 
@@ -318,50 +236,37 @@ storageLocation : 'memory' | 'storage' ;
 
 //___Statements___
 
-block: statement | '{' statement* '}' ;
-
+block: '{' statement* '}' ;
 
 statement
-    : addressDeclaration ';'
-    | creatingContractViaNewStatement ';'
+    : block
     | ifStatement
     | whileStatement
     | forStatement
     | inlineAssemblyStatement
     | doWhileStatement ';'
-    | placeholderStatement ';'?
+    | placeholderStatement ';'? // semicolon is not necessary in old compiler versions
     | continueStatement ';'
     | breakStatement ';'
     | returnStatement ';'
     | throwRevertStatement ';'
     | simpleStatement ';'
-    | functionCallStatement ';'
+    | emitEventStatement ';'
     ;
 
-// TODO check if this expression also create dynamic arrays: `uint[] memory a = new uint[](7);`
-creatingContractViaNewStatement : identifier arrayLiteral? '=' 'new' identifier arrayLiteral? callArguments ';'? ;
-// should be part of expression
-//newContractExpression : 'new' functionCall ;
+emitEventStatement : 'emit' functionName callArguments ;
 
-// TODO add new dynamic array as expression
-//newDynamicArrayExpression : 'new' typeName '(' expression ')';
-// maybe it should be like
-//newDynamicArrayExpression : 'new' typeName '[' ']' '(' expression ')';
+ifStatement : 'if' '(' condition ')' statement ('else' statement)? ;
 
+whileStatement : 'while' '(' condition ')' statement ;
 
-ifStatement : 'if' '(' ifCondition ')' block ('else' block)? ;
-
-ifCondition : expression identifier? comparison? expression? identifier? ;
-
-whileStatement : 'while' '(' whileCondition ')' block ;
-
-whileCondition: expression ;
-
-forStatement : 'for' '(' expression? ';' expression? ';' expression? ')' block ;
+forStatement : 'for' '(' expression? ';' condition? ';' expression? ')' statement ;
 
 inlineAssemblyStatement : 'assembly' inlineAssemblyBlock ;
 
-doWhileStatement : 'do' block 'while' '(' expression ')' ;
+doWhileStatement : 'do' statement 'while' '(' condition ')' ;
+
+condition : expression ;
 
 placeholderStatement : '_' ;
 
@@ -382,8 +287,6 @@ throwRevertStatement : 'throw' | 'revert' ('(' stringLiteral? ')')? ;
 
 simpleStatement : variableDeclarationStatement | expressionStatement ;
 
-functionCallStatement : functionCall ;
-
 expressionStatement : expression ;
 
 variableDeclarationStatement
@@ -393,31 +296,64 @@ variableDeclarationStatement
 
 //___Assembler___
 
-inlineAssemblyBlock : '{' assemblyStatement* '}' ;
+inlineAssemblyBlock : '{' assemblyItem* '}' ;
 
-assemblyStatement : assemblyItem ;
+assemblyItem
+    : identifier
+    | inlineAssemblyBlock
+    | assemblyExpression
+    | assemblyLocalDefinition
+    | assemblyAssignment
+    | assemblyStackAssignment
+    | labelDefinition
+    | assemblySwitch
+    | assemblyFunctionDefinition
+    | assemblyFor
+    | assemblyIf
+    | 'break'
+    | 'continue'
+    | subAssembly
+    | numberLiteral
+    | StringLiteral
+    | HexLiteral
+    ;
 
-assemblyItem : identifier | assemblyItemCase | assemblySwitchStatement | assemblyItemDefault | functionalAssemblyExpression
-    | inlineAssemblyBlock | assemblyLabels | assemblyFunctionCall | assemblerLocalVariables | assemblerLoopAndLocalVariables
-    | addressNumber | numberLiteral | StringLiteral | HexLiteral | '(' assemblyItem ')' ;
+assemblyExpression : assemblyCall | assemblyLiteral ;
 
-assemblyItemCase : 'case' primaryExpression ':'? inlineAssemblyBlock ;
+assemblyCall : ('return' | 'address' | 'byte' | 'revert' | identifier) ('(' assemblyExpression? (',' assemblyExpression)* ')')? ;
 
-assemblyItemDefault : 'default' ':'? inlineAssemblyBlock ;
+assemblyLocalDefinition : 'let' assemblyIdentifierOrList (':=' assemblyExpression)? ;
 
-assemblySwitchStatement : 'switch' (primaryExpression | functionalAssemblyExpression) ;
+assemblyAssignment : assemblyIdentifierOrList (':' '=' | ':=') assemblyExpression ;
 
-assemblyLabels : 'let' (identifier | '(' identifier ')') ':=' (functionalAssemblyExpression | primaryExpression) ;
+assemblyIdentifierOrList : identifier | '(' assemblyIdentifierList ')' ;
 
-assemblerLocalVariables : identifier ':=' (elementaryTypeNameAssemblyExpression | functionalAssemblyExpression | primaryExpression) | '=:' identifier ;
+assemblyIdentifierList : identifier (',' identifier)* ;
 
-assemblerLoopAndLocalVariables : 'for' '{' assemblyLabels '}' functionalAssemblyExpression inlineAssemblyBlock* ;
+assemblyStackAssignment : '=:' identifier ;
 
-functionalAssemblyExpression : (identifier | 'return') ('('  (assemblyItem ','? )* ')')? ('=:' identifier)? ;
+labelDefinition : identifier ':' ;
 
-elementaryTypeNameAssemblyExpression : (elementaryTypeName) ('('  (assemblyItem ','? )* ')')? ('=:' identifier)? ;
+assemblySwitch : 'switch' assemblyExpression assemblyCase* ;
 
-assemblyFunctionCall : 'function' identifier '(' (assemblyItem ','? )* ')' '->' identifier inlineAssemblyBlock ;
+assemblyCase
+    : 'case' assemblyLiteral inlineAssemblyBlock
+    | 'default' inlineAssemblyBlock
+    ;
+
+assemblyFunctionDefinition : 'function' identifier '(' assemblyIdentifierList? ')'
+    assemblyFunctionReturns? inlineAssemblyBlock ;
+
+assemblyFunctionReturns : ('->' assemblyIdentifierList) ;
+
+assemblyFor : 'for' (inlineAssemblyBlock | assemblyExpression)
+    assemblyExpression (inlineAssemblyBlock | assemblyExpression) inlineAssemblyBlock ;
+
+assemblyIf : 'if' assemblyExpression inlineAssemblyBlock ;
+
+assemblyLiteral : StringLiteral | DecimalNumber | HexNumber | HexLiteral ;
+
+subAssembly : 'assembly' identifier inlineAssemblyBlock ;
 
 //___expressions___
 
@@ -428,7 +364,6 @@ primaryExpression
     | stringLiteral
     | identifier
     | tupleExpression
-    | elementaryTypeNameExpression
     | addressNumber
     | numberLiteral
     | environmentalVariable
@@ -438,11 +373,6 @@ tupleExpression
     : '(' ( expression? ( ',' expression? )+ )? ')'
     | '[' ( expression? ( ',' expression? )+ )? ']'
     ;
-
-// TODO remove
-newExpression : 'new' typeName ;
-
-elementaryTypeNameExpression : elementaryTypeName ;
 
 //___auxiliary parameters___
 
@@ -455,9 +385,7 @@ identifierList : '(' identifier? (',' identifier? )* ')' ;
 //items after Identifier are listed for lexer to understand that these words can be used as identifier
 identifier : Identifier | placeholderStatement | 'value' | 'from' | 'this' | 'balance' | 'sender' | 'msg' | 'gas'
     | 'length' | 'block' | 'timestamp' | 'tx' | 'origin' | 'blockhash' | 'coinbase' | 'difficulty' | 'gaslimit'
-    | 'number' | 'data' | 'sig' | 'now' | 'gasprice' | 'emit' | 'constructor' ;
-
-Identifier : IdentifierStart IdentifierPart* ;
+    | 'number' | 'data' | 'sig' | 'now' | 'gasprice' | 'emit' | 'constructor' | 'revert' | 'solidity' | 'experimental' ;
 
 elementaryTypeName : 'address' | 'bool' | 'string' | 'var'
     |'int' | 'int8' | 'int16' | 'int24' | 'int32' | 'int40' | 'int48' | 'int56' | 'int64' | 'int72'
@@ -607,18 +535,23 @@ arrayLiteral : ('[' arrayElement? (',' arrayElement)* ']')+ ;
 
 arrayElement: expression ;
 
-// TODO replace with (DecimalNumber | HexNumber) NumberUnit? ;
-numberLiteral : decimalNumber numberUnit? ;
+numberLiteral : (decimalNumber | hexNumber) numberUnit? ;
 
 decimalNumber : DecimalNumber ;
 
-VersionLiteral : [0-9]+ (' ')? '.' [0-9]+  (' ')? '.' [0-9]+ ;
+DecimalNumber : (Digits | Digits '.' | '.' Digits | Digits '.' Digits) (('e'|'E') Digits)?;
+
+Identifier : IdentifierStart IdentifierPart* ;
+
+Digits : [0-9]+ ;
+
+versionLiteral : DecimalNumber  ('.'? DecimalNumber)? ('.'? DecimalNumber)? ;
 
 booleanLiteral : 'true' | 'false' ;
 
 numberUnit : 'wei' | 'szabo' | 'finney' | 'ether' | 'seconds' | 'minutes' | 'hours' | 'days' | 'weeks' | 'years' ;
 
-DecimalNumber : ( [0-9]+ ('.' [0-9]* )? | '.' [0-9]+ ) ( ('e'|'E') [0-9]+ )? ;
+hexNumber : HexNumber ;
 
 HexNumber : ('0x'|'0X') HexCharacter+ ;
 
@@ -653,6 +586,6 @@ SingleQuotedStringCharacter : ~['\r\n\\] | ('\\' .) ;
 
 WS : [ \t\r\n\u000C]+ -> skip ;
 
-COMMENT : '/*' .*? '*/' -> channel(HIDDEN) ;
+COMMENT : '/*' .*? ('*/'|EOF) -> channel(HIDDEN) ;
 
 LINE_COMMENT : '//' ~[\r\n]* -> channel(HIDDEN) ;

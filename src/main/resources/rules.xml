@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+﻿<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <Rules xmlns="http://www.smartdec.ru/SmartCheck/Conditions" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.smartdec.ru/SmartCheck/Conditions rules-grammar-schema.xsd ">
     <Rule>
         <RuleId>SOLIDITY_ADDRESS_HARDCODED</RuleId>
@@ -33,7 +33,7 @@
                     <Severity>1</Severity>
                     <TruePositiveRate>2</TruePositiveRate>
                     <XPath>
-                        //addressCall/expression[primaryExpression/numberLiteral/decimalNumber][not(primaryExpression/numberLiteral/decimalNumber[matches(text()[1],"^0$")]) and not(primaryExpression/identifier[matches(text()[1],"^this$")])]
+                        //typeConversion[typeName[elementaryTypeName[matches(text()[1],"^address$")]]]/expression[primaryExpression/numberLiteral/decimalNumber][not(primaryExpression/numberLiteral/decimalNumber[matches(text()[1],"^0$")]) and not(primaryExpression/identifier[matches(text()[1],"^this$")])]
                     </XPath>
                 </Pattern>
                 <!-- фиксирует использование адреса address(0), кроме "!=address(0)" и "==address(0)", и кторе тех случаев, когда address(0) внутри event(внутренняя функция, название которой начинается с большой буквы)-->
@@ -44,8 +44,8 @@
                     <Severity>1</Severity>
                     <TruePositiveRate>1</TruePositiveRate>
                     <XPath>
-                        //expression[addressCall/expression/primaryExpression/numberLiteral/decimalNumber[matches(text()[1],"^0$")]]
-                        /parent::*[not(matches(text()[1],"^==|!=$"))][not(ancestor::internalFunctionCall[1]/functionName/identifier[matches(text()[1],"^[A-Z]")])]
+                        //expression[typeConversion[typeName[elementaryTypeName[matches(text()[1],"^address$")]]]/expression/primaryExpression/numberLiteral/decimalNumber[matches(text()[1],"^0$")]]
+                        /parent::*[not(comparison)][not(ancestor::functionCall[1]/functionName//identifier[matches(text()[1],"^[A-Z]")])]
                     </XPath>
                 </Pattern>
                 <!-- фиксирует использование адреса 0x0, кроме "!=0x0" и "==0x0", и кторе тех случаев, когда 0x0 внутри event(внутренняя функция, название которой начинается с большой буквы)-->
@@ -56,7 +56,7 @@
                     <Severity>1</Severity>
                     <TruePositiveRate>1</TruePositiveRate>
                     <XPath>
-                        //addressNumber[matches(text()[1],"^0x0$")]/parent::*[parent::*[parent::*[not(matches(text()[1],"^==|!=$"))]]][not(ancestor::internalFunctionCall[1]/functionName/identifier[matches(text()[1],"^[A-Z]")])]
+                        //addressNumber[matches(text()[1],"^0x0$")]/parent::*[parent::*[parent::*[not(comparison)]]][not(ancestor::functionCall[1]/functionName//identifier[matches(text()[1],"^[A-Z]")])]
                     </XPath>
                 </Pattern>
             </Patterns>
@@ -98,7 +98,7 @@
                 </Categories>
                 <Severity>1</Severity>
                 <XPath>
-                //expression[expression[matches(text()[1],".balance$")]][matches(text()[1],"^==|!=$")]
+                //expression[expression[matches(text()[1],".balance$")]][comparison]
                 </XPath>
             </Pattern>
         </Patterns>
@@ -117,21 +117,6 @@
         </Patterns>
     </Rule>
     <Rule>
-        <RuleId>SOLIDITY_CALL_VALUE</RuleId>
-        <Patterns>
-            <!-- фиксирует конструкцию: "call.value()()"-->
-            <Pattern patternId="cc2e04">
-                <Categories>
-                    <Category>Solidity</Category>
-                </Categories>
-                <Severity>3</Severity>
-                <XPath>
-                    //externalFunctionCall/externalFunctionCallNotThis/functionNameAndArgs[functionName/identifier[matches(text()[1],"^call$")] and functionName/identifier[matches(text()[1],"^value$")] and not(callArguments/callArgument)]
-                </XPath>
-            </Pattern>
-        </Patterns>
-    </Rule>
-    <Rule>
         <RuleId>SOLIDITY_DEPRECATED_CONSTRUCTIONS</RuleId>
         <Patterns>
             <!--Фиксирует конструкцию: "suicide"-->
@@ -141,8 +126,8 @@
                 </Categories>
                 <Severity>1</Severity>
                 <XPath>
-                    //functionName/identifier[matches(text()[1],"suicide")] |
-                    //assemblyItem/identifier[matches(text()[1],"suicide")]
+                    //functionCall/functionName//identifier[matches(text()[1],"suicide")] |
+                    //assemblyCall/identifier[matches(text()[1],"suicide")]
                 </XPath>
             </Pattern>
             <!--Фиксирует конструкцию: "sha3"-->
@@ -152,8 +137,8 @@
                 </Categories>
                 <Severity>1</Severity>
                 <XPath>
-                    //functionName/identifier[matches(text()[1],"^sha3$")] |
-                    //functionalAssemblyExpression/identifier[matches(text()[1],"sha3")]
+                    //functionCall/functionName//identifier[matches(text()[1],"^sha3$")] |
+                    //assemblyCall/identifier[matches(text()[1],"sha3")]
                 </XPath>
             </Pattern>
             <!--Фиксирует конструкцию: "throw"-->
@@ -188,7 +173,7 @@
                     <Category>Solidity</Category>
                 </Categories>
                 <Severity>3</Severity>
-                <XPath>//ifStatement[ifCondition//externalFunctionCall][block/statement//throwRevertStatement]</XPath>
+                <XPath>//ifStatement[condition//externalFunctionCall][block/statement//throwRevertStatement]</XPath>
             </Pattern> -->
             <!-- пока отключаем -->
             <!-- фиксирует конструкцию: "for (... внешний вызов ...)"-->
@@ -310,7 +295,7 @@
                 </Categories>
                 <Severity>2</Severity>
                 <XPath>
-                    //forStatement[expression[2][matches(text()[1],"&lt;|&lt; =")]/expression[2][not(primaryExpression/numberLiteral/decimalNumber)]][expression[3][twoPlusMinusOperator/incrementOperator or lvalueOperator/plusLvalueOperator or expression[2]/plusminusOperator/plusOperator]]
+                    //forStatement[condition/expression[matches(text()[1],"&lt;|&lt; =")]/expression[2][not(primaryExpression/numberLiteral/decimalNumber)]][expression[2][twoPlusMinusOperator/incrementOperator or lvalueOperator/plusLvalueOperator or expression[2]/plusminusOperator/plusOperator]]
                 </XPath>
             </Pattern>
             <!-- for (<инициализация счетчика не числом>; <счетчик больше чем что угодно>; <уменьшение счетчика>)-->
@@ -320,7 +305,7 @@
                 </Categories>
                 <Severity>2</Severity>
                 <XPath>
-                    //forStatement[expression[1][not(variableDeclaration/expression/primaryExpression/numberLiteral/decimalNumber)]][expression[2][matches(text()[1],"&gt;|&gt; =")]][expression[3][twoPlusMinusOperator/decrementOperator or lvalueOperator/minusLvalueOperator or expression[2]/plusminusOperator/minusOperator]]
+                    //forStatement[expression[1][not(variableDeclaration/expression/primaryExpression/numberLiteral/decimalNumber)]][condition/expression[matches(text()[1],"&gt;|&gt; =")]][expression[2][twoPlusMinusOperator/decrementOperator or lvalueOperator/minusLvalueOperator or expression[2]/plusminusOperator/minusOperator]]
                 </XPath>
             </Pattern>
             <!--Фиксируется конструкция: while (в условии все, кроме вызова функции и числа)-->
@@ -329,14 +314,14 @@
                     <Category>Solidity</Category>
                 </Categories>
                 <Severity>1</Severity>
-                <XPath>//whileStatement/whileCondition[not(descendant-or-self::functionCall) and not(expression/expression/primaryExpression/numberLiteral/decimalNumber)]</XPath>            </Pattern>
+                <XPath>//whileStatement/condition[not(descendant-or-self::functionCall) and not(expression/expression/primaryExpression/numberLiteral/decimalNumber)]</XPath>            </Pattern>
             <!--Фиксируется конструкция: while (в условии вызов функции)-->
             <Pattern patternId="38f6c7">
                 <Categories>
                     <Category>Solidity</Category>
                 </Categories>
                 <Severity>2</Severity>
-                <XPath>//whileStatement[whileCondition/descendant::functionCall]</XPath>
+                <XPath>//whileStatement[condition/descendant::functionCall]</XPath>
             </Pattern>
         </Patterns>
     </Rule>
@@ -351,9 +336,9 @@
                 <Severity>3</Severity>
                 <XPath>
                     //contractDefinition[contractPartDefinition[functionDefinition/stateMutability/payableType or functionFallBackDefinition/stateMutability/payableType]]
-                    [not(contractPartDefinition/functionDefinition/block//functionCall/internalFunctionCall/functionName/identifier[matches(text()[1],"^suicide|selfdestruct$")])]
-                    [not(contractPartDefinition/functionDefinition/block//functionCall/externalFunctionCall/externalFunctionCallNotThis/functionNameAndArgs/functionName/identifier[matches(text()[1],"^transfer|send$")])]
-                    [not(contractPartDefinition/functionDefinition/block//functionCall/externalFunctionCall/externalFunctionCallNotThis/functionNameAndArgs/functionName/identifier[matches(text()[1],"^value$")])]
+                    [not(contractPartDefinition/functionDefinition/block//functionCall/functionName//identifier[matches(text()[1],"^suicide|selfdestruct$")])]
+                    [not(contractPartDefinition/functionDefinition/block//functionCall/functionName//identifier[matches(text()[1],"^transfer|send$")])]
+                    [not(contractPartDefinition/functionDefinition/block//functionCall/value)]
                 </XPath>
             </Pattern>
         </Patterns>
@@ -367,7 +352,7 @@
                     <Category>Solidity</Category>
                 </Categories>
                 <Severity>1</Severity>
-                <XPath>//pragmaDirective/pragmaValue//versionOperator</XPath>
+                <XPath>//pragmaDirective/pragmaSolidity//versionOperator</XPath>
             </Pattern>
         </Patterns>
     </Rule>
@@ -399,11 +384,11 @@
                     <!--Accessing any of the members of block, tx, msg (with the exception of msg.sig and msg.data)-->
                     or environmentalVariable[matches(text()[1],"msg.value|msg.gas|msg.sender|block.timestamp|tx.origin|block.blockhash|block.coinbase|block.difficulty|block.gaslimit|block.number|block.blockhash|block.coinbase|tx.gasprice")]
                     <!--Using selfdestruct and it's alias suicide:-->
-                    or functionCall/internalFunctionCall/functionName/identifier[matches(text()[1],"^selfdestruct|suicide$")]
+                    or functionCall/functionName//identifier[matches(text()[1],"^selfdestruct|suicide$")]
                     <!--Sending Ether via calls:-->
-                    or externalFunctionCallNotThis/functionNameAndArgs/functionName/identifier[matches(text()[1],"^send|transfer$")]
+                    or functionCall/functionName//identifier[matches(text()[1],"^send|transfer$")]
                     <!--Using low-level calls:-->
-                    or externalFunctionCallNotThis/functionNameAndArgs/functionName/identifier[matches(text()[1],"^call|delegatecall|callcode$")]
+                    or functionCall/functionName//identifier[matches(text()[1],"^call|delegatecall|callcode$")]
                     <!--Using inline assembly that contains certain opcodes:-->
                     or inlineAssemblyStatement
                     ]
@@ -422,7 +407,7 @@
                 </Categories>
                 <Severity>1</Severity>
                 <XPath>
-                    //sourceUnit[pragmaDirective/pragmaValue/version/versionConstraint[versionLiteral &gt;= "0.4.0"]]/contractDefinition/contractPartDefinition/functionFallBackDefinition/block[count(descendant-or-self::statement)=1]
+                    //sourceUnit[pragmaDirective/pragmaSolidity/version[versionLiteral &gt;= "0.4.0"]]/contractDefinition/contractPartDefinition/functionFallBackDefinition/block[count(descendant-or-self::statement)=1]
                     [statement/throwRevertStatement]
                 </XPath>
             </Pattern>
@@ -439,7 +424,7 @@
                 <Severity>1</Severity>
                 <TruePositiveRate>3</TruePositiveRate>
                 <XPath>
-                    //ifStatement/block/statement/throwRevertStatement/ancestor-or-self::statement[2]
+                    //ifStatement[statement[not(descendant::ifStatement)]//throwRevertStatement]
                 </XPath>
             </Pattern>
         </Patterns>
@@ -469,7 +454,7 @@
                 </Categories>
                 <Severity>3</Severity>
                 <XPath>
-                    //functionName/identifier[text()[1]="send"][ancestor::ifCondition/parent::*[block//statement/throwRevertStatement] or ancestor::internalFunctionCall/functionName/identifier[matches(text()[1],"^require|assert$")]]
+                    //functionCall/functionName//identifier[text()[1]="send"][ancestor::ifStatement/condition/parent::*[statement//throwRevertStatement] or ancestor::functionCall/functionName//identifier[matches(text()[1],"^require|assert$")]]
                 </XPath>
             </Pattern>
         </Patterns>
@@ -499,7 +484,9 @@
                     <Category>Solidity</Category>
                 </Categories>
                 <Severity>2</Severity>
-                <XPath>//expression[matches(text()[1],"^==|!=$") and expression//environmentalVariable[matches(text()[1],"^block.timestamp|now$")]]</XPath>
+                <XPath>
+                    //expression[comparison and expression//environmentalVariable[matches(text()[1],"^block.timestamp|now$")]]
+                </XPath>
             </Pattern>
             <!--Фиксируется случаи, когда в вызове функции в качестве аргусентов передаются block.timestamp или now. А также, когда в выражении используется "= и далее выражение содержащее  block.timestamp или now" -->
             <Pattern patternId="cd1537">
@@ -508,7 +495,7 @@
                 </Categories>
                 <Severity>2</Severity>
                 <XPath>
-                    //statement[simpleStatement//functionCall[internalFunctionCall or externalFunctionCall]//callArguments[ not(callArgument//expression[matches(text()[1],"^>=|>|&lt;|&lt;=$")]) and callArgument//expression[environmentalVariable[matches(text()[1],"^block.timestamp|now$")]]]
+                    //statement[simpleStatement//functionCall[not(callArguments//expression[matches(text()[1],"^>=|>|&lt;|&lt;=$")]) and callArguments//expression[environmentalVariable[matches(text()[1],"^block.timestamp|now$")]]]
                     or simpleStatement/expressionStatement//expression[matches(text()[1],"^=$") and expression//environmentalVariable[matches(text()[1],"^block.timestamp|now$")]]]
                 </XPath>
             </Pattern>
@@ -534,7 +521,7 @@
                     <Category>Solidity</Category>
                 </Categories>
                 <Severity>2</Severity>
-                <XPath>//environmentalVariable[matches(text()[1],"^tx.origin$")]/parent::*[parent::*[not(matches(text()[1],"^==|!=$") and expression/environmentalVariable[matches(text()[1],"^msg.sender$")])]]</XPath>
+                <XPath>//environmentalVariable[matches(text()[1],"^tx.origin$")]/parent::*[parent::*[not(comparison and expression/environmentalVariable[matches(text()[1],"^msg.sender$")])]]</XPath>
             </Pattern>
         </Patterns>
     </Rule>
@@ -548,7 +535,7 @@
                 </Categories>
                 <Severity>3</Severity>
                 <XPath>
-                    //externalFunctionCall/externalFunctionCallNotThis[functionNameAndArgs/functionName/identifier[matches(text()[1],"^call|delegatecall|send|callcode$")] and not(ancestor::ifCondition) and not(ancestor::internalFunctionCall[functionName/identifier[matches(text()[1],"^require|assert$")]]) and not(ancestor::returnStatement) and not(ancestor::functionCall[2]) and not(ancestor::variableDeclarationStatement)]
+                    //functionCall[functionName//identifier[matches(text()[1],"^call|delegatecall|send|callcode$")] and not(ancestor::ifStatement) and not(ancestor::functionCall[functionName//identifier[matches(text()[1],"^require|assert$")]]) and not(ancestor::returnStatement) and not(ancestor::functionCall) and not(ancestor::variableDeclarationStatement)]
                 </XPath>
             </Pattern>
         </Patterns>
@@ -564,7 +551,7 @@
             <Severity>1</Severity>
             <TruePositiveRate>3</TruePositiveRate>
             <XPath>
-                //forStatement/expression[matches(text()[1],">=")][expression/primaryExpression/numberLiteral/decimalNumber[matches(text()[1],"^0$")]]
+                //forStatement/condition/expression[matches(text()[1],">=")][expression[2]/primaryExpression/numberLiteral/decimalNumber[matches(text()[1],"^0$")]]
             </XPath>
         </Pattern>
             <!--Фиксирует конструкцию: "...>=0"-->
@@ -605,7 +592,9 @@
                 </Categories>
                 <Severity>1</Severity>
                 <XPath>
-                    //statement/inlineAssemblyStatement/inlineAssemblyBlock/assemblyStatement[not(assemblyItem/assemblerLocalVariables[matches(text()[1],"^:=$")][functionalAssemblyExpression/identifier[matches(text()[1],"^extcodesize$")]])]/ancestor::inlineAssemblyStatement
+                    //statement/inlineAssemblyStatement/inlineAssemblyBlock
+                        [not(assemblyItem/assemblyAssignment[assemblyExpression/assemblyCall/identifier[matches(text()[1],"^extcodesize$")]])]
+                    /ancestor::inlineAssemblyStatement
                 </XPath>
             </Pattern>
         </Patterns>
@@ -641,7 +630,7 @@
                 </Categories>
                 <Severity>2</Severity>
                 <TruePositiveRate>3</TruePositiveRate>
-                <XPath>//forStatement[expression[1]//typeName/elementaryTypeName[matches(text()[1],"^var$")]][expression[2]/expression/primaryExpression[numberLiteral/decimalNumber[matches(text()[1],"^[0-9]+$")]&gt; 255]][expression[3]/twoPlusMinusOperator/incrementOperator]
+                <XPath>//forStatement[expression[1]//typeName/elementaryTypeName[matches(text()[1],"^var$")]][condition/expression/expression/primaryExpression[numberLiteral/decimalNumber[matches(text()[1],"^[0-9]+$")]&gt; 255]][expression[2]/twoPlusMinusOperator/incrementOperator]
                 </XPath>
             </Pattern>
         </Patterns>
@@ -661,11 +650,11 @@
                 <XPath>
                     //functionDefinition[stateMutability/viewType and block/descendant-or-self::*[
                         <!--Using selfdestruct and it's alias suicide:-->
-                        functionCall/internalFunctionCall/functionName/identifier[matches(text()[1],"^selfdestruct|suicide$")]
+                        functionCall/functionName//identifier[matches(text()[1],"^selfdestruct|suicide$")]
                         <!--Sending Ether via calls:-->
-                        or externalFunctionCallNotThis/functionNameAndArgs/functionName/identifier[matches(text()[1],"^send|transfer$")]
+                        or functionCall/functionName//identifier[matches(text()[1],"^send|transfer$")]
                         <!--Using low-level calls:-->
-                        or externalFunctionCallNotThis/functionNameAndArgs/functionName/identifier[matches(text()[1],"^call|delegatecall|callcode$")]
+                        or functionCall/functionName//identifier[matches(text()[1],"^call|delegatecall|callcode$")]
                         <!--Using inline assembly that contains certain opcodes:-->
                         or inlineAssemblyStatement
                     ]
