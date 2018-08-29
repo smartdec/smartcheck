@@ -117,21 +117,6 @@
         </Patterns>
     </Rule>
     <Rule>
-        <RuleId>SOLIDITY_DELETE_FOR_ARRAYS</RuleId>
-        <Patterns>
-            <!--Фиксирует ... .length=0-->
-            <Pattern patternId="792a6d">
-                <Categories>
-                    <Category>Solidity</Category>
-                </Categories>
-                <Severity>1</Severity>
-                <XPath>
-                    //simpleStatement/expressionStatement/expression[expression[matches(text()[1],".length")]][matches(text()[1],"^=$")][expression/primaryExpression/numberLiteral/decimalNumber[matches(text()[1],"^0$")]]
-                </XPath>
-            </Pattern>
-        </Patterns>
-    </Rule>
-    <Rule>
         <RuleId>SOLIDITY_DEPRECATED_CONSTRUCTIONS</RuleId>
         <Patterns>
             <!--Фиксирует конструкцию: "suicide"-->
