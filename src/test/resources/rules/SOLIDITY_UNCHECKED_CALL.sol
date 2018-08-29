@@ -7,7 +7,7 @@ interface Deff {
 contract SolidityUncheckedSend {
     function unseatKing(address a, uint w) public {
         // <yes> <report> SOLIDITY_UNCHECKED_CALL f39eed
-        a.call.value(w);
+        a.call.value(w)();
         // <yes> <report> SOLIDITY_UNCHECKED_CALL f39eed
         a.send(w);
         // <yes> <report> SOLIDITY_UNCHECKED_CALL f39eed
