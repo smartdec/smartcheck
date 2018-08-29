@@ -1,5 +1,4 @@
-pragma solidity 0.4.24;
-
+pragma solidity 0.4.23;
 
 contract SolidityVisibility1 {
 
@@ -35,6 +34,14 @@ contract SolidityVisibility2 {
 
 // <yes> <report> SOLIDITY_VISIBILITY 910067
     constructor () {
+        address owner = msg.sender;
+    }
+// <yes> <report> SOLIDITY_VISIBILITY 321aca
+    constructor () external {
+        address owner = msg.sender;
+    }
+// <yes> <report> SOLIDITY_VISIBILITY 321aca
+    constructor () private {
         address owner = msg.sender;
     }
 // <yes> <report> SOLIDITY_VISIBILITY 910067
