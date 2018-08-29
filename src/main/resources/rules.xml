@@ -329,7 +329,7 @@
                     [expression[1][text()[1]="="]/expression[2]//numberLiteral/decimalNumber[text()[1]="0"]
                         or expression[1]/variableDeclaration[text()[1]="="]/expression//numberLiteral/decimalNumber[text()[1]="0"]
                         or expression[1]/variableDeclaration[not(text()[1]="=")]]
-                    [expression[2][matches(text()[1],"&lt;|&lt; =")]
+                    [condition/expression[matches(text()[1],"&lt;|&lt; =")]
                         /expression[2]
                             [text()[1]=".length"
                             or primaryExpression/identifier
@@ -347,7 +347,7 @@
                     //forStatement
                     [expression[1][text()[1]="="]/expression[2][text()[1]=".length"]
                         or expression[1]/variableDeclaration[text()[1]="="]/expression[text()[1]=".length"]]
-                    [expression[2][matches(text()[1],"&gt;|&gt; =")]]
+                    [condition/expression[matches(text()[1],"&gt;|&gt; =")]]
                 </XPath>
             </Pattern>
             <!--Фиксируется конструкция: while (в условии все, кроме вызова функции и числа)-->
@@ -357,7 +357,7 @@
                 </Categories>
                 <Severity>1</Severity>
                 <XPath>
-                    //whileStatement/whileCondition[not(descendant-or-self::functionCall) and not(expression/expression/primaryExpression/numberLiteral/decimalNumber)]
+                    //whileStatement/condition[not(descendant-or-self::functionCall) and not(expression/expression/primaryExpression/numberLiteral/decimalNumber)]
                 </XPath>
             </Pattern>
             <!--Фиксируется конструкция: while (в условии вызов функции)-->
@@ -367,7 +367,7 @@
                 </Categories>
                 <Severity>2</Severity>
                 <XPath>
-                    //whileStatement[whileCondition/descendant::functionCall]
+                    //whileStatement[condition/descendant::functionCall]
                 </XPath>
             </Pattern>
         </Patterns>
