@@ -479,15 +479,29 @@
     <Rule>
         <RuleId>SOLIDITY_SHOULD_RETURN_STRUCT</RuleId>
         <Patterns>
-            <!--Фиксируются internal или private функции, у которых больше одного выходного параметра-->
+            <!--Фиксируются internal или private функции, у которых больше одного выходного параметра (pragma < 0.5.0)-->
             <Pattern patternId="7d54ca">
                 <Categories>
                     <Category>Solidity</Category>
                 </Categories>
                 <Severity>1</Severity>
                 <XPath>
-                    //functionDefinition[(visibleType[matches(text()[1],"internal|private")])or(not(visibleType))]
+                    /sourceUnit[not(pragmaDirective//versionLiteral[matches(text()[1],"\.[5-9]\.|^[1-9]")]
+                                 or pragmaDirective/pragmaExperimental//stringLiteral[text()[1]="ABIEncoderV2"])]
+                    //functionDefinition[visibleType[matches(text()[1],"internal|private")]]
                     /returnsParameters/parameterList[count(parameter)>1]
+                </XPath>
+            </Pattern>
+            <!--Фиксируются функции, у которых больше одного выходного параметра (pragma >= 0.5.0 или pragma experimental)-->
+            <Pattern patternId="83hf3l">
+                <Categories>
+                    <Category>Solidity</Category>
+                </Categories>
+                <Severity>1</Severity>
+                <XPath>
+                    /sourceUnit[pragmaDirective//versionLiteral[matches(text()[1],"\.[5-9]\.|^[1-9]")]
+                                 or pragmaDirective/pragmaExperimental//stringLiteral[text()[1]="ABIEncoderV2"]]
+                    //functionDefinition/returnsParameters/parameterList[count(parameter)>1]
                 </XPath>
             </Pattern>
         </Patterns>
