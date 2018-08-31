@@ -361,6 +361,25 @@
         </Patterns>
     </Rule>
     <Rule>
+        <RuleId>SOLIDITY_MSGVALUE_EQUALS_ZERO</RuleId>
+        <Patterns>
+            <!-- Фиксируются проверки (msg.value == 0) везде, кроме конструктора -->
+            <Pattern patternId="1df89a">
+                <Categories>
+                    <Category>Solidity</Category>
+                </Categories>
+                <Severity>1</Severity>
+                <XPath>
+                    //expression
+                        [expression[1]/environmentalVariable[text()[1]="msg.value"]]
+                        [comparison[text()[1]="=="]]
+                        [expression[2]//decimalNumber[text()[1]="0"]]
+                        [not(ancestor::functionDefinition[text()[1]="constructor"])]
+                </XPath>
+            </Pattern>
+        </Patterns>
+    </Rule>
+    <Rule>
         <RuleId>SOLIDITY_PRAGMAS_VERSION</RuleId>
         <Patterns>
             <!--Фиксируется определение pragma имеющее в версии знаки '^' | '>=' | '>' | '<' | '<='-->
