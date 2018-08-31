@@ -164,6 +164,25 @@
         </Patterns>
     </Rule>
     <Rule>
+        <RuleId>SOLIDITY_DO_WHILE_CONTINUE</RuleId>
+        <Patterns>
+            <!--Фиксирует конструкцию: do {continue;} while (false);-->
+            <Pattern patternId="94fra3">
+                <Categories>
+                    <Category>Solidity</Category>
+                </Categories>
+                <Severity>1</Severity>
+                <XPath>
+                    /sourceUnit[pragmaDirective//versionLiteral[not(matches(text()[1],"\.[5-9]\.|^[1-9]"))]]
+                    //doWhileStatement
+                        [statement//continueStatement
+                            [not(ancestor::forStatement[ancestor::doWhileStatement])
+                             and not(ancestor::whileStatement[ancestor::doWhileStatement])]]
+                </XPath>
+            </Pattern>
+        </Patterns>
+    </Rule>
+    <Rule>
         <RuleId>SOLIDITY_DOS_WITH_THROW</RuleId>
         <Patterns>
             <!-- пока отключаем -->
