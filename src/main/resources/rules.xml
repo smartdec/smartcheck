@@ -565,22 +565,48 @@
             <Categories>
                 <Category>Solidity</Category>
             </Categories>
+            <Severity>3</Severity>
+            <TruePositiveRate>3</TruePositiveRate>
+            <XPath>
+                //forStatement/condition/expression
+                    [matches(text()[1],">=")]
+                    [expression[2]//decimalNumber[text()[1]="0"]]
+            </XPath>
+            </Pattern>
+            <!--Фиксирует конструкцию: "...>=0" для переменных типа uint и полей структур типа uint-->
+            <Pattern patternId="d48ac4">
+            <Categories>
+                <Category>Solidity</Category>
+            </Categories>
             <Severity>1</Severity>
             <TruePositiveRate>3</TruePositiveRate>
             <XPath>
-                //forStatement/condition/expression[matches(text()[1],">=")][expression[2]/primaryExpression/numberLiteral/decimalNumber[matches(text()[1],"^0$")]]
+                //expression[text()[1]=">="]
+                    [expression[2]//decimalNumber[text()[1]="0"]]
+                    [expression[1]//identifier
+                        [text()[1]=(ancestor::functionDefinition//variableDeclaration
+                            [typeName/elementaryTypeName[text()[1]="uint"]]/identifier)
+                        or text()[1]=(ancestor::contractDefinition//stateVariableDeclaration
+                            [typeName/elementaryTypeName[text()[1]="uint"]]/identifier)
+                        or text()[1]=(ancestor::contractDefinition//structDefinition/variableDeclaration
+                            [typeName/elementaryTypeName[text()[1]="uint"]]/identifier)]]
             </XPath>
-        </Pattern>
-            <!--Фиксирует конструкцию: "...>=0"-->
-            <Pattern patternId="d48ac4">
-                <Categories>
-                    <Category>Solidity</Category>
-                </Categories>
-                <Severity>2</Severity>
-                <TruePositiveRate>3</TruePositiveRate>
-                <XPath>
-                    //expression[matches(text()[1],">=")][expression/primaryExpression/numberLiteral/decimalNumber[matches(text()[1],"^0$")]]/ancestor-or-self::statement
-                </XPath>
+            </Pattern>
+            <!--Фиксирует конструкцию: "...>=0" только для мапингов вида (...>=uint) -->
+            <Pattern patternId="733fdd">
+            <Categories>
+                <Category>Solidity</Category>
+            </Categories>
+            <Severity>1</Severity>
+            <TruePositiveRate>3</TruePositiveRate>
+            <XPath>
+                //expression[text()[1]=">="]
+                    [expression[2]//decimalNumber[text()[1]="0"]]
+                    [expression[1]/expression[1]//identifier
+                        [text()[1]=(ancestor::contractDefinition//stateVariableDeclaration
+                            [typeName/mappingSt/typeName[2]/elementaryTypeName[text()[1]="uint"]]
+                            /identifier)]]
+            </XPath>
             </Pattern>
         </Patterns>
     </Rule>
