@@ -26,8 +26,9 @@ contract C {
     function returnSenderBalance(uint a) constant returns (uint){
             return a;
     }
-    // <yes> <report> SOLIDITY_DEPRECATED_CONSTRUCTIONS 852kwn
+
     function usingYears() returns(uint) {
+    // <yes> <report> SOLIDITY_DEPRECATED_CONSTRUCTIONS 852kwn
         return 100 years;
     }
 }
