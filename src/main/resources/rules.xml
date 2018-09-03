@@ -558,7 +558,7 @@
         </Patterns>
     </Rule>
     <Rule>
-        <RuleId>SOLIDITY_UNDERFLOW_OVERFLOW</RuleId>
+        <RuleId>SOLIDITY_UNDERFLOW</RuleId>
         <Patterns>
             <!--Фиксирует конструкцию: "for (...; i >= 0; ...) { ... }"-->
             <Pattern patternId="11ca45b">
