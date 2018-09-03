@@ -161,6 +161,16 @@
                     //functionDefinition[stateMutability/constantType]
                 </XPath>
             </Pattern>
+            <!-- фиксирует использование множителя years -->
+            <Pattern patternId="852kwn">
+                <Categories>
+                    <Category>Solidity</Category>
+                </Categories>
+                <Severity>1</Severity>
+                <XPath>
+                    //numberLiteral/numberUnit[text()[1]="years"]
+                </XPath>
+            </Pattern>
         </Patterns>
     </Rule>
     <Rule>

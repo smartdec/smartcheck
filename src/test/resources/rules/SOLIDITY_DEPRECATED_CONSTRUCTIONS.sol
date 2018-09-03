@@ -1,7 +1,7 @@
 pragma solidity 0.4.24;
 
 contract C {
-	function kill() {
+    function kill() {
     // <yes> <report> SOLIDITY_DEPRECATED_CONSTRUCTIONS  27cb59
         suicide(0x0);
     }
@@ -25,5 +25,9 @@ contract C {
     // <yes> <report> SOLIDITY_DEPRECATED_CONSTRUCTIONS 28fa69
     function returnSenderBalance(uint a) constant returns (uint){
             return a;
-        }
+    }
+    // <yes> <report> SOLIDITY_DEPRECATED_CONSTRUCTIONS 852kwn
+    function usingYears() returns(uint) {
+        return 100 years;
+    }
 }
