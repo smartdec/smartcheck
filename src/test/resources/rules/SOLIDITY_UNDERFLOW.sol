@@ -3,7 +3,7 @@ pragma solidity 0.4.24;
 contract UnderFlow {
     uint8 a;
 
-    function foo_1(){
+    function foo_1() {
         uint b;
         int c = 1;
     // <yes> <report> SOLIDITY_UNDERFLOW  11ca45b <yes> <report> SOLIDITY_UNDERFLOW  d48ac4
@@ -40,5 +40,23 @@ contract UnderFlow {
     // <yes> <report> SOLIDITY_UNDERFLOW  733fdd
         require(balances[user] >= 0);
         require(ibalances[user] >= 0);
+    }
+
+    function foo_4() {
+        uint i;
+    // <yes> <report> SOLIDITY_UNDERFLOW  11ca45b <yes> <report> SOLIDITY_UNDERFLOW  d48ac4
+        while(i >= 0) {
+            i--;
+        }
+        do {
+            i--;
+    // <yes> <report> SOLIDITY_UNDERFLOW  11ca45b <yes> <report> SOLIDITY_UNDERFLOW  d48ac4
+        } while(i >=0);
+
+        for (uint i=100; i <= 0; i++) {
+    // <yes> <report> SOLIDITY_UNDERFLOW  11ca45b <yes> <report> SOLIDITY_UNDERFLOW  d48ac4
+            for (uint i=100; i >= 0; i--) {
+            }
+        }
     }
 }

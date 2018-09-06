@@ -568,9 +568,13 @@
             <Severity>3</Severity>
             <TruePositiveRate>3</TruePositiveRate>
             <XPath>
-                //forStatement/condition/expression
-                    [matches(text()[1],">=")]
-                    [expression[2]//decimalNumber[text()[1]="0"]]
+                //statement[forStatement or whileStatement or doWhileStatement]
+                    //condition
+                        /expression[text()[1]=">="]
+                        [expression[2]//decimalNumber[text()[1]="0"]]
+                        [expression[1]//identifier
+                            [text()[1]=(ancestor::functionDefinition//variableDeclaration
+                                [typeName/elementaryTypeName[matches(text()[1],"uint")]]/identifier)]]
             </XPath>
             </Pattern>
             <!--Фиксирует конструкцию: "...>=0" для переменных типа uint и полей структур типа uint-->
@@ -578,7 +582,7 @@
             <Categories>
                 <Category>Solidity</Category>
             </Categories>
-            <Severity>1</Severity>
+            <Severity>2</Severity>
             <TruePositiveRate>3</TruePositiveRate>
             <XPath>
                 //expression[text()[1]=">="]
@@ -597,7 +601,7 @@
             <Categories>
                 <Category>Solidity</Category>
             </Categories>
-            <Severity>1</Severity>
+            <Severity>2</Severity>
             <TruePositiveRate>3</TruePositiveRate>
             <XPath>
                 //expression[text()[1]=">="]
