@@ -12,7 +12,7 @@
                     <TruePositiveRate>2</TruePositiveRate>
                     <XPath>
                         //addressNumber[string-length()=42]
-                    </XPath>
+                    </XPath>un
                 </Pattern>
                 <!-- фиксирует адреса длиной менее чем 42 символа и не равные 0x0"-->
                 <Pattern patternId="b140cd">
@@ -585,11 +585,11 @@
                     [expression[2]//decimalNumber[text()[1]="0"]]
                     [expression[1]//identifier
                         [text()[1]=(ancestor::functionDefinition//variableDeclaration
-                            [typeName/elementaryTypeName[text()[1]="uint"]]/identifier)
+                            [typeName/elementaryTypeName[matches(text()[1],"uint")]]/identifier)
                         or text()[1]=(ancestor::contractDefinition//stateVariableDeclaration
-                            [typeName/elementaryTypeName[text()[1]="uint"]]/identifier)
+                            [typeName/elementaryTypeName[matches(text()[1],"uint")]]/identifier)
                         or text()[1]=(ancestor::contractDefinition//structDefinition/variableDeclaration
-                            [typeName/elementaryTypeName[text()[1]="uint"]]/identifier)]]
+                            [typeName/elementaryTypeName[matches(text()[1],"uint")]]/identifier)]]
             </XPath>
             </Pattern>
             <!--Фиксирует конструкцию: "...>=0" только для мапингов вида (...>=uint) -->
@@ -604,7 +604,7 @@
                     [expression[2]//decimalNumber[text()[1]="0"]]
                     [expression[1]/expression[1]//identifier
                         [text()[1]=(ancestor::contractDefinition//stateVariableDeclaration
-                            [typeName/mappingSt/typeName[2]/elementaryTypeName[text()[1]="uint"]]
+                            [typeName/mappingSt/typeName[2]/elementaryTypeName[matches(text()[1],"uint")]]
                             /identifier)]]
             </XPath>
             </Pattern>
