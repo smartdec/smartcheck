@@ -560,7 +560,7 @@
     <Rule>
         <RuleId>SOLIDITY_UNDERFLOW</RuleId>
         <Patterns>
-            <!--Фиксирует конструкцию: "for (...; i >= 0; ...) { ... }"-->
+            <!--Фиксирует конструкции: "for (...; i >= 0; ...) { ... }", "while(i >= 0) {}", "do {} while(i >= 0)", где переменная i типа uint*-->
             <Pattern patternId="11ca45b">
             <Categories>
                 <Category>Solidity</Category>
@@ -568,11 +568,24 @@
             <Severity>3</Severity>
             <TruePositiveRate>3</TruePositiveRate>
             <XPath>
-                //statement[forStatement or whileStatement or doWhileStatement]
-                    //condition
+                //statement/forStatement/condition
                         /expression[text()[1]=">="]
-                        [expression[2]//decimalNumber[text()[1]="0"]]
-                        [expression[1]//identifier
+                        [expression[2]/primaryExpression//decimalNumber[text()[1]="0"]]
+                        [expression[1]/primaryExpression/identifier
+                            [text()[1]=(ancestor::functionDefinition//variableDeclaration
+                                [typeName/elementaryTypeName[matches(text()[1],"uint")]]/identifier)]]
+                |
+                //statement/whileStatement/condition
+                        /expression[text()[1]=">="]
+                        [expression[2]/primaryExpression//decimalNumber[text()[1]="0"]]
+                        [expression[1]/primaryExpression/identifier
+                            [text()[1]=(ancestor::functionDefinition//variableDeclaration
+                                [typeName/elementaryTypeName[matches(text()[1],"uint")]]/identifier)]]
+                |
+                //statement/doWhileStatement/condition
+                        /expression[text()[1]=">="]
+                        [expression[2]/primaryExpression//decimalNumber[text()[1]="0"]]
+                        [expression[1]/primaryExpression/identifier
                             [text()[1]=(ancestor::functionDefinition//variableDeclaration
                                 [typeName/elementaryTypeName[matches(text()[1],"uint")]]/identifier)]]
             </XPath>
@@ -586,13 +599,19 @@
             <TruePositiveRate>3</TruePositiveRate>
             <XPath>
                 //expression[text()[1]=">="]
-                    [expression[2]//decimalNumber[text()[1]="0"]]
-                    [expression[1]//identifier
+                    [expression[2]/primaryExpression//decimalNumber[text()[1]="0"]]
+                    [expression[1]/primaryExpression/identifier
                         [text()[1]=(ancestor::functionDefinition//variableDeclaration
                             [typeName/elementaryTypeName[matches(text()[1],"uint")]]/identifier)
                         or text()[1]=(ancestor::contractDefinition//stateVariableDeclaration
                             [typeName/elementaryTypeName[matches(text()[1],"uint")]]/identifier)
                         or text()[1]=(ancestor::contractDefinition//structDefinition/variableDeclaration
+                            [typeName/elementaryTypeName[matches(text()[1],"uint")]]/identifier)]]
+                |
+                //expression[text()[1]=">="]
+                    [expression[2]/primaryExpression//decimalNumber[text()[1]="0"]]
+                    [expression[1]/identifier
+                        [text()[1]=(ancestor::contractDefinition//structDefinition/variableDeclaration
                             [typeName/elementaryTypeName[matches(text()[1],"uint")]]/identifier)]]
             </XPath>
             </Pattern>
