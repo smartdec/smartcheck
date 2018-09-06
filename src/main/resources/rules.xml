@@ -568,21 +568,7 @@
             <Severity>3</Severity>
             <TruePositiveRate>3</TruePositiveRate>
             <XPath>
-                //statement/forStatement/condition
-                        /expression[text()[1]=">="]
-                        [expression[2]/primaryExpression//decimalNumber[text()[1]="0"]]
-                        [expression[1]/primaryExpression/identifier
-                            [text()[1]=(ancestor::functionDefinition//variableDeclaration
-                                [typeName/elementaryTypeName[matches(text()[1],"uint")]]/identifier)]]
-                |
-                //statement/whileStatement/condition
-                        /expression[text()[1]=">="]
-                        [expression[2]/primaryExpression//decimalNumber[text()[1]="0"]]
-                        [expression[1]/primaryExpression/identifier
-                            [text()[1]=(ancestor::functionDefinition//variableDeclaration
-                                [typeName/elementaryTypeName[matches(text()[1],"uint")]]/identifier)]]
-                |
-                //statement/doWhileStatement/condition
+                //statement/(forStatement|whileStatement|doWhileStatement)/condition
                         /expression[text()[1]=">="]
                         [expression[2]/primaryExpression//decimalNumber[text()[1]="0"]]
                         [expression[1]/primaryExpression/identifier
