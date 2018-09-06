@@ -1,7 +1,7 @@
 pragma solidity 0.4.24;
 
 contract UpgradeTo050_1 {
-	// <yes> <report> SOLIDITY_UPGRADE_TO_050 341gim
+    // <yes> <report> SOLIDITY_UPGRADE_TO_050 341gim
     function call(address token, bytes memory a, bytes b) public {
         // <yes> <report> SOLIDITY_UPGRADE_TO_050 83k1no
         address(token).call();
@@ -9,6 +9,7 @@ contract UpgradeTo050_1 {
         token.call();
         // <yes> <report> SOLIDITY_UPGRADE_TO_050 83k1no
         token.call(a,b);
+        token.call(2+2);
         token.call(abi.encodePacked(a, b));
         // <yes> <report> SOLIDITY_UPGRADE_TO_050 83k1no
         address(token).call(a,b);
@@ -31,6 +32,12 @@ contract UpgradeTo050_2 {
     }
     // <yes> <report> SOLIDITY_UPGRADE_TO_050 341gim
     function numberTwo(uint[] a) public {
+    }
+    // <yes> <report> SOLIDITY_UPGRADE_TO_050 341gim <yes> <report> SOLIDITY_UPGRADE_TO_050 341gim
+    function numberTwo0(bytes a, string b) public {
+    }
+    // <yes> <report> SOLIDITY_UPGRADE_TO_050 341gim
+    function numberTwo1() public returns(uint[] a) {
     }
     function numberTwo2(User memory a) internal {
     }

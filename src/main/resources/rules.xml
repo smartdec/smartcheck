@@ -630,12 +630,13 @@
                         [visibleType[text()[1] != "external"]]
                         //parameter
                             [typeName[text()[1]="[]"] 
-                            or typeName/elementaryTypeName[text()[1] = "bytes"]
+                            or typeName/elementaryTypeName[text()[1] = "bytes"
+                                                            or text()[1] = "string"]
                             or typeName//identifier[text()[1] = (ancestor::contractDefinition//structDefinition/identifier)]]
                             [not(storageLocation)]
                 </XPath>
             </Pattern>
-                        <!-- Ищет массивы и структуры без явного определения места хранения (storage, memory) в локальных переменных функций-->
+            <!-- Ищет массивы и структуры без явного определения места хранения (storage, memory) в локальных переменных функций-->
             <Pattern patternId="441gim">
                 <Categories>
                     <Category>Solidity</Category>
@@ -645,7 +646,8 @@
                     //functionDefinition
                         //variableDeclaration
                             [typeName[text()[1]="[]"] 
-                            or typeName/elementaryTypeName[text()[1] = "bytes"]
+                            or typeName/elementaryTypeName[text()[1] = "bytes"
+                                                            or text()[1] = "string"]
                             or typeName//identifier[text()[1] = (ancestor::contractDefinition//structDefinition/identifier)]]
                             [not(storageLocation)]
                 </XPath>
