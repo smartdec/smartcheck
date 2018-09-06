@@ -166,14 +166,16 @@
     <Rule>
         <RuleId>SOLIDITY_DO_WHILE_CONTINUE</RuleId>
         <Patterns>
-            <!--Фиксирует конструкцию: do {continue;} while (false);-->
+            <!--Фиксирует конструкцию: do {continue;} while (false); в версиях компилятора ниже 0.5.0 инструкция continue переводит исполнение на do, не проверяя условие в while - это делает циккл do while бесконечным-->
             <Pattern patternId="94fra3">
                 <Categories>
                     <Category>Solidity</Category>
                 </Categories>
                 <Severity>1</Severity>
                 <XPath>
-                    /sourceUnit[pragmaDirective//versionLiteral[not(matches(text()[1],"\.[5-9]\.|^[1-9]"))]]
+                    /sourceUnit[pragmaDirective
+                                    [not(//versionOperator) or //versionOperator[text()[1]="^"]]
+                                    [//versionLiteral[not(matches(text()[1],"\.\s*[5-9]\s*\.|^\s*[1-9]"))]]]
                     //doWhileStatement
                         [statement//continueStatement
                             [not(ancestor::forStatement[ancestor::doWhileStatement])
