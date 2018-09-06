@@ -17,8 +17,15 @@ contract MsgValue {
         assert(msg.value == 0);
     }
 
-    function () {
+    function() {
         // <yes> <report> SOLIDITY_MSGVALUE_EQUALS_ZERO 1df89a
+        require(msg.value == 0);
+    }
+}
+
+contract MsgValue2 {
+
+    function MsgValue2() {
         require(msg.value == 0);
     }
 }
