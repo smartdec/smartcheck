@@ -12,7 +12,7 @@
                     <TruePositiveRate>2</TruePositiveRate>
                     <XPath>
                         //addressNumber[string-length()=42]
-                    </XPath>un
+                    </XPath>
                 </Pattern>
                 <!-- фиксирует адреса длиной менее чем 42 символа и не равные 0x0"-->
                 <Pattern patternId="b140cd">
