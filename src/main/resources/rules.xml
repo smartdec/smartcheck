@@ -685,6 +685,78 @@
         </Patterns>
     </Rule>
     <Rule>
+        <RuleId>SOLIDITY_UPGRADE_TO_050</RuleId>
+        <Patterns>
+            <!-- Ищет .call() с !=1 аргументом -->
+            <Pattern patternId="83k1no">
+                <Categories>
+                    <Category>Solidity</Category>
+                </Categories>
+                <Severity>1</Severity>
+                <XPath>
+                    //functionCall
+                        [functionName/identifier[text()[1] = "call"]]
+                        [callArguments[count(expression) != 1]]
+                </XPath>
+            </Pattern>
+            <!-- Ищет keccak256(a, b, c) с более чем одним аргументом -->
+            <Pattern patternId="901eae">
+                <Categories>
+                    <Category>Solidity</Category>
+                </Categories>
+                <Severity>1</Severity>
+                <XPath>
+                    //functionCall
+                        [functionName/identifier[text()[1] = "keccak256"]]
+                        [callArguments[count(expression) > 1]]
+                </XPath>
+            </Pattern>
+            <!-- Ищет fallback функции, у которых видимость не external -->
+            <Pattern patternId="91h3sa">
+                <Categories>
+                    <Category>Solidity</Category>
+                </Categories>
+                <Severity>1</Severity>
+                <XPath>
+                    //functionFallBackDefinition/visibleType[text()[1] != "external"]
+                </XPath>
+            </Pattern>
+            <!-- Ищет массивы и структуры без явного определения места хранения (storage, memory) в параметрах не external функций-->
+            <Pattern patternId="341gim">
+                <Categories>
+                    <Category>Solidity</Category>
+                </Categories>
+                <Severity>1</Severity>
+                <XPath>
+                    //functionDefinition
+                        [visibleType[text()[1] != "external"]]
+                        //parameter
+                            [typeName[text()[1]="[]"] 
+                            or typeName/elementaryTypeName[text()[1] = "bytes"
+                                                            or text()[1] = "string"]
+                            or typeName//identifier[text()[1] = (ancestor::contractDefinition//structDefinition/identifier)]]
+                            [not(storageLocation)]
+                </XPath>
+            </Pattern>
+            <!-- Ищет массивы и структуры без явного определения места хранения (storage, memory) в локальных переменных функций-->
+            <Pattern patternId="441gim">
+                <Categories>
+                    <Category>Solidity</Category>
+                </Categories>
+                <Severity>1</Severity>
+                <XPath>
+                    //functionDefinition
+                        //variableDeclaration
+                            [typeName[text()[1]="[]"] 
+                            or typeName/elementaryTypeName[text()[1] = "bytes"
+                                                            or text()[1] = "string"]
+                            or typeName//identifier[text()[1] = (ancestor::contractDefinition//structDefinition/identifier)]]
+                            [not(storageLocation)]
+                </XPath>
+            </Pattern>
+        </Patterns>
+    </Rule>
+    <Rule>
         <RuleId>SOLIDITY_USING_BLOCKHASH</RuleId>
         <Patterns>
             <!--Фиксирует конструкцию: "blockhash"-->
