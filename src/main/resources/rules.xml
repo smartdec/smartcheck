@@ -45,7 +45,7 @@
                     <TruePositiveRate>1</TruePositiveRate>
                     <XPath>
                         //expression[typeConversion[typeName[elementaryTypeName[matches(text()[1],"^address$")]]]/expression/primaryExpression/numberLiteral/decimalNumber[matches(text()[1],"^0$")]]
-                        /parent::*[not(comparison)][not(ancestor::functionCall[1]/functionName//identifier[matches(text()[1],"^[A-Z]")])]
+                        /parent::*[not(comparison)][not(ancestor::functionCall[1]/functionName//identifier[matches(text()[1],"^[A-Z]")])][not(emitEventStatement)]
                     </XPath>
                 </Pattern>
                 <!-- фиксирует использование адреса 0x0, кроме "!=0x0" и "==0x0", и кторе тех случаев, когда 0x0 внутри event(внутренняя функция, название которой начинается с большой буквы)-->
