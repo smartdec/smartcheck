@@ -412,6 +412,44 @@
         </Patterns>
     </Rule>
     <Rule>
+        <RuleId>SOLIDITY_OVERPOWERED_OWNER</RuleId>
+        <Patterns>
+            <!-- Фиксируются функции без входных параметров, с модификатором onlyOwner() или содержащие проверку (msg.sender==owner) (owner тут это любой адрес контракта), и названием withdraw* или transfer* -->
+            <Pattern patternId="43jfq2">
+                <Categories>
+                    <Category>Solidity</Category>
+                </Categories>
+                <Severity>2</Severity>
+                <XPath>
+                    //functionDefinition
+                        [parameterList[text()[1]="()"]]
+                        [identifier[text()[1]="onlyOwner"] or identifier[text()[1]="onlyOwner()"] or
+                         descendant::expression[comparison[text()[1]="=="]]
+                                     [expression[1]/environmentalVariable[text()[1]="msg.sender"]]
+                                     [expression[2]/primaryExpression/identifier[text()[1]=(ancestor::contractDefinition
+                                        //stateVariableDeclaration[typeName/elementaryTypeName[text()[1]="address"]]/identifier)]]]
+                        [identifier[matches(text()[1],"^withdraw*|^transfer*|^send*")]]
+                </XPath>
+            </Pattern>
+            <!-- Фиксируются функции с входными параметрами, с модификатором onlyOwner() или содержащие проверку (msg.sender==owner) (owner тут это любой адрес контракта)-->
+            <Pattern patternId="j83hf7">
+                <Categories>
+                    <Category>Solidity</Category>
+                </Categories>
+                <Severity>2</Severity>
+                <XPath>
+                    //functionDefinition
+                        [parameterList[text()[1]!="()"]]
+                        [identifier[text()[1]="onlyOwner"] or identifier[text()[1]="onlyOwner()"] or
+                         descendant::expression[comparison[text()[1]="=="]]
+                                     [expression[1]/environmentalVariable[text()[1]="msg.sender"]]
+                                     [expression[2]/primaryExpression/identifier[text()[1]=(ancestor::contractDefinition
+                                        //stateVariableDeclaration[typeName/elementaryTypeName[text()[1]="address"]]/identifier)]]]
+                </XPath>
+            </Pattern>
+        </Patterns>
+    </Rule>
+    <Rule>
         <RuleId>SOLIDITY_PRAGMAS_VERSION</RuleId>
         <Patterns>
             <!--Фиксируется определение pragma имеющее в версии знаки '^' | '>=' | '>' | '<' | '<='-->
