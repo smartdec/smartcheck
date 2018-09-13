@@ -250,8 +250,8 @@ statement
     | breakStatement ';'
     | returnStatement ';'
     | throwRevertStatement ';'
-    | simpleStatement ';'
     | emitEventStatement ';'
+    | simpleStatement ';'
     ;
 
 emitEventStatement : 'emit' functionName callArguments ;
