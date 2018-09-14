@@ -608,7 +608,7 @@
         </Patterns>
     </Rule>
     <Rule>
-        <RuleId>SOLIDITY_UINT_CANT_BE_NEGAATIVE</RuleId>
+        <RuleId>SOLIDITY_UINT_CANT_BE_NEGATIVE</RuleId>
         <Patterns>
             <!--Фиксирует конструкции: "for (...; i >= 0; ...) { ... }", "while(i >= 0) {}", "do {} while(i >= 0)", где переменная i типа uint*-->
             <Pattern patternId="11ca45b">
