@@ -6,7 +6,7 @@ contract UnderFlow {
     function foo_1() {
         uint b;
         int c = 1;
-    // <yes> <report> SOLIDITY_UINT_CANT_BE_NEGATIVE  11ca45b <yes> <report> SOLIDITY_UNDERFLOW  d48ac4
+    // <yes> <report> SOLIDITY_UINT_CANT_BE_NEGATIVE  11ca45b <yes> <report> SOLIDITY_UINT_CANT_BE_NEGATIVE  d48ac4
         for (uint i=100; i >= 0; i--) {
         }
         for (uint j=0; j <= 0; j--) {
