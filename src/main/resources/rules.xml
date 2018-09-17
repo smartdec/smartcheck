@@ -414,7 +414,7 @@
     <Rule>
         <RuleId>SOLIDITY_OVERPOWERED_OWNER</RuleId>
         <Patterns>
-            <!-- Фиксируются функции с входными параметрами, с модификатором onlyOwner() или содержащие проверку (msg.sender==owner) (owner тут это любой адрес контракта) и названием начинающимся на set*-->
+            <!-- Фиксируются функции с входными параметрами, с модификатором onlyOwner() или содержащие проверку (msg.sender==owner) (owner тут это любой адрес контракта) и названием начинающимся на set* или init*-->
             <Pattern patternId="j83hf7">
                 <Categories>
                     <Category>Solidity</Category>
