@@ -174,6 +174,25 @@
         </Patterns>
     </Rule>
     <Rule>
+        <RuleId>SOLIDITY_DIV_MUL</RuleId>
+        <Patterns>
+            <!--Фиксирует арифметические операции в которых деление перед(ниже по дереву) умножением, в том числе с использованием SafeMath-->
+            <Pattern patternId="09hhh1">
+                <Categories>
+                    <Category>Solidity</Category>
+                </Categories>
+                <Severity>2</Severity>
+                <XPath>
+                    //expression
+                        [muldivOperator/mulOperator or
+                         functionCall/functionName/identifier[text()[1]='mul']]
+                        [descendant::divOperator or
+                         descendant::functionCall/functionName/identifier[text()[1]='div']]
+                </XPath>
+            </Pattern>
+        </Patterns>
+    </Rule>
+    <Rule>
         <RuleId>SOLIDITY_DO_WHILE_CONTINUE</RuleId>
         <Patterns>
             <!--Фиксирует конструкцию: do {continue;} while (false); в версиях компилятора ниже 0.5.0 инструкция continue переводит исполнение на do, не проверяя условие в while - это делает циккл do while бесконечным-->
