@@ -595,6 +595,23 @@
         </Patterns>
     </Rule>
     <Rule>
+        <RuleId>SOLIDITY_TRANSFER_IN_CYCLE</RuleId>
+        <Patterns>
+            <!-- Фиксирует циклы с .transfer() внутри-->
+            <Pattern patternId="8jdj43">
+                <Categories>
+                    <Category>Solidity</Category>
+                </Categories>
+                <Severity>2</Severity>
+                <XPath>
+                    //statement
+                        [forStatement or whileStatement or doWhileStatement]
+                        [descendant::functionCall/functionName/identifier[text()[1]='transfer']]
+                </XPath>
+            </Pattern>
+        </Patterns>
+    </Rule>
+    <Rule>
         <RuleId>SOLIDITY_TX_ORIGIN</RuleId>
         <Patterns>
             <!--Фиксируется вхождение tx.origin-->
