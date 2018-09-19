@@ -520,9 +520,12 @@
                 <Categories>
                     <Category>Solidity</Category>
                 </Categories>
-                <Severity>3</Severity>
+                <Severity>1</Severity>
                 <XPath>
-                    //functionCall/functionName//identifier[text()[1]="send"][ancestor::ifStatement/condition/parent::*[statement//throwRevertStatement] or ancestor::functionCall/functionName//identifier[matches(text()[1],"^require|assert$")]]
+                    //functionCall
+                        [functionName/identifier[text()[1]="send"]]
+                        [ancestor::ifStatement/statement//throwRevertStatement or
+                         ancestor::functionCall/functionName/identifier[matches(text()[1],"require|assert")]]
                 </XPath>
             </Pattern>
         </Patterns>
