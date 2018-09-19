@@ -117,6 +117,21 @@
         </Patterns>
     </Rule>
     <Rule>
+        <RuleId>SOLIDITY_CONSTRUCTOR_RETURN</RuleId>
+        <Patterns>
+            <!-- Фиксирует assembly { return() } в конструкторе.-->
+            <Pattern patternId="8saf21">
+                <Categories>
+                    <Category>Solidity</Category>
+                </Categories>
+                <Severity>3</Severity>
+                <XPath>
+                    //functionDefinition[text()[1]='constructor']//assemblyCall[matches(text()[1],'^return')]
+                </XPath>
+            </Pattern>
+        </Patterns>
+    </Rule>
+    <Rule>
         <RuleId>SOLIDITY_DEPRECATED_CONSTRUCTIONS</RuleId>
         <Patterns>
             <!--Фиксирует конструкцию: "suicide"-->
