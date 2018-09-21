@@ -14,18 +14,20 @@ contract SolidityUncheckedSend {
         a.delegatecall(w);
         // <yes> <report> SOLIDITY_UNCHECKED_CALL f39eed
         a.callcode(w);
+        // <yes> <report> SOLIDITY_UNCHECKED_CALL f39eed
+        a.staticcall();
     }
     
     function delegatecallSetN(address _e, uint _n) public {
-        if (!_e.delegatecall(bytes4(sha3("setN(uint256)")), _n)) throw;
+        if (!_e.delegatecall(bytes4(sha3("setN(uint256)")), _n)) revert();
     }
     
     function delegatecallSetN1(address _e, uint _n) public {
-        if (!_e.call(bytes4(sha3("setN(uint256)")), _n)) throw;
+        if (!_e.call(bytes4(sha3("setN(uint256)")), _n)) revert();
     }
     
     function delegatecallSetN2(address _e, uint _n) public {
-        if (!_e.send(1)) throw;
+        if (!_e.send(1)) revert();
     }
     function delegatecallSetN3(address _e, uint _n) public {
         require(_e.call(bytes4(sha3("setN(uint256)")), _n));
