@@ -412,6 +412,28 @@
         </Patterns>
     </Rule>
     <Rule>
+        <RuleId>SOLIDITY_OVERPOWERED_ROLE</RuleId>
+        <Patterns>
+            <!-- Фиксируются функции с входными параметрами, с модификатором onlyOwner() или содержащие проверку (msg.sender==owner) (owner тут это любой адрес контракта) и названием начинающимся на set* или init*-->
+            <Pattern patternId="j83hf7">
+                <Categories>
+                    <Category>Solidity</Category>
+                </Categories>
+                <Severity>2</Severity>
+                <XPath>
+                    //functionDefinition
+                        [parameterList/parameter]
+                        [identifier[text()[1]="onlyOwner"] or identifier[text()[1]="onlyOwner()"] or
+                         descendant::expression[comparison[text()[1]="=="]]
+                                [expression/environmentalVariable[text()[1]="msg.sender"]]
+                                [expression/primaryExpression/identifier[text()[1]=(ancestor::contractDefinition
+                                //stateVariableDeclaration[typeName/elementaryTypeName[text()[1]="address"]]/identifier)]]]
+                        [identifier[matches(text()[1],"^set|^init")]]
+                </XPath>
+            </Pattern>
+        </Patterns>
+    </Rule>
+    <Rule>
         <RuleId>SOLIDITY_PRAGMAS_VERSION</RuleId>
         <Patterns>
             <!--Фиксируется определение pragma имеющее в версии знаки '^' | '>=' | '>' | '<' | '<='-->
