@@ -1,4 +1,20 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <Rules xmlns="http://www.smartdec.ru/SmartCheck/Conditions" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.smartdec.ru/SmartCheck/Conditions rules-grammar-schema.xsd ">
-
+    <Rule>
+        <RuleId>VYPER_BALANCE_EQUALITY</RuleId>
+        <Patterns>
+            <!-- фиксирует конструкции: ".balance ==", ".balance !="-->
+            <Pattern patternId="5094ad">
+                <Categories>
+                    <Category>Vyper</Category>
+                </Categories>
+                <Severity>1</Severity>
+                <XPath>
+                    //comparison
+                        [comp_op[text()[1]="!=" or text()[1]="=="]]
+                        [expr//atom_expr/trailer[text()[1]=".balance"]]
+                </XPath>
+            </Pattern>
+        </Patterns>
+    </Rule>
 </Rules>
