@@ -32,4 +32,19 @@
             </Pattern>
         </Patterns>
     </Rule>
+    <Rule>
+        <RuleId>VYPER_PRIVATE_MODIFIER_DONT_HIDE_DATA</RuleId>
+        <Patterns>
+            <!-- Фиксируется определение state переменных с типом видимости private -->
+            <Pattern patternId="lo771p">
+                <Categories>
+                    <Category>Vyper</Category>
+                </Categories>
+                <Severity>1</Severity>
+                <XPath>
+                    /file_input/stmt/simple_stmt/small_stmt/expr_stmt[not(annassign//atom_expr/trailer)][annassign]
+                </XPath>
+            </Pattern>
+        </Patterns>
+    </Rule>
 </Rules>
