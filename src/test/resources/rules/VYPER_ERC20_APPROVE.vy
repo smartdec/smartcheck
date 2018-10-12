@@ -6,6 +6,7 @@ allowances: (uint256(wei)[address])[address]
 
 
 @public
+# <yes> <report> VYPER_ERC20_APPROVE af782c
 def approve(_spender : address, _value : uint256(wei)) -> bool:
     _sender: address = msg.sender
     self.allowances[_sender][_spender] = _value

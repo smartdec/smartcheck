@@ -16,6 +16,8 @@
                 </XPath>
             </Pattern>
         </Patterns>
+    </Rule>
+    <Rule>
         <RuleId>VYPER_ERC20_APPROVE</RuleId>
         <Patterns>
             <!--Фиксирует определение функции approve-->
