@@ -16,5 +16,18 @@
                 </XPath>
             </Pattern>
         </Patterns>
+        <RuleId>VYPER_ERC20_APPROVE</RuleId>
+        <Patterns>
+            <!--Фиксирует определение функции approve-->
+            <Pattern patternId="af782c">
+                <Categories>
+                    <Category>Vyper</Category>
+                </Categories>
+                <Severity>2</Severity>
+                <XPath>
+                    //funcdef[matches(text()[1],"approve","i")]
+                </XPath>
+            </Pattern>
+        </Patterns>
     </Rule>
 </Rules>
