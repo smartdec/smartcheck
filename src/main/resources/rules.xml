@@ -286,6 +286,37 @@
         </Patterns>
     </Rule>
     <Rule>
+        <RuleId>SOLIDITY_EXTRA_GAS_IN_LOOPS</RuleId>
+        <Patterns>
+            <!--Фиксирует циклы for, в которых во 2 или 3 стейтменте есть стейт переменные контракта или ".balance", ".length"-->
+            <Pattern patternId="d3j11j">
+                <Categories>
+                    <Category>Solidity</Category>
+                </Categories>
+                <Severity>1</Severity>
+                <XPath>
+                    //forStatement
+                        [condition//expression[matches(text()[1],"^.balance$|^.length$")] 
+                        or expression[2]//expression[matches(text()[1],"^.balance$|^.length$")] 
+                        or condition//identifier[text()[1]=(ancestor::contractDefinition//stateVariableDeclaration/identifier)] 
+                        or expression[2]//identifier[text()[1]=(ancestor::contractDefinition//stateVariableDeclaration/identifier)]]
+                </XPath>
+            </Pattern>
+            <!--Фиксирует циклы while, в которых в условии есть стейт переменные контракта или ".balance", ".length"-->
+            <Pattern patternId="k4o1l4">
+                <Categories>
+                    <Category>Solidity</Category>
+                </Categories>
+                <Severity>1</Severity>
+                <XPath>
+                    //whileStatement
+                        [condition//expression[matches(text()[1],"^.balance$|^.length$")] 
+                        or condition//identifier[text()[1]=(ancestor::contractDefinition//stateVariableDeclaration/identifier)] ]
+                </XPath>
+            </Pattern>
+        </Patterns>
+    </Rule>
+    <Rule>
     <RuleId>SOLIDITY_FUNCTIONS_RETURNS_TYPE_AND_NO_RETURN</RuleId>
     <Patterns>
         <!--Фиксирует функции, у которых есть возвращаемые параметры без идентификатора(returns(uint,...)), и в теле функции нет return-->
