@@ -595,7 +595,7 @@
         </Patterns>
     </Rule>
     <Rule>
-        <RuleId>SOLIDITY_TRANSFER_IN_CYCLE</RuleId>
+        <RuleId>SOLIDITY_TRANSFER_IN_LOOP</RuleId>
         <Patterns>
             <!-- Фиксирует циклы с .transfer() внутри-->
             <Pattern patternId="8jdj43">
@@ -606,7 +606,10 @@
                 <XPath>
                     //statement
                         [forStatement or whileStatement or doWhileStatement]
-                        [descendant::functionCall/functionName/identifier[text()[1]='transfer']]
+                        [descendant::functionCall
+                                                [functionName/identifier[text()[1]='transfer']]
+                                                [callArguments[count(expression)=1]]
+                        ]
                 </XPath>
             </Pattern>
         </Patterns>
