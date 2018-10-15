@@ -47,4 +47,29 @@
             </Pattern>
         </Patterns>
     </Rule>
+    <Rule>
+        <RuleId>VYPER_TIMESTAMP_DEPENDENCE</RuleId>
+        <Patterns>
+            <!-- Фиксируется случаи, когда выражение содержит "= block.timestamp" -->
+            <Pattern patternId="to882y">
+                <Categories>
+                    <Category>Vyper</Category>
+                </Categories>
+                <Severity>2</Severity>
+                <XPath>
+                    //expr_stmt[testlist_star_expr//trailer[matches(text()[1], "timestamp")]][matches(text(), "=")]
+                </XPath>
+            </Pattern>
+            <!-- Фиксируется случаи, когда выражение содержит "== block.timestamp" -->
+            <Pattern patternId="to993y">
+                <Categories>
+                    <Category>Vyper</Category>
+                </Categories>
+                <Severity>2</Severity>
+                <XPath>
+                    //comparison[comp_op[matches(text(),"==")]][expr//trailer[matches(text()[1], "timestamp")]]
+                </XPath>
+            </Pattern>
+        </Patterns>
+    </Rule>
 </Rules>
