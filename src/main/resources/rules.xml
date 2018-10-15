@@ -117,6 +117,37 @@
         </Patterns>
     </Rule>
     <Rule>
+        <RuleId>SOLIDITY_SOLIDITY_CALL_VALUE</RuleId>
+        <Patterns>
+            <!-- Фиксирует вызовы call с пустой датой и без ограничения газа-->
+            <Pattern patternId="om991k">
+                <Categories>
+                    <Category>Solidity</Category>
+                </Categories>
+                <Severity>2</Severity>
+                <XPath>
+                    //functionCall
+                        [functionName/identifier[text()[1]="call"]]
+                        [not(callArguments/expression)]
+                        [not(gas/expression)]
+                </XPath>
+            </Pattern>
+            <!-- Фиксирует вызовы call с пустой датой, но с ограничением газа-->
+            <Pattern patternId="lr991l">
+                <Categories>
+                    <Category>Solidity</Category>
+                </Categories>
+                <Severity>1</Severity>
+                <XPath>
+                    //functionCall
+                        [functionName/identifier[text()[1]="call"]]
+                        [not(callArguments/expression)]
+                        [gas/expression]
+                </XPath>
+            </Pattern>
+        </Patterns>
+    </Rule>
+    <Rule>
         <RuleId>SOLIDITY_DEPRECATED_CONSTRUCTIONS</RuleId>
         <Patterns>
             <!--Фиксирует конструкцию: "suicide"-->
