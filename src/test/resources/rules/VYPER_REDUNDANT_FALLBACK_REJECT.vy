@@ -10,6 +10,7 @@ def __default__():
 def __default__():
     throw
 
+// <yes> <report> VYPER_REDUNDANT_FALLBACK_REJECT am179p
 @public
 def __default__():
     throw
@@ -20,6 +21,7 @@ def __default__():
     throw
     log.Payment(msg.value, msg.sender)
 
+// <yes> <report> VYPER_REDUNDANT_FALLBACK_REJECT am180p
 @public
 @payable
 def __default__():
