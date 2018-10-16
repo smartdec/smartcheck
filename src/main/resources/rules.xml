@@ -98,7 +98,9 @@
                 </Categories>
                 <Severity>1</Severity>
                 <XPath>
-                //expression[expression[matches(text()[1],".balance$")]][comparison]
+                    //expression
+                        [expression[matches(text()[1],".balance$")] or expression/expression[matches(text()[1],".balance$")]]
+                        [comparison]
                 </XPath>
             </Pattern>
         </Patterns>
