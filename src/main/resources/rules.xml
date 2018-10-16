@@ -797,18 +797,25 @@
     <Rule>
         <RuleId>SOLIDITY_UNCHECKED_CALL</RuleId>
         <Patterns>
-            <!--Фиксируется случаи, когда вызовы функций  call, delegatecall, send, callcode не имеют предков по дереву: if, require, assert, return, вызов функции, не входит в определение переменной-->
+            <!--Фиксируется случаи, когда вызовы функций  call, delegatecall, send, callcode не имеют
+             предков по дереву: if, require, assert, return, вызов функции, не входит в определение переменной-->
             <Pattern patternId="f39eed">
                 <Categories>
                     <Category>Solidity</Category>
                 </Categories>
                 <Severity>3</Severity>
                 <XPath>
-                    //functionCall[functionName//identifier[matches(text()[1],"^call|delegatecall|send|callcode$")] and not(ancestor::ifStatement) and not(ancestor::functionCall[functionName//identifier[matches(text()[1],"^require|assert$")]]) and not(ancestor::returnStatement) and not(ancestor::functionCall) and not(ancestor::variableDeclarationStatement)]
+                    //functionCall
+                        [functionName//identifier[matches(text()[1],"call|delegatecall|send|callcode")]
+                        and not(ancestor::ifStatement)
+                        and not(ancestor::returnStatement)
+                        and not(ancestor::functionCall)
+                        and not(ancestor::variableDeclarationStatement)
+                    ]
                 </XPath>
             </Pattern>
         </Patterns>
-    </Rule>
+    </Rule>﻿
     <Rule>
         <RuleId>SOLIDITY_UPGRADE_TO_050</RuleId>
         <Patterns>
