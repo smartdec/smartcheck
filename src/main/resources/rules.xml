@@ -610,7 +610,7 @@
     <Rule>
         <RuleId>SOLIDITY_UNCHECKED_CALL</RuleId>
         <Patterns>
-            <!--Фиксируется случаи, когда вызовы функций  call, delegatecall, send, callcode, staticcall не имеют предков по дереву: if, require, assert, return, вызов функции, не входит в определение переменной-->
+            <!--Фиксируется случаи, когда вызовы функций  call, delegatecall, send, callcode не имеют предков по дереву: if, require, assert, return, вызов функции, не входит в определение переменной-->
             <Pattern patternId="f39eed">
                 <Categories>
                     <Category>Solidity</Category>
@@ -618,7 +618,7 @@
                 <Severity>3</Severity>
                 <XPath>
                     //functionCall
-                        [functionName//identifier[matches(text()[1],"call|delegatecall|send|callcode|staticcall")] 
+                        [functionName//identifier[matches(text()[1],"call|delegatecall|send|callcode")]
                         and not(ancestor::ifStatement) 
                         and not(ancestor::returnStatement) 
                         and not(ancestor::functionCall) 

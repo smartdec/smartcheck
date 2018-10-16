@@ -14,8 +14,6 @@ contract SolidityUncheckedSend {
         a.delegatecall(w);
         // <yes> <report> SOLIDITY_UNCHECKED_CALL f39eed
         a.callcode(w);
-        // <yes> <report> SOLIDITY_UNCHECKED_CALL f39eed
-        a.staticcall();
     }
     
     function delegatecallSetN(address _e, uint _n) public {
