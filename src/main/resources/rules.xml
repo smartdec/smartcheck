@@ -515,7 +515,8 @@
     <Rule>
         <RuleId>SOLIDITY_SEND</RuleId>
         <Patterns>
-            <!--Фиксируется использование функции send, в случаях: if (..send()){revert() или throw} и require или assert от send-->
+            <!--Фиксируется использование функции send, в случаях: if (..send()){revert() или throw},
+             и require или assert от send-->
             <Pattern patternId="430636">
                 <Categories>
                     <Category>Solidity</Category>
@@ -524,7 +525,7 @@
                 <XPath>
                     //functionCall
                         [functionName/identifier[text()[1]="send"]]
-                        [ancestor::ifStatement/statement//throwRevertStatement or
+                        [ancestor::ifStatement/statement/block/statement/throwRevertStatement or
                          ancestor::functionCall/functionName/identifier[matches(text()[1],"require|assert")]]
                 </XPath>
             </Pattern>
