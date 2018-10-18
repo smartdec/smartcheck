@@ -27,7 +27,8 @@
                 </Categories>
                 <Severity>3</Severity>
                 <XPath>
-                    //decorator/dotted_name[text()[1]='payable']
+                    //decorator/dotted_name
+                        [text()[1]='payable']
                         [not(ancestor::file_input//atom_expr
                             [trailer]
                             [atom/atom_name[matches(text()[1],'send|raw_call|selfdestruct')]]
