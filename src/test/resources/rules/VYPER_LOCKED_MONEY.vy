@@ -1,5 +1,5 @@
 funders: {sender: address, value: wei_value}[int128]
-nextFunderIndex: int128
+nextFunderIndex: public(int128)
 
 
 @public
