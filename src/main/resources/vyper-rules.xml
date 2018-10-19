@@ -47,7 +47,8 @@
                 </Categories>
                 <Severity>1</Severity>
                 <XPath>
-                    /file_input/stmt/simple_stmt/small_stmt/expr_stmt[not(annassign//atom_expr/trailer)][annassign]
+                    /file_input/stmt/simple_stmt/small_stmt/expr_stmt[not(annassign//atom_expr/trailer)]
+                        [annassign]
                 </XPath>
             </Pattern>
         </Patterns>
