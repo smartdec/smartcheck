@@ -20,14 +20,21 @@
     <Rule>
         <RuleId>VYPER_ERC20_APPROVE</RuleId>
         <Patterns>
-            <!--Фиксирует определение функции approve-->
+            <!--Фиксирует определение функции approve, возвращающей bool, с двумя аргументами типов address и bool-->
             <Pattern patternId="af782c">
                 <Categories>
                     <Category>Vyper</Category>
                 </Categories>
                 <Severity>2</Severity>
                 <XPath>
-                    //funcdef[matches(text()[1],"approve","i")]
+                    //funcdef
+                        [matches(text()[1],"approve$","i")]
+                        [parameters/typedargslist
+                            [count(tfpdef)=2]
+                            [tfpdef[1]//atom_name[text()[1]="address"]]
+                            [tfpdef[2]//atom_name[matches(text()[1],"uint")]]]
+                        [text()[2] = "->"]
+                        [test//atom_name[text()[1]="bool"]]
                 </XPath>
             </Pattern>
         </Patterns>
