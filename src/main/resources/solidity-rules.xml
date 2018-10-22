@@ -340,7 +340,7 @@
     <Rule>
         <RuleId>SOLIDITY_EXACT_TIME</RuleId>
         <Patterns>
-            <!--Фиксируется случаи, когда выражение содержит "== or != block.timestamp or now"-->
+            <!--Фиксируется случаи, когда выражение содержит "== or != block.timestamp or now", кроме функций от now/block.timestamp-->
             <Pattern patternId="1955d9">
                 <Categories>
                     <Category>Solidity</Category>
@@ -349,7 +349,9 @@
                 <XPath>
                     //expression
                         [comparison[matches(text()[1],"==|!=")]]
-                        [expression//environmentalVariable[matches(text()[1],"^block.timestamp|now$")]]
+                        [expression//environmentalVariable
+                            [matches(text()[1],"^block.timestamp|now$")]
+                            [not(parent::expression[parent::callArguments[parent::functionCall]])]]
                 </XPath>
             </Pattern>
         </Patterns>
