@@ -131,6 +131,18 @@
                     //functionDefinition[text()[1]='constructor']//assemblyCall[matches(text()[1],'^return')]
                 </XPath>
             </Pattern>
+            <!-- Фиксирует assembly { return() } в конструкторе старого типа.-->
+            <Pattern patternId="7gaf21">
+                <Categories>
+                    <Category>Solidity</Category>
+                </Categories>
+                <Severity>3</Severity>
+                <XPath>
+                    //functionDefinition
+                        [identifier[text()[1]=(ancestor::contractDefinition/identifier)]]
+                        //assemblyCall[matches(text()[1],'^return')]
+                </XPath>
+            </Pattern>
         </Patterns>
     </Rule>
     <Rule>
