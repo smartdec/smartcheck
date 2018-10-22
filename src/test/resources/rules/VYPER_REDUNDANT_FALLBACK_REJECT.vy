@@ -1,5 +1,3 @@
-Payment: event({amount: int128, from: indexed(address)})
-
 @public
 @payable
 def __default__():
@@ -20,7 +18,7 @@ def __default__():
 @payable
 def __default__():
     throw
-    log.Payment(msg.value, msg.sender)
+    pass
 
 @public
 @payable
@@ -30,10 +28,10 @@ def __default__():
 
 @public
 def __default__():
-    assert msg.balance < 15
+    assert 10 < 15
 
 @public
 @payable
 def __default__():
     assert msg.value < 15
-    log.Payment(msg.value, msg.sender)
+    pass
