@@ -1,12 +1,12 @@
-
 test_end: public(timestamp)
 test_start: public(timestamp)
 
 @public
-def test_function()->uint256:
+def test_function():
 
-    # <yes> <report> VYPER_TIMESTAMP_DEPENDENCE to882y
-    self.test_start = block.timestamp
+    # <yes> <report> VYPER_TIMESTAMP_DEPENDENCE to993y
+    if self.test_start != block.timestamp:
+        pass
 
     # <yes> <report> VYPER_TIMESTAMP_DEPENDENCE to993y
     assert self.test_end == block.timestamp
@@ -16,14 +16,14 @@ def test_function()->uint256:
     # <yes> <report> VYPER_TIMESTAMP_DEPENDENCE to993y
     if self.test_end == block.timestamp:
 
-        # <yes> <report> VYPER_TIMESTAMP_DEPENDENCE to882y
-        self.test_end = block.timestamp
-        return(0)
+        # <yes> <report> VYPER_TIMESTAMP_DEPENDENCE to993y
+        if self.test_end != block.timestamp:
+            pass
+
 
     if self.test_end == self.test_start:
-        return(0)
+        pass
 
     if self.test_end > block.timestamp:
-        return(0)
-
+        pass
 
