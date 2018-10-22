@@ -48,7 +48,10 @@
                 <Severity>2</Severity>
                 <XPath>
                     //comparison[comp_op[matches(text(),"==|!=")]]
-                        [expr//trailer[matches(text()[1], "timestamp")]]
+                        [expr//atom_expr[trailer[matches(text()[1], "timestamp")]]
+                            [atom/atom_name[matches(text()[1], "block")]]
+                            [not(ancestor::argument)]]
+
                 </XPath>
             </Pattern>
         </Patterns>

@@ -2,6 +2,10 @@ test_end: public(timestamp)
 test_start: public(timestamp)
 
 @public
+def timefunction()->bool:
+    return True
+
+@public
 def test_function():
 
     # <yes> <report> VYPER_TIMESTAMP_DEPENDENCE to993y
@@ -27,3 +31,5 @@ def test_function():
     if self.test_end > block.timestamp:
         pass
 
+    if self.test_end == timefunction(block.timestamp):
+        pass
