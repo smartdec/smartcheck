@@ -457,6 +457,29 @@
         </Patterns>
     </Rule>
     <Rule>
+        <RuleId>SOLIDITY_INCORRECT_BLOCKHASH</RuleId>
+        <Patterns>
+            <!--Фиксирует неправильное использование blockhash: blockhash(число), blockhash(blockNumber) - не известен хэш текущего блока, blockhash(blockNumber минус число больше 256) - храняться хэши только последних 256 блоков-->
+            <Pattern patternId="b629ad">
+                <Categories>
+                    <Category>Solidity</Category>
+                </Categories>
+                <Severity>2</Severity>
+                <XPath>
+                    //environmentalVariable
+                        [matches(text()[1],"block.blockhash")]
+                    /expression
+                        [primaryExpression/numberLiteral/decimalNumber 
+                        or environmentalVariable[text()[1]="block.number"] 
+                        or (expression[1]/environmentalVariable[text()[1]="block.number"] 
+                            and plusminusOperator 
+                            and expression[2]/primaryExpression/numberLiteral/decimalNumber
+                                [text()[1] > 256])]
+                </XPath>
+            </Pattern>
+        </Patterns>
+    </Rule>
+    <Rule>
         <RuleId>SOLIDITY_LOCKED_MONEY</RuleId>
         <Patterns>
             <!--Фиксируются ситуации, когда в контракте имеется функция типа payable, но нет функций suicide, selfdestruct, transfer, send, .value-->
@@ -916,21 +939,6 @@
                                                             or text()[1] = "string"]
                             or typeName//identifier[text()[1] = (ancestor::contractDefinition//structDefinition/identifier)]]
                             [not(storageLocation)]
-                </XPath>
-            </Pattern>
-        </Patterns>
-    </Rule>
-    <Rule>
-        <RuleId>SOLIDITY_USING_BLOCKHASH</RuleId>
-        <Patterns>
-            <!--Фиксирует конструкцию: "blockhash"-->
-            <Pattern patternId="b629ad">
-                <Categories>
-                    <Category>Solidity</Category>
-                </Categories>
-                <Severity>1</Severity>
-                <XPath>
-                    //expression[//environmentalVariable[matches(text()[1],"block.blockhash")]]
                 </XPath>
             </Pattern>
         </Patterns>
