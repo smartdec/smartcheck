@@ -16,13 +16,7 @@ def __default__():
     pass
 
 @public
-@payable
-#<yes> <report> VYPER_REDUNDANT_FALLBACK_REJECT am179p
+@payables
 def __default__():
-    assert msg.value < 15
-
-@public
-@payable
-def __default__():
-    assert msg.value < 15
-    pass
+    if True:
+        throw

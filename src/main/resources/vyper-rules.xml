@@ -40,18 +40,16 @@
     <Rule>
         <RuleId>VYPER_REDUNDANT_FALLBACK_REJECT</RuleId>
         <Patterns>
-            <!-- контракт содержит fallback функцию, в определении которой есть только один statement: throw или assert -->
+            <!-- контракт содержит fallback функцию, в определении которой есть только один statement: throw -->
             <Pattern patternId="am179p">
                 <Categories>
                     <Category>Vyper</Category>
                 </Categories>
                 <Severity>1</Severity>
                 <XPath>
-                    //funcdef
-                        [matches(text()[1], "__default__")]
-                        [suite[count(stmt)=1]]
-                        [suite//atom_name[matches(text()[1], "throw")]
-                            or suite//assert_stmt[matches(text()[1], "assert")]]
+                    //funcdef[suite[count(stmt)=1]]
+                        [suite/stmt/simple_stmt/small_stmt/expr_stmt/testlist_star_expr/test/or_test/and_test/not_test/comparison/
+                        expr/xor_expr/and_expr/shift_expr/arith_expr/term/factor/power/atom_expr/atom/atom_name[matches(text()[1], "^throw$")]]
                 </XPath>
             </Pattern>
         </Patterns>
