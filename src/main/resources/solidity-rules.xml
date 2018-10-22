@@ -457,6 +457,29 @@
         </Patterns>
     </Rule>
     <Rule>
+        <RuleId>SOLIDITY_INCORRECT_BLOCKHASH</RuleId>
+        <Patterns>
+            <!--Фиксирует неправильное использование blockhash: blockhash(число), blockhash(blockNumber) - не известен хэш текущего блока, blockhash(blockNumber минус число больше 256) - храняться хэши только последних 256 блоков-->
+            <Pattern patternId="b629ad">
+                <Categories>
+                    <Category>Solidity</Category>
+                </Categories>
+                <Severity>2</Severity>
+                <XPath>
+                    //environmentalVariable
+                        [matches(text()[1],"block.blockhash")]
+                    /expression
+                        [primaryExpression/numberLiteral/decimalNumber 
+                        or environmentalVariable[text()[1]="block.number"] 
+                        or (expression[1]/environmentalVariable[text()[1]="block.number"] 
+                            and plusminusOperator 
+                            and expression[2]/primaryExpression/numberLiteral/decimalNumber
+                                [text()[1] > 256])]
+                </XPath>
+            </Pattern>
+        </Patterns>
+    </Rule>
+    <Rule>
         <RuleId>SOLIDITY_LOCKED_MONEY</RuleId>
         <Patterns>
             <!--Фиксируются ситуации, когда в контракте имеется функция типа payable, но нет функций suicide, selfdestruct, transfer, send, .value-->
@@ -543,34 +566,6 @@
         </Patterns>
     </Rule>
     <Rule>
-        <RuleId>SOLIDITY_PURE_FUNCTION</RuleId>
-        <Patterns>
-            <Pattern patternId="11314f">
-                <Categories>
-                    <Category>Solidity</Category>
-                </Categories>
-                <Severity>0</Severity>
-                <XPath>
-                    //functionDefinition[stateMutability/pureType and block/descendant-or-self::*[
-                    <!--Accessing <address>.balance: using .balance-->
-                    expression[matches(text()[1],".balance")]
-                    <!--Accessing any of the members of block, tx, msg (with the exception of msg.sig and msg.data)-->
-                    or environmentalVariable[matches(text()[1],"msg.value|msg.gas|msg.sender|block.timestamp|tx.origin|block.blockhash|block.coinbase|block.difficulty|block.gaslimit|block.number|block.blockhash|block.coinbase|tx.gasprice")]
-                    <!--Using selfdestruct and it's alias suicide:-->
-                    or functionCall/functionName//identifier[matches(text()[1],"^selfdestruct|suicide$")]
-                    <!--Sending Ether via calls:-->
-                    or functionCall/functionName//identifier[matches(text()[1],"^send|transfer$")]
-                    <!--Using low-level calls:-->
-                    or functionCall/functionName//identifier[matches(text()[1],"^call|delegatecall|callcode$")]
-                    <!--Using inline assembly that contains certain opcodes:-->
-                    or inlineAssemblyStatement
-                    ]
-                    ]
-                </XPath>
-            </Pattern>
-        </Patterns>
-    </Rule>
-    <Rule>
         <RuleId>SOLIDITY_REDUNDANT_FALLBACK_REJECT</RuleId>
         <Patterns>
             <!--Фиксируется случаи, когда версия компилятора больше или равна 0.4.0, контракт содержит fallback функцию типа payable, в определении которой есть только один statement: throw или revert() -->
@@ -632,6 +627,62 @@
                         [functionName/identifier[text()[1]="send"]]
                         [ancestor::ifStatement/statement/block/statement/throwRevertStatement or
                          ancestor::functionCall/functionName/identifier[matches(text()[1],"require|assert")]]
+                </XPath>
+            </Pattern>
+        </Patterns>
+    </Rule>
+    <Rule>
+        <RuleId>SOLIDITY_SHOULD_NOT_BE_PURE</RuleId>
+        <Patterns>
+            <Pattern patternId="11314f">
+                <Categories>
+                    <Category>Solidity</Category>
+                </Categories>
+                <Severity>1</Severity>
+                <XPath>
+                    //functionDefinition[stateMutability/pureType and block/descendant-or-self::*[
+                    <!--Accessing <address>.balance: using .balance-->
+                    expression[matches(text()[1],".balance")]
+                    <!--Accessing any of the members of block, tx, msg (with the exception of msg.sig and msg.data)-->
+                    or environmentalVariable[matches(text()[1],"msg.value|msg.gas|msg.sender|block.timestamp|tx.origin|block.blockhash|block.coinbase|block.difficulty|block.gaslimit|block.number|block.blockhash|block.coinbase|tx.gasprice")]
+                    <!--Using selfdestruct and it's alias suicide:-->
+                    or functionCall/functionName//identifier[matches(text()[1],"^selfdestruct|suicide$")]
+                    <!--Sending Ether via calls:-->
+                    or functionCall/functionName//identifier[matches(text()[1],"^send|transfer$")]
+                    <!--Using low-level calls:-->
+                    or functionCall/functionName//identifier[matches(text()[1],"^call|delegatecall|callcode$")]
+                    <!--Using inline assembly that contains certain opcodes:-->
+                    or inlineAssemblyStatement
+                    ]
+                    ]
+                </XPath>
+            </Pattern>
+        </Patterns>
+    </Rule>
+    <Rule>
+        <RuleId>SOLIDITY_SHOULD_NOT_BE_VIEW</RuleId>
+        <Patterns>
+            <Pattern patternId="189abf">
+                <Categories>
+                    <Category>Solidity</Category>
+                </Categories>
+                <Severity>1</Severity>
+                <!--Writing to state variables - лучше сделать через флаги-->
+                <!--Emitting events - лучше сделать через флаги-->
+                <!--Creating other contracts - лучше сделать через флаги-->
+                <!--Calling any function not marked view or pure:- лучше сделать через флаги-->
+                <XPath>
+                    //functionDefinition[stateMutability/viewType and block/descendant-or-self::*[
+                        <!--Using selfdestruct and it's alias suicide:-->
+                        functionCall/functionName//identifier[matches(text()[1],"^selfdestruct|suicide$")]
+                        <!--Sending Ether via calls:-->
+                        or functionCall/functionName//identifier[matches(text()[1],"^send|transfer$")]
+                        <!--Using low-level calls:-->
+                        or functionCall/functionName//identifier[matches(text()[1],"^call|delegatecall|callcode$")]
+                        <!--Using inline assembly that contains certain opcodes:-->
+                        or inlineAssemblyStatement
+                    ]
+                    ]
                 </XPath>
             </Pattern>
         </Patterns>
@@ -893,21 +944,6 @@
         </Patterns>
     </Rule>
     <Rule>
-        <RuleId>SOLIDITY_USING_BLOCKHASH</RuleId>
-        <Patterns>
-            <!--Фиксирует конструкцию: "blockhash"-->
-            <Pattern patternId="b629ad">
-                <Categories>
-                    <Category>Solidity</Category>
-                </Categories>
-                <Severity>1</Severity>
-                <XPath>
-                    //expression[//environmentalVariable[matches(text()[1],"block.blockhash")]]
-                </XPath>
-            </Pattern>
-        </Patterns>
-    </Rule>
-    <Rule>
         <RuleId>SOLIDITY_USING_INLINE_ASSEMBLY</RuleId>
         <Patterns>
             <!--Фиксирует конструкцию: "assembly", кроме конструкции: assembly { ... := extcodesize(...) }-->
@@ -956,34 +992,6 @@
                 <Severity>2</Severity>
                 <TruePositiveRate>3</TruePositiveRate>
                 <XPath>//forStatement[expression[1]//typeName/elementaryTypeName[matches(text()[1],"^var$")]][condition/expression/expression/primaryExpression[numberLiteral/decimalNumber[matches(text()[1],"^[0-9]+$")]&gt; 255]][expression[2]/twoPlusMinusOperator/incrementOperator]
-                </XPath>
-            </Pattern>
-        </Patterns>
-    </Rule>
-    <Rule>
-        <RuleId>SOLIDITY_VIEW_FUNCTION</RuleId>
-        <Patterns>
-            <Pattern patternId="189abf">
-                <Categories>
-                    <Category>Solidity</Category>
-                </Categories>
-                <Severity>0</Severity>
-                <!--Writing to state variables - лучше сделать через флаги-->
-                <!--Emitting events - лучше сделать через флаги-->
-                <!--Creating other contracts - лучше сделать через флаги-->
-                <!--Calling any function not marked view or pure:- лучше сделать через флаги-->
-                <XPath>
-                    //functionDefinition[stateMutability/viewType and block/descendant-or-self::*[
-                        <!--Using selfdestruct and it's alias suicide:-->
-                        functionCall/functionName//identifier[matches(text()[1],"^selfdestruct|suicide$")]
-                        <!--Sending Ether via calls:-->
-                        or functionCall/functionName//identifier[matches(text()[1],"^send|transfer$")]
-                        <!--Using low-level calls:-->
-                        or functionCall/functionName//identifier[matches(text()[1],"^call|delegatecall|callcode$")]
-                        <!--Using inline assembly that contains certain opcodes:-->
-                        or inlineAssemblyStatement
-                    ]
-                    ]
                 </XPath>
             </Pattern>
         </Patterns>
