@@ -18,6 +18,26 @@
         </Patterns>
     </Rule>
     <Rule>
+        <RuleId>VYPER_LOCKED_MONEY</RuleId>
+        <Patterns>
+            <!-- Фиксируются ситуации, когда в контракте имеется функция типа payable, но нет функций selfdestruct, send, .value-->
+            <Pattern patternId="30281d">
+                <Categories>
+                    <Category>Vyper</Category>
+                </Categories>
+                <Severity>3</Severity>
+                <XPath>
+                    //decorator/dotted_name
+                        [text()[1]='payable']
+                        [not(ancestor::file_input//atom_expr
+                            [trailer]
+                            [atom/atom_name[matches(text()[1],'send|raw_call|selfdestruct')]]
+                        )]
+                </XPath>
+            </Pattern>
+        </Patterns>
+    </Rule>
+    <Rule>
         <RuleId>VYPER_REDUNDANT_FALLBACK_REJECT</RuleId>
         <Patterns>
             <!-- контракт содержит fallback функцию типа payable, в определении которой есть только один statement: throw -->
