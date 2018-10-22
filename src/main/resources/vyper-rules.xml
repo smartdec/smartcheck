@@ -18,31 +18,21 @@
         </Patterns>
     </Rule>
     <Rule>
-        <RuleId>VYPER_ERC20_APPROVE</RuleId>
+        <RuleId>VYPER_LOCKED_MONEY</RuleId>
         <Patterns>
-            <!--Фиксирует определение функции approve-->
-            <Pattern patternId="af782c">
+            <!-- Фиксируются ситуации, когда в контракте имеется функция типа payable, но нет функций selfdestruct, send, .value-->
+            <Pattern patternId="30281d">
                 <Categories>
                     <Category>Vyper</Category>
                 </Categories>
-                <Severity>2</Severity>
+                <Severity>3</Severity>
                 <XPath>
-                    //funcdef[matches(text()[1],"approve","i")]
-                </XPath>
-            </Pattern>
-        </Patterns>
-    </Rule>
-    <Rule>
-        <RuleId>VYPER_PRIVATE_MODIFIER_DONT_HIDE_DATA</RuleId>
-        <Patterns>
-            <!-- Фиксируется определение state переменных с типом видимости private -->
-            <Pattern patternId="lo771p">
-                <Categories>
-                    <Category>Vyper</Category>
-                </Categories>
-                <Severity>1</Severity>
-                <XPath>
-                    /file_input/stmt/simple_stmt/small_stmt/expr_stmt[not(annassign//atom_expr/trailer)][annassign]
+                    //decorator/dotted_name
+                        [text()[1]='payable']
+                        [not(ancestor::file_input//atom_expr
+                            [trailer]
+                            [atom/atom_name[matches(text()[1],'send|raw_call|selfdestruct')]]
+                        )]
                 </XPath>
             </Pattern>
         </Patterns>
@@ -50,24 +40,15 @@
     <Rule>
         <RuleId>VYPER_TIMESTAMP_DEPENDENCE</RuleId>
         <Patterns>
-            <!-- Фиксируется случаи, когда выражение содержит "= block.timestamp" -->
-            <Pattern patternId="to882y">
-                <Categories>
-                    <Category>Vyper</Category>
-                </Categories>
-                <Severity>2</Severity>
-                <XPath>
-                    //expr_stmt[testlist_star_expr//trailer[matches(text()[1], "timestamp")]][matches(text(), "=")]
-                </XPath>
-            </Pattern>
-            <!-- Фиксируется случаи, когда выражение содержит "== block.timestamp" -->
+            <!-- Фиксируется случаи, когда выражение содержит "!= или == block.timestamp" -->
             <Pattern patternId="to993y">
                 <Categories>
                     <Category>Vyper</Category>
                 </Categories>
                 <Severity>2</Severity>
                 <XPath>
-                    //comparison[comp_op[matches(text(),"==")]][expr//trailer[matches(text()[1], "timestamp")]]
+                    //comparison[comp_op[matches(text(),"==|!=")]]
+                        [expr//trailer[matches(text()[1], "timestamp")]]
                 </XPath>
             </Pattern>
         </Patterns>
