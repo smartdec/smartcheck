@@ -9,11 +9,6 @@ def __default__():
 def __default__():
     throw
 
-
-@public
-def __default__():
-    throw
-
 @public
 @payable
 def __default__():
@@ -22,13 +17,9 @@ def __default__():
 
 @public
 @payable
-#<yes> <report> VYPER_REDUNDANT_FALLBACK_REJECT am180p
+#<yes> <report> VYPER_REDUNDANT_FALLBACK_REJECT am179p
 def __default__():
     assert msg.value < 15
-
-@public
-def __default__():
-    assert 10 < 15
 
 @public
 @payable

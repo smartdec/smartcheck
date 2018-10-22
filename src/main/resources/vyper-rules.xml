@@ -40,7 +40,7 @@
     <Rule>
         <RuleId>VYPER_REDUNDANT_FALLBACK_REJECT</RuleId>
         <Patterns>
-            <!-- контракт содержит fallback функцию типа payable, в определении которой есть только один statement: throw -->
+            <!-- контракт содержит fallback функцию, в определении которой есть только один statement: throw или assert -->
             <Pattern patternId="am179p">
                 <Categories>
                     <Category>Vyper</Category>
@@ -50,22 +50,8 @@
                     //funcdef
                         [matches(text()[1], "__default__")]
                         [suite[count(stmt)=1]]
-                        [suite//atom_name[matches(text()[1], "throw")]]
-                        [parent::*//dotted_name[matches(text()[1], "payable")]]
-                </XPath>
-            </Pattern>
-            <!-- контракт содержит fallback функцию типа payable, в определении которой есть только один statement:assert() -->
-            <Pattern patternId="am180p">
-                <Categories>
-                    <Category>Vyper</Category>
-                </Categories>
-                <Severity>1</Severity>
-                <XPath>
-                    //funcdef
-                        [matches(text()[1], "__default__")]
-                        [suite[count(stmt)=1]]
-                        [suite//assert_stmt[matches(text()[1], "assert")]]
-                        [parent::*//dotted_name[matches(text()[1], "payable")]]
+                        [suite//atom_name[matches(text()[1], "throw")]
+                            or suite//assert_stmt[matches(text()[1], "assert")]]
                 </XPath>
             </Pattern>
         </Patterns>
