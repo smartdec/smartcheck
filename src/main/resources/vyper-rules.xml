@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<Rules xmlns="http://www.smartdec.ru/SmartCheck/Conditions" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.smartdec.ru/SmartCheck/Conditions rules-grammar-schema.xsd ">
+    <Rule>
+        <RuleId>VYPER_BALANCE_EQUALITY</RuleId>
+        <Patterns>
+            <!-- фиксирует конструкции: ".balance ==", ".balance !="-->
+            <Pattern patternId="5094ad">
+                <Categories>
+                    <Category>Vyper</Category>
+                </Categories>
+                <Severity>1</Severity>
+                <XPath>
+                    //comparison
+                        [comp_op[text()[1]="!=" or text()[1]="=="]]
+                        [expr//atom_expr/trailer[text()[1]=".balance"]]
+                </XPath>
+            </Pattern>
+        </Patterns>
+    </Rule>
+    <Rule>
+        <RuleId>VYPER_LOCKED_MONEY</RuleId>
+        <Patterns>
+            <!-- Фиксируются ситуации, когда в контракте имеется функция типа payable, но нет функций selfdestruct, send, .value-->
+            <Pattern patternId="30281d">
+                <Categories>
+                    <Category>Vyper</Category>
+                </Categories>
+                <Severity>3</Severity>
+                <XPath>
+                    //decorator/dotted_name
+                        [text()[1]='payable']
+                        [not(ancestor::file_input//atom_expr
+                            [trailer]
+                            [atom/atom_name[matches(text()[1],'send|raw_call|selfdestruct')]]
+                        )]
+                </XPath>
+            </Pattern>
+        </Patterns>
+    </Rule>
+</Rules>
