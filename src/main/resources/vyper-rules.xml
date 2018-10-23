@@ -38,6 +38,47 @@
         </Patterns>
     </Rule>
     <Rule>
+        <RuleId>VYPER_ERC20_APPROVE</RuleId>
+        <Patterns>
+            <!--Фиксирует определение функции approve, возвращающей bool, с двумя аргументами типов address и bool-->
+            <Pattern patternId="af782c">
+                <Categories>
+                    <Category>Vyper</Category>
+                </Categories>
+                <Severity>2</Severity>
+                <XPath>
+                    //funcdef
+                    [text()[1]="defapprove"]
+                    [parameters/typedargslist
+                    [count(tfpdef)=2]
+                    [tfpdef[1]//atom_name[text()[1]="address"]]
+                    [tfpdef[2]//atom_name[matches(text()[1],"^uint[0-9]*")]]]
+                    [text()[2] = "->"]
+                    [test//atom_name[text()[1]="bool"]]
+                </XPath>
+            </Pattern>
+        </Patterns>
+    </Rule>
+    <Rule>
+        <RuleId>VYPER_TIMESTAMP_DEPENDENCE</RuleId>
+        <Patterns>
+            <!-- Фиксируется случаи, когда выражение содержит "!= или == block.timestamp", кроме аргументов функций -->
+            <Pattern patternId="to993y">
+                <Categories>
+                    <Category>Vyper</Category>
+                </Categories>
+                <Severity>2</Severity>
+                <XPath>
+                    //comparison[comp_op[matches(text(),"==|!=")]]
+                        [expr//atom_expr[trailer[matches(text()[1], "timestamp")]]
+                            [atom/atom_name[matches(text()[1], "block")]]
+                            [not(ancestor::*[14][self::argument])]]
+
+                </XPath>
+            </Pattern>
+        </Patterns>
+    </Rule>
+    <Rule>
         <RuleId>VYPER_PRIVATE_MODIFIER_DONT_HIDE_DATA</RuleId>
         <Patterns>
             <!-- Фиксируется определение state переменных с типом видимости private -->
