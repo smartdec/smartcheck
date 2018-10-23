@@ -40,7 +40,7 @@
     <Rule>
         <RuleId>VYPER_TIMESTAMP_DEPENDENCE</RuleId>
         <Patterns>
-            <!-- Фиксируется случаи, когда выражение содержит "!= или == block.timestamp" -->
+            <!-- Фиксируется случаи, когда выражение содержит "!= или == block.timestamp", кроме аргументов функций -->
             <Pattern patternId="to993y">
                 <Categories>
                     <Category>Vyper</Category>
@@ -50,7 +50,7 @@
                     //comparison[comp_op[matches(text(),"==|!=")]]
                         [expr//atom_expr[trailer[matches(text()[1], "timestamp")]]
                             [atom/atom_name[matches(text()[1], "block")]]
-                            [not(ancestor::argument)]]
+                            [not(ancestor::*[14][self::argument])]]
 
                 </XPath>
             </Pattern>
