@@ -348,10 +348,10 @@
                 <Severity>2</Severity>
                 <XPath>
                     //expression
-                        [comparison[matches(text()[1],"==|!=")]]
+                        [comparison]
                         [expression//environmentalVariable
                             [matches(text()[1],"^block.timestamp|now$")]
-                            [not(parent::expression[parent::callArguments[parent::functionCall]])]]
+                            [not(ancestor::*[3][self::functionCall])]]
                 </XPath>
             </Pattern>
         </Patterns>
