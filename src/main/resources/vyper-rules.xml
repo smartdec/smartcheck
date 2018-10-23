@@ -70,8 +70,7 @@
                 <Severity>1</Severity>
                 <XPath>
                     //funcdef[suite[count(stmt)=1]]
-                        [suite/stmt/simple_stmt/small_stmt/expr_stmt/testlist_star_expr/test/or_test/and_test/not_test/comparison/
-                        expr/xor_expr/and_expr/shift_expr/arith_expr/term/factor/power/atom_expr/atom/atom_name[matches(text()[1], "^throw$")]]
+                        [suite[descendant::*[21][matches(text()[1], "^throw$")]]]
                 </XPath>
             </Pattern>
         </Patterns>
