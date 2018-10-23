@@ -78,4 +78,20 @@
             </Pattern>
         </Patterns>
     </Rule>
+    <Rule>
+        <RuleId>VYPER_REDUNDANT_FALLBACK_REJECT</RuleId>
+        <Patterns>
+            <!-- контракт содержит fallback функцию, в определении которой есть только один statement: throw -->
+            <Pattern patternId="am179p">
+                <Categories>
+                    <Category>Vyper</Category>
+                </Categories>
+                <Severity>1</Severity>
+                <XPath>
+                    //funcdef[suite[count(stmt)=1]]
+                        [suite[descendant::*[21][matches(text()[1], "^throw$")]]]
+                </XPath>
+            </Pattern>
+        </Patterns>
+    </Rule>
 </Rules>
