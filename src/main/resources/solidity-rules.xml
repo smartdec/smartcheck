@@ -45,7 +45,7 @@
                     <TruePositiveRate>1</TruePositiveRate>
                     <XPath>
                         //expression[typeConversion[typeName[elementaryTypeName[matches(text()[1],"^address$")]]]/expression/primaryExpression/numberLiteral/decimalNumber[matches(text()[1],"^0$")]]
-                        /parent::*[not(comparison)][not(ancestor::functionCall[1]/functionName//identifier[matches(text()[1],"^[A-Z]")])][not(emitEventStatement)]
+                        /parent::*[not(comparison)][not(ancestor::functionCall[1]/functionName//identifier[matches(text()[1],"^[A-Z]")])][not(ancestor::emitEventStatement)]
                     </XPath>
                 </Pattern>
                 <!-- фиксирует использование адреса 0x0, кроме "!=0x0" и "==0x0", и кторе тех случаев, когда 0x0 внутри event(внутренняя функция, название которой начинается с большой буквы)-->
@@ -56,7 +56,7 @@
                     <Severity>1</Severity>
                     <TruePositiveRate>1</TruePositiveRate>
                     <XPath>
-                        //addressNumber[matches(text()[1],"^0x0$")]/parent::*[parent::*[parent::*[not(comparison)]]][not(ancestor::functionCall[1]/functionName//identifier[matches(text()[1],"^[A-Z]")])]
+                        //addressNumber[matches(text()[1],"^0x0$")]/parent::*[parent::*[parent::*[not(comparison)]]][not(ancestor::functionCall[1]/functionName//identifier[matches(text()[1],"^[A-Z]")])][not(ancestor::emitEventStatement)]
                     </XPath>
                 </Pattern>
             </Patterns>
@@ -115,6 +115,33 @@
                 </Categories>
                 <Severity>1</Severity>
                 <XPath>//typeName[typeName/elementaryTypeName[text()[1]="byte"]][matches(text()[1],"^\[.*\]$")]</XPath>
+            </Pattern>
+        </Patterns>
+    </Rule>
+    <Rule>
+        <RuleId>SOLIDITY_CONSTRUCTOR_RETURN</RuleId>
+        <Patterns>
+            <!-- Фиксирует assembly { return() } в конструкторе.-->
+            <Pattern patternId="8saf21">
+                <Categories>
+                    <Category>Solidity</Category>
+                </Categories>
+                <Severity>3</Severity>
+                <XPath>
+                    //functionDefinition[text()[1]='constructor']//assemblyCall[matches(text()[1],'^return')]
+                </XPath>
+            </Pattern>
+            <!-- Фиксирует assembly { return() } в конструкторе старого типа.-->
+            <Pattern patternId="7gaf21">
+                <Categories>
+                    <Category>Solidity</Category>
+                </Categories>
+                <Severity>3</Severity>
+                <XPath>
+                    //functionDefinition
+                        [identifier[text()[1]=(ancestor::contractDefinition/identifier)]]
+                        //assemblyCall[matches(text()[1],'^return')]
+                </XPath>
             </Pattern>
         </Patterns>
     </Rule>
@@ -452,6 +479,29 @@
                 <Severity>2</Severity>
                 <XPath>
                     //whileStatement[condition/descendant::functionCall]
+                </XPath>
+            </Pattern>
+        </Patterns>
+    </Rule>
+    <Rule>
+        <RuleId>SOLIDITY_INCORRECT_BLOCKHASH</RuleId>
+        <Patterns>
+            <!--Фиксирует неправильное использование blockhash: blockhash(число), blockhash(blockNumber) - не известен хэш текущего блока, blockhash(blockNumber минус число больше 256) - храняться хэши только последних 256 блоков-->
+            <Pattern patternId="b629ad">
+                <Categories>
+                    <Category>Solidity</Category>
+                </Categories>
+                <Severity>2</Severity>
+                <XPath>
+                    //environmentalVariable
+                        [matches(text()[1],"block.blockhash")]
+                    /expression
+                        [primaryExpression/numberLiteral/decimalNumber 
+                        or environmentalVariable[text()[1]="block.number"] 
+                        or (expression[1]/environmentalVariable[text()[1]="block.number"] 
+                            and plusminusOperator 
+                            and expression[2]/primaryExpression/numberLiteral/decimalNumber
+                                [text()[1] > 256])]
                 </XPath>
             </Pattern>
         </Patterns>
@@ -916,21 +966,6 @@
                                                             or text()[1] = "string"]
                             or typeName//identifier[text()[1] = (ancestor::contractDefinition//structDefinition/identifier)]]
                             [not(storageLocation)]
-                </XPath>
-            </Pattern>
-        </Patterns>
-    </Rule>
-    <Rule>
-        <RuleId>SOLIDITY_USING_BLOCKHASH</RuleId>
-        <Patterns>
-            <!--Фиксирует конструкцию: "blockhash"-->
-            <Pattern patternId="b629ad">
-                <Categories>
-                    <Category>Solidity</Category>
-                </Categories>
-                <Severity>1</Severity>
-                <XPath>
-                    //expression[//environmentalVariable[matches(text()[1],"block.blockhash")]]
                 </XPath>
             </Pattern>
         </Patterns>
