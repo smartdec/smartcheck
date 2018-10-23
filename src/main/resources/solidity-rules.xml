@@ -146,7 +146,7 @@
         </Patterns>
     </Rule>
     <Rule>
-        <RuleId>SOLIDITY_SOLIDITY_CALL_VALUE</RuleId>
+        <RuleId>SOLIDITY_CALL_WITHOUT_DATA</RuleId>
         <Patterns>
             <!-- Фиксирует вызовы call с пустой датой и без ограничения газа-->
             <Pattern patternId="om991k">
