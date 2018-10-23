@@ -119,6 +119,33 @@
         </Patterns>
     </Rule>
     <Rule>
+        <RuleId>SOLIDITY_CONSTRUCTOR_RETURN</RuleId>
+        <Patterns>
+            <!-- Фиксирует assembly { return() } в конструкторе.-->
+            <Pattern patternId="8saf21">
+                <Categories>
+                    <Category>Solidity</Category>
+                </Categories>
+                <Severity>3</Severity>
+                <XPath>
+                    //functionDefinition[text()[1]='constructor']//assemblyCall[matches(text()[1],'^return')]
+                </XPath>
+            </Pattern>
+            <!-- Фиксирует assembly { return() } в конструкторе старого типа.-->
+            <Pattern patternId="7gaf21">
+                <Categories>
+                    <Category>Solidity</Category>
+                </Categories>
+                <Severity>3</Severity>
+                <XPath>
+                    //functionDefinition
+                        [identifier[text()[1]=(ancestor::contractDefinition/identifier)]]
+                        //assemblyCall[matches(text()[1],'^return')]
+                </XPath>
+            </Pattern>
+        </Patterns>
+    </Rule>
+    <Rule>
         <RuleId>SOLIDITY_SOLIDITY_CALL_VALUE</RuleId>
         <Patterns>
             <!-- Фиксирует вызовы call с пустой датой и без ограничения газа-->
