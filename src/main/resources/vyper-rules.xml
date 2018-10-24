@@ -48,13 +48,13 @@
                 <Severity>2</Severity>
                 <XPath>
                     //funcdef
-                    [text()[1]="defapprove"]
-                    [parameters/typedargslist
-                    [count(tfpdef)=2]
-                    [tfpdef[1]//atom_name[text()[1]="address"]]
-                    [tfpdef[2]//atom_name[matches(text()[1],"^uint[0-9]*")]]]
-                    [text()[2] = "->"]
-                    [test//atom_name[text()[1]="bool"]]
+                        [text()[1]="defapprove"]
+                        [parameters/typedargslist
+                            [count(tfpdef)=2]
+                            [tfpdef[1]//atom_name[text()[1]="address"]]
+                            [tfpdef[2]//atom_name[matches(text()[1],"^uint[0-9]*")]]]
+                        [text()[2] = "->"]
+                        [test//atom_name[text()[1]="bool"]]
                 </XPath>
             </Pattern>
         </Patterns>
@@ -74,6 +74,22 @@
                             [atom/atom_name[matches(text()[1], "block")]]
                             [not(ancestor::*[14][self::argument])]]
 
+                </XPath>
+            </Pattern>
+        </Patterns>
+    </Rule>
+    <Rule>
+        <RuleId>VYPER_REDUNDANT_FALLBACK_REJECT</RuleId>
+        <Patterns>
+            <!-- контракт содержит fallback функцию, в определении которой есть только один statement: throw -->
+            <Pattern patternId="am179p">
+                <Categories>
+                    <Category>Vyper</Category>
+                </Categories>
+                <Severity>1</Severity>
+                <XPath>
+                    //funcdef[suite[count(stmt)=1]]
+                        [suite[descendant::*[21][matches(text()[1], "^throw$")]]]
                 </XPath>
             </Pattern>
         </Patterns>

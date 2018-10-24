@@ -365,6 +365,25 @@
         </Patterns>
     </Rule>
     <Rule>
+        <RuleId>SOLIDITY_EXACT_TIME</RuleId>
+        <Patterns>
+            <!--Фиксируется случаи, когда выражение содержит "== or != block.timestamp or now", кроме функций от now/block.timestamp-->
+            <Pattern patternId="1955d9">
+                <Categories>
+                    <Category>Solidity</Category>
+                </Categories>
+                <Severity>2</Severity>
+                <XPath>
+                    //expression
+                        [comparison]
+                        [expression//environmentalVariable
+                            [matches(text()[1],"^block.timestamp|now$")]
+                            [not(ancestor::*[3][self::functionCall])]]
+                </XPath>
+            </Pattern>
+        </Patterns>
+    </Rule>
+    <Rule>
         <RuleId>SOLIDITY_EXTRA_GAS_IN_LOOPS</RuleId>
         <Patterns>
             <!--Фиксирует циклы for, в которых во 2 или 3 стейтменте есть стейт переменные контракта или ".balance", ".length"-->
@@ -742,43 +761,6 @@
                     //functionDefinition/returnsParameters/parameterList[count(parameter)>1]
                 </XPath>
             </Pattern>
-        </Patterns>
-    </Rule>
-    <Rule>
-        <RuleId>SOLIDITY_TIMESTAMP_DEPENDENCE</RuleId>
-        <Patterns>
-            <!--Фиксируется случаи, когда выражение содержит "== or = block.timestamp or now"-->
-            <Pattern patternId="1955d9">
-                <Categories>
-                    <Category>Solidity</Category>
-                </Categories>
-                <Severity>2</Severity>
-                <XPath>
-                    //expression[comparison and expression//environmentalVariable[matches(text()[1],"^block.timestamp|now$")]]
-                </XPath>
-            </Pattern>
-            <!--Фиксируется случаи, когда в вызове функции в качестве аргусентов передаются block.timestamp или now. А также, когда в выражении используется "= и далее выражение содержащее  block.timestamp или now" -->
-            <Pattern patternId="cd1537">
-                <Categories>
-                    <Category>Solidity</Category>
-                </Categories>
-                <Severity>2</Severity>
-                <XPath>
-                    //statement[simpleStatement//functionCall[not(callArguments//expression[matches(text()[1],"^>=|>|&lt;|&lt;=$")]) and callArguments//expression[environmentalVariable[matches(text()[1],"^block.timestamp|now$")]]]
-                    or simpleStatement/expressionStatement//expression[matches(text()[1],"^=$") and expression//environmentalVariable[matches(text()[1],"^block.timestamp|now$")]]]
-                </XPath>
-            </Pattern>
-            <!-- пока отключаем -->
-            <!--Фиксируется все вхождения block.timestamp или now-->
-            <!-- <Pattern patternId="afb67a">
-                <Categories>
-                    <Category>Solidity</Category>
-                </Categories>
-                <Severity>0</Severity>
-                <XPath>
-                    //expression/environmentalVariable[matches(text()[1],"block.timestamp|now")]/ancestor-or-self::statement
-                </XPath>
-            </Pattern> -->
         </Patterns>
     </Rule>
     <Rule>
