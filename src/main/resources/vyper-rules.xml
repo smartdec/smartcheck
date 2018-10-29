@@ -110,4 +110,21 @@
             </Pattern>
         </Patterns>
     </Rule>
+    <Rule>
+        <RuleId>VYPER_UNITLESS_NUMBER</RuleId>
+        <Patterns>
+            <!-- Фиксируется использование функции as_unitless_number() не в return-->
+            <Pattern patternId="fgg331">
+                <Categories>
+                    <Category>Vyper</Category>
+                </Categories>
+                <Severity>1</Severity>
+                <XPath>
+                    //atom_name
+                        [text()[1]="as_unitless_number"]
+                        [not(ancestor::*[self::return_stmt])]
+                </XPath>
+            </Pattern>
+        </Patterns>
+    </Rule>
 </Rules>
