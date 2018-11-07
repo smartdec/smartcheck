@@ -113,7 +113,7 @@
     <Rule>
         <RuleId>VYPER_UNITLESS_NUMBER</RuleId>
         <Patterns>
-            <!-- Фиксируется использование функции as_unitless_number() не в return-->
+            <!-- Фиксируется использование функции as_unitless_number() не в return или не в private функции-->
             <Pattern patternId="fgg331">
                 <Categories>
                     <Category>Vyper</Category>
@@ -122,7 +122,8 @@
                 <XPath>
                     //atom_name
                         [text()[1]="as_unitless_number"]
-                        [not(ancestor::*[self::return_stmt])]
+                        [not(ancestor::*[self::return_stmt])
+                        or not(ancestor::decorated/decorators//dotted_name[text()[1]="private"])]
                 </XPath>
             </Pattern>
         </Patterns>
