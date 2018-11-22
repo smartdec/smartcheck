@@ -174,7 +174,7 @@
                         [gas/expression]
                 </XPath>
             </Pattern>
-            <!-- Фиксирует вызовы call с пустой датой и без ограничения газа-->
+            <!-- Фиксирует вызовы call с пустой датой ("") и без ограничения газа-->
             <Pattern patternId="111ppp">
                 <Categories>
                     <Category>Solidity</Category>
@@ -187,7 +187,7 @@
                     [not(gas/expression)]
                 </XPath>
             </Pattern>
-            <!-- Фиксирует вызовы call с пустой датой, но с ограничением газа-->
+            <!-- Фиксирует вызовы call с пустой датой (""), но с ограничением газа-->
             <Pattern patternId="111ttt">
                 <Categories>
                     <Category>Solidity</Category>
