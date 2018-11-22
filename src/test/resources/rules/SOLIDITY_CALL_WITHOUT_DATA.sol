@@ -22,17 +22,17 @@ contract CallValue {
         }
     }
     function withdraw5() {
-        // <yes> <report> SOLIDITY_CALL_WITHOUT_DATA 111ttt
+        // <yes> <report> SOLIDITY_CALL_WITHOUT_DATA 111ppp
         if (msg.sender.call.value(1)("")) {
         }
     }
     function withdraw6() {
-        // <yes> <report> SOLIDITY_CALL_WITHOUT_DATA 111ttt
+        // <yes> <report> SOLIDITY_CALL_WITHOUT_DATA 111ppp
         if (msg.sender.call("")) {
         }
     }
     function withdraw7() {
-        // <yes> <report> SOLIDITY_CALL_WITHOUT_DATA 111ppp
+        // <yes> <report> SOLIDITY_CALL_WITHOUT_DATA 111ttt
         if (msg.sender.call.gas(100000)("")) {
         }
     }
