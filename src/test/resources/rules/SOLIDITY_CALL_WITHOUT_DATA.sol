@@ -40,4 +40,12 @@ contract CallValue {
         if (msg.sender.call.value(1)(" ")) {
         }
     }
+    function withdraw9() {
+        if (msg.sender.call("", 1)) {
+        }
+    }
+    function withdraw10() {
+        if (msg.sender.call.gas(100000)("", 1)) {
+        }
+    }
 }

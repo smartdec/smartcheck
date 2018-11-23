@@ -184,6 +184,7 @@
                     //functionCall
                     [functionName/identifier[text()[1]="call"]]
                     [callArguments//stringLiteral[string-length(text())=0]]
+                    [callArguments[count(expression)=1]]
                     [not(gas/expression)]
                 </XPath>
             </Pattern>
@@ -197,6 +198,7 @@
                     //functionCall
                     [functionName/identifier[text()[1]="call"]]
                     [callArguments//stringLiteral[string-length(text())=0]]
+                    [callArguments[count(expression)=1]]
                     [gas/expression]
                 </XPath>
             </Pattern>
