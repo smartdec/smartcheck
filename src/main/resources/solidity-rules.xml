@@ -242,6 +242,7 @@
             <!-- фиксирует использование типа constant в определении функции-->
             <Pattern patternId="28fa69">
                 <Categories>
+
                     <Category>Solidity</Category>
                 </Categories>
                 <Severity>1</Severity>
@@ -1077,6 +1078,34 @@
                 <Severity>1</Severity>
                 <XPath>
                     //functionDefinition[text()[1]="constructor"][visibleType[text()[1]="external" or text()[1]="private"]]
+                </XPath>
+            </Pattern>
+        </Patterns>
+    </Rule>
+    <Rule>
+        <RuleId>SOLIDITY_WRONG_SIGNATURE</RuleId>
+        <Patterns>
+            <!-- Фиксирует конструкции в которых используется bytes4(keccak256(signature)) bytes4(sha3(signature)), где в signature есть uint, int -->
+            <Pattern patternId="ui25n6">
+                <Categories>
+                    <Category>Solidity</Category>
+                </Categories>
+                <Severity>2</Severity>
+                <XPath>
+                    //functionCall[functionName/identifier[text()[1]="call"]]
+                        [callArguments//primaryExpression[contains(stringLiteral, ",uint,") or contains(stringLiteral, ",int,")]]
+                        [callArguments/expression[1][typeConversion[typeName/elementaryTypeName[text()[1]="bytes4"]]
+                                                                   [//functionCall[functionName/identifier[text()[1]="sha3" or text()[1]="keccak256"]]]]]
+
+                </XPath>
+            </Pattern>
+            <Pattern patternId="rec155">
+                <Categories>
+                    <Category>Solidity</Category>
+                </Categories>
+                <Severity>2</Severity>
+                <XPath>
+                    //functionCall[callArguments//primaryExpression[contains(stringLiteral, 'kukareku')]]
                 </XPath>
             </Pattern>
         </Patterns>
