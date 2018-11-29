@@ -2,36 +2,59 @@ pragma solidity 0.4.25;
 
 contract A {
 
-    function foo1(address _spender, uint256 _value, bytes _extraData) returns (bool success) {
+    function foo1(address _spender, uint256 _value) public returns (bool success) {
         // <yes> <report> SOLIDITY_WRONG_SIGNATURE ui25n6
-        require(_spender.call(bytes4(bytes32(sha3("receiveApproval(address,uint,address,bytes)"))), msg.sender, _value, this, _extraData));
+        require(_spender.call.value(10).gas(11)(bytes4(bytes32(sha3("receiveApproval(address,uint)"))), msg.sender, _value));
         return true;
     }
 
-    function foo2(address _spender, uint256 _value, bytes _extraData) returns (bool success) {
+    function foo2(address _spender, uint256 _value) public returns (bool success) {
         // <yes> <report> SOLIDITY_WRONG_SIGNATURE ui25n6
-        require(_spender.call(bytes4(bytes32(keccak256("receiveApproval(address,uint,address,bytes)"))), msg.sender, _value, this, _extraData));
+        require(_spender.call(bytes4(bytes32(keccak256("receiveApproval(address,int,address)"))), msg.sender, _value, this));
         return true;
     }
 
-    function foo3(address _spender, uint256 _value, bytes _extraData) returns (bool success) {
-        require(_spender.call(bytes4(bytes32(sha3("receiveApproval(address,uint256,address,bytes)"))), msg.sender, _value, this, _extraData));
+    function foo3(address _spender, uint256 _value) public returns (bool success) {
+        require(_spender.call(bytes4(bytes32(sha3("receiveApproval(address,uint256,address)"))), msg.sender, _value, this));
         return true;
     }
 
-    function foo4(address _spender, uint256 _value, bytes _extraData) returns (bool success) {
-        require(_spender.call(bytes4(bytes32(keccak256("receiveApproval(address,uint256,address,bytes)"))), msg.sender, _value, this, _extraData));
+    function foo4(address _spender, uint256 _value) public returns (bool success) {
+        require(_spender.call(bytes4(bytes32(keccak256("receiveApproval(address,int256)"))), msg.sender, _value));
         return true;
     }
 
-    function foo5(address _spender, uint256 _value, bytes _extraData) {
+    function foo5(address _spender, uint256 _value ) public returns (bool success) {
         // <yes> <report> SOLIDITY_WRONG_SIGNATURE ui25n6
-        _spender.call(bytes4(sha3("receiveApproval(address,uint,address,bytes)")), msg.sender, _value, this, _extraData);
+        return _spender.call.gas(11)(bytes4(sha3("receiveApproval(address,uint)")), msg.sender, _value);
     }
 
-    function foo6(address _spender, uint256 _value, bytes _extraData) {
-        _spender.call(bytes4(sha3("receiveApproval(address,address,bytes)")), msg.sender, _value, this, _extraData);
+    function foo6(address _spender, uint256 _value ) public returns (bool success) {
+        // <yes> <report> SOLIDITY_WRONG_SIGNATURE ui25n6
+        return _spender.call(bytes4(keccak256("receiveApproval(address,int, address)")), msg.sender, _value, this);
     }
 
-}
+    function foo7(address _spender, uint256 _value) public returns (bool success) {
+        return _spender.call.value(10)(bytes4(sha3("receiveApproval(address,address)")), msg.sender, _value, this);
+    }
+
+    function foo8(address _spender, uint256 _value) public returns (bool success) {
+        // <yes> <report> SOLIDITY_WRONG_SIGNATURE rec155
+        return _spender.call(abi.encodeWithSignature("receiveApproval(address,uint)"), msg.sender, _value);
+    }
+
+    function foo9(address _spender, uint256 _value) public returns (bool success) {
+        // <yes> <report> SOLIDITY_WRONG_SIGNATURE rec155
+        return _spender.call(abi.encodeWithSignature("receiveApproval(address,int)"), msg.sender, _value);
+    }
+
+    function foo10(address _spender, uint256 _value) public returns (bool success) {
+        // <yes> <report> SOLIDITY_WRONG_SIGNATURE rec155
+        return _spender.call(abi.encodeWithSignature("receiveApproval(int,address)"), _value, msg.sender);
+    }
+
+    function foo11(address _spender, uint256 _value) public returns (bool success) {
+        // <yes> <report> SOLIDITY_WRONG_SIGNATURE rec155
+        return _spender.call(abi.encodeWithSignature("receiveApproval(uint,address)"), _value, msg.sender);
+    }
 }
