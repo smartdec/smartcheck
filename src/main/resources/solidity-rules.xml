@@ -1093,7 +1093,8 @@
                 <Severity>2</Severity>
                 <XPath>
                     //functionCall[callArguments//primaryExpression[contains(stringLiteral, "uint,")
-                        or contains(stringLiteral, "int,") or contains(stringLiteral, "uint)") or contains(stringLiteral, "int)")]]
+                        or contains(stringLiteral, "int,") or contains(stringLiteral, "uint)") or contains(stringLiteral, "int)")
+                            or contains(stringLiteral, "uint[") or contains(stringLiteral, "int[")]]
                         [callArguments/expression[1][typeConversion[typeName/elementaryTypeName[text()[1]="bytes4"]]
                             [//functionCall[functionName/identifier[text()[1]="sha3" or text()[1]="keccak256"]]]]]
 
@@ -1105,10 +1106,11 @@
                 </Categories>
                 <Severity>2</Severity>
                 <XPath>
-                    //functionCall[callArguments[//primaryExpression[contains(stringLiteral, 'uint)') or
-                        contains(stringLiteral, 'int)') or contains(stringLiteral, 'uint,') or contains(stringLiteral, 'int,')]]
-                        [expression[expression/primaryExpression/identifier[text()[1]="abi"]]
-                                   [functionCall/functionName/identifier[text()[1]="encodeWithSignature"]]]
+                    //functionCall/callArguments[expression[expression/primaryExpression/identifier[text()[1]="abi"]]
+                                   [functionCall/functionName/identifier[text()[1]="encodeWithSignature"]]
+                                    [functionCall//primaryExpression[contains(stringLiteral, 'uint)') or
+                                    contains(stringLiteral, 'int)') or contains(stringLiteral, 'uint,') or contains(stringLiteral, 'int,')
+                                    or contains(stringLiteral, "uint[") or contains(stringLiteral, "int[")]]
                     ]
                 </XPath>
             </Pattern>
