@@ -1,0 +1,39 @@
+<p>
+    In the following example, deployed bytecode differs from bytecode of the contract:
+</p>
+<pre>
+<code>
+pragma solidity 0.4.24;
+
+contract HoneyPot {
+
+    bytes internal constant ID = hex"60203414600857005B60008080803031335AF100";
+
+    constructor () public payable {
+        bytes memory contract_identifier = ID;
+        assembly { return(add(0x20, contract_identifier), mload(contract_identifier)) }
+    }
+
+    function withdraw() public payable {
+        require(msg.value >= 1 ether);
+        msg.sender.transfer(address(this).balance);
+    }
+}
+</code>
+</pre>
+<p>It turns out that the contract deployed to the blockchain is equivalent to the following:</p>
+<pre>
+<code>
+pragma solidity 0.4.24;
+
+contract HoneyPot {
+
+    function () public payable {
+        if (msg.value == 32) {
+            msg.sender.transfer(address(this).balance);
+        }
+    }
+}
+</code>
+</pre>
+<p>This contract requires 32 wei to be sent in order to get reward.</p>

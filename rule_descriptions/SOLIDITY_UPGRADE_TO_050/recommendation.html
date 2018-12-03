@@ -1,0 +1,17 @@
+<ul>
+    <li>
+        Замените все <code>.call()</code> на <code>.call("")</code>, и все <code>.call(signature, a, b, c)</code> на <code>.call(abi.encodeWithSignature(signature, a, b, c))</code> (последнее только для value типов).
+    </li>
+    <li>
+        Замените все <code>keccak256(a, b, c)</code> на <code>keccak256(abi.encodePacked(a, b, c))</code>.
+    </li>
+    <li>
+        Добавьте модификатор <code>public</code> всем функциям и модификатор <code>external</code> всем fallback функциям и функциям в интерфейсах, у которых нет модификатора видимости.
+    </li>
+    <li>
+        Явно устанавливайте положение в памяти для всех структур, масссивов и отображений (включая параметры функций), в том числе замените <code>uint[] x = m_x</code> на <code>uint[] storage x = m_x</code>. Заметьте, что <code>external</code>функции требуют парметров только с положением в памяти <code>calldata</code>.
+    </li>
+    <li>
+        Явно преобразуйте контракты к типу <code>address</code>, перед тем как использовать их в качестве адресов. Например: если <code>contract</code> это контракт, замените <code>contract.transfer(...)</code> на <code>address(contract).transfer(...)</code>.
+    </li>
+</ul>

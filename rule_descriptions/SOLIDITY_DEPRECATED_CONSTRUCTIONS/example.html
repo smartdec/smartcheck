@@ -1,0 +1,33 @@
+<p>
+В следующем примере используются <code>sha3</code>, <code>suicide</code>, <code>throw</code> и <code>constant</code> функция:
+</p>
+<p>
+<pre>
+<code>
+pragma solidity 0.4.24;
+
+contract BreakThisHash {
+    bytes32 hash;
+    uint birthday;
+    constructor(bytes32 _hash) public payable {
+        hash = _hash;
+        birthday = now;
+    }
+
+    function kill(bytes password) external {
+        if (sha3(password) != hash) {
+            throw;
+        }
+        suicide(msg.sender);
+    }
+
+    function hashAge() public constant returns(uint) {
+        return(now - birthday);
+    }
+}
+</code>
+</pre>
+</p>
+<p>
+    Используйте <code>keccak256</code>, <code>selfdestruct</code>, <code>revert()</code>.
+</p>

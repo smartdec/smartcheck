@@ -1,0 +1,19 @@
+<p> 
+В следующем примере <code>internal</code> функция возвращает несколько переменных:
+</p>
+<p>
+<pre>
+<code>
+pragma solidity 0.4.24;
+
+contract TestContract {
+    
+    function test() internal returns(uint a, address b, bool c) {
+        a = 1;
+        b = msg.sender;
+        c = true;
+    }
+}
+</code>
+</pre>
+</p>

@@ -1,0 +1,48 @@
+<p>
+    In the following example, the <code>SafeMath</code> library is used:
+</p>
+<p>
+<pre>
+<code>
+pragma solidity 0.4.24;
+
+import "../libraries/SafeMath.sol";
+
+contract SafeSubAndDiv {
+    using SafeMath for uint256;
+
+    function sub(uint a, uint b) public returns(uint) {
+        return(a.sub(b));
+    }
+
+    function div(uint a, uint b) public returns(uint) {
+        return(a.div(b));
+    }
+}
+</code>
+</pre>
+</p>
+<p>
+    Best practice:
+</p>
+<p>
+<pre>
+<code>
+pragma solidity 0.4.24;
+
+contract SafeSubAndDiv {
+
+    function sub(uint a, uint b) public returns(uint) {
+        // explicit check
+        require(a >= b, "the result of the subtraction is negative");
+        return(a - b);
+    }
+
+    function div(uint a, uint b) public returns(uint) {
+        // EVM does not allow division by zero
+        return(a / b);
+    }
+}
+</code>
+</pre>
+</p>

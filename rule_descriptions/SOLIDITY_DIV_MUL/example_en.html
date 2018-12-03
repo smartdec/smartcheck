@@ -1,0 +1,18 @@
+<p>
+    In the following example, <code>amount</code> variable is divided by <code>DELIMITER</code> and then multiplied by <code>BONUS</code>. Thus, a rounding error appears (consider <code>amount = 9000</code>):
+</p>
+<pre>
+<code>
+pragma solidity 0.4.25;
+
+contract MyContract {
+
+    uint constant BONUS = 500;
+    uint constant DELIMITER = 10000;
+
+    function calculateBonus(uint amount) returns (uint) {
+        return amount/DELIMITER*BONUS;
+    }
+}
+</code>
+</pre>

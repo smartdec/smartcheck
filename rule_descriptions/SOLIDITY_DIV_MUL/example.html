@@ -1,0 +1,18 @@
+<p>
+    В данном примере величина <code>amount</code> делится на <code>DELIMITER</code> нацело и только потом умножается на <code>BONUS</code>. Таким образом, возникает погрешность (напрмер, при <code>amount = 9000</code>):
+</p>
+<pre>
+<code>
+pragma solidity 0.4.25;
+
+contract MyContract {
+
+    uint constant BONUS = 500;
+    uint constant DELIMITER = 10000;
+
+    function calculateBonus(uint amount) returns (uint) {
+        return amount/DELIMITER*BONUS;
+    }
+}
+</code>
+</pre>

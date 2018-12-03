@@ -1,0 +1,18 @@
+<p>
+    В следующем примере используются функция <code>call</code> для передачи ETH:
+</p>
+
+<pre>
+<code>
+pragma solidity 0.4.24;
+
+contract MyContract {
+
+    function withdraw() public {
+        if (msg.sender.call.value(1 ether)()) {
+            /*...*/
+        }
+    }
+}
+</code>
+</pre>

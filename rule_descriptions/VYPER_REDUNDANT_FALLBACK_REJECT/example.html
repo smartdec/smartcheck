@@ -1,0 +1,9 @@
+<p> В следующем примере default-функция по отклонению платежа является избыточной:</p>
+<pre>
+<code>
+@public
+@payable
+def __default__():
+    throw
+</code>
+</pre>

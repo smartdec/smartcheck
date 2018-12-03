@@ -1,0 +1,1 @@
+Non-strict comparison with zero

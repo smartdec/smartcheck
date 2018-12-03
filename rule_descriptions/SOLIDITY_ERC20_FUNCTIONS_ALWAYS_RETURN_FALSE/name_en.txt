@@ -1,0 +1,1 @@
+Standard ERC-20 for functions transfer, transferFrom and approve: return value.

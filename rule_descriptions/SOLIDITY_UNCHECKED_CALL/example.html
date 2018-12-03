@@ -1,0 +1,14 @@
+<p>
+	В следующем примере используется функция <code>send</code> без проверки возвращаемого значения:
+</p>
+<p>
+<pre>
+<code>
+contract SolidityUncheckedSend {
+    function unseatKing(address addr, uint value) {
+        addr.send(value);
+    }
+}
+</code>
+</pre>
+</p>

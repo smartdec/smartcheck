@@ -1,0 +1,19 @@
+<p> In the following example, sensitive data is stored in <code>password</code> state variable:</p>
+<pre>
+<code>
+password: bytes32
+set: public(bool)
+
+@public
+def unlock(_password: bytes32):
+    assert self.password == _password
+    send(msg.sender, self.balance)
+
+@payable
+@public
+def lock(_password: bytes32):
+    assert self.set == False
+    self.password = _password
+    self.set = True
+</code>
+</pre>

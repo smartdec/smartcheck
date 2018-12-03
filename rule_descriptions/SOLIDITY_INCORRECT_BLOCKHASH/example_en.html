@@ -1,0 +1,15 @@
+<p>
+    In the following example, <code>currentBlockBlockhash</code> function always returns 0:
+</p>
+<pre>
+<code>
+pragma solidity 0.4.25;
+
+contract MyContract {
+
+    function currentBlockHash() public view returns(bytes32) {
+        return blockhash(block.number);
+    }
+}
+</code>
+</pre>

@@ -1,0 +1,24 @@
+<p>
+    In the following example, checking for strict balance equality is used:
+</p>
+<pre>
+<code>
+@public
+def func_1(user: address):
+    if (user.balance == as_wei_value(10, "ether")):
+        # do some stuff
+        pass
+</code>
+</pre>
+<p>
+    Secure alternative:
+</p>
+<pre>
+<code>
+@public
+def func_1(user: address):
+    if (user.balance >= as_wei_value(10, "ether")):
+        # do some stuff
+        pass
+</code>
+</pre>

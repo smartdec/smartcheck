@@ -1,0 +1,23 @@
+<p>
+    Далее приведен пример бесконечного цикла:
+</p>
+<p>
+<pre>
+<code>
+pragma solidity 0.4.24;
+
+contract GreaterOrEqualToZero {
+
+    function infiniteLoop(uint border) returns(uint ans) {
+
+        for (uint i = border; i >= 0; i--) {
+            ans += i;
+        }
+    }
+}
+</code>
+</pre>
+</p>
+<p>
+    В данном случае, условие <code>i >= 0</code> будет всегда выполнено. Следующим после <code>0</code> значением переменной <code>i</code> будет <code>2**256-1</code>. Таким образом, цикл будет бесконечным.
+</p>

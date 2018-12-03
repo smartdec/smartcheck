@@ -1,0 +1,27 @@
+<p>
+In the following example, ETH is transferred in a loop:
+</p>
+
+<pre>
+<code>
+pragma solidity 0.4.25;
+
+contract MyContract {
+
+    address[] public users;
+    uint internal id;
+
+    function transferBatch(address[] users) public {
+        uint amount = address(this).balance / users.length;
+        for (uint i = 0; i < users.length; i++) {
+            users[i].transfer(amount);
+        }
+    }
+
+    function () public payable {
+        users[id] = msg.sender;
+        id++;
+    }
+}
+</code>
+</pre>

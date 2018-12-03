@@ -1,0 +1,20 @@
+<p>
+    В данном примере у контракта есть <code>@payable</code> функция:
+</p>
+<pre>
+<code>
+funders: {sender: address, value: wei_value}[int128]
+nextFunderIndex: int128
+
+
+@public
+@payable
+def participate(i: int128):
+    nfi: int128 = self.nextFunderIndex
+    self.funders[nfi] = {sender: msg.sender, value: msg.value}
+    self.nextFunderIndex = nfi + 1
+</code>
+</pre>
+<p>
+    Однако, вывести средства с адреса контракта невозможно.
+</p>

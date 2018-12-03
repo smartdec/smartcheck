@@ -1,0 +1,16 @@
+<p>В следующем примере обращение к переменной <code>limiter</code> происходит на каждом шаге цикла:</p>
+<pre>
+<code>
+pragma solidity 0.4.25;
+
+contract NewContract {
+    uint limiter = 100;
+
+    function longLoop() {
+        for(uint i = 0; i < limiter; i++) {
+            /* ... */
+        }
+    }
+}
+</code>
+</pre>

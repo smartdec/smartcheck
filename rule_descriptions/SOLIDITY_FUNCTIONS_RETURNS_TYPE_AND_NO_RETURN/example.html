@@ -1,0 +1,14 @@
+<p>В следующем примере в сигнатуре функции обозначен только тип возвращаемого значения, а в ее теле нет <code>return</code>:</p>
+<pre>
+<code>
+pragma solidity 0.4.25;
+
+contract NewContract {
+    uint minimumBuy;
+
+    function setMinimumBuy(uint256 newMinimumBuy) returns (bool){
+        minimumBuy = newMinimumBuy;
+    }
+}
+</code>
+</pre>

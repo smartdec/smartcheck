@@ -1,0 +1,1 @@
+Стандарт ERC-20 для функций transfer, transferFrom и approve: возвращаемое значение.

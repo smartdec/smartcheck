@@ -1,0 +1,41 @@
+<p>
+    In the following example, the length of the dynamic array is changed directly:
+</p>
+<p>
+<pre>
+<code>
+pragma solidity 0.4.24;
+
+contract dataStorage {
+    uint[] public data;
+
+    function writeData(uint[] _data) external {
+        for(uint i = data.length; i < _data.length; i++) {
+            data.length++;
+            data[i]=_data[i];
+        }
+    }
+}
+</code>
+</pre>
+</p>
+<p>
+    Secure alternative:
+</p>
+<p>
+<pre>
+<code>
+pragma solidity 0.4.24;
+
+contract dataStorage {
+    uint[] public data;
+
+    function writeData(uint[] _data) external {
+        for(uint i = data.length; i < _data.length; i++) {
+            data.push(_data[i]);
+        }
+    }
+}
+</code>
+</pre>
+</p>

@@ -1,0 +1,16 @@
+<p>
+    В следующем примере контракт, запрограммированный на получение эфира, не вызывает ни одну из функций <code>transfer</code>, <code>send</code> или <code>call.value</code>:
+</p>
+<p>
+<pre>
+<code>
+pragma solidity 0.4.25;
+
+contract BadMarketPlace {
+    function deposit() payable {
+        require(msg.value > 0);
+    }
+}
+</code>
+</pre>
+</p>

@@ -1,0 +1,1 @@
+Использование continue в цикле do-while

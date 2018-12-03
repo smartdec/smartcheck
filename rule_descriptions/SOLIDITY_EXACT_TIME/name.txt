@@ -1,0 +1,1 @@
+Строгое сравнение с block.timestamp или now

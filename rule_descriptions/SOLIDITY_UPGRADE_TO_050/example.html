@@ -1,0 +1,37 @@
+<p>
+Данный контракт не будет компилироваться компилятором версии 0.5.0:
+</p>
+<p>
+<pre>
+<code>
+contract Token {
+    uint totalSupply;
+
+    function Token() {
+        totalSupply = +1e18;
+    }
+
+    function () payable {}
+}
+</code>
+</pre>
+</p>
+
+<p>
+Один из вариантов обновления контракта:
+</p>
+<p>
+<pre>
+<code>
+contract Token {
+    uint public totalSupply;
+
+    constructor() public {
+        totalSupply = 1e18;
+    }
+
+    function () external payable {}
+}
+</code>
+</pre>
+</p>

@@ -1,0 +1,17 @@
+<p>In the following example, <code>limiter</code> variable is accessed on every for-loop iteration:</p>
+
+<pre>
+<code>
+pragma solidity 0.4.25;
+
+contract NewContract {
+    uint limiter = 100;
+
+    function longLoop() {
+        for(uint i = 0; i < limiter; i++) {
+            /* ... */
+        }
+    }
+}
+</code>
+</pre>

@@ -1,0 +1,1 @@
+View-function should not change state

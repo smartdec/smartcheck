@@ -1,0 +1,12 @@
+<ul>
+If possible, avoid changing the length of the dynamic array directly.
+<li>
+    Use <code>uint[] storage arrayName = new uint[](7)</code> to create a dynamic array of the desired length.
+</li><li>
+    Use <code>delete arrayName</code> to clear a dynamic array.
+</li><li>
+    Use <code>.push()</code> (instead of <code>.length++</code>) to write to the end of the dynamic array.
+</li><li>
+    Starting with version 0.5.0 of the Solidity compiler, use <code>.pop()</code> (instead of <code>.length--</code>) to delete the last element of the dynamic array.
+</li>
+</ul>

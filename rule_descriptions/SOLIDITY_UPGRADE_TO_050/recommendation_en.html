@@ -1,0 +1,17 @@
+<ul>
+    <li>
+        Change every <code>.call()</code> to a <code>.call("")</code> and every <code>.call(signature, a, b, c)</code> to use <code>.call(abi.encodeWithSignature(signature, a, b, c))</code> (the last one only works for value types).
+    </li>
+    <li>
+        Change every <code>keccak256(a, b, c)</code> to <code>keccak256(abi.encodePacked(a, b, c))</code>.
+    </li>
+    <li>
+        Add <code>public</code> to every function and <code>external</code> to every fallback or interface function that does not specify its visibility already.
+    </li>
+    <li>
+        Explicitly state the data location for all variables of struct, array or mapping types (including function parameters), e.g. change <code>uint[] x = m_x</code> to <code>uint[] storage x = m_x</code>. Note that <code>external</code> functions require parameters with a data location of <code>calldata</code>.
+    </li>
+    <li>
+        Explicitly convert values of contract type to <code>address</code> type before using an address member. Example: if <code>contract</code> is a contract, change <code>contract.transfer(...)</code> to <code>address(contract).transfer(...)</code>.
+    </li>
+</ul>

@@ -1,0 +1,1 @@
+Revert-function in the body of the conditional operator if

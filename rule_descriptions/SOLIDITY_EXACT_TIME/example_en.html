@@ -1,0 +1,20 @@
+<p>
+    In the following example, <code>now</code> can be manipulated by the miner so that he/she will always win:
+</p>
+<pre>
+<code>
+pragma solidity 0.4.25;
+
+contract Game {
+
+    function oddOrEven(bool yourGuess) external payable {
+        if (yourGuess == now % 2 > 0) {
+            uint fee = msg.value / 10;
+            msg.sender.transfer(msg.value * 2 - fee);
+        }
+    }
+
+    function () external payable {}
+}
+</code>
+</pre>

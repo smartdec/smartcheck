@@ -1,0 +1,19 @@
+<p> В следующем примере fallback-функция по отклонению платежа является избыточной:</p>
+<p>
+<pre>
+<code>
+pragma solidity 0.4.24;
+
+contract Сlock {
+    
+    function time() public returns(uint) {
+        return now;
+    }
+
+    function() {
+        revert();
+    }
+}
+</code>
+</pre>
+</p>

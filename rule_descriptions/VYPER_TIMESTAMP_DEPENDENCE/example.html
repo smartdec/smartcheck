@@ -1,0 +1,21 @@
+<p>
+    В данном примере логика контракта опирается на точное значение переменной <code>block.timestamp</code>:
+</p>
+<pre>
+<code>
+investor_money: puiblic(uint256[address])
+lucky_time: public(timestamp)
+
+@public
+def init(_lucky_time: timestamp):
+    self.lucky_time = _lucky_time
+
+@payable
+@public
+def add_investor():
+    if block.timestamp == self.lucky_time:
+        self.investor_money[msg.sender] = 2 * msg.value
+    else:
+        self.investor_money[msg.sender] = msg.value / 2
+</code>
+</pre>

@@ -1,0 +1,9 @@
+<p>Here is the example of correct <code>pure</code>-function:</p>
+<pre><code>pragma solidity ^0.4.16;
+
+contract C {
+    function f(uint a, uint b) pure returns (uint) {
+        return a * (b + 42) + now;
+    }
+}</code>
+</pre>

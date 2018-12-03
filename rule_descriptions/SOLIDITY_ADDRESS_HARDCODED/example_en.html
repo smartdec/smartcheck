@@ -1,0 +1,17 @@
+<p>In the following contract, the address is specified in the source code:
+</p>
+<pre>
+<code>
+    pragma solidity 0.4.24;
+
+    contract C {
+        function f(uint a, uint b) pure returns (address) {
+            address public multisig = 0xf64B584972FE6055a770477670208d737Fff282f;
+            return multisig;
+        }
+    }
+</code>
+</pre>
+<p>
+    Do not forget to check the contract at the address <code>0xf64B584972FE6055a770477670208d737Fff282f</code> for vulnerabilities.
+</p>

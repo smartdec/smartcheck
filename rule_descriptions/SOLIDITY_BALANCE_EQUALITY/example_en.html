@@ -1,0 +1,24 @@
+<p>
+    In the following example, checking for strict balance equality is used:
+</p>
+<p>
+<pre>
+<code>
+    if (address(this).balance == 42 ether ) {
+    /* ... */
+    }
+</code>
+</pre>
+</p>
+<p>
+    Secure alternative:
+</p>
+<p>
+<pre>
+<code>
+    if (address(this).balance >= 42 ether ) {
+    /* ... */
+    }
+</code>
+</pre>
+</p>

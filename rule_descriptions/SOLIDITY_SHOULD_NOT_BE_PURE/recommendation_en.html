@@ -1,0 +1,20 @@
+<p>Do not declare functions that read from or modify the state as <code>pure</code>.</p>
+<p>The following statements are considered modifying the state:</p>
+<ol>
+	<li>Writing to state variables;</li>
+	<li>Emitting events;</li>
+	<li>Creating other contracts;</li>
+	<li>Using <code>selfdestruct</code>;</li>
+	<li>Sending Ether via calls;</li>
+	<li>Calling any function not marked <code>view</code> or <code>pure</code>;</li>
+	<li>Using low-level calls;</li>
+	<li>Using inline assembly that contains certain opcodes.</li>
+</ol>
+<p>The following statements are considered reading from the state:</p>
+<ol>
+	<li>Reading from state variables;</li>
+	<li>Accessing <code>this.balance</code> or <code> &lt;adress&gt;.balance</code>;</li>
+	<li>Accessing any of the members of <code>block</code>, <code>tx</code>, <code>msg</code> (with the exception of <code>msg.sig</code> and <code>msg.data</code>);</li>
+	<li>Calling any function not marked <code>pure</code>;</li>
+	<li>Using inline assembly that contains certain opcodes</li>
+</ol>

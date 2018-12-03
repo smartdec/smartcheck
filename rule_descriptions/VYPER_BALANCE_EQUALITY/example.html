@@ -1,0 +1,24 @@
+<p>
+    В следующем примере используется проверка баланса на строгое равенство:
+</p>
+<pre>
+<code>
+@public
+def func_1(user: address):
+    if (user.balance == as_wei_value(10, "ether")):
+        # do some stuff
+        pass
+</code>
+</pre>
+<p>
+    Безопасный вариант:
+</p>
+<pre>
+<code>
+@public
+def func_1(user: address):
+    if (user.balance >= as_wei_value(10, "ether")):
+        # do some stuff
+        pass
+</code>
+</pre>

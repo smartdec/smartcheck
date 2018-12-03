@@ -1,0 +1,12 @@
+<p>В следующем контракте используется функция <code>approve</code></p>
+<pre><code>pragma solidity ^0.4.5;
+contract StandardToken is ERC20, BasicToken {
+	...
+	function approve(address _spender, uint256 _value) public returns (bool) {
+		allowed[msg.sender][_spender] = _value;
+		Approval(msg.sender, _spender, _value);
+		return true;
+	}
+	...
+}
+</code></pre>

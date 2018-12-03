@@ -1,0 +1,19 @@
+<p>
+    В данном примере используется функция <code>as_unitless_number()</code>, что приводит к ошибке:
+</p>
+<pre>
+<code>
+units: {day: "days"}
+
+price: public(uint256(wei/day))
+start: public(timestamp[address])
+
+@public
+@payable
+def payment():
+    total_price: uint256(wei)
+    total_price = as_wei_value(as_unitless_number(self.price) *
+        (as_unitless_number(block.timestamp) - as_unitless_number(self.start[msg.sender])), "wei")
+    assert(msg.value >= total_price)
+</code>
+</pre>

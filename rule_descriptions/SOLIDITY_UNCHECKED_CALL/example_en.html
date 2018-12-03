@@ -1,0 +1,14 @@
+<p>
+	In the following example, the <code>send</code> function without checking return value is used:
+</p>
+<p>
+<pre>
+<code>
+contract SolidityUncheckedSend {
+    function unseatKing(address addr, uint value) {
+        addr.send(value);
+    }
+}
+</code>
+</pre>
+</p>
