@@ -1,29 +1,43 @@
 # SmartCheck
-## Version
-This version of SmartCheck accompanies the original academic paper "SmartCheck: Static Analysis of Ethereum Smart Contracts"<!--  (LINK) as released (DATE) -->. [The online tool](https://tool.smartdec.net/) uses the actual version of SmartCheck.
+
+SmartCheck is an extensible static analysis tool for discovering vulnerabilities and other code issues
+in Ethereum smart contracts written in the Solidity programming language.
+
+SmartCheck is described in the academic paper titled
+["SmartCheck: Static Analysis of Ethereum Smart Contracts"](https://orbilu.uni.lu/bitstream/10993/35862/1/smartcheck-paper.pdf)
+as released on May 27, 2018.
+
+An online version of SmartCheck is available on [our website](https://tool.smartdec.net/).
 
 ## Building the project
-Execute in the project directory:
+The project uses Maven. To build it, execute in the project directory:
 
-`mvn clean package`
+```bash
+$ mvn clean package
+```
 
-## Start analysis
-Execute in the `target` folder: 
+## Start the analysis
 
-`java -jar solidity-checker-1.0-SNAPSHOT-jar-with-dependencies.jar -p <path to directory or file>`
+```bash
+$ java -jar target/smartcheck-2.0-SNAPSHOT-jar-with-dependencies.jar -p <path to directory or file>
+```
 
-Optional parameter: `-r <path to .xml-file with rules>`; by default the file at `src\main\resources\rules.xml` is used.
+Optional argument: `-r <path to .xml-file with rules>`; by default it uses the built-in rules files.
 
-Analysis can also be started from an IDE by executing the `main` method of `src\main\java\ru\smartdec\soliditycheck\app\cli\Tool.java`.
+Analysis can also be started from an IDE by running the `ru.smartdec.smartcheck.app.cli.Tool.main()` method.
 
 ## View the parse tree in a graphical form
 
-`mvn exec:java@tree -Dexec.args="-p <path to the file>"`
+```bash
+$ mvn exec:java@tree -Dexec.args="-p <path to the file>"
+```
 
-It can also be done from an IDE by executing the `main` method of `src\main\java\ru\smartdec\soliditycheck\app\cli\TreeView.java`
+It can also be done from an IDE by running the `ru.smartdec.smartcheck.app.cli.TreeView.main()` method.
 
 ## View the parse tree as XML
 
-`mvn exec:java@xml -Dexec.args="-t <path to save xml-tree> -s <path to the file>"`
+```bash
+$ mvn exec:java@xml -Dexec.args="-t <path to save xml-tree> -s <path to the file>"
+```
 
-It can also be done from an IDE by executing the `main` method of `src\main\java\ru\smartdec\soliditycheck\app\cli\XmlView.java`
+It can also be done from an IDE by running the `ru.smartdec.smartcheck.app.cli.XmlView.main()` method.
