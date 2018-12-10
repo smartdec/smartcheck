@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<Rules xmlns="http://www.smartdec.ru/SmartCheck/Conditions" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.smartdec.ru/SmartCheck/Conditions rules-grammar-schema.xsd ">
+    <Rule>
+        <RuleId>VYPER_BALANCE_EQUALITY</RuleId>
+        <Patterns>
+            <!-- фиксирует конструкции: ".balance ==", ".balance !="-->
+            <Pattern patternId="5094ad">
+                <Categories>
+                    <Category>Vyper</Category>
+                </Categories>
+                <Severity>1</Severity>
+                <XPath>
+                    //comparison
+                        [comp_op[text()[1]="!=" or text()[1]="=="]]
+                        [expr//atom_expr/trailer[text()[1]=".balance"]]
+                </XPath>
+            </Pattern>
+        </Patterns>
+    </Rule>
+    <Rule>
+        <RuleId>VYPER_LOCKED_MONEY</RuleId>
+        <Patterns>
+            <!-- Фиксируются ситуации, когда в контракте имеется функция типа payable, но нет функций selfdestruct, send, .value-->
+            <Pattern patternId="30281d">
+                <Categories>
+                    <Category>Vyper</Category>
+                </Categories>
+                <Severity>3</Severity>
+                <XPath>
+                    //decorator/dotted_name
+                        [text()[1]='payable']
+                        [not(ancestor::file_input//atom_expr
+                            [trailer]
+                            [atom/atom_name[matches(text()[1],'send|raw_call|selfdestruct')]]
+                        )]
+                </XPath>
+            </Pattern>
+        </Patterns>
+    </Rule>
+    <Rule>
+        <RuleId>VYPER_ERC20_APPROVE</RuleId>
+        <Patterns>
+            <!--Фиксирует определение функции approve, возвращающей bool, с двумя аргументами типов address и bool-->
+            <Pattern patternId="af782c">
+                <Categories>
+                    <Category>Vyper</Category>
+                </Categories>
+                <Severity>2</Severity>
+                <XPath>
+                    //funcdef
+                        [text()[1]="defapprove"]
+                        [parameters/typedargslist
+                            [count(tfpdef)=2]
+                            [tfpdef[1]//atom_name[text()[1]="address"]]
+                            [tfpdef[2]//atom_name[matches(text()[1],"^uint[0-9]*")]]]
+                        [text()[2] = "->"]
+                        [test//atom_name[text()[1]="bool"]]
+                </XPath>
+            </Pattern>
+        </Patterns>
+    </Rule>
+    <Rule>
+        <RuleId>VYPER_TIMESTAMP_DEPENDENCE</RuleId>
+        <Patterns>
+            <!-- Фиксируется случаи, когда выражение содержит "!= или == block.timestamp", кроме аргументов функций -->
+            <Pattern patternId="to993y">
+                <Categories>
+                    <Category>Vyper</Category>
+                </Categories>
+                <Severity>2</Severity>
+                <XPath>
+                    //comparison[comp_op[matches(text(),"==|!=")]]
+                        [expr//atom_expr[trailer[matches(text()[1], "timestamp")]]
+                            [atom/atom_name[matches(text()[1], "block")]]
+                            [not(ancestor::*[14][self::argument])]]
+
+                </XPath>
+            </Pattern>
+        </Patterns>
+    </Rule>
+    <Rule>
+        <RuleId>VYPER_REDUNDANT_FALLBACK_REJECT</RuleId>
+        <Patterns>
+            <!-- контракт содержит fallback функцию, в определении которой есть только один statement: throw -->
+            <Pattern patternId="am179p">
+                <Categories>
+                    <Category>Vyper</Category>
+                </Categories>
+                <Severity>1</Severity>
+                <XPath>
+                    //funcdef[suite[count(stmt)=1]]
+                        [suite[descendant::*[21][matches(text()[1], "^throw$")]]]
+                </XPath>
+            </Pattern>
+        </Patterns>
+    </Rule>
+    <Rule>
+        <RuleId>VYPER_PRIVATE_MODIFIER_DONT_HIDE_DATA</RuleId>
+        <Patterns>
+            <!-- Фиксируется определение state переменных с типом видимости private -->
+            <Pattern patternId="lo771p">
+                <Categories>
+                    <Category>Vyper</Category>
+                </Categories>
+                <Severity>1</Severity>
+                <XPath>
+                    /file_input/stmt/simple_stmt/small_stmt/expr_stmt[not(annassign//atom_expr/trailer)]
+                        [annassign]
+                </XPath>
+            </Pattern>
+        </Patterns>
+    </Rule>
+    <Rule>
+        <RuleId>VYPER_UNITLESS_NUMBER</RuleId>
+        <Patterns>
+            <!-- Фиксируется использование функции as_unitless_number() не в return или не в private функции-->
+            <Pattern patternId="fgg331">
+                <Categories>
+                    <Category>Vyper</Category>
+                </Categories>
+                <Severity>1</Severity>
+                <XPath>
+                    //atom_name
+                        [text()[1]="as_unitless_number"]
+                        [not(ancestor::*[self::return_stmt])
+                        or not(ancestor::decorated/decorators//dotted_name[text()[1]="private"])]
+                </XPath>
+            </Pattern>
+        </Patterns>
+    </Rule>
+</Rules>

@@ -1,16 +1,45 @@
-pragma solidity ^0.4.11;
+pragma solidity 0.4.24;
 
-contract SoliditySendValue {
-    function comparingBalances(uint _amount) returns (bool) {
-        if (this.balance == 1543 wei) {//5094ad
+contract C {
+
+    function badPrictice(address addr) {
+        // <yes> <report> SOLIDITY_BALANCE_EQUALITY 5094ad
+        if (this.balance == 100 wei) {
         }
+        // <yes> <report> SOLIDITY_BALANCE_EQUALITY 5094ad
+        if (address(this).balance != 100 wei) {
+        }
+        // <yes> <report> SOLIDITY_BALANCE_EQUALITY 5094ad
+        if (addr.balance != 100 wei) {
+        }
+        // <yes> <report> SOLIDITY_BALANCE_EQUALITY 5094ad
+        if((addr.balance) == 0) {
+        }
+        // <yes> <report> SOLIDITY_BALANCE_EQUALITY 5094ad
+        if(1 + addr.balance == 0) {
+        }
+    }
 
-        if (_amount == this.balance) return false;//5094ad
-        if (this.balance ==_amount) return false;//5094ad
-        if (this.balance > 100 wei) throw;
-        if (this.balance >= 100 wei) throw;
-        if (this.balance <= 100 wei) throw;
-        if (a == 100 wei) throw;
-        return true;
+    function myFoo(uint) returns(uint) {
+        return 0;
+    }
+
+    function goodPrictice(address addr) public {  
+        if(myFoo(addr.balance) == 0) {
+        }
+        if (this.balance > 100 wei) {
+        }
+        if (address(this).balance >= 100 wei) {
+        }
+        if (addr.balance <= 100 wei) {
+        }
+        if (msg.sender.balance < 100 wei) {
+        }
+        if (foo(addr).balance >= 100 wei) {
+        }
+    }
+
+    function foo(address _addr) public returns(address) {
+        return _addr;
     }
 }
