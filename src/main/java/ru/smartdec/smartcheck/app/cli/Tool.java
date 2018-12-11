@@ -111,11 +111,14 @@ public final class Tool {
                             tree -> tree.contexts().forEach(
                                     context -> {
                                         System.out.printf(
-                                                "ruleId: %s%npatternId: %s%n"
+                                                "ruleId: %s%n"
+                                                      + "patternId: %s%n"
+                                                      + "severity: %d%n"
                                                       + "line: %d%ncolumn: %d%n"
                                                       + "content: %s%n%n",
                                                 tree.rule().id(),
                                                 tree.pattern().id(),
+                                                tree.pattern().severity(),
                                                 context.getStart().getLine(),
                                                 context
                                                        .getStart()
