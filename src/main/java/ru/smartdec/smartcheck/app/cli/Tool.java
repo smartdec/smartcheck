@@ -36,7 +36,7 @@ public final class Tool {
      */
     public static void main(final Arguments arguments) throws Exception {
         Path src = arguments
-                .value("-p", "-path")
+                .value("-p", "--path")
                 .map(Paths::get)
                 .filter(Files::exists)
                 .orElseThrow(IllegalArgumentException::new);
@@ -57,7 +57,7 @@ public final class Tool {
         };
 
         RulesXml.Source rules = arguments
-                .value("-r", "-rules")
+                .value("-r", "--rules")
                 .map(Paths::get)
                 .filter(Files::isRegularFile)
                 .<RulesXml.Source>map(path -> () -> path)

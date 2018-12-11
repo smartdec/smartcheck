@@ -34,11 +34,11 @@ public final class XmlView {
     public static void main(final Arguments arguments) throws Exception {
         new XmlView(
                 arguments
-                        .value("-s", "-source")
+                        .value("-s", "--source")
                         .map(Paths::get)
                         .orElseThrow(IllegalArgumentException::new),
                 arguments
-                        .value("-t", "-target")
+                        .value("-t", "--target")
                         .map(Paths::get)
                         .orElseThrow(IllegalArgumentException::new)
         )

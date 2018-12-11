@@ -21,7 +21,7 @@ public final class TreeView {
     public static void main(final String... args) throws Exception {
         new TreeView(
                 new ArgumentsDefault(args)
-                        .value("-p", "-path")
+                        .value("-p", "--path")
                         .map(Paths::get)
                         .orElseThrow(IllegalArgumentException::new)
         )
