@@ -53,7 +53,8 @@ public final class DocumentTreeBasic implements DocumentTree {
             final ParseTree pt,
             final Supplier<Document> supplier,
             final Function<RuleContext, String> frs,
-            final Function<TerminalNode, String> fts) {
+            final Function<TerminalNode, String> fts
+    ) {
         this.tree = pt;
         this.documents = supplier;
         this.rules = frs;
@@ -68,12 +69,13 @@ public final class DocumentTreeBasic implements DocumentTree {
     public DocumentTreeBasic(
             final ParseTree pt,
             final DocumentBuilder builder,
-            final List<String> names) {
+            final List<String> names
+    ) {
         this(
                 pt,
                 builder::newDocument,
                 node -> names.get(node.getRuleIndex()),
-                TerminalNode::getText
+                new TerminalTransformer()
         );
     }
 
@@ -85,7 +87,8 @@ public final class DocumentTreeBasic implements DocumentTree {
     public DocumentTreeBasic(
             final ParseTree pt,
             final DocumentBuilder builder,
-            final String[] names) {
+            final String[] names
+    ) {
         this(pt, builder, Arrays.asList(names));
     }
 
