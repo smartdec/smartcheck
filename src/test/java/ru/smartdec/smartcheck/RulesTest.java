@@ -4,6 +4,8 @@ import lombok.EqualsAndHashCode;
 import lombok.ToString;
 import org.junit.Before;
 import org.junit.Test;
+import ru.smartdec.smartcheck.app.SourceLanguage;
+import ru.smartdec.smartcheck.app.SourceLanguages;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -27,23 +29,31 @@ import static org.hamcrest.Matchers.isIn;
 public final class RulesTest {
 
     private DocumentBuilder builder;
-    private Rules rules;
-    private FileExtension extension;
+    private Map<SourceLanguage, Rules> rules;
     private Collection<Path> sources;
+
+    private void addRules(SourceLanguage sourceLanguage) {
+        this.rules.put(
+                sourceLanguage,
+                new RulesCached(
+                        new RulesXml(
+                                sourceLanguage.rulesFileName(),
+                                XPathFactory.newInstance().newXPath(),
+                                Throwable::printStackTrace
+                        )
+                )
+        );
+    }
 
     @Before
     public void before() throws Exception {
         this.builder = DocumentBuilderFactory
                 .newInstance()
                 .newDocumentBuilder();
-        this.rules = new RulesCached(
-                new RulesXml(
-                        "/rules.xml",
-                        XPathFactory.newInstance().newXPath(),
-                        Throwable::printStackTrace
-                )
-        );
-        this.extension = new FileExtension(".sol");
+        this.rules = new HashMap<>();
+        addRules(new SourceLanguages.Solidity());
+        addRules(new SourceLanguages.Vyper());
+
         this.sources = Files
                 .walk(
                         Paths.get(
@@ -52,20 +62,17 @@ public final class RulesTest {
                         1
                 )
                 .filter(Files::isRegularFile)
-                .filter(this.extension)
                 .collect(Collectors.toList());
     }
 
-    @Test
+    // @Test
     public void coverage() throws Exception {
         // TODO: fix the problem with SOLIDITY_SHOULD_RETURN_STRUCT
-        /*
         assertThat(
                 "coverage",
                 this.coverageExpected().entrySet(),
                 everyItem(isIn(this.coverageActual().entrySet()))
         );
-        */
     }
 
     @Test
@@ -80,7 +87,9 @@ public final class RulesTest {
     private Map<String, Set<String>> coverageExpected() throws Exception {
         return this
                 .rules
+                .values()
                 .stream()
+                .flatMap(Rules::streamUnchecked)
                 .collect(
                         Collectors.toMap(
                                 Rule::id,
@@ -92,16 +101,24 @@ public final class RulesTest {
                 );
     }
 
+    private String extractName(final Path path) {
+        String fileName = path.getFileName().toString();
+        int index = fileName.lastIndexOf('.');
+        return fileName.substring(0, index);
+    }
+
     private Map<String, Set<String>> coverageActual() throws Exception {
         final Map<String, Set<String>> result = new HashMap<>();
         for (final Path source : this.sources) {
             result.put(
-                    this.extension.apply(source),
+                    this.extractName(source),
                     this.coverageActual(Files.readAllLines(source))
             );
         }
         return result;
     }
+
+
 
     private Set<String> coverageActual(
             final List<String> lines) throws Exception {
@@ -109,11 +126,8 @@ public final class RulesTest {
         Set<String> res = new HashSet<>();
 
         for (String line : lines) {
-            if (!line.contains("// <yes> <report>")) continue;
-
-            String[] patterns = line
-                    .split("//")[1]
-                    .split("<yes> <report>");
+            String[] patterns = extractPatterns(line);
+            if (patterns == null) continue;
             Arrays.stream(patterns)
                     .map(String::trim)
                     .filter(pattern -> !pattern.isEmpty())
@@ -124,11 +138,25 @@ public final class RulesTest {
         return res;
     }
 
+    private String[] extractPatterns(String line) {
+        if (!line.contains("<yes> <report>")) return null;
+
+        if (line.contains("//")) {
+            line = line.split("//")[1];
+        } else if (line.contains("#")) {
+            line = line.split("#")[1];
+        } else {
+            return null;
+        }
+
+        return line.split("<yes> <report>");
+    }
+
     private Map<String, Set<LinePattern>> patternsExpected() throws Exception {
         final Map<String, Set<LinePattern>> result = new HashMap<>();
         for (final Path source : this.sources) {
             result.put(
-                    this.extension.apply(source),
+                    this.extractName(source),
                     this.patternsExpected(Files.readAllLines(source))
             );
         }
@@ -143,11 +171,10 @@ public final class RulesTest {
         for (int lineNo = 0; lineNo < lines.size(); lineNo++) {
             int lineNo2 = lineNo + 2;
             String line = lines.get(lineNo);
-            if (!line.contains("// <yes> <report>")) continue;
 
-            String[] patterns = line
-                    .split("//")[1]
-                    .split("<yes> <report>");
+            String[] patterns = extractPatterns(line);
+            if (patterns == null) continue;
+
             Arrays.stream(patterns)
                     .map(String::trim)
                     .filter(pattern -> !pattern.isEmpty())
@@ -162,10 +189,16 @@ public final class RulesTest {
     private Map<String, Set<LinePattern>> patternsActual() throws Exception {
         final Map<String, Set<LinePattern>> result = new HashMap<>();
         for (final Path source : this.sources) {
+            SourceLanguage sourceLanguage = SourceLanguages.fromFileName(source);
+            if (sourceLanguage == null) {
+                throw new RuntimeException("Unexpected file " + source);
+            }
             result.put(
-                    this.extension.apply(source),
+                    this.extractName(source),
                     this.patternsActual(
-                            this.tree(source), this.extension.apply(source)
+                            this.tree(source, sourceLanguage),
+                            this.extractName(source),
+                            rules.get(sourceLanguage)
                     )
             );
         }
@@ -173,9 +206,11 @@ public final class RulesTest {
     }
 
     private Set<LinePattern> patternsActual(
-            final SearchableTree tree, final String id) throws Exception {
-        return this
-                .rules
+            final SearchableTree tree,
+            final String id,
+            final Rules rules
+    ) throws Exception {
+        return rules
                 .stream()
                 .filter(rule -> id.equals(rule.id()))
                 .findAny()
@@ -194,19 +229,22 @@ public final class RulesTest {
                 .collect(Collectors.toSet());
     }
 
-    private SearchableTree tree(final Path file) {
+    private SearchableTree tree(
+            final Path file,
+            final SourceLanguage sourceLanguage
+    ) {
         return new SearchableTreeDefault(
                 new DocumentTreeCached(
                         new DocumentTreeBasic(
                                 new ParseTreeCached(
-                                        new ParseTreeBasic(
+                                        sourceLanguage.createParseTree(
                                                 new SourceFile(
                                                         file
                                                 )
                                         )
                                 ),
                                 this.builder,
-                                SolidityParser.ruleNames
+                                sourceLanguage.getRuleNames()
                         )
                 )
         );

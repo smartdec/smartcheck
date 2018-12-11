@@ -6,7 +6,7 @@ import org.antlr.v4.runtime.tree.RuleNode;
 /**
  *
  */
-public final class ParseTreeBasic implements ParseTree {
+public final class ParseTreeBasicVyper implements ParseTree {
 
     /**
      *
@@ -16,19 +16,19 @@ public final class ParseTreeBasic implements ParseTree {
     /**
      * @param src source
      */
-    public ParseTreeBasic(final Source src) {
+    public ParseTreeBasicVyper(final Source src) {
         this.source = src;
     }
 
     @Override
     public RuleNode root() throws Exception {
-        return new SolidityParser(
+        return new ru.smartdec.smartcheck.VyperParser(
                 new CommonTokenStream(
-                        new SolidityLexer(
+                        new ru.smartdec.smartcheck.VyperLexer(
                                 this.source.chars()
                         )
                 )
         )
-                .sourceUnit();
+                .file_input();
     }
 }

@@ -2,11 +2,9 @@ package ru.smartdec.smartcheck.app;
 
 import ru.smartdec.smartcheck.DocumentTreeBasic;
 import ru.smartdec.smartcheck.DocumentTreeCached;
-import ru.smartdec.smartcheck.ParseTreeBasic;
 import ru.smartdec.smartcheck.ParseTreeCached;
 import ru.smartdec.smartcheck.SearchableTree;
 import ru.smartdec.smartcheck.SearchableTreeDefault;
-import ru.smartdec.smartcheck.SolidityParser;
 import ru.smartdec.smartcheck.SourceFile;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -19,6 +17,7 @@ import java.nio.file.Path;
  */
 public final class TreeFactoryDefault implements TreeFactory {
 
+
     /**
      *
      */
@@ -27,21 +26,35 @@ public final class TreeFactoryDefault implements TreeFactory {
      *
      */
     private final Charset charset;
+    /**
+     *
+     */
+    private final SourceLanguage sourceLanguage;
 
     /**
      * @param db builder
      * @param ch charset
+     * @param language language
      */
-    public TreeFactoryDefault(final DocumentBuilder db, final Charset ch) {
+    public TreeFactoryDefault(
+            final DocumentBuilder db,
+            final Charset ch,
+            final SourceLanguage language
+    ) {
         this.builder = db;
         this.charset = ch;
+        this.sourceLanguage = language;
     }
 
     /**
      * @param db builder
+     * @param language language
      */
-    public TreeFactoryDefault(final DocumentBuilder db) {
-        this(db, StandardCharsets.UTF_8);
+    public TreeFactoryDefault(
+            final DocumentBuilder db,
+            final SourceLanguage language
+    ) {
+        this(db, StandardCharsets.UTF_8, language);
     }
 
     @Override
@@ -50,7 +63,7 @@ public final class TreeFactoryDefault implements TreeFactory {
                 new DocumentTreeCached(
                         new DocumentTreeBasic(
                                 new ParseTreeCached(
-                                        new ParseTreeBasic(
+                                        sourceLanguage.createParseTree(
                                                 new SourceFile(
                                                         path,
                                                         this.charset
@@ -58,7 +71,7 @@ public final class TreeFactoryDefault implements TreeFactory {
                                         )
                                 ),
                                 this.builder,
-                                SolidityParser.ruleNames
+                                sourceLanguage.getRuleNames()
                         )
                 )
         );

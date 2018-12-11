@@ -6,6 +6,7 @@ import ru.smartdec.smartcheck.TreeAnalysisDefault;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.function.Predicate;
 import java.util.stream.Stream;
 
 /**
@@ -20,6 +21,10 @@ public final class DirectoryAnalysisDefault implements DirectoryAnalysis {
     /**
      *
      */
+    private final Predicate<? super Path> fileFilter;
+    /**
+     *
+     */
     private final TreeFactory trees;
     /**
      *
@@ -28,12 +33,18 @@ public final class DirectoryAnalysisDefault implements DirectoryAnalysis {
 
     /**
      * @param src     path
+     * @param filter filter
      * @param factory tree factory
      * @param rl      rules
      */
     public DirectoryAnalysisDefault(
-            final Path src, final TreeFactory factory, final Rules rl) {
+            final Path src,
+            final Predicate<? super Path> filter,
+            final TreeFactory factory,
+            final Rules rl
+    ) {
         this.directory = src;
+        this.fileFilter = filter;
         this.trees = factory;
         this.rules = rl;
     }
@@ -43,6 +54,7 @@ public final class DirectoryAnalysisDefault implements DirectoryAnalysis {
         return Files
                 .walk(this.directory)
                 .filter(Files::isRegularFile)
+                .filter(this.fileFilter)
                 .map(
                         file -> new DirectoryAnalysis.Info() {
                             @Override

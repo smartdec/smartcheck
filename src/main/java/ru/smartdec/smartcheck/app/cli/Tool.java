@@ -2,13 +2,18 @@ package ru.smartdec.smartcheck.app.cli;
 
 import ru.smartdec.smartcheck.RulesCached;
 import ru.smartdec.smartcheck.RulesXml;
+import ru.smartdec.smartcheck.app.DirectoryAnalysis;
+import ru.smartdec.smartcheck.app.DirectoryAnalysisCombined;
 import ru.smartdec.smartcheck.app.DirectoryAnalysisDefault;
 import ru.smartdec.smartcheck.app.ReportDefault;
+import ru.smartdec.smartcheck.app.SourceLanguage;
+import ru.smartdec.smartcheck.app.SourceLanguages;
 import ru.smartdec.smartcheck.app.TreeFactoryDefault;
 
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.xpath.XPathFactory;
 import java.net.URI;
+import java.nio.file.FileSystemAlreadyExistsException;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -16,6 +21,7 @@ import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
+import java.util.function.Function;
 
 /**
  *
@@ -41,27 +47,36 @@ public final class Tool {
                 .filter(Files::exists)
                 .orElseThrow(IllegalArgumentException::new);
 
-        RulesXml.Source defaultRules = () -> {
+        Function<SourceLanguage, RulesXml.Source> defaultRules =
+                sourceLanguage -> () -> {
+            String rulesFileName = sourceLanguage.rulesFileName();
             URI uri = RulesXml
                     .class
-                    .getResource("/rules.xml")
+                    .getResource(rulesFileName)
                     .toURI();
             System.out.print(uri);
 
-            // initialize a new ZipFilesystem
-            HashMap<String, String> env = new HashMap<>();
-            env.put("create", "true");
-            FileSystems.newFileSystem(uri, env);
+            try {
+                // initialize a new ZipFilesystem
+                HashMap<String, String> env = new HashMap<>();
+                env.put("create", "true");
+                FileSystems.newFileSystem(uri, env);
+            } catch (FileSystemAlreadyExistsException ex) {
+                // great!
+                // appease PMD
+                int p = 0;
+            }
 
             return Paths.get(uri);
         };
 
-        RulesXml.Source rules = arguments
+        Function<SourceLanguage, RulesXml.Source> rules = arguments
                 .value("-r", "--rules")
                 .map(Paths::get)
                 .filter(Files::isRegularFile)
-                .<RulesXml.Source>map(path -> () -> path)
-                .orElseGet(() -> defaultRules);
+                .<Function<SourceLanguage, RulesXml.Source>>
+                        map(path -> language -> () -> path)
+                .orElse(defaultRules);
 
         new Tool(src, rules).run();
     }
@@ -73,15 +88,52 @@ public final class Tool {
     /**
      *
      */
-    private final RulesXml.Source rules;
+    private final Function<
+            ? super SourceLanguage,
+            ? extends RulesXml.Source
+    > rules;
 
     /**
      * @param src source
-     * @param rs  rules
+     * @param rs rules
      */
-    public Tool(final Path src, final RulesXml.Source rs) {
+    public Tool(
+            final Path src,
+            final Function<
+                    ? super SourceLanguage,
+                    ? extends RulesXml.Source
+            > rs
+    ) {
         this.source = src;
         this.rules = rs;
+    }
+
+    /**
+     *
+     * @param sourceLanguage source language
+     * @return directory analysis
+     * @throws Exception exception
+     */
+    private DirectoryAnalysis makeDirectoryAnalysis(
+            final SourceLanguage sourceLanguage
+    ) throws Exception {
+        return new DirectoryAnalysisDefault(
+                this.source,
+                p -> p.toString().endsWith(sourceLanguage.fileExtension()),
+                new TreeFactoryDefault(
+                        DocumentBuilderFactory
+                                .newInstance()
+                                .newDocumentBuilder(),
+                        sourceLanguage
+                ),
+                new RulesCached(
+                        new RulesXml(
+                                this.rules.apply(sourceLanguage),
+                                XPathFactory.newInstance().newXPath(),
+                                Throwable::printStackTrace
+                        )
+                )
+        );
     }
 
     /**
@@ -89,20 +141,9 @@ public final class Tool {
      */
     public void run() throws Exception {
         new ReportDefault(
-                new DirectoryAnalysisDefault(
-                        this.source,
-                        new TreeFactoryDefault(
-                                DocumentBuilderFactory
-                                        .newInstance()
-                                        .newDocumentBuilder()
-                        ),
-                        new RulesCached(
-                                new RulesXml(
-                                        this.rules,
-                                        XPathFactory.newInstance().newXPath(),
-                                        Throwable::printStackTrace
-                                )
-                        )
+                new DirectoryAnalysisCombined(
+                    makeDirectoryAnalysis(new SourceLanguages.Solidity()),
+                    makeDirectoryAnalysis(new SourceLanguages.Vyper())
                 ),
                 info -> {
                     System.out.println(info.file());

@@ -1,9 +1,9 @@
 package ru.smartdec.smartcheck.app.cli;
 
 import org.antlr.v4.gui.TreeViewer;
-import ru.smartdec.smartcheck.ParseTreeBasic;
-import ru.smartdec.smartcheck.SolidityParser;
 import ru.smartdec.smartcheck.SourceFile;
+import ru.smartdec.smartcheck.app.SourceLanguage;
+import ru.smartdec.smartcheck.app.SourceLanguages;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -19,13 +19,14 @@ public final class TreeView {
      * @throws Exception exception
      */
     public static void main(final String... args) throws Exception {
-        new TreeView(
-                new ArgumentsDefault(args)
-                        .value("-p", "--path")
-                        .map(Paths::get)
-                        .orElseThrow(IllegalArgumentException::new)
-        )
-                .run();
+        ArgumentsDefault arguments = new ArgumentsDefault(args);
+
+        Path src = arguments
+                .value("-p", "--path")
+                .map(Paths::get)
+                .orElseThrow(IllegalArgumentException::new);
+
+        new TreeView(src).run();
     }
 
     /**
@@ -44,9 +45,16 @@ public final class TreeView {
      * @throws Exception exception
      */
     public void run() throws Exception {
+        final SourceLanguage sourceLanguage =
+                SourceLanguages.fromFileName(this.path);
+        if (sourceLanguage == null) {
+            throw new IllegalArgumentException();
+        }
         new TreeViewer(
-                Arrays.asList(SolidityParser.ruleNames),
-                new ParseTreeBasic(new SourceFile(this.path)).root()
+                Arrays.asList(sourceLanguage.getRuleNames()),
+                sourceLanguage.createParseTree(
+                        new SourceFile(this.path)
+                ).root()
         )
                 .open()
                 .get()

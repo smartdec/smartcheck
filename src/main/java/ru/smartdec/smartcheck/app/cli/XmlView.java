@@ -1,9 +1,9 @@
 package ru.smartdec.smartcheck.app.cli;
 
 import ru.smartdec.smartcheck.DocumentTreeBasic;
-import ru.smartdec.smartcheck.ParseTreeBasic;
-import ru.smartdec.smartcheck.SolidityParser;
 import ru.smartdec.smartcheck.SourceFile;
+import ru.smartdec.smartcheck.app.SourceLanguage;
+import ru.smartdec.smartcheck.app.SourceLanguages;
 
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.transform.OutputKeys;
@@ -32,17 +32,16 @@ public final class XmlView {
      * @throws Exception exception
      */
     public static void main(final Arguments arguments) throws Exception {
-        new XmlView(
-                arguments
-                        .value("-s", "--source")
-                        .map(Paths::get)
-                        .orElseThrow(IllegalArgumentException::new),
-                arguments
-                        .value("-t", "--target")
-                        .map(Paths::get)
-                        .orElseThrow(IllegalArgumentException::new)
-        )
-                .run();
+        Path src = arguments
+                .value("-s", "--source")
+                .map(Paths::get)
+                .orElseThrow(IllegalArgumentException::new);
+        Path target = arguments
+                .value("-t", "--target")
+                .map(Paths::get)
+                .orElseThrow(IllegalArgumentException::new);
+
+        new XmlView(src, target).run();
     }
 
     /**
@@ -67,6 +66,11 @@ public final class XmlView {
      * @throws Exception exception
      */
     public void run() throws Exception {
+        final SourceLanguage sourceLanguage =
+                SourceLanguages.fromFileName(this.source);
+        if (sourceLanguage == null) {
+            throw new IllegalArgumentException();
+        }
         final Transformer transformer = TransformerFactory
                 .newInstance()
                 .newTransformer();
@@ -74,11 +78,13 @@ public final class XmlView {
         transformer.transform(
                 new DOMSource(
                         new DocumentTreeBasic(
-                                new ParseTreeBasic(new SourceFile(this.source)),
+                                sourceLanguage.createParseTree(
+                                        new SourceFile(this.source)
+                                ),
                                 DocumentBuilderFactory
                                         .newInstance()
                                         .newDocumentBuilder(),
-                                SolidityParser.ruleNames
+                                sourceLanguage.getRuleNames()
                         )
                                 .info()
                                 .node()
