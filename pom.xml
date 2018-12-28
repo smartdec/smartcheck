@@ -67,6 +67,9 @@
                         </goals>
                     </execution>
                 </executions>
+                <configuration>
+                    <excludes>**/generated-source/**/*</excludes>
+                </configuration>
             </plugin>
             <plugin>
                 <artifactId>maven-pmd-plugin</artifactId>
