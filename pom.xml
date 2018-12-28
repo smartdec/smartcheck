@@ -11,6 +11,18 @@
         <pmd.verbose>true</pmd.verbose>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
+    <scm>
+        <url>https://github.com/smartdec/smartcheck</url>
+        <connection>scm:git:git://github.com/smartdec/smartcheck.git</connection>
+        <developerConnection>scm:git:git@github.com:smartdec/smartcheck.git</developerConnection>
+    </scm>
+    <licenses>
+        <license>
+            <name>GNU General Public License (GPLV3+)</name>
+            <url>http://www.gnu.org/licenses/gpl-3.0.html</url>
+        </license>
+    </licenses>
+
     <dependencies>
         <dependency>
             <groupId>junit</groupId>
