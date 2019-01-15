@@ -3,7 +3,8 @@
     <Rule>
         <RuleId>SOLIDITY_ADDRESS_HARDCODED</RuleId>
             <Patterns>
-                <!-- фиксирует адреса длиной в 42 символа"-->
+                <!-- Looks for hardcoded address 42 symbols long. -->
+                <!-- Фиксирует адреса длиной в 42 символа. -->
                 <Pattern patternId="adc165">
                     <Categories>
                          <Category>Solidity</Category>
@@ -14,7 +15,8 @@
                         //addressNumber[string-length()=42]
                     </XPath>
                 </Pattern>
-                <!-- фиксирует адреса длиной менее чем 42 символа и не равные 0x0"-->
+                <!-- Looks for hardcoded address with less than 42 symbols that is not equal to 0x0. -->
+                <!-- Фиксирует адреса длиной менее чем 42 символа и не равные 0x0. -->
                 <Pattern patternId="b140cd">
                     <Categories>
                         <Category>Solidity</Category>
@@ -25,7 +27,8 @@
                         //addressNumber[string-length() lt 42 and not(matches(text()[1],"^0x0$"))]
                     </XPath>
                 </Pattern>
-                <!-- фиксирует конструкции: address(numberLiteral/decimalNumber), где numberLiteral/decimalNumber не равно 0"-->
+                <!-- Looks for construction: address(<some constant>), where the constant is not equal to 0. -->
+                <!-- Фиксирует конструкции: address(numberLiteral/decimalNumber), где numberLiteral/decimalNumber не равно 0. -->
                 <Pattern patternId="f32db1">
                     <Categories>
                         <Category>Solidity</Category>
@@ -36,7 +39,8 @@
                         //typeConversion[typeName[elementaryTypeName[matches(text()[1],"^address$")]]]/expression[primaryExpression/numberLiteral/decimalNumber][not(primaryExpression/numberLiteral/decimalNumber[matches(text()[1],"^0$")]) and not(primaryExpression/identifier[matches(text()[1],"^this$")])]
                     </XPath>
                 </Pattern>
-                <!-- фиксирует использование адреса address(0), кроме "!=address(0)" и "==address(0)", и кторе тех случаев, когда address(0) внутри event(внутренняя функция, название которой начинается с большой буквы)-->
+                <!-- Looks for address(0) in the the code, except for "!=address(0)", "==address(0)" and emit SomeEvent(... address(0) ...) -->
+                <!-- Фиксирует использование адреса address(0), кроме "!=address(0)" и "==address(0)", и кроме тех случаев, когда address(0) внутри event(внутренняя функция, название которой начинается с большой буквы). -->
                 <Pattern patternId="a91b18">
                     <Categories>
                         <Category>Solidity</Category>
@@ -48,7 +52,8 @@
                         /parent::*[not(comparison)][not(ancestor::functionCall[1]/functionName//identifier[matches(text()[1],"^[A-Z]")])][not(ancestor::emitEventStatement)]
                     </XPath>
                 </Pattern>
-                <!-- фиксирует использование адреса 0x0, кроме "!=0x0" и "==0x0", и кторе тех случаев, когда 0x0 внутри event(внутренняя функция, название которой начинается с большой буквы)-->
+                <!-- Looks for 0x0 addresses, except for those used as event parameter -->
+                <!-- Фиксирует использование адреса 0x0, кроме "!=0x0" и "==0x0", и кроме тех случаев, когда 0x0 внутри event(внутренняя функция, название которой начинается с большой буквы). -->
                 <Pattern patternId="c67a09">
                     <Categories>
                         <Category>Solidity</Category>
@@ -64,7 +69,8 @@
     <Rule>
         <RuleId>SOLIDITY_ARRAY_LENGTH_MANIPULATION</RuleId>
         <Patterns>
-            <!-- фиксирует операции с длиной динамического массива ".length": =, +=, -=, *=, /=, минус-минус -->
+            <!-- Looks for operations with dynamic array's length ".length": =, +=, -=, *=, /=, decrement. -->
+            <!-- Фиксирует операции с длиной динамического массива ".length": =, +=, -=, *=, /=, декремент. -->
             <Pattern patternId="872bdd">
                 <Categories>
                     <Category>Solidity</Category>
@@ -75,7 +81,8 @@
                 [matches(text()[1],"^=$") or twoPlusMinusOperator/decrementOperator or lvalueOperator[mulLvalueOperator or minusLvalueOperator or plusLvalueOperator or divLvalueOperator]]
                 </XPath>
             </Pattern>
-            <!-- фиксирует конструкцию ".length++"-->
+            <!-- Looks for ".length++". -->
+            <!-- Фиксирует конструкцию ".length++". -->
             <Pattern patternId="43ba1c">
                 <Categories>
                     <Category>Solidity</Category>
@@ -91,7 +98,8 @@
     <Rule>
         <RuleId>SOLIDITY_BALANCE_EQUALITY</RuleId>
         <Patterns>
-            <!-- фиксирует конструкции: ".balance ==", ".balance !="-->
+            <!-- Looks for strict balance comparisons: ".balance ==", ".balance !=".  -->
+            <!-- Фиксирует конструкции: ".balance ==", ".balance !=". -->
             <Pattern patternId="5094ad">
                 <Categories>
                     <Category>Solidity</Category>
@@ -108,7 +116,8 @@
     <Rule>
         <RuleId>SOLIDITY_BYTE_ARRAY_INSTEAD_BYTES</RuleId>
         <Patterns>
-            <!-- фиксирует конструкцию: "byte[]"-->
+            <!-- Looks for construction: "byte[]". --> 
+            <!-- Фиксирует конструкцию: "byte[]". -->
             <Pattern patternId="f13a9f">
                 <Categories>
                     <Category>Solidity</Category>
@@ -121,7 +130,8 @@
     <Rule>
         <RuleId>SOLIDITY_CONSTRUCTOR_RETURN</RuleId>
         <Patterns>
-            <!-- Фиксирует assembly { return() } в конструкторе.-->
+            <!-- Looks for assembly { return() } in constructor. -->
+            <!-- Фиксирует assembly { return() } в конструкторе. -->
             <Pattern patternId="8saf21">
                 <Categories>
                     <Category>Solidity</Category>
@@ -131,7 +141,8 @@
                     //functionDefinition[text()[1]='constructor']//assemblyCall[matches(text()[1],'^return')]
                 </XPath>
             </Pattern>
-            <!-- Фиксирует assembly { return() } в конструкторе старого типа.-->
+            <!-- Looks for assembly { return() } in old-style constructor. -->
+            <!-- Фиксирует assembly { return() } в конструкторе старого типа. -->
             <Pattern patternId="7gaf21">
                 <Categories>
                     <Category>Solidity</Category>
@@ -148,7 +159,8 @@
     <Rule>
         <RuleId>SOLIDITY_CALL_WITHOUT_DATA</RuleId>
         <Patterns>
-            <!-- Фиксирует вызовы call с пустой датой и без ограничения газа-->
+            <!-- Looks for low-level call() without data and gas limit. -->
+            <!-- Фиксирует вызовы call с пустой датой и без ограничения газа. -->
             <Pattern patternId="om991k">
                 <Categories>
                     <Category>Solidity</Category>
@@ -161,7 +173,8 @@
                         [not(gas/expression)]
                 </XPath>
             </Pattern>
-            <!-- Фиксирует вызовы call с пустой датой, но с ограничением газа-->
+            <!-- Looks for low-level call() without data, but with gas limit. -->
+            <!-- Фиксирует вызовы call с пустой датой, но с ограничением газа. -->
             <Pattern patternId="lr991l">
                 <Categories>
                     <Category>Solidity</Category>
@@ -174,7 +187,8 @@
                         [gas/expression]
                 </XPath>
             </Pattern>
-            <!-- Фиксирует вызовы call с пустой датой ("") и без ограничения газа-->
+            <!-- Looks for low-level call() with empty data ("") and without gas limit. -->
+            <!-- Фиксирует вызовы call с пустой датой ("") и без ограничения газа. -->
             <Pattern patternId="111ppp">
                 <Categories>
                     <Category>Solidity</Category>
@@ -188,7 +202,8 @@
                     [not(gas/expression)]
                 </XPath>
             </Pattern>
-            <!-- Фиксирует вызовы call с пустой датой (""), но с ограничением газа-->
+            <!-- Looks for low-level call() with empty data (""), but with gas limit. -->
+            <!-- Фиксирует вызовы call с пустой датой (""), но с ограничением газа. -->
             <Pattern patternId="111ttt">
                 <Categories>
                     <Category>Solidity</Category>
@@ -207,7 +222,8 @@
     <Rule>
         <RuleId>SOLIDITY_DEPRECATED_CONSTRUCTIONS</RuleId>
         <Patterns>
-            <!--Фиксирует конструкцию: "suicide"-->
+            <!-- Looks for "suicide". -->
+            <!-- Фиксирует конструкцию: "suicide". -->
             <Pattern patternId="27cb59">
                 <Categories>
                     <Category>Solidity</Category>
@@ -218,7 +234,8 @@
                     //assemblyCall/identifier[matches(text()[1],"suicide")]
                 </XPath>
             </Pattern>
-            <!--Фиксирует конструкцию: "sha3"-->
+            <!-- Looks for "sha3". -->
+            <!-- Фиксирует конструкцию: "sha3". -->
             <Pattern patternId="187b5a">
                 <Categories>
                     <Category>Solidity</Category>
@@ -229,7 +246,8 @@
                     //assemblyCall/identifier[matches(text()[1],"sha3")]
                 </XPath>
             </Pattern>
-            <!--Фиксирует конструкцию: "throw"-->
+            <!-- Looks for "throw". -->
+            <!-- Фиксирует конструкцию: "throw". -->
             <Pattern patternId="49bd2a">
                 <Categories>
                     <Category>Solidity</Category>
@@ -239,7 +257,8 @@
                     //statement/throwRevertStatement[matches(text()[1],"throw")]
                 </XPath>
             </Pattern>
-            <!-- фиксирует использование типа constant в определении функции-->
+            <!-- Looks for using "constant" keyword for functions. -->
+            <!-- Фиксирует использование типа constant в определении функции. -->
             <Pattern patternId="28fa69">
                 <Categories>
 
@@ -250,7 +269,8 @@
                     //functionDefinition[stateMutability/constantType]
                 </XPath>
             </Pattern>
-            <!-- фиксирует использование множителя years -->
+            <!-- Looks for "years" multiplier. -->
+            <!-- Фиксирует использование множителя years. -->
             <Pattern patternId="852kwn">
                 <Categories>
                     <Category>Solidity</Category>
@@ -265,7 +285,8 @@
     <Rule>
         <RuleId>SOLIDITY_DIV_MUL</RuleId>
         <Patterns>
-            <!--Фиксирует арифметические операции в которых деление перед(ниже по дереву) умножением, в том числе с использованием SafeMath-->
+            <!-- Looks for arithmetic expressions with division before multiplication, including those using SafeMath library. -->
+            <!--Фиксирует арифметические операции в которых деление перед(ниже по дереву) умножением, в том числе с использованием SafeMath. -->
             <Pattern patternId="09hhh1">
                 <Categories>
                     <Category>Solidity</Category>
@@ -284,7 +305,8 @@
     <Rule>
         <RuleId>SOLIDITY_DO_WHILE_CONTINUE</RuleId>
         <Patterns>
-            <!--Фиксирует конструкцию: do {continue;} while (false); в версиях компилятора ниже 0.5.0 инструкция continue переводит исполнение на do, не проверяя условие в while - это делает циккл do while бесконечным-->
+            <!-- Looks for "continue" inside do-while loop in files compiled with solidity 0.4 and older. -->
+            <!--Фиксирует конструкцию: do {continue;} while (false); в версиях компилятора ниже 0.5.0 инструкция continue переводит исполнение на do, не проверяя условие в while - это делает цикл do while бесконечным. -->
             <Pattern patternId="94fra3">
                 <Categories>
                     <Category>Solidity</Category>
@@ -305,8 +327,9 @@
     <Rule>
         <RuleId>SOLIDITY_DOS_WITH_THROW</RuleId>
         <Patterns>
-            <!-- пока отключаем -->
-            <!-- фиксирует конструкцию: "if (... внешний вызов ...) {throw, revert}"-->
+            <!-- пока отключаем / disabled -->
+            <!-- Looks for construction: "if (... external call ...) {throw, revert}". -->
+            <!-- Фиксирует конструкцию: "if (... внешний вызов ...) {throw, revert}". -->
             <!-- <Pattern patternId="637fdc">
                 <Categories>
                     <Category>Solidity</Category>
@@ -314,8 +337,9 @@
                 <Severity>3</Severity>
                 <XPath>//ifStatement[condition//externalFunctionCall][block/statement//throwRevertStatement]</XPath>
             </Pattern> -->
-            <!-- пока отключаем -->
-            <!-- фиксирует конструкцию: "for (... внешний вызов ...)"-->
+            <!-- пока отключаем / disabled -->
+            <!-- Looks for construction: "for (... external call ...)". -->
+            <!-- Фиксирует конструкцию: "for (... внешний вызов ...)". -->
             <!-- <Pattern patternId="efb788">
                 <Categories>
                     <Category>Solidity</Category>
@@ -323,8 +347,9 @@
                 <Severity>2</Severity>
                 <XPath>//forStatement/expression//externalFunctionCall</XPath>
             </Pattern> -->
-            <!-- пока отключаем -->
-            <!-- фиксирует конструкцию: "while (... внешний вызов ...)"-->
+            <!-- пока отключаем / disabled -->
+            <!-- Looks for construction: "while (... externall call ...)". -->
+            <!-- Фиксирует конструкцию: "while (... внешний вызов ...)". -->
             <!-- <Pattern patternId="04242c">
                 <Categories>
                     <Category>Solidity</Category>
@@ -337,7 +362,8 @@
     <Rule>
         <RuleId>SOLIDITY_ERC20_APPROVE</RuleId>
         <Patterns>
-            <!--Фиксирует конструкции: имя контракта содержит token или erc20 либо наследуется от контракта содержащего такое в названии. В этом контракте есть определение функции approve, которая не является интерфейсом-->
+            <!-- Looks for non-empty "approve" function in a contract with name that contains "token" or "erc20", or the contract's parent has such name. -->
+            <!-- Фиксирует конструкции: имя контракта содержит token или erc20 либо наследуется от контракта содержащего такое в названии. В этом контракте есть определение функции approve, которая не является интерфейсом. -->
             <Pattern patternId="af782c">
                 <Categories>
                     <Category>Solidity</Category>
@@ -353,9 +379,11 @@
     <Rule>
         <RuleId>SOLIDITY_ERC20_FUNCTIONS_ALWAYS_RETURN_FALSE</RuleId>
         <Patterns>
+            <!-- Looks for construction: contract's name contains "token" or "erc20", or parent contract contains such name. In this contract there is definition of transfer, transferFrom or approve function, which returns value of type bool and is not an interface.
+            There is no return or assignment of the return parameter in the definition of such function. -->
             <!--Фиксирует конструкции: имя контракта содержит token или erc20 либо наследуется от контракта содержащего такое в названии.
             В этом контракте есть определение функции с названием transfer,transferFrom или approve, которая возвращающает значение типа bool и не является интерфейсом.
-            В определении этой функции не содержится return или присваивание возвращаемого параметра.-->
+            В определении этой функции не содержится return или присваивание возвращаемого параметра. -->
             <Pattern patternId="b180ca">
                 <Categories>
                     <Category>Solidity</Category>
@@ -375,6 +403,8 @@
     <Rule>
         <RuleId>SOLIDITY_ERC20_TRANSFER_SHOULD_THROW</RuleId>
         <Patterns>
+            <!-- Looks for construction: contract's name contains token or erc20, or parent contract contains such name. In this contract there is a  definition of transfer, transferFrom or approve function, which returns value of type bool and is not an interface.
+            There are no revert(), require(), assert(), throw and function call in the definition of such function. -->
             <!--Фиксирует конструкции: имя контракта содержит token или erc20 либо наследуется от контракта содержащего такое в названии.
              В этом контракте есть определение функции, содержащей в названии transfer или transferFrom, возвращающей значение типа bool, которая не является интерфейсом.
              В определении этой функции не содержатся функции revert, require, assert, throw, кроме того нет любых вызовов функций-->
@@ -396,7 +426,8 @@
     <Rule>
         <RuleId>SOLIDITY_EXACT_TIME</RuleId>
         <Patterns>
-            <!--Фиксируется случаи, когда выражение содержит "== or != block.timestamp or now", кроме функций от now/block.timestamp-->
+            <!-- Looks for expression that contains "==" or "!=" and "block.timestamp" or "now", except for cases when timestamp is a function argument. -->
+            <!-- Фиксируется случаи, когда выражение содержит "== or != block.timestamp or now", кроме функций от now/block.timestamp. -->
             <Pattern patternId="1955d9">
                 <Categories>
                     <Category>Solidity</Category>
@@ -415,7 +446,8 @@
     <Rule>
         <RuleId>SOLIDITY_EXTRA_GAS_IN_LOOPS</RuleId>
         <Patterns>
-            <!--Фиксирует циклы for, в которых во 2 или 3 стейтменте есть стейт переменные контракта или ".balance", ".length"-->
+            <!-- Looks for "for" cycle, which accesses contract's state variables, ".balance" or ".length" in second or third statement. -->
+            <!-- Фиксирует циклы for, в которых во 2 или 3 стейтменте есть стейт переменные контракта или ".balance", ".length". -->
             <Pattern patternId="d3j11j">
                 <Categories>
                     <Category>Solidity</Category>
@@ -429,7 +461,8 @@
                         or expression[2]//identifier[text()[1]=(ancestor::contractDefinition//stateVariableDeclaration/identifier)]]
                 </XPath>
             </Pattern>
-            <!--Фиксирует циклы while, в которых в условии есть стейт переменные контракта или ".balance", ".length"-->
+            <!-- Looks for "while" cycle, which condition accesses contract's state variables, ".balance" or ".length". -->
+            <!-- Фиксирует циклы while, в которых в условии есть стейт переменные контракта или ".balance", ".length". -->
             <Pattern patternId="k4o1l4">
                 <Categories>
                     <Category>Solidity</Category>
@@ -446,7 +479,8 @@
     <Rule>
     <RuleId>SOLIDITY_FUNCTIONS_RETURNS_TYPE_AND_NO_RETURN</RuleId>
     <Patterns>
-        <!--Фиксирует функции, у которых есть возвращаемые параметры без идентификатора(returns(uint,...)), и в теле функции нет return-->
+        <!-- Looks for functions with unnamed return parameters and without return statement. -->
+        <!-- Фиксирует функции, у которых есть возвращаемые параметры без идентификатора(returns(uint,...)), и в теле функции нет return. -->
         <Pattern patternId="47acc2">
             <Categories>
                 <Category>Solidity</Category>
@@ -459,7 +493,8 @@
                 [returnsParameters/parameterList/parameter[not(identifier)]]
             </XPath>
         </Pattern>
-        <!--Фиксирует конструкцию: "function(...) ... returns (type name) {...}" - в теле функции нет присваивания "name=" и нет return.-->
+        <!-- Looks for construction: "function(...) ... returns (type name) {...}" and there are no assignment "name=" and no return. -->
+        <!-- Фиксирует конструкцию: "function(...) ... returns (type name) {...}" - в теле функции нет присваивания "name=" и нет return. -->
         <Pattern patternId="58bdd3">
             <Categories>
                 <Category>Solidity</Category>
@@ -477,7 +512,8 @@
     <Rule>
         <RuleId>SOLIDITY_GAS_LIMIT_IN_LOOPS</RuleId>
         <Patterns>
-            <!-- for (<инициализация счетчика нулём>; <счетчик меньше чем name.length>; )-->
+            <!-- Looks for construction: "for (<counter is initialized as zero>; <counter is lower than name.length>; ...)". -->
+            <!-- Фиксирует конструкцию: "for (<инициализация счетчика нулём>; <счетчик меньше чем name.length>; ...)". -->
             <Pattern patternId="f6f853">
                 <Categories>
                     <Category>Solidity</Category>
@@ -496,7 +532,8 @@
                                 or text()[1]=(ancestor::functionDefinition//expression[text()[1]="="][expression[2][text()[1]=".length"]]/expression[1]//identifier)]]]
                 </XPath>
             </Pattern>
-            <!-- for (<инициализация счетчика name.length>; <счетчик больше чем что угодно>;)-->
+            <!-- Looks for construction: "for (<counter is initialized as name.length>; <counter is bigger than anything>; ...)". -->
+            <!-- Фиксирует конструкцию: "for (<инициализация счетчика name.length>; <счетчик больше чем что угодно>; ...)". -->
             <Pattern patternId="12cf32">
                 <Categories>
                     <Category>Solidity</Category>
@@ -509,7 +546,8 @@
                     [condition/expression[matches(text()[1],"&gt;|&gt; =")]]
                 </XPath>
             </Pattern>
-            <!--Фиксируется конструкция: while (в условии все, кроме вызова функции и числа)-->
+            <!-- Looks for construction: "while (<condition>)" where <condition> doesn't include function call or specific expression with number. -->
+            <!-- Фиксируется конструкция: "while (в условии все, кроме вызова функции и числа)". -->
             <Pattern patternId="17f23a">
                 <Categories>
                     <Category>Solidity</Category>
@@ -519,7 +557,8 @@
                     //whileStatement/condition[not(descendant-or-self::functionCall) and not(expression/expression/primaryExpression/numberLiteral/decimalNumber)]
                 </XPath>
             </Pattern>
-            <!--Фиксируется конструкция: while (в условии вызов функции)-->
+            <!-- Looks for construction: "while (<function call>)".-->
+            <!-- Фиксируется конструкция: "while (в условии вызов функции)".-->
             <Pattern patternId="38f6c7">
                 <Categories>
                     <Category>Solidity</Category>
@@ -534,7 +573,8 @@
     <Rule>
         <RuleId>SOLIDITY_INCORRECT_BLOCKHASH</RuleId>
         <Patterns>
-            <!--Фиксирует неправильное использование blockhash: blockhash(число), blockhash(blockNumber) - не известен хэш текущего блока, blockhash(blockNumber минус число больше 256) - храняться хэши только последних 256 блоков-->
+            <!-- Looks for incorrect use of blockhash: blockhash(<number>), bloblockhash(block.number). -->
+            <!-- Фиксирует неправильное использование blockhash: blockhash(число), blockhash(block.number) - не известен хэш текущего блока, blockhash(block.number минус число больше 256) - храняться хэши только последних 256 блоков. -->
             <Pattern patternId="b629ad">
                 <Categories>
                     <Category>Solidity</Category>
@@ -557,7 +597,8 @@
     <Rule>
         <RuleId>SOLIDITY_LOCKED_MONEY</RuleId>
         <Patterns>
-            <!--Фиксируются ситуации, когда в контракте имеется функция типа payable, но нет функций suicide, selfdestruct, transfer, send, .value-->
+            <!-- Looks for situations, where there is a payable function in the contract, however there is no "suicide", "selfdestruct", "transfer", "send", or ".value". -->
+            <!-- Фиксируются ситуации, когда в контракте имеется функция типа payable, но нет функций "suicide", "selfdestruct", "transfer", "send", ".value". -->
             <Pattern patternId="30281d">
                 <Categories>
                     <Category>Solidity</Category>
@@ -575,7 +616,8 @@
     <Rule>
         <RuleId>SOLIDITY_MSGVALUE_EQUALS_ZERO</RuleId>
         <Patterns>
-            <!-- Фиксируются проверки (msg.value == 0) везде, кроме конструктора -->
+            <!-- Looks for checks (msg.value == 0), except for those in the conctructor. -->
+            <!-- Фиксируются проверки (msg.value == 0) везде, кроме конструктора. -->
             <Pattern patternId="1df89a">
                 <Categories>
                     <Category>Solidity</Category>
@@ -595,7 +637,8 @@
     <Rule>
         <RuleId>SOLIDITY_OVERPOWERED_ROLE</RuleId>
         <Patterns>
-            <!-- Фиксируются функции с входными параметрами, с модификатором onlyOwner() или содержащие проверку (msg.sender==owner) (owner тут это любой адрес контракта) и названием начинающимся на set* или init*-->
+            <!-- Looks for functions with input parameter(s), named like "set*" or "init*", that have onlyOwner() modifier or compare msg.sender to some specific address.-->
+            <!-- Фиксируются функции с входными параметрами, с модификатором onlyOwner() или содержащие проверку (msg.sender==owner) (owner тут это любой адрес контракта) и названием начинающимся на set* или init*. -->
             <Pattern patternId="j83hf7">
                 <Categories>
                     <Category>Solidity</Category>
@@ -617,7 +660,8 @@
     <Rule>
         <RuleId>SOLIDITY_PRAGMAS_VERSION</RuleId>
         <Patterns>
-            <!--Фиксируется определение pragma имеющее в версии знаки '^' | '>=' | '>' | '<' | '<='-->
+            <!-- Looks for pragma version, which contains '^' | '>=' | '>' | '<' | '<='. -->
+            <!-- Фиксируется определение pragma имеющее в версии знаки '^' | '>=' | '>' | '<' | '<='. -->
             <Pattern patternId="23fc32">
                 <Categories>
                     <Category>Solidity</Category>
@@ -630,7 +674,8 @@
     <Rule>
         <RuleId>SOLIDITY_PRIVATE_MODIFIER_DONT_HIDE_DATA</RuleId>
         <Patterns>
-            <!--Фиксируется определение state переменных с типом видимости private-->
+            <!-- Looks for state variables with private visibility type. -->
+            <!-- Фиксируется определение state переменных с типом видимости private-->
             <Pattern patternId="5616b2">
                 <Categories>
                     <Category>Solidity</Category>
@@ -643,7 +688,8 @@
     <Rule>
         <RuleId>SOLIDITY_REDUNDANT_FALLBACK_REJECT</RuleId>
         <Patterns>
-            <!--Фиксируется случаи, когда версия компилятора больше или равна 0.4.0, контракт содержит fallback функцию типа payable, в определении которой есть только один statement: throw или revert() -->
+            <!-- Looks for cases, when comiler's version is equal or bigger than 0.4.0, contract contains payable fallback() function with only one statement in the definition: throw or revert(). -->
+            <!--Фиксируется случаи, когда версия компилятора больше или равна 0.4.0, контракт содержит fallback функцию типа payable, в определении которой есть только один statement: throw или revert(). -->
             <Pattern patternId="b85a32">
                 <Categories>
                     <Category>Solidity</Category>
@@ -659,7 +705,8 @@
     <Rule>
         <RuleId>SOLIDITY_REVERT_REQUIRE</RuleId>
         <Patterns>
-            <!--Фиксирует конструкцию: "if (...){revert(); или throw;}"-->
+            <!-- Looks for construction: "if (...){revert(); or throw;}". -->
+            <!-- Фиксирует конструкцию: "if (...){revert(); или throw;}". -->
             <Pattern patternId="c56b12">
                 <Categories>
                     <Category>Solidity</Category>
@@ -675,7 +722,8 @@
     <Rule>
         <RuleId>SOLIDITY_SAFEMATH</RuleId>
         <Patterns>
-            <!-- фиксирует использование библиотеки Safemath -->
+            <!-- Looks for usage of SafeMath library. -->
+            <!-- Фиксирует использование библиотеки SafeMath. -->
             <Pattern patternId="837cac">
                 <Categories>
                     <Category>Solidity</Category>
@@ -690,8 +738,8 @@
     <Rule>
         <RuleId>SOLIDITY_SEND</RuleId>
         <Patterns>
-            <!--Фиксируется использование функции send, в случаях: if (..send()){revert() или throw},
-             и require или assert от send-->
+            <!-- Looks for using of send function in the following cases: if (<addr>.send()){revert() or throw}, and require or assert with send as an argument. -->
+            <!-- Фиксируется использование функции send, в случаях: if (..send()){revert() или throw}, и require или assert от send. -->
             <Pattern patternId="430636">
                 <Categories>
                     <Category>Solidity</Category>
@@ -765,7 +813,8 @@
     <Rule>
         <RuleId>SOLIDITY_SHOULD_RETURN_STRUCT</RuleId>
         <Patterns>
-            <!--Фиксируются internal или private функции, у которых больше одного выходного параметра (pragma < 0.5.0)-->
+            <!-- Looks for internal and private functions with more than one input parameter (Solidity version prior to 0.5.0). -->
+            <!-- Фиксируются internal или private функции, у которых больше одного выходного параметра (pragma < 0.5.0). -->
             <Pattern patternId="7d54ca">
                 <Categories>
                     <Category>Solidity</Category>
@@ -778,7 +827,8 @@
                     /returnsParameters/parameterList[count(parameter)>1]
                 </XPath>
             </Pattern>
-            <!--Фиксируются функции, у которых больше одного выходного параметра (pragma >= 0.5.0 или pragma experimental)-->
+            <!-- Looks for functions with more than one output parameter (only in files with Solidity version 0.5.0 and newer or pragma experimental). -->
+            <!-- Фиксируются функции, у которых больше одного выходного параметра (pragma >= 0.5.0 или pragma experimental). -->
             <Pattern patternId="83hf3l">
                 <Categories>
                     <Category>Solidity</Category>
@@ -795,7 +845,8 @@
     <Rule>
         <RuleId>SOLIDITY_TRANSFER_IN_LOOP</RuleId>
         <Patterns>
-            <!-- Фиксирует циклы с .transfer() эфиров внутри-->
+            <!-- Looks for cycles with <addr>.transfer() inside. -->
+            <!-- Фиксирует циклы с .transfer() эфиров внутри. -->
             <Pattern patternId="8jdj43">
                 <Categories>
                     <Category>Solidity</Category>
@@ -815,7 +866,8 @@
     <Rule>
         <RuleId>SOLIDITY_TX_ORIGIN</RuleId>
         <Patterns>
-            <!--Фиксируется вхождение tx.origin-->
+            <!-- Looks for tx.origin occurrence. -->
+            <!-- Фиксируется вхождение tx.origin. -->
             <Pattern patternId="12e802">
                 <Categories>
                     <Category>Solidity</Category>
@@ -828,7 +880,8 @@
     <Rule>
         <RuleId>SOLIDITY_UINT_CANT_BE_NEGATIVE</RuleId>
         <Patterns>
-            <!--Фиксирует конструкции: "for (...; i >= 0; ...) { ... }", "while(i >= 0) {}", "do {} while(i >= 0)", где переменная i типа uint*-->
+            <!-- Looks for construction: "for (...; i >= 0; ...) { ... }", "while(i >= 0) {}", "do {} while(i >= 0)", where variable i is of type uint*. -->
+            <!-- Фиксирует конструкции: "for (...; i >= 0; ...) { ... }", "while(i >= 0) {}", "do {} while(i >= 0)", где переменная i типа uint*. -->
             <Pattern patternId="11ca45b">
                 <Categories>
                     <Category>Solidity</Category>
@@ -844,7 +897,8 @@
                     [typeName/elementaryTypeName[matches(text()[1],"uint")]]/identifier)]]
                 </XPath>
             </Pattern>
-            <!--Фиксирует конструкцию: "...>=0" для переменных типа uint и полей структур типа uint-->
+            <!-- Looks for construction: "...>=0" for uint variables and structure's members of uint type-->
+            <!-- Фиксирует конструкцию: "...>=0" для переменных типа uint и полей структур типа uint. -->
             <Pattern patternId="d48ac4">
                 <Categories>
                     <Category>Solidity</Category>
@@ -869,7 +923,8 @@
                     [typeName/elementaryTypeName[matches(text()[1],"uint")]]/identifier)]]
                 </XPath>
             </Pattern>
-            <!--Фиксирует конструкцию: "...>=0" только для мапингов вида (...>=uint) -->
+            <!-- Looks for construction: "...>=0" only for mappings of type: (...=>uint). -->
+            <!-- Фиксирует конструкцию: "...>=0" только для мапингов вида (...>=uint). -->
             <Pattern patternId="733fdd">
                 <Categories>
                     <Category>Solidity</Category>
@@ -890,8 +945,8 @@
     <Rule>
         <RuleId>SOLIDITY_UNCHECKED_CALL</RuleId>
         <Patterns>
-            <!--Фиксируется случаи, когда вызовы функций  call, delegatecall, send, callcode не имеют
-             предков по дереву: if, require, assert, return, вызов функции, не входит в определение переменной-->
+            <!-- Looks for cases, when function calls delegatecall, send, callcode, call do not have ancestors: if, require, assert, return and function call is not a part of variable declaration. -->
+            <!-- Фиксируется случаи, когда вызовы функций  call, delegatecall, send, callcode не имеют предков по дереву: if, require, assert, return, вызов функции, не входит в определение переменной. -->
             <Pattern patternId="f39eed">
                 <Categories>
                     <Category>Solidity</Category>
@@ -912,7 +967,8 @@
     <Rule>
         <RuleId>SOLIDITY_UPGRADE_TO_050</RuleId>
         <Patterns>
-            <!-- Ищет .call() с !=1 аргументом -->
+            <!-- Looks for .call() with zero or two and more arguments. -->
+            <!-- Ищет .call() с !=1 аргументом. -->
             <Pattern patternId="83k1no">
                 <Categories>
                     <Category>Solidity</Category>
@@ -924,7 +980,8 @@
                         [callArguments[count(expression) != 1]]
                 </XPath>
             </Pattern>
-            <!-- Ищет keccak256(a, b, c) с более чем одним аргументом -->
+            <!-- Looks for "keccak256(...)" with more than one argument. -->
+            <!-- Ищет keccak256(a, b, c) с более чем одним аргументом. -->
             <Pattern patternId="901eae">
                 <Categories>
                     <Category>Solidity</Category>
@@ -936,7 +993,8 @@
                         [callArguments[count(expression) > 1]]
                 </XPath>
             </Pattern>
-            <!-- Ищет fallback функции, у которых видимость не external -->
+            <!-- Looks for fallback function with not external visibility. -->
+            <!-- Ищет fallback функции, у которых видимость не external. -->
             <Pattern patternId="91h3sa">
                 <Categories>
                     <Category>Solidity</Category>
@@ -946,7 +1004,8 @@
                     //functionFallBackDefinition/visibleType[text()[1] != "external"]
                 </XPath>
             </Pattern>
-            <!-- Ищет массивы и структуры без явного определения места хранения (storage, memory) в параметрах не external функций-->
+            <!-- Looks for arrays and structures without storage declaration (storage, memory) for parameters of not external function. -->
+            <!-- Ищет массивы и структуры без явного определения места хранения (storage, memory) в параметрах не external функций. -->
             <Pattern patternId="341gim">
                 <Categories>
                     <Category>Solidity</Category>
@@ -963,7 +1022,8 @@
                             [not(storageLocation)]
                 </XPath>
             </Pattern>
-            <!-- Ищет массивы и структуры без явного определения места хранения (storage, memory) в локальных переменных функций-->
+            <!-- Looks for arrays and structures without storage declaration (storage, memory) for local variables. -->
+            <!-- Ищет массивы и структуры без явного определения места хранения (storage, memory) в локальных переменных функций. -->
             <Pattern patternId="441gim">
                 <Categories>
                     <Category>Solidity</Category>
@@ -984,7 +1044,8 @@
     <Rule>
         <RuleId>SOLIDITY_USING_INLINE_ASSEMBLY</RuleId>
         <Patterns>
-            <!--Фиксирует конструкцию: "assembly", кроме конструкции: assembly { ... := extcodesize(...) }-->
+            <!-- Looks for assembly usage, except for construction: assembly { ... := extcodesize(...) }. -->
+            <!-- Фиксирует конструкцию: "assembly", кроме конструкции: assembly { ... := extcodesize(...) }. -->
             <Pattern patternId="109cd5">
                 <Categories>
                     <Category>Solidity</Category>
@@ -1001,7 +1062,8 @@
     <Rule>
         <RuleId>SOLIDITY_VAR</RuleId>
         <Patterns>
-            <!--Фиксируется случаи определения переменных, как var ...= число-->
+            <!-- Looks for variable declaration as "var ... = <number>". -->
+            <!-- Фиксируется случаи определения переменных, как var ...= число. -->
             <Pattern patternId="d28aa7">
                 <Categories>
                     <Category>Solidity</Category>
@@ -1009,7 +1071,8 @@
                 <Severity>2</Severity>
                 <XPath>//variableDeclaration[typeName/elementaryTypeName[matches(text()[1],"^var$")]][expression//primaryExpression/numberLiteral/decimalNumber[matches(text()[1],"^[0-9]+$")]]</XPath>
             </Pattern>
-            <!--Фиксируется случаи определения переменных, как var имя переменной-->
+            <!-- Looks for variable declaration using "var". -->
+            <!-- Фиксируется случаи определения переменных, как var имя переменной. -->
             <Pattern patternId="f77619">
                 <Categories>
                     <Category>Solidity</Category>
@@ -1022,7 +1085,8 @@
     <Rule>
         <RuleId>SOLIDITY_VAR_IN_LOOP_FOR</RuleId>
         <Patterns>
-            <!-- фиксирует конструкцию: "for (var ...; ... число более 255; ... ++)"-->
+            <!-- Looks for construction: "for (var ...; ... <number bigger than 255>; ... ++)". -->
+            <!-- Фиксирует конструкцию: "for (var ...; ... число более 255; ... ++)". -->
             <Pattern patternId="f176ab">
                 <Categories>
                     <Category>Solidity</Category>
@@ -1037,7 +1101,8 @@
     <Rule>
         <RuleId>SOLIDITY_VISIBILITY</RuleId>
         <Patterns>
-            <!-- фиксирует ситуацию, когда в интерфейсе для функции или fallback функции видимость не external-->
+            <!-- Looks for non-external funstions in an interface. -->
+            <!-- Фиксирует ситуацию, когда в интерфейсе для функции или fallback функции видимость не external. -->
             <Pattern patternId="23rt6g">
                 <Categories>
                     <Category>Solidity</Category>
@@ -1046,7 +1111,8 @@
                 <XPath>//interfaceDefinition/contractPartDefinition/(functionDefinition|functionFallBackDefinition)/visibleType[not(matches(text()[1],"^external$"))]
                 </XPath>
             </Pattern>
-            <!-- фиксирует ситуацию, когда для функции или fallback функции не определена видимость-->
+            <!-- Looks for fallback function without explicit visibility declaration. -->
+            <!-- Фиксирует ситуацию, когда для функции или fallback функции не определена видимость. -->
             <Pattern patternId="910067">
                 <Categories>
                     <Category>Solidity</Category>
@@ -1054,7 +1120,8 @@
                 <Severity>1</Severity>
                 <XPath>//(functionDefinition|functionFallBackDefinition)[not(visibleType)]</XPath>
             </Pattern>
-            <!-- фиксирует ситуацию, когда в контракте для fallback функции видимость не external или public-->
+            <!-- Looks for fallback function that is neither external nor public. -->
+            <!-- Фиксирует ситуацию, когда в контракте для fallback функции видимость не external или public. -->
             <Pattern patternId="d67c21">
                 <Categories>
                     <Category>Solidity</Category>
@@ -1062,7 +1129,8 @@
                 <Severity>1</Severity>
                 <XPath>//contractDefinition/contractPartDefinition/functionFallBackDefinition/visibleType[not(matches(text()[1],"^external|public$"))]</XPath>
             </Pattern>
-            <!-- фиксирует ситуацию, когда для переменной состояния не определена видимость-->
+            <!-- Looks for state variables without explicit visibility declaration. -->
+            <!-- Фиксирует ситуацию, когда для переменной состояния не определена видимость. -->
             <Pattern patternId="b51ce0">
                 <Categories>
                     <Category>Solidity</Category>
@@ -1070,7 +1138,8 @@
                 <Severity>1</Severity>
                 <XPath>//stateVariableDeclaration[not(visibleType)]</XPath>
             </Pattern>
-            <!-- фиксирует ситуацию, когда у конструктора видимость external или private-->
+            <!-- Looks for constructor with external or private visibility. -->
+            <!-- Фиксирует ситуацию, когда у конструктора видимость external или private. -->
             <Pattern patternId="321aca">
                 <Categories>
                     <Category>Solidity</Category>
@@ -1085,7 +1154,8 @@
     <Rule>
         <RuleId>SOLIDITY_WRONG_SIGNATURE</RuleId>
         <Patterns>
-            <!-- Фиксирует конструкции в которых используется bytes4(keccak256(signature)) bytes4(sha3(signature)), где в signature есть uint, int -->
+            <!-- Looks for "bytes4(keccak256(<signature>))" and "bytes4(sha3(<signature>))" with uint or int in <signature>. -->
+            <!-- Фиксирует конструкции в которых используется bytes4(keccak256(signature)) bytes4(sha3(signature)), где в signature есть uint, int. -->
             <Pattern patternId="ui25n6">
                 <Categories>
                     <Category>Solidity</Category>
@@ -1101,6 +1171,8 @@
                 </XPath>
             </Pattern>
             <Pattern patternId="rec155">
+            <!-- Looks for "abi.encodeWithSignature(<signature>)" with uint or int in <signature>. -->
+            <!-- Фиксирует конструкции в которых используется "abi.encodeWithSignature(<signature>)", где в signature есть uint, int. -->
                 <Categories>
                     <Category>Solidity</Category>
                 </Categories>

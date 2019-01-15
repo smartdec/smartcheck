@@ -3,7 +3,8 @@
     <Rule>
         <RuleId>VYPER_BALANCE_EQUALITY</RuleId>
         <Patterns>
-            <!-- фиксирует конструкции: ".balance ==", ".balance !="-->
+            <!-- Looks for strict balance comparisons: ".balance ==", ".balance !=". -->
+            <!-- Фиксирует конструкции: ".balance ==", ".balance !=". -->
             <Pattern patternId="5094ad">
                 <Categories>
                     <Category>Vyper</Category>
@@ -20,7 +21,8 @@
     <Rule>
         <RuleId>VYPER_LOCKED_MONEY</RuleId>
         <Patterns>
-            <!-- Фиксируются ситуации, когда в контракте имеется функция типа payable, но нет функций selfdestruct, send, .value-->
+            <!-- Looks for contracts with payable function and without selfdestruct, send or .value. -->
+            <!-- Фиксируются ситуации, когда в контракте имеется функция типа payable, но нет функций selfdestruct, send, .value. -->
             <Pattern patternId="30281d">
                 <Categories>
                     <Category>Vyper</Category>
@@ -40,7 +42,8 @@
     <Rule>
         <RuleId>VYPER_ERC20_APPROVE</RuleId>
         <Patterns>
-            <!--Фиксирует определение функции approve, возвращающей bool, с двумя аргументами типов address и bool-->
+            <!-- Looks for ERC20.approve function (checks signature and return value). -->
+            <!-- Фиксирует определение функции approve, возвращающей bool, с двумя аргументами типов address и bool. -->
             <Pattern patternId="af782c">
                 <Categories>
                     <Category>Vyper</Category>
@@ -62,6 +65,7 @@
     <Rule>
         <RuleId>VYPER_TIMESTAMP_DEPENDENCE</RuleId>
         <Patterns>
+            <!-- Looks for "==" or "!=" comparisons with expression that contains either "now" or "block.timestamp", but not as a function call argument. -->
             <!-- Фиксируется случаи, когда выражение содержит "!= или == block.timestamp", кроме аргументов функций -->
             <Pattern patternId="to993y">
                 <Categories>
@@ -81,7 +85,8 @@
     <Rule>
         <RuleId>VYPER_REDUNDANT_FALLBACK_REJECT</RuleId>
         <Patterns>
-            <!-- контракт содержит fallback функцию, в определении которой есть только один statement: throw -->
+            <!-- Looks for payable fallback() function with the only statement in the definition: throw -->
+            <!-- Контракт содержит fallback функцию, в определении которой есть только один statement: throw. -->
             <Pattern patternId="am179p">
                 <Categories>
                     <Category>Vyper</Category>
@@ -97,7 +102,8 @@
     <Rule>
         <RuleId>VYPER_PRIVATE_MODIFIER_DONT_HIDE_DATA</RuleId>
         <Patterns>
-            <!-- Фиксируется определение state переменных с типом видимости private -->
+            <!-- Looks for state variables with private visibility type. -->
+            <!-- Фиксируется определение state переменных с типом видимости private. -->
             <Pattern patternId="lo771p">
                 <Categories>
                     <Category>Vyper</Category>
@@ -113,7 +119,8 @@
     <Rule>
         <RuleId>VYPER_UNITLESS_NUMBER</RuleId>
         <Patterns>
-            <!-- Фиксируется использование функции as_unitless_number() не в return или не в private функции-->
+            <!-- Looks for as_unitless_number() calls anywhere except for return statement of private function. -->
+            <!-- Фиксируется использование функции as_unitless_number() не в return или не в private функции. -->
             <Pattern patternId="fgg331">
                 <Categories>
                     <Category>Vyper</Category>
