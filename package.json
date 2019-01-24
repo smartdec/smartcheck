@@ -3,7 +3,7 @@
     "smartcheck": "jdeploy-bundle/jdeploy.js"
   },
   "author": "SmartDec <info@smartdec.net> (https://smartdec.net/)",
-  "description": "SmartCheck is an extensible static analysis tool for discovering vulnerabilities and other code issues in Ethereum smart contracts written in the Solidity programming language.",
+  "description": "SmartCheck is an extensible static analysis tool for discovering vulnerabilities and other code issues in Ethereum smart contracts written in the Solidity and Vyper programming languages.",
   "homepage": "https://tool.smartdec.ru/",
   "main": "index.js",
   "preferGlobal": true,
@@ -25,7 +25,7 @@
   },
   "keywords": [
     "solidity",
-    "viper",
+    "vyper",
     "sast",
     "security",
     "linter"
