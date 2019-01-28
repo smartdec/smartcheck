@@ -14,6 +14,8 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.xpath.XPathFactory;
 import java.io.*;
 import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URL;
 import java.nio.file.FileSystemAlreadyExistsException;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
@@ -153,11 +155,17 @@ public final class Tool {
                                         LinkedList<String> fields = new LinkedList<>();
                                         String rule_name;
                                         try {
-                                            List<String> content = Files.readAllLines(
-                                                    Paths.get("rule_descriptions/"
-                                                            .concat(tree.rule().id().concat("/name_en.txt"))));
-                                            rule_name = content.get(0);
-                                        } catch (IOException e) {
+                                            URL rule_name_resource = getClass().getClassLoader().getResource(
+                                                    String.format(
+                                                            "rule_descriptions/%s/name_en.txt",
+                                                            tree.rule().id()));
+                                            if (rule_name_resource != null) {
+                                                rule_name = new String(Files.readAllBytes(
+                                                        Paths.get(rule_name_resource.toURI())));
+                                            } else {
+                                                rule_name = "";
+                                            }
+                                        } catch (IOException | URISyntaxException e) {
                                             rule_name = "";
                                         }
                                         fields.addLast("");
