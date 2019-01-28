@@ -141,6 +141,7 @@ public final class Tool {
      * @throws Exception exception
      */
     public void run() throws Exception {
+        final Integer[] total = {0};
         new ReportDefault(
                 new DirectoryAnalysisCombined(
                     makeDirectoryAnalysis(new SourceLanguages.Solidity()),
@@ -190,10 +191,14 @@ public final class Tool {
                     if (!report_fields.isEmpty()) {
                         System.out.println(info.file());
                         System.out.print(formatAsTable(report_fields));
+                        total[0] += report_fields.size();
                     }
                 }
         )
                 .print();
+        if (total[0] > 0) {
+            System.out.printf("%n\u2716 %d problems (%d errors)%n", total[0], total[0]);
+        }
     }
 
     public static String formatAsTable(List<List<String>> rows)
