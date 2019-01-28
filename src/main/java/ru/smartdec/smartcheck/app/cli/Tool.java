@@ -12,15 +12,14 @@ import ru.smartdec.smartcheck.app.TreeFactoryDefault;
 
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.xpath.XPathFactory;
+import java.io.*;
 import java.net.URI;
 import java.nio.file.FileSystemAlreadyExistsException;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.function.Function;
 
 /**
@@ -146,26 +145,29 @@ public final class Tool {
                     makeDirectoryAnalysis(new SourceLanguages.Vyper())
                 ),
                 info -> {
-                    System.out.println(info.file());
+                    LinkedList<List<String>> report_fields = new LinkedList<>();
                     Map<String, Integer> result = new HashMap<>();
                     info.treeReport().streamUnchecked().forEach(
                             tree -> tree.contexts().forEach(
                                     context -> {
-                                        System.out.printf(
-                                                "ruleId: %s%n"
-                                                      + "patternId: %s%n"
-                                                      + "severity: %d%n"
-                                                      + "line: %d%ncolumn: %d%n"
-                                                      + "content: %s%n%n",
-                                                tree.rule().id(),
-                                                tree.pattern().id(),
-                                                tree.pattern().severity(),
-                                                context.getStart().getLine(),
-                                                context
-                                                       .getStart()
-                                                       .getCharPositionInLine(),
-                                                context.getText()
-                                        );
+                                        LinkedList<String> fields = new LinkedList<>();
+                                        String rule_name;
+                                        try {
+                                            List<String> content = Files.readAllLines(
+                                                    Paths.get("rule_descriptions/"
+                                                            .concat(tree.rule().id().concat("/name_en.txt"))));
+                                            rule_name = content.get(0);
+                                        } catch (IOException e) {
+                                            rule_name = "";
+                                        }
+                                        fields.addLast("");
+                                        fields.addLast(String.format("%d:%d", context.getStart().getLine(), context
+                                                .getStart()
+                                                .getCharPositionInLine()));
+                                        fields.addLast(String.format("severity:%d", tree.pattern().severity()));
+                                        fields.addLast(rule_name);
+                                        fields.addLast(String.format("%s_%s", tree.rule().id(),
+                                                tree.pattern().id()));
                                         result.compute(
                                                 tree.rule().id(),
                                                 (k, v) -> Optional
@@ -173,12 +175,43 @@ public final class Tool {
                                                         .map(i -> i + 1)
                                                         .orElse(1)
                                         );
+                                        report_fields.addLast(fields);
                                     }
                             )
                     );
-                    result.forEach((k, v) -> System.out.println(k + " :" + v));
+                    if (!report_fields.isEmpty()) {
+                        System.out.println(info.file());
+                        System.out.print(formatAsTable(report_fields));
+                    }
                 }
         )
                 .print();
+    }
+
+    public static String formatAsTable(List<List<String>> rows)
+    {
+        if (rows.isEmpty()) return "";
+        int[] maxLengths = new int[rows.get(0).size()];
+        for (List<String> row : rows)
+        {
+            for (int i = 0; i < row.size(); i++)
+            {
+                maxLengths[i] = Math.max(maxLengths[i], row.get(i).length());
+            }
+        }
+
+        StringBuilder formatBuilder = new StringBuilder();
+        for (int maxLength : maxLengths)
+        {
+            formatBuilder.append("%-").append(maxLength + 3).append("s");
+        }
+        String format = formatBuilder.toString();
+
+        StringBuilder result = new StringBuilder();
+        for (List<String> row : rows)
+        {
+            result.append(String.format(format, row.toArray(new String[0]))).append("\n");
+        }
+        return result.toString();
     }
 }
