@@ -1,5 +1,6 @@
 package ru.smartdec.smartcheck.app.cli;
 
+import com.google.devtools.common.options.OptionsParser;
 import ru.smartdec.smartcheck.RulesCached;
 import ru.smartdec.smartcheck.RulesXml;
 import ru.smartdec.smartcheck.app.DirectoryAnalysis;
@@ -18,6 +19,7 @@ import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -32,20 +34,28 @@ public final class Tool {
      * @param args args
      * @throws Exception exception
      */
-    public static void main(final String... args) throws Exception {
-        Tool.main(new ArgumentsDefault(args));
-    }
+    public static void main(final String[] args) throws Exception {
+        OptionsParser parser = OptionsParser.newOptionsParser(CliOptions.class);
+        parser.parseAndExitUponError(args);
 
-    /**
-     * @param arguments args
-     * @throws Exception exception
-     */
-    public static void main(final Arguments arguments) throws Exception {
-        Path src = arguments
-                .value("-p", "--path")
-                .map(Paths::get)
-                .filter(Files::exists)
-                .orElseThrow(IllegalArgumentException::new);
+        CliOptions options = parser.getOptions(CliOptions.class);
+
+        if (options.help) {
+            printUsage(parser);
+            System.exit(0);
+        }
+
+        if (options.version) {
+            System.out.println("SmartCheck, version 2.1");
+            System.exit(0);
+        }
+
+        Path src = Paths.get(options.path);
+        if (!Files.exists(src)) {
+            System.err.println("Path not exists");
+            printUsage(parser);
+            System.exit(1);
+        }
 
         Function<SourceLanguage, RulesXml.Source> defaultRules =
                 sourceLanguage -> () -> {
@@ -54,8 +64,6 @@ public final class Tool {
                     .class
                     .getResource(rulesFileName)
                     .toURI();
-            System.out.print(uri);
-
             try {
                 // initialize a new ZipFilesystem
                 HashMap<String, String> env = new HashMap<>();
@@ -70,16 +78,27 @@ public final class Tool {
             return Paths.get(uri);
         };
 
-        Function<SourceLanguage, RulesXml.Source> rules = arguments
-                .value("-r", "--rules")
+        Function<SourceLanguage, RulesXml.Source> rules =
+                options.rules.stream()
                 .map(Paths::get)
                 .filter(Files::isRegularFile)
                 .<Function<SourceLanguage, RulesXml.Source>>
                         map(path -> language -> () -> path)
-                .orElse(defaultRules);
+                .findAny().orElse(defaultRules);
 
         new Tool(src, rules).run();
     }
+
+    /**
+     * @param parser parser
+     */
+    private static void printUsage(final OptionsParser parser) {
+        System.out.println("Usage: smartcheck OPTIONS");
+        System.out.println(parser.describeOptions(
+                Collections.<String, String>emptyMap(),
+                OptionsParser.HelpVerbosity.LONG));
+    }
+
 
     /**
      *
