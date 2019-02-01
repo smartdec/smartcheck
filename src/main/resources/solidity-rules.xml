@@ -1013,7 +1013,7 @@
                 <Severity>1</Severity>
                 <XPath>
                     //functionDefinition
-                        [visibleType[text()[1] != "external"]]
+                        [not(visibleType) or visibleType[text()[1] != "external"]]
                         //parameter
                             [typeName[text()[1]="[]"] 
                             or typeName/elementaryTypeName[text()[1] = "bytes"
