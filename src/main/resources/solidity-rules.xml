@@ -959,6 +959,7 @@
                         and not(ancestor::returnStatement)
                         and not(ancestor::functionCall)
                         and not(ancestor::variableDeclarationStatement)
+                        and not(ancestor::expression and ancestor::expression[text()[1] = "=" or lvalueOperator])
                     ]
                 </XPath>
             </Pattern>
