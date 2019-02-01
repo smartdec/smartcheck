@@ -102,16 +102,19 @@
     <Rule>
         <RuleId>VYPER_PRIVATE_MODIFIER_DONT_HIDE_DATA</RuleId>
         <Patterns>
-            <!-- Looks for state variables with private visibility type. -->
-            <!-- Фиксируется определение state переменных с типом видимости private. -->
+            <!-- Looks for state variables with private visibility type. Pattern reports all structure's fields in structure definition but it is false positive -->
+            <!-- Фиксируется определение state переменных с типом видимости private.(Ложное срабатывание на элементах структур) -->
             <Pattern patternId="lo771p">
                 <Categories>
                     <Category>Vyper</Category>
                 </Categories>
                 <Severity>1</Severity>
                 <XPath>
-                    /file_input/stmt/simple_stmt/small_stmt/expr_stmt[not(annassign//atom_expr/trailer)]
-                        [annassign]
+                    /file_input/stmt/simple_stmt/small_stmt/expr_stmt
+                        [not(annassign//atom_expr/atom/atom_name
+                            [text()[1]="public" or text()[1]="event"])]
+                        [testlist_star_expr//atom_expr[count(*)=1]]
+                        [annassign/test/or_test]
                 </XPath>
             </Pattern>
         </Patterns>
