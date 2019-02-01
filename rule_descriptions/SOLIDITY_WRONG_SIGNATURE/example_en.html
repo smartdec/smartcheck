@@ -1,0 +1,20 @@
+<p>
+	This code uses incorrect function signature:
+</p>
+<p>
+<pre>
+<code>
+pragma solidity ^0.5.1;
+contract Signature {
+    function callFoo(address addr, uint value) public returns (bool) {
+        bytes memory data = abi.encodeWithSignature("foo(uint)", value);
+        (bool status, ) = addr.call(data);
+        return status;
+    }
+}
+</code>
+</pre>
+</p>
+<p>
+	Use <code>"foo(uint256)"</code> instead.
+</p>
