@@ -13,16 +13,16 @@ import ru.smartdec.smartcheck.app.TreeFactoryDefault;
 
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.xpath.XPathFactory;
+import java.io.*;
 import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URL;
 import java.nio.file.FileSystemAlreadyExistsException;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.function.Function;
 
 /**
@@ -43,7 +43,7 @@ public final class Tool {
         if (options.help) {
             printUsage(parser);
             System.exit(0);
-        }
+    }
 
         if (options.version) {
             System.out.println("SmartCheck, version 2.1");
@@ -159,32 +159,42 @@ public final class Tool {
      * @throws Exception exception
      */
     public void run() throws Exception {
+        final Integer[] total = {0};
         new ReportDefault(
                 new DirectoryAnalysisCombined(
                     makeDirectoryAnalysis(new SourceLanguages.Solidity()),
                     makeDirectoryAnalysis(new SourceLanguages.Vyper())
                 ),
                 info -> {
-                    System.out.println(info.file());
+                    LinkedList<List<String>> report_fields = new LinkedList<>();
                     Map<String, Integer> result = new HashMap<>();
                     info.treeReport().streamUnchecked().forEach(
                             tree -> tree.contexts().forEach(
                                     context -> {
-                                        System.out.printf(
-                                                "ruleId: %s%n"
-                                                      + "patternId: %s%n"
-                                                      + "severity: %d%n"
-                                                      + "line: %d%ncolumn: %d%n"
-                                                      + "content: %s%n%n",
-                                                tree.rule().id(),
-                                                tree.pattern().id(),
-                                                tree.pattern().severity(),
-                                                context.getStart().getLine(),
-                                                context
+                                        LinkedList<String> fields = new LinkedList<>();
+                                        String rule_name;
+                                        try {
+                                            URL rule_name_resource = getClass().getClassLoader().getResource(
+                                                    String.format(
+                                                            "rule_descriptions/%s/name_en.txt",
+                                                            tree.rule().id()));
+                                            if (rule_name_resource != null) {
+                                                rule_name = new String(Files.readAllBytes(
+                                                        Paths.get(rule_name_resource.toURI())));
+                                            } else {
+                                                rule_name = "";
+                                            }
+                                        } catch (IOException | URISyntaxException e) {
+                                            rule_name = "";
+                                        }
+                                        fields.addLast("");
+                                        fields.addLast(String.format("%d:%d", context.getStart().getLine(), context
                                                        .getStart()
-                                                       .getCharPositionInLine(),
-                                                context.getText()
-                                        );
+                                                .getCharPositionInLine()));
+                                        fields.addLast(String.format("severity:%d", tree.pattern().severity()));
+                                        fields.addLast(rule_name);
+                                        fields.addLast(String.format("%s_%s", tree.rule().id(),
+                                                tree.pattern().id()));
                                         result.compute(
                                                 tree.rule().id(),
                                                 (k, v) -> Optional
@@ -192,12 +202,47 @@ public final class Tool {
                                                         .map(i -> i + 1)
                                                         .orElse(1)
                                         );
+                                        report_fields.addLast(fields);
                                     }
                             )
                     );
-                    result.forEach((k, v) -> System.out.println(k + " :" + v));
+                    if (!report_fields.isEmpty()) {
+                        System.out.println(info.file());
+                        System.out.print(formatAsTable(report_fields));
+                        total[0] += report_fields.size();
+                    }
                 }
         )
                 .print();
+        if (total[0] > 0) {
+            System.out.printf("%n\u2716 %d problems (%d errors)%n", total[0], total[0]);
+        }
+    }
+
+    public static String formatAsTable(List<List<String>> rows)
+    {
+        if (rows.isEmpty()) return "";
+        int[] maxLengths = new int[rows.get(0).size()];
+        for (List<String> row : rows)
+        {
+            for (int i = 0; i < row.size(); i++)
+            {
+                maxLengths[i] = Math.max(maxLengths[i], row.get(i).length());
+            }
+        }
+
+        StringBuilder formatBuilder = new StringBuilder();
+        for (int maxLength : maxLengths)
+        {
+            formatBuilder.append("%-").append(maxLength + 3).append("s");
+        }
+        String format = formatBuilder.toString();
+
+        StringBuilder result = new StringBuilder();
+        for (List<String> row : rows)
+        {
+            result.append(String.format(format, row.toArray(new String[0]))).append("\n");
+        }
+        return result.toString();
     }
 }
