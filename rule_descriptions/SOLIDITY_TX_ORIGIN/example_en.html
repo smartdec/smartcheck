@@ -1,7 +1,6 @@
 <p>
-	Let’s say you have a wallet contract like this:
+    Let’s say you have a wallet contract like this:
 </p>
-<p>
 <pre>
 <code>
 pragma solidity ^0.4.11;
@@ -21,11 +20,9 @@ contract TxUserWallet {
 }
 </code>
 </pre>
-</p>
 <p>
-	Now someone tricks you into sending ether to the address of this attack wallet:
+    Now someone tricks you into sending ether to the address of this attack wallet:
 </p>
-<p>
 <pre>
 <code>
 pragma solidity ^0.4.11;
@@ -47,7 +44,6 @@ contract TxAttackWallet {
 }
 </code>
 </pre>
-</p>
 <p>
-	If your wallet had checked <code>msg.sender</code> for authorization, it would get the address of the attack wallet, instead of the owner address. But by checking <code>tx.origin</code>, it gets the original address that kicked off the transaction, which is still the owner address. The attack wallet instantly drains all your funds.
+    If your wallet had checked <code>msg.sender</code> for authorization, it would get the address of the attack wallet, instead of the owner address. But by checking <code>tx.origin</code>, it gets the original address that kicked off the transaction, which is still the owner address. The attack wallet instantly drains all your funds.
 </p>

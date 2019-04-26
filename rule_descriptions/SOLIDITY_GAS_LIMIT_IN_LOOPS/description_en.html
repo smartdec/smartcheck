@@ -1,13 +1,12 @@
 <p>
-	Ethereum is a very resource-constrained environment. Prices per computational step are orders of magnitude higher than with centralized providers. Moreover, Ethereum miners impose a limit on the total number of gas consumed in a block. If <code>array.length</code> is large enough, the function exceeds the block gas limit, and transactions calling it will never be confirmed:
-<p>
-<pre><code>
-	for (uint256 i = 0; i < array.length ; i++) { 
-		cosltyFunc();
-	}
-</code></pre>
+    Ethereum is a very resource-constrained environment. Prices per computational step are orders of magnitude higher than with centralized providers. Moreover, Ethereum miners impose a limit on the total number of gas consumed in a block. If <code>array.length</code> is large enough, the function exceeds the block gas limit, and transactions calling it will never be confirmed:
 </p>
+<pre><code>
+    for (uint256 i = 0; i < array.length ; i++) {
+        cosltyFunc();
+    }
+</code></pre>
 <p>
-	This becomes a security issue, if an external actor influences <code>array.length</code>.
-	E.g., if array enumerates all registered addresses, an adversary can register many addresses, causing the problem described above.
+    This becomes a security issue, if an external actor influences <code>array.length</code>.
+    E.g., if array enumerates all registered addresses, an adversary can register many addresses, causing the problem described above.
 </p>

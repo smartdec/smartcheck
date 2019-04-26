@@ -1,1 +1,1 @@
-Standard ERC-20 for functions transfer, transferFrom and approve: return value.
+Return value of transfer, transferFrom, or approve function of ERC-20 standard is always false.

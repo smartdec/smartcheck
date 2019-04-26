@@ -1,0 +1,18 @@
+<p>In the following contract <code>Transfer</code> event's arguments are unindexed:</p>
+<pre><code>
+pragma solidity ^0.5.0;
+
+contract StandardToken is ERC20 {
+    ...
+
+    event Transfer(address _from, address _to, uint256 _value);
+
+    function transfer(address to, uint256 value) public returns (bool) {
+        require(value <= balances[msg.sender]);
+        balances[msg.sender] -= value; // we've checked for underflow
+        balances[to] += value; // no overflow because of limited supply
+        emit Transfer(msg.sender, to, value);
+        return true;
+    }
+}
+</code></pre>

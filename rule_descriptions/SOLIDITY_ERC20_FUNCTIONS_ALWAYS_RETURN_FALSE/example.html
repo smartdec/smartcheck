@@ -1,10 +1,10 @@
-<p>В следующем примере приведена функция <code>transferFrom</code>, которая не возвращает <code>true</code></p>
+<p>В следующем примере приведена функция <code>transferFrom</code>, которая не возвращает <code>true</code>:</p>
 <pre>
 <code>
 pragma Solidity 0.4.24;
 
 contract StandardToken is ERC20, BasicToken {
-    
+
     function transferFrom(address _from, address _to, uint _value) returns (bool) {
         uint _allowance = allowed[_from][msg.sender];
         require(_allowance >= _value);

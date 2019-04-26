@@ -1,0 +1,14 @@
+<p>In the following example, the function's signature only denotes the type of the return value, but the function's body does not contain <code>return</code> statement:</p>
+<pre>
+<code>
+pragma solidity 0.4.25;
+
+contract NewContract {
+    uint minimumBuy;
+
+    function setMinimumBuy(uint256 newMinimumBuy) returns (bool){
+        minimumBuy = newMinimumBuy;
+    }
+}
+</code>
+</pre>
