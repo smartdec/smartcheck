@@ -1,16 +1,14 @@
 <p>
-	The payment rejection fallback is redundant.
+    The payment rejection fallback is redundant.
 </p>
 <p>
-	Contracts should reject unexpected payments. Before Solidity 0.4.0, it was done manually:
+    Contracts should reject unexpected payments. Before Solidity 0.4.0, it was done manually:
 </p>
-<p>
 <pre>
 <code>
 function () { revert(); }
 </code>
 </pre>
-</p>
 <p>
 Starting from Solidity 0.4.0, contracts without a fallback function automatically
 revert payments, making the code above redundant.

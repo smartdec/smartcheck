@@ -1,6 +1,13 @@
 grammar Solidity;
 
-sourceUnit : (pragmaDirective | importDirective | contractDefinition | libraryDefinition | interfaceDefinition)* EOF ;
+sourceUnit :
+    ( pragmaDirective
+    | importDirective
+    | contractDefinition
+    | libraryDefinition
+    | interfaceDefinition
+    )*
+    EOF ;
 
 pragmaDirective : 'pragma' (pragmaSolidity | pragmaExperimental) ';' ;
 
@@ -8,32 +15,29 @@ pragmaSolidity : 'solidity' version+;
 
 pragmaExperimental : 'experimental' expression;
 
-version : versionOperator? (versionLiteral | StringLiteral ) ;
+version : versionOperator? (versionLiteral | stringLiteral) ;
 
 versionOperator : '~' | '^' | '>=' | '>' | '<' | '<=' ;
 
 importDirective
-    : 'import' StringLiteral ('as' identifier)? ';'
-    | 'import' ('*' | identifier) ('as' identifier)? 'from' StringLiteral ';'
-    | 'import' '{' importDeclaration (',' importDeclaration)* '}' 'from' StringLiteral ';'
+    : 'import' stringLiteral ('as' identifier)? ';'
+    | 'import' ('*' | identifier) ('as' identifier)? 'from' stringLiteral ';'
+    | 'import' '{' importDeclaration (',' importDeclaration)* '}' 'from' stringLiteral ';'
     ;
 
 importDeclaration : identifier ('as' identifier)? ;
 
-contractDefinition : 'contract' identifier ('is' inheritanceSpecifier (',' inheritanceSpecifier)* )?
+contractDefinition : 'contract' identifier
+    ('is' inheritanceSpecifier (',' inheritanceSpecifier)*)?
     '{' contractPartDefinition* '}' ;
 
 libraryDefinition : 'library' identifier '{' contractPartDefinition* '}' ;
 
-interfaceDefinition : 'interface' identifier ('is' inheritanceSpecifier (',' inheritanceSpecifier)* )?
+interfaceDefinition : 'interface' identifier
+    ('is' inheritanceSpecifier (',' inheritanceSpecifier)*)?
     '{' contractPartDefinition* '}' ;
 
-inheritanceSpecifier : userDefinedTypeName
-    ( // no arguments
-    | '(' ')' // empty parentheses are always allowed
-    | '(' expression (',' expression)* ')'
-    )
-    ;
+inheritanceSpecifier : userDefinedTypeName expression? ;
 
 //____DEFINITION____
 contractPartDefinition
@@ -61,9 +65,11 @@ functionDefinition : ('function' identifier | 'constructor') parameterList
 
 returnsParameters : 'returns' parameterList ;
 
-variableDeclaration : typeName storageLocation? identifier ('=' expression)? ;
+variableDeclaration
+    : typeName (storageLocation? identifier)? ;
 
-stateVariableDeclaration : typeName (visibleType | constantType)* identifier ('=' expression)? ';' ;
+stateVariableDeclaration : typeName (visibleType | constantType)*
+    identifier ('=' expression)? ';' ;
 
 functionFallBackDefinition : 'function' parameterList
     (stateMutability | visibleType | functionCall | identifier)*
@@ -110,7 +116,7 @@ typeName
     | functionTypeName
     ;
 
-userDefinedTypeName : identifier ('.' identifier )* ;
+userDefinedTypeName : identifier ('.' identifier)* ;
 
 functionTypeName : 'function' parameterList (visibleType | stateMutability)*
     ('returns' parameterList)? ;
@@ -157,36 +163,29 @@ mulOperator : '*' ;
 
 divOperator : '/' ;
 
-addressNumber : HexNumber ;
-
 callArguments
-    : '('
-    ( // empty list
-    | expression (',' expression)*
-    | '{' nameValueList? '}'
-    )
-    ')' ;
+    : tupleExpression
+    | '(' nameValueList ')'
+    ;
 
 typeConversion : typeName '(' expression ')' ;
 
 expression
-    : environmentalVariable
+    : expression twoPlusMinusOperator
+    | expression '[' expression ']'
+    | newDynamicArray
+    | environmentalVariable
     | expression '.' 'length'
     | expression '.' 'balance'
     | expression '.' functionCall
-    | functionCall
-    | primaryExpression
-    | expression callArguments
-    | typeConversion
     | expression '.' identifier
-    | expression twoPlusMinusOperator
-    | newDynamicArrayExpression
-    | expression '[' expression ']'
-    | '(' expression ')'
+    | tupleExpression
+    | functionCall
+    | expression callArguments
+    | primaryExpression
     | twoPlusMinusOperator expression
+    | typeConversion
     | plusminusOperator expression
-    // TODO maybe we should make separate `deleteExpression`, otherwise I don't know how to write xpath
-    | 'delete' expression
     | '!' expression
     | '~' expression
     | expression powerOperator expression
@@ -202,13 +201,20 @@ expression
     | expression '||' expression
     | expression '?' expression ':' expression
     | expression ('=' | lvalueOperator) expression
+    | varDeclaration
     | variableDeclaration
-    | '{' nameValueList '}'
     ;
 
-newDynamicArrayExpression : 'new' (typeName '[' ']' | 'string' | 'bytes') ('(' expression ')')? ;
+newDynamicArray : 'new' (typeName '[' ']' | 'string' | 'bytes') ('(' expression ')')? ;
 
-lvalueOperator : '|=' | '^=' | '&=' | plusLvalueOperator | minusLvalueOperator | mulLvalueOperator | divLvalueOperator | divRemLvalueOperator | '<<=' | '>>=' ;
+lvalueOperator
+    : '|=' | '^=' | '&='
+    | plusLvalueOperator
+    | minusLvalueOperator
+    | mulLvalueOperator
+    | divLvalueOperator
+    | divRemLvalueOperator
+    | '<<=' | '>>=' ;
 
 plusLvalueOperator : '+=' ;
 
@@ -224,15 +230,15 @@ divRemLvalueOperator : '%=' ;
 
 enumValue : identifier ;
 
-indexedParameterList : '(' ( indexedParameter (',' indexedParameter)* )? ')' ;
+indexedParameterList : '(' (indexedParameter (',' indexedParameter)*)? ')' ;
 
 indexedParameter : typeName 'indexed'? identifier?;
 
-parameterList : '(' (parameter (',' parameter)* )? ')' ;
+parameterList : '(' (parameter (',' parameter)*)? ')' ;
 
 parameter : typeName storageLocation? identifier? ;
 
-storageLocation : 'memory' | 'storage' ;
+storageLocation : 'memory' | 'storage' | 'calldata';
 
 //___Statements___
 
@@ -249,12 +255,13 @@ statement
     | continueStatement ';'
     | breakStatement ';'
     | returnStatement ';'
+    | deleteStatement ';'
     | throwRevertStatement ';'
     | emitEventStatement ';'
-    | simpleStatement ';'
+    | expressionStatement ';'
     ;
 
-emitEventStatement : 'emit' functionName callArguments ;
+emitEventStatement : 'emit' (identifier '.' identifier callArguments | identifier callArguments) ; // emit BaseContract.EventName() is allowed
 
 ifStatement : 'if' '(' condition ')' statement ('else' statement)? ;
 
@@ -274,25 +281,15 @@ continueStatement : 'continue' ;
 
 breakStatement : 'break' ;
 
-returnStatement : 'return'
-    ( // no return value
-    | expression // expression without parentheses
-    | '(' ')' // empty parentheses
-    | '(' expression ','? ')' // one expression with trailing comma is allowed
-    | '(' expression  (',' expression)+ ')' // list of expressions
-    )
-    ;
+deleteStatement : 'delete' expression ;
+
+returnStatement : 'return' expression? ;
 
 throwRevertStatement : 'throw' | 'revert' ('(' stringLiteral? ')')? ;
 
-simpleStatement : variableDeclarationStatement | expressionStatement ;
-
 expressionStatement : expression ;
 
-variableDeclarationStatement
-    : ('var' identifierList ('=' expression )? )
-    | variableDeclaration
-    ;
+varDeclaration : 'var' expression ;
 
 //___Assembler___
 
@@ -313,9 +310,6 @@ assemblyItem
     | 'break'
     | 'continue'
     | subAssembly
-    | numberLiteral
-    | StringLiteral
-    | HexLiteral
     ;
 
 assemblyExpression : assemblyCall | assemblyLiteral ;
@@ -351,7 +345,7 @@ assemblyFor : 'for' (inlineAssemblyBlock | assemblyExpression)
 
 assemblyIf : 'if' assemblyExpression inlineAssemblyBlock ;
 
-assemblyLiteral : StringLiteral | DecimalNumber | HexNumber | HexLiteral ;
+assemblyLiteral : stringLiteral | numberLiteral | hexLiteral ;
 
 subAssembly : 'assembly' identifier inlineAssemblyBlock ;
 
@@ -362,33 +356,30 @@ primaryExpression
     | booleanLiteral
     | hexLiteral
     | stringLiteral
-    | identifier
-    | tupleExpression
-    | addressNumber
     | numberLiteral
-    | environmentalVariable
+    | identifier
     ;
 
 tupleExpression
-    : '(' ( expression? ( ',' expression? )+ )? ')'
-    | '[' ( expression? ( ',' expression? )+ )? ']'
+    : '(' ')' // empty parentheses
+    | '(' expression ','? ')' // one expression with trailing comma is allowed
+    | '(' expression?  (',' expression?)+ ')' // list of expressions
     ;
 
 //___auxiliary parameters___
 
-nameValueList : identifier ':' expression (',' identifier ':' expression)* ','? ; // trailing comma compiled until 0.4.11
+nameValueList : '{' identifier ':' expression (',' identifier ':' expression)* ','? '}' ; // trailing comma compiled until 0.4.11
 
 comparison : '==' | '!=' ;
 
-identifierList : '(' identifier? (',' identifier? )* ')' ;
-
 //items after Identifier are listed for lexer to understand that these words can be used as identifier
-identifier : Identifier | placeholderStatement | 'value' | 'from' | 'this' | 'balance' | 'sender' | 'msg' | 'gas'
-    | 'length' | 'block' | 'timestamp' | 'tx' | 'origin' | 'blockhash' | 'coinbase' | 'difficulty' | 'gaslimit'
-    | 'number' | 'data' | 'sig' | 'now' | 'gasprice' | 'emit' | 'constructor' | 'revert' | 'solidity' | 'experimental' ;
+identifier
+    : Identifier | placeholderStatement | 'value' | 'from' | 'this' | 'balance' | 'sender'
+    | 'msg' | 'gas' | 'length' | 'block' | 'timestamp' | 'tx' | 'origin' | 'blockhash'
+    | 'coinbase' | 'difficulty' | 'gaslimit' | 'number' | 'data' | 'sig' | 'now' | 'gasprice'
+    | 'emit' | 'constructor' | 'revert' | 'solidity' | 'experimental' | 'calldata' ;
 
-elementaryTypeName : 'address' | 'bool' | 'string' | 'var'
-    |'int' | 'int8' | 'int16' | 'int24' | 'int32' | 'int40' | 'int48' | 'int56' | 'int64' | 'int72'
+elementaryTypeName : 'address' | 'address payable' | 'bool' | 'string' | 'int' | 'int8' | 'int16' | 'int24' | 'int32' | 'int40' | 'int48' | 'int56' | 'int64' | 'int72'
     | 'int80' | 'int88' | 'int96' | 'int104' | 'int112' | 'int120' | 'int128' | 'int136' | 'int144' | 'int152' | 'int160' | 'int168'
     | 'int176' | 'int184' | 'int192' | 'int200' | 'int208' | 'int216' | 'int224' | 'int232' | 'int240' | 'int248' | 'int256' |'uint'
     | 'uint8' | 'uint16' | 'uint24' | 'uint32' | 'uint40' | 'uint48' | 'uint56' | 'uint64' | 'uint72' | 'uint80' | 'uint88' | 'uint96'
@@ -531,21 +522,21 @@ elementaryTypeName : 'address' | 'bool' | 'string' | 'var'
 
 //___literals___
 
-arrayLiteral : ('[' arrayElement? (',' arrayElement)* ']')+ ;
+arrayLiteral : '[' arrayElement? (',' arrayElement)* ']' ;
 
-arrayElement: expression ;
+arrayElement : expression ;
 
 numberLiteral : (decimalNumber | hexNumber) numberUnit? ;
 
-decimalNumber : DecimalNumber ;
+decimalNumber : Number ;
 
-DecimalNumber : (Digits | Digits '.' | '.' Digits | Digits '.' Digits) (('e'|'E') Digits)?;
+Number : Mantissa (Exponent)? ;
+
+versionLiteral : VersionLiteral | Number ;
+
+VersionLiteral : [0-9]+ ' '* '.' ' '* [0-9]+ (' '* '.' ' '* [0-9]+)? ; // 0.4 . 21 is allowed
 
 Identifier : IdentifierStart IdentifierPart* ;
-
-Digits : [0-9]+ ;
-
-versionLiteral : DecimalNumber  ('.'? DecimalNumber)? ('.'? DecimalNumber)? ;
 
 booleanLiteral : 'true' | 'false' ;
 
@@ -563,13 +554,27 @@ fragment
 HexPair : HexCharacter HexCharacter ;
 
 fragment
-HexCharacter : [0-9A-Fa-f] ;
+HexCharacter : [0-9A-Fa-f_] ;
 
 fragment
 IdentifierStart : [a-zA-Z$_] ;
 
 fragment
 IdentifierPart : [a-zA-Z0-9$_] ;
+
+fragment
+Mantissa
+    : DigitUnderscore+ '.' DigitUnderscore+
+    | DigitUnderscore+ '.'
+    | '.' DigitUnderscore+
+    | DigitUnderscore+
+    ;
+
+fragment
+Exponent: [Ee] '-'? (DigitUnderscore)+;
+
+fragment
+DigitUnderscore : [0-9] ('_' [0-9])? ;
 
 StringLiteral
     : '"' DoubleQuotedStringCharacter* '"'

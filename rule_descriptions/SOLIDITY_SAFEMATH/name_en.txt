@@ -1,1 +1,1 @@
-SafeMath is used
+Use of SafeMath

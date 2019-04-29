@@ -1,21 +1,17 @@
 <p>
-	Solidity supports type inference: the type of <code>i</code> in <code>var i = 42;</code> is the smallest integer type sufficient to store the right-hand side value (<code>uint8</code>). Consider a common for-loop pattern:
+    Solidity supports type inference: the type of <code>i</code> in <code>var i = 42;</code> is the smallest integer type sufficient to store the right-hand side value (<code>uint8</code>). Consider a common for-loop pattern:
 </p>
-<p>
 <pre>
 <code>
 for (var i = 0; i < array.length; i++) { /* ... */ }
 </code>
 </pre>
-</p>
 <p>
 The type of <code>i</code> is inferred to <code>uint8</code>. If <code>array.length</code> is bigger than 255, an
 overflow will occur. Explicitly define the type when declaring integer variables:
 </p>
-<p>
 <pre>
 <code>
-for (uint256 i = 0; i < array.length; i++) { /* ... */ } 
+for (uint256 i = 0; i < array.length; i++) { /* ... */ }
 </code>
 </pre>
-</p>

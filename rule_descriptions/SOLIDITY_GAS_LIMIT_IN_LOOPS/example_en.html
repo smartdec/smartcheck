@@ -1,5 +1,4 @@
 <p> In the following example, an attacker may register many addresses, causing the excess of the gas limit:</p>
-<p>
 <pre>
 <code>
 pragma solidity 0.4.24;
@@ -15,12 +14,12 @@ contract PriceOracle {
     constructor() public {
         owner = msg.sender;
     }
-    
+
     function subscribe() payable external{
         subscribers.push(msg.sender);
         balances[msg.sender] += msg.value;
     }
-    
+
     function setPrice(uint price) external {
         require(msg.sender == owner);
         bytes memory data = abi.encodeWithSelector(SIGNATURE, price);
@@ -38,4 +37,3 @@ contract PriceOracle {
 }
 </code>
 </pre>
-</p>

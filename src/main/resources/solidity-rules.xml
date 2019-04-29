@@ -12,7 +12,7 @@
                     <Severity>1</Severity>
                     <TruePositiveRate>2</TruePositiveRate>
                     <XPath>
-                        //addressNumber[string-length()=42]
+                        //hexNumber[string-length()=42]
                     </XPath>
                 </Pattern>
                 <!-- Looks for hardcoded address with less than 42 symbols that is not equal to 0x0. -->
@@ -24,7 +24,7 @@
                     <Severity>1</Severity>
                     <TruePositiveRate>2</TruePositiveRate>
                     <XPath>
-                        //addressNumber[string-length() lt 42 and not(matches(text()[1],"^0x0$"))]
+                        //hexNumber[(string-length() lt 42) and (string-length() gt 30) and not(matches(text()[1],"^0x0$"))]
                     </XPath>
                 </Pattern>
                 <!-- Looks for construction: address(<some constant>), where the constant is not equal to 0. -->
@@ -61,7 +61,10 @@
                     <Severity>1</Severity>
                     <TruePositiveRate>1</TruePositiveRate>
                     <XPath>
-                        //addressNumber[matches(text()[1],"^0x0$")]/parent::*[parent::*[parent::*[not(comparison)]]][not(ancestor::functionCall[1]/functionName//identifier[matches(text()[1],"^[A-Z]")])][not(ancestor::emitEventStatement)]
+                        //hexNumber[matches(text()[1],"^0x0$")]
+                        [not(ancestor::expression[comparison])]
+                        [not(ancestor::functionCall[1]/functionName//identifier[matches(text()[1],"^[A-Z]")])]
+                        [not(ancestor::emitEventStatement)]
                     </XPath>
                 </Pattern>
             </Patterns>
@@ -107,8 +110,11 @@
                 <Severity>1</Severity>
                 <XPath>
                     //expression
-                        [expression[matches(text()[1],".balance$")] or expression/expression[matches(text()[1],".balance$")]]
                         [comparison]
+                        [expression[matches(text()[1],".balance$")]
+                            or expression/tupleExpression/expression[matches(text()[1],".balance$")]
+                            or expression/expression[matches(text()[1],".balance$")]]
+
                 </XPath>
             </Pattern>
         </Patterns>
@@ -169,7 +175,7 @@
                 <XPath>
                     //functionCall
                         [functionName/identifier[text()[1]="call"]]
-                        [not(callArguments/expression)]
+                        [not(callArguments//expression)]
                         [not(gas/expression)]
                 </XPath>
             </Pattern>
@@ -183,7 +189,7 @@
                 <XPath>
                     //functionCall
                         [functionName/identifier[text()[1]="call"]]
-                        [not(callArguments/expression)]
+                        [not(callArguments//expression)]
                         [gas/expression]
                 </XPath>
             </Pattern>
@@ -198,7 +204,7 @@
                     //functionCall
                     [functionName/identifier[text()[1]="call"]]
                     [callArguments//stringLiteral[string-length(text())=0]]
-                    [callArguments[count(expression)=1]]
+                    [callArguments/tupleExpression[count(expression)=1]]
                     [not(gas/expression)]
                 </XPath>
             </Pattern>
@@ -213,7 +219,7 @@
                     //functionCall
                     [functionName/identifier[text()[1]="call"]]
                     [callArguments//stringLiteral[string-length(text())=0]]
-                    [callArguments[count(expression)=1]]
+                    [callArguments/tupleExpression[count(expression)=1]]
                     [gas/expression]
                 </XPath>
             </Pattern>
@@ -401,6 +407,31 @@
         </Patterns>
     </Rule>
     <Rule>
+        <RuleId>SOLIDITY_ERC20_INDEXED</RuleId>
+        <Patterns>
+            <!-- Looks for Transfer and Approval events in ERC20 tokens without indexed address parameters. -->
+            <!-- Фиксирует коснтрукции в ERC20 токенах: Transfer, Approval события с не идексированными переменными типа address. -->
+            <Pattern patternId="ac081b">
+                <Categories>
+                    <Category>Solidity</Category>
+                </Categories>
+                <Severity>1</Severity>
+                <XPath>
+                    <!-- looks for Transfer and Aproval events -->
+                    //eventDefinition[identifier[text()[1] = "Transfer" or text()[1] = "Approval"]]
+                    <!-- with unindexed address parameter -->
+                        [indexedParameterList/indexedParameter[typeName/elementaryTypeName[text()[1] = "address"]][not(text()[1] = "indexed")]]
+                    <!-- check that event has three parameters -->
+                        [indexedParameterList[count(child::indexedParameter)=3]
+                    <!-- check that there are two address parameters in the event -->
+                        [count(child::indexedParameter//elementaryTypeName[text()[1]="address"])=2]
+                    <!-- check that there is one uint256 parameter in the event -->
+                        [count(child::indexedParameter//elementaryTypeName[text()[1]="uint256"])=1]]
+                </XPath>
+            </Pattern>
+        </Patterns>
+    </Rule>
+    <Rule>
         <RuleId>SOLIDITY_ERC20_TRANSFER_SHOULD_THROW</RuleId>
         <Patterns>
             <!-- Looks for construction: contract's name contains token or erc20, or parent contract contains such name. In this contract there is a  definition of transfer, transferFrom or approve function, which returns value of type bool and is not an interface.
@@ -438,7 +469,7 @@
                         [comparison]
                         [expression//environmentalVariable
                             [matches(text()[1],"^block.timestamp|now$")]
-                            [not(ancestor::*[3][self::functionCall])]]
+                            [not(ancestor::*[4][self::functionCall])]]
                 </XPath>
             </Pattern>
         </Patterns>
@@ -477,7 +508,7 @@
         </Patterns>
     </Rule>
     <Rule>
-    <RuleId>SOLIDITY_FUNCTIONS_RETURNS_TYPE_AND_NO_RETURN</RuleId>
+    <RuleId>SOLIDITY_FUNCTION_RETURNS_TYPE_AND_NO_RETURN</RuleId>
     <Patterns>
         <!-- Looks for functions with unnamed return parameters and without return statement. -->
         <!-- Фиксирует функции, у которых есть возвращаемые параметры без идентификатора(returns(uint,...)), и в теле функции нет return. -->
@@ -672,7 +703,7 @@
         </Patterns>
     </Rule>
     <Rule>
-        <RuleId>SOLIDITY_PRIVATE_MODIFIER_DONT_HIDE_DATA</RuleId>
+        <RuleId>SOLIDITY_PRIVATE_MODIFIER_DOES_NOT_HIDE_DATA</RuleId>
         <Patterns>
             <!-- Looks for state variables with private visibility type. -->
             <!-- Фиксируется определение state переменных с типом видимости private-->
@@ -857,7 +888,7 @@
                         [forStatement or whileStatement or doWhileStatement]
                         [descendant::functionCall
                             [functionName/identifier[text()[1]='transfer']]
-                            [callArguments[count(expression)=1]]
+                            [callArguments/tupleExpression[count(expression)=1]]
                         ]
                 </XPath>
             </Pattern>
@@ -978,7 +1009,7 @@
                 <XPath>
                     //functionCall
                         [functionName/identifier[text()[1] = "call"]]
-                        [callArguments[count(expression) != 1]]
+                        [callArguments/tupleExpression[count(expression) != 1]]
                 </XPath>
             </Pattern>
             <!-- Looks for "keccak256(...)" with more than one argument. -->
@@ -991,7 +1022,7 @@
                 <XPath>
                     //functionCall
                         [functionName/identifier[text()[1] = "keccak256"]]
-                        [callArguments[count(expression) > 1]]
+                        [callArguments/tupleExpression[count(expression) > 1]]
                 </XPath>
             </Pattern>
             <!-- Looks for fallback function with not external visibility. -->
@@ -1070,7 +1101,7 @@
                     <Category>Solidity</Category>
                 </Categories>
                 <Severity>2</Severity>
-                <XPath>//variableDeclaration[typeName/elementaryTypeName[matches(text()[1],"^var$")]][expression//primaryExpression/numberLiteral/decimalNumber[matches(text()[1],"^[0-9]+$")]]</XPath>
+                <XPath>//varDeclaration[expression//primaryExpression/numberLiteral/decimalNumber[matches(text()[1],"^[0-9]+$")]]</XPath>
             </Pattern>
             <!-- Looks for variable declaration using "var". -->
             <!-- Фиксируется случаи определения переменных, как var имя переменной. -->
@@ -1079,7 +1110,7 @@
                     <Category>Solidity</Category>
                 </Categories>
                 <Severity>1</Severity>
-                <XPath>//variableDeclaration[typeName/elementaryTypeName[matches(text()[1],"^var$")]][expression/primaryExpression/identifier]</XPath>
+                <XPath>//varDeclaration[expression/primaryExpression/identifier]</XPath>
             </Pattern>
         </Patterns>
     </Rule>
@@ -1094,7 +1125,7 @@
                 </Categories>
                 <Severity>2</Severity>
                 <TruePositiveRate>3</TruePositiveRate>
-                <XPath>//forStatement[expression[1]//typeName/elementaryTypeName[matches(text()[1],"^var$")]][condition/expression/expression/primaryExpression[numberLiteral/decimalNumber[matches(text()[1],"^[0-9]+$")]&gt; 255]][expression[2]/twoPlusMinusOperator/incrementOperator]
+                <XPath>//forStatement[expression[1]/varDeclaration][condition/expression/expression/primaryExpression[numberLiteral/decimalNumber[matches(text()[1],"^[0-9]+$")]&gt; 255]][expression[2]/twoPlusMinusOperator/incrementOperator]
                 </XPath>
             </Pattern>
         </Patterns>
@@ -1166,7 +1197,7 @@
                     //functionCall[callArguments//primaryExpression[contains(stringLiteral, "uint,")
                         or contains(stringLiteral, "int,") or contains(stringLiteral, "uint)") or contains(stringLiteral, "int)")
                             or contains(stringLiteral, "uint[") or contains(stringLiteral, "int[")]]
-                        [callArguments/expression[1][typeConversion[typeName/elementaryTypeName[text()[1]="bytes4"]]
+                        [callArguments/tupleExpression/expression[1][typeConversion[typeName/elementaryTypeName[text()[1]="bytes4"]]
                             [//functionCall[functionName/identifier[text()[1]="sha3" or text()[1]="keccak256"]]]]]
 
                 </XPath>
@@ -1179,7 +1210,7 @@
                 </Categories>
                 <Severity>2</Severity>
                 <XPath>
-                    //functionCall/callArguments[expression[expression/primaryExpression/identifier[text()[1]="abi"]]
+                    //functionCall/callArguments[tupleExpression/expression[expression/primaryExpression/identifier[text()[1]="abi"]]
                                    [functionCall/functionName/identifier[text()[1]="encodeWithSignature"]]
                                     [functionCall//primaryExpression[contains(stringLiteral, 'uint)') or
                                     contains(stringLiteral, 'int)') or contains(stringLiteral, 'uint,') or contains(stringLiteral, 'int,')

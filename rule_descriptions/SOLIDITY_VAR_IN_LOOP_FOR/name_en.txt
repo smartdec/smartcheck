@@ -1,1 +1,1 @@
-Unsafe type inference in <code>for</code>
+Unsafe type inference in the for-loop

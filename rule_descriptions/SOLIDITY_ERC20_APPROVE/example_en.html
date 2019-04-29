@@ -1,12 +1,12 @@
-<p>In the following contract the function <code>approve</code> is used</p>
+<p>In the following contract the function <code>approve</code> is used:</p>
 <pre><code>pragma solidity ^0.4.5;
 contract StandardToken is ERC20, BasicToken {
-	...
-	function approve(address _spender, uint256 _value) public returns (bool) {
-		allowed[msg.sender][_spender] = _value;
-		Approval(msg.sender, _spender, _value);
-		return true;
-	}
-	...
+    ...
+    function approve(address _spender, uint256 _value) public returns (bool) {
+        allowed[msg.sender][_spender] = _value;
+        Approval(msg.sender, _spender, _value);
+        return true;
+    }
+    ...
 }
 </code></pre>

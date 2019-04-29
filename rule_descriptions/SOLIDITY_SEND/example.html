@@ -1,20 +1,16 @@
-<p> 
-	В следующем примере используется функция <code>send</code>:
-</p>
 <p>
+    В следующем примере используется функция <code>send</code>:
+</p>
 <pre>
 <code>
 if(!addr.send(42 ether)) {
-	revert();
+    revert();
 }
 </code>
 </pre>
-</p>
 <p>Предпочтительный вариант:</p>
-<p>
 <pre>
 <code>
 addr.transfer(42 ether);
 </code>
 </pre>
-</p>
