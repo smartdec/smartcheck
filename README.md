@@ -23,9 +23,9 @@ npm install --save-dev @smartdec/smartcheck
 ### Start the analysis
 To start analysis simply run:
 ```bash
-smartcheck
+smartcheck -p .
 ```
-Optional argument: `-p <path to directory or file>`; by default current directory.
+Required argument: `-p <path to directory or file>`.
 Optional argument: `-r <path to .xml-file with rules>`; by default it uses the built-in rules files.
 
 ## Using source code of SmartCheck
