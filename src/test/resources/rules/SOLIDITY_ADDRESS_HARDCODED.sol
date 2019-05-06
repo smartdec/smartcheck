@@ -13,7 +13,7 @@ contract C {
         address x = 0xf64B584972FE6055a770477670208d737Fff282f;
         // <yes> <report> SOLIDITY_ADDRESS_HARDCODED  adc165
         x = g(0x72ba7d8e73fe8eb666ea66babc8116a41bfb10e2);
-        // <yes> <report> SOLIDITY_ADDRESS_HARDCODED  b140cd
+        // too short - not an address
         x = 0x123;
         // <yes> <report> SOLIDITY_ADDRESS_HARDCODED  f32db1
         x = address(342);

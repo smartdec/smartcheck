@@ -15,8 +15,8 @@
                         //hexNumber[string-length()=42]
                     </XPath>
                 </Pattern>
-                <!-- Looks for hardcoded address with less than 42 symbols that is not equal to 0x0. -->
-                <!-- Фиксирует адреса длиной менее чем 42 символа и не равные 0x0. -->
+                <!-- Looks for hardcoded address that are 31-41 symbols long. -->
+                <!-- Фиксирует адреса длиной от 31 до 41 символа. -->
                 <Pattern patternId="b140cd">
                     <Categories>
                         <Category>Solidity</Category>
@@ -24,7 +24,7 @@
                     <Severity>1</Severity>
                     <TruePositiveRate>2</TruePositiveRate>
                     <XPath>
-                        //hexNumber[(string-length() lt 42) and (string-length() gt 30) and not(matches(text()[1],"^0x0$"))]
+                        //hexNumber[(string-length() lt 42) and (string-length() gt 30)]
                     </XPath>
                 </Pattern>
                 <!-- Looks for construction: address(<some constant>), where the constant is not equal to 0. -->
