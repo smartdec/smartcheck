@@ -1,0 +1,28 @@
+<p>
+    In the following example, functions with both <code>public</code> and <code>external</code> visibility modifiers are used:
+</p>
+<pre>
+<code>
+contract Token {
+
+    mapping (address => uint256) internal _balances;
+
+    function transfer_public(address to, uint256 value) public {
+        require(value <= _balances[msg.sender]);
+
+        _balances[msg.sender] -= value;
+        _balances[to] += value;
+    }
+
+    function transfer_external(address to, uint256 value) external {
+        require(value <= _balances[msg.sender]);
+
+        _balances[msg.sender] -= value;
+        _balances[to] += value;
+    }
+}
+</code>
+</pre>
+<p>
+    The second function requires less gas.
+</p>
