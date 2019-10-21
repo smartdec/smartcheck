@@ -10,21 +10,24 @@
                          <Category>Solidity</Category>
                     </Categories>
                     <Severity>1</Severity>
-                    <TruePositiveRate>2</TruePositiveRate>
                     <XPath>
-                        //hexNumber[string-length()=42]
+                        //hexNumber[string-length() = 42]
                     </XPath>
                 </Pattern>
-                <!-- Looks for hardcoded address that are 31-41 symbols long. -->
-                <!-- Фиксирует адреса длиной от 31 до 41 символа. -->
+                <!-- Looks for hardcoded address with less than 42 symbols that is not equal to 0x0. -->
+                <!-- Фиксирует адреса длиной менее чем 42 символа и не равные 0x0. -->
                 <Pattern patternId="b140cd">
                     <Categories>
                         <Category>Solidity</Category>
                     </Categories>
                     <Severity>1</Severity>
-                    <TruePositiveRate>2</TruePositiveRate>
                     <XPath>
-                        //hexNumber[(string-length() lt 42) and (string-length() gt 30)]
+                        //hexNumber
+                            [
+                                (string-length() lt 42)
+                                and (string-length() gt 30)
+                                and not(matches(text()[1], "^0x0$"))
+                            ]
                     </XPath>
                 </Pattern>
                 <!-- Looks for construction: address(<some constant>), where the constant is not equal to 0. -->
@@ -34,37 +37,15 @@
                         <Category>Solidity</Category>
                     </Categories>
                     <Severity>1</Severity>
-                    <TruePositiveRate>2</TruePositiveRate>
                     <XPath>
-                        //typeConversion[typeName[elementaryTypeName[matches(text()[1],"^address$")]]]/expression[primaryExpression/numberLiteral/decimalNumber][not(primaryExpression/numberLiteral/decimalNumber[matches(text()[1],"^0$")]) and not(primaryExpression/identifier[matches(text()[1],"^this$")])]
-                    </XPath>
-                </Pattern>
-                <!-- Looks for address(0) in the the code, except for "!=address(0)", "==address(0)" and emit SomeEvent(... address(0) ...) -->
-                <!-- Фиксирует использование адреса address(0), кроме "!=address(0)" и "==address(0)", и кроме тех случаев, когда address(0) внутри event(внутренняя функция, название которой начинается с большой буквы). -->
-                <Pattern patternId="a91b18">
-                    <Categories>
-                        <Category>Solidity</Category>
-                    </Categories>
-                    <Severity>1</Severity>
-                    <TruePositiveRate>1</TruePositiveRate>
-                    <XPath>
-                        //expression[typeConversion[typeName[elementaryTypeName[matches(text()[1],"^address$")]]]/expression/primaryExpression/numberLiteral/decimalNumber[matches(text()[1],"^0$")]]
-                        /parent::*[not(comparison)][not(ancestor::functionCall[1]/functionName//identifier[matches(text()[1],"^[A-Z]")])][not(ancestor::emitEventStatement)]
-                    </XPath>
-                </Pattern>
-                <!-- Looks for 0x0 addresses, except for those used as event parameter -->
-                <!-- Фиксирует использование адреса 0x0, кроме "!=0x0" и "==0x0", и кроме тех случаев, когда 0x0 внутри event(внутренняя функция, название которой начинается с большой буквы). -->
-                <Pattern patternId="c67a09">
-                    <Categories>
-                        <Category>Solidity</Category>
-                    </Categories>
-                    <Severity>1</Severity>
-                    <TruePositiveRate>1</TruePositiveRate>
-                    <XPath>
-                        //hexNumber[matches(text()[1],"^0x0$")]
-                        [not(ancestor::expression[comparison])]
-                        [not(ancestor::functionCall[1]/functionName//identifier[matches(text()[1],"^[A-Z]")])]
-                        [not(ancestor::emitEventStatement)]
+                        //typeConversion
+                            [typeName[elementaryTypeName[matches(text()[1], "^address$")]]]
+                            /expression
+                                [primaryExpression/numberLiteral/decimalNumber]
+                                [
+                                    not(primaryExpression/numberLiteral/decimalNumber[matches(text()[1], "^0$")])
+                                    and not(primaryExpression/identifier[matches(text()[1], "^this$")])
+                                ]
                     </XPath>
                 </Pattern>
             </Patterns>
@@ -80,8 +61,19 @@
                 </Categories>
                 <Severity>1</Severity>
                 <XPath>
-                //expression[expression[1][matches(text()[1],".length$")]]
-                [matches(text()[1],"^=$") or twoPlusMinusOperator/decrementOperator or lvalueOperator[mulLvalueOperator or minusLvalueOperator or plusLvalueOperator or divLvalueOperator]]
+                    //expression
+                        [expression[1][matches(text()[1], "\.length$")]]
+                        [
+                            matches(text()[1], "^=$")
+                            or twoPlusMinusOperator/decrementOperator
+                            or lvalueOperator
+                                [
+                                    mulLvalueOperator
+                                    or minusLvalueOperator
+                                    or plusLvalueOperator
+                                    or divLvalueOperator
+                                ]
+                        ]
                 </XPath>
             </Pattern>
             <!-- Looks for ".length++". -->
@@ -92,8 +84,9 @@
                 </Categories>
                 <Severity>1</Severity>
                 <XPath>
-                //expression[expression[1][matches(text()[1],".length$")]]
-                [twoPlusMinusOperator/incrementOperator]
+                    //expression
+                        [expression[1][matches(text()[1], "\.length$")]]
+                        [twoPlusMinusOperator/incrementOperator]
                 </XPath>
             </Pattern>
         </Patterns>
@@ -111,9 +104,11 @@
                 <XPath>
                     //expression
                         [comparison]
-                        [expression[matches(text()[1],".balance$")]
-                            or expression/tupleExpression/expression[matches(text()[1],".balance$")]
-                            or expression/expression[matches(text()[1],".balance$")]]
+                        [
+                            expression[matches(text()[1], "\.balance$")]
+                            or expression/tupleExpression/expression[matches(text()[1], "\.balance$")]
+                            or expression/expression[matches(text()[1], "\.balance$")]
+                        ]
 
                 </XPath>
             </Pattern>
@@ -122,14 +117,18 @@
     <Rule>
         <RuleId>SOLIDITY_BYTE_ARRAY_INSTEAD_BYTES</RuleId>
         <Patterns>
-            <!-- Looks for construction: "byte[]". --> 
+            <!-- Looks for construction: "byte[]". -->
             <!-- Фиксирует конструкцию: "byte[]". -->
             <Pattern patternId="f13a9f">
                 <Categories>
                     <Category>Solidity</Category>
                 </Categories>
                 <Severity>1</Severity>
-                <XPath>//typeName[typeName/elementaryTypeName[text()[1]="byte"]][matches(text()[1],"^\[.*\]$")]</XPath>
+                <XPath>
+                    //typeName
+                        [typeName/elementaryTypeName[text()[1] = "byte"]]
+                        [matches(text()[1], "^\[.*\]$")]
+                </XPath>
             </Pattern>
         </Patterns>
     </Rule>
@@ -144,7 +143,9 @@
                 </Categories>
                 <Severity>3</Severity>
                 <XPath>
-                    //functionDefinition[text()[1]='constructor']//assemblyCall[matches(text()[1],'^return')]
+                    //functionDefinition
+                        [text()[1] = "constructor"]
+                        //assemblyCall[matches(text()[1], "^return\(")]
                 </XPath>
             </Pattern>
             <!-- Looks for assembly { return() } in old-style constructor. -->
@@ -156,8 +157,8 @@
                 <Severity>3</Severity>
                 <XPath>
                     //functionDefinition
-                        [identifier[text()[1]=(ancestor::contractDefinition/identifier)]]
-                        //assemblyCall[matches(text()[1],'^return')]
+                        [identifier[text()[1] = (ancestor::contractDefinition/identifier)]]
+                        //assemblyCall[matches(text()[1], "^return\(")]
                 </XPath>
             </Pattern>
         </Patterns>
@@ -174,7 +175,7 @@
                 <Severity>2</Severity>
                 <XPath>
                     //functionCall
-                        [functionName/identifier[text()[1]="call"]]
+                        [functionName/identifier[text()[1] = "call"]]
                         [not(callArguments//expression)]
                         [not(gas/expression)]
                 </XPath>
@@ -188,7 +189,7 @@
                 <Severity>1</Severity>
                 <XPath>
                     //functionCall
-                        [functionName/identifier[text()[1]="call"]]
+                        [functionName/identifier[text()[1] = "call"]]
                         [not(callArguments//expression)]
                         [gas/expression]
                 </XPath>
@@ -202,10 +203,10 @@
                 <Severity>2</Severity>
                 <XPath>
                     //functionCall
-                    [functionName/identifier[text()[1]="call"]]
-                    [callArguments//stringLiteral[string-length(text())=0]]
-                    [callArguments/tupleExpression[count(expression)=1]]
-                    [not(gas/expression)]
+                        [functionName/identifier[text()[1] = "call"]]
+                        [callArguments//stringLiteral[string-length(text()) = 0]]
+                        [callArguments/tupleExpression[count(expression) = 1]]
+                        [not(gas/expression)]
                 </XPath>
             </Pattern>
             <!-- Looks for low-level call() with empty data (""), but with gas limit. -->
@@ -217,10 +218,66 @@
                 <Severity>1</Severity>
                 <XPath>
                     //functionCall
-                    [functionName/identifier[text()[1]="call"]]
-                    [callArguments//stringLiteral[string-length(text())=0]]
-                    [callArguments/tupleExpression[count(expression)=1]]
-                    [gas/expression]
+                        [functionName/identifier[text()[1] = "call"]]
+                        [callArguments//stringLiteral[string-length(text()) = 0]]
+                        [callArguments/tupleExpression[count(expression) = 1]]
+                        [gas/expression]
+                </XPath>
+            </Pattern>
+        </Patterns>
+    </Rule>
+    <Rule>
+        <RuleId>SOLIDITY_DELETE_ON_DYNAMIC_ARRAYS</RuleId>
+        <Patterns>
+            <!-- Looks for delete or `.length = 0` on dynamically-sized storage arrays. -->
+            <!-- Фиксирует delete или `.length = 0`, примененное к массивам с динамической длиной, лежащим в storage контракта. -->
+            <Pattern patternId="2ft3g5">
+                <Categories>
+                    <Category>Solidity</Category>
+                </Categories>
+                <Severity>1</Severity>
+                <XPath>
+                    //(
+                        deleteStatement
+                        | expression
+                            [matches(text()[1], "^=$")]
+                            [expression[2]//numberLiteral/decimalNumber/text()[1] = "0"]
+                            /expression[1][matches(text()[1], "^\.length$")]
+                    )
+                        [
+                            expression/primaryExpression/identifier
+                                = ancestor::contractDefinition/contractPartDefinition/stateVariableDeclaration
+                                    [
+                                        typeName[text()[1] = "[]"] or
+                                        typeName/elementaryTypeName
+                                            [
+                                                text()[1] = "bytes" or
+                                                text()[1] = "string"
+                                            ]
+                                    ]/identifier
+                        ]
+                </XPath>
+            </Pattern>
+            <!-- Looks for delete or `.length = 0` on dynamically-sized storage arrays passed as reference in function. -->
+            <!-- Фиксирует delete или `.length = 0`, примененное к массивам с динамической длиной, переданным в виде аргумента функции. -->
+            <Pattern patternId="6f23y5">
+                <Categories>
+                    <Category>Solidity</Category>
+                </Categories>
+                <Severity>1</Severity>
+                <XPath>
+                    //(
+                        deleteStatement
+                        | expression
+                            [matches(text()[1], "^=$")]
+                            [expression[2]//numberLiteral/decimalNumber/text()[1] = "0"]
+                            /expression[1][matches(text()[1], "^\.length$")]
+                    )
+                        [
+                            expression/primaryExpression/identifier
+                                = ancestor::functionDefinition/parameterList/parameter
+                                    [storageLocation[text()[1] = "storage"]]/identifier
+                        ]
                 </XPath>
             </Pattern>
         </Patterns>
@@ -236,8 +293,8 @@
                 </Categories>
                 <Severity>1</Severity>
                 <XPath>
-                    //functionCall/functionName//identifier[matches(text()[1],"suicide")] |
-                    //assemblyCall/identifier[matches(text()[1],"suicide")]
+                    //functionCall/functionName//identifier[matches(text()[1], "^suicide$")]
+                    | //assemblyCall/identifier[matches(text()[1], "^suicide$")]
                 </XPath>
             </Pattern>
             <!-- Looks for "sha3". -->
@@ -248,8 +305,8 @@
                 </Categories>
                 <Severity>1</Severity>
                 <XPath>
-                    //functionCall/functionName//identifier[matches(text()[1],"^sha3$")] |
-                    //assemblyCall/identifier[matches(text()[1],"sha3")]
+                    //functionCall/functionName//identifier[matches(text()[1], "^sha3$")]
+                    | //assemblyCall/identifier[matches(text()[1], "^sha3$")]
                 </XPath>
             </Pattern>
             <!-- Looks for "throw". -->
@@ -260,14 +317,13 @@
                 </Categories>
                 <Severity>1</Severity>
                 <XPath>
-                    //statement/throwRevertStatement[matches(text()[1],"throw")]
+                    //statement/throwRevertStatement[matches(text()[1], "^throw$")]
                 </XPath>
             </Pattern>
             <!-- Looks for using "constant" keyword for functions. -->
             <!-- Фиксирует использование типа constant в определении функции. -->
             <Pattern patternId="28fa69">
                 <Categories>
-
                     <Category>Solidity</Category>
                 </Categories>
                 <Severity>1</Severity>
@@ -283,7 +339,7 @@
                 </Categories>
                 <Severity>1</Severity>
                 <XPath>
-                    //numberLiteral/numberUnit[text()[1]="years"]
+                    //numberLiteral/numberUnit[text()[1] = "years"]
                 </XPath>
             </Pattern>
         </Patterns>
@@ -300,10 +356,14 @@
                 <Severity>2</Severity>
                 <XPath>
                     //expression
-                        [muldivOperator/mulOperator or
-                         functionCall/functionName/identifier[text()[1]='mul']]
-                        [descendant::divOperator or
-                         descendant::functionCall/functionName/identifier[text()[1]='div']]
+                        [
+                            muldivOperator/mulOperator
+                            or functionCall/functionName/identifier[text()[1] = "mul"]
+                        ]
+                        [
+                            descendant::divOperator
+                            or descendant::functionCall/functionName/identifier[text()[1] = "div"]
+                        ]
                 </XPath>
             </Pattern>
         </Patterns>
@@ -320,12 +380,15 @@
                 <Severity>1</Severity>
                 <XPath>
                     /sourceUnit[pragmaDirective
-                                    [not(//versionOperator) or //versionOperator[text()[1]="^"]]
-                                    [//versionLiteral[not(matches(text()[1],"\.\s*[5-9]\s*\.|^\s*[1-9]"))]]]
+                        [not(//versionOperator) or //versionOperator[text()[1] = "^"]]
+                        [//versionLiteral[not(matches(text()[1], "^0\.\s*[5-9]\s*\.|^0\.\s*[0-9]{2,}\s*\.|^[1-9]"))]]]
                     //doWhileStatement
                         [statement//continueStatement
-                            [not(ancestor::forStatement[ancestor::doWhileStatement])
-                             and not(ancestor::whileStatement[ancestor::doWhileStatement])]]
+                            [
+                                not(ancestor::forStatement[ancestor::doWhileStatement])
+                                and not(ancestor::whileStatement[ancestor::doWhileStatement])
+                            ]
+                        ]
                 </XPath>
             </Pattern>
         </Patterns>
@@ -376,8 +439,44 @@
                 </Categories>
                 <Severity>2</Severity>
                 <XPath>
-                    //contractDefinition[identifier[matches(text()[1],"token|erc20","i")] or inheritanceSpecifier/userDefinedTypeName/identifier[matches(text()[1],"token|erc20","i")]]
-                    //functionDefinition[block/statement][identifier[matches(text()[1],"^approve$")]]
+                    //contractDefinition
+                        [
+                            identifier[matches(text()[1], "token|erc20", "i")]
+                            or inheritanceSpecifier/userDefinedTypeName/identifier[matches(text()[1], "token|erc20", "i")]
+                        ]
+                        //functionDefinition
+                            [block/statement]
+                            [identifier[matches(text()[1], "^approve$")]]
+                            [not(
+                                ancestor::contractDefinition//functionDefinition
+                                [block/statement]
+                                [identifier[matches(text()[1], "Approval$|Allowance$|Approve$")]]
+                            )
+                            ]
+                </XPath>
+            </Pattern>
+            <!-- Looks for non-empty "approve" function in a contract with name that contains "token" or "erc20", or the contract's parent has such name.
+                 In case the contract contains `decrease-/icreaseApproval`, etc. implemented - severity is low -->
+            <!-- Фиксирует конструкции: имя контракта содержит token или erc20 либо наследуется от контракта содержащего такое в названии. В этом контракте есть определение функции approve, которая не является интерфейсом.
+                 В случае, когда в контракте есть функции `decrease-/icreaseApproval` и им подобные, снижена критичность -->
+            <Pattern patternId="lsd05g">
+                <Categories>
+                    <Category>Solidity</Category>
+                </Categories>
+                <Severity>1</Severity>
+                <XPath>
+                    //contractDefinition
+                        [
+                            identifier[matches(text()[1], "token|erc20", "i")]
+                            or inheritanceSpecifier/userDefinedTypeName/identifier[matches(text()[1], "token|erc20", "i")]
+                        ]
+                        //functionDefinition
+                            [block/statement]
+                            [identifier[matches(text()[1], "^approve$")]]
+                            [ancestor::contractDefinition//functionDefinition
+                                [block/statement]
+                                [identifier[matches(text()[1], "Approval$|Allowance$|Approve$")]]
+                            ]
                 </XPath>
             </Pattern>
         </Patterns>
@@ -396,12 +495,25 @@
                 </Categories>
                 <Severity>2</Severity>
                 <XPath>
-                    //contractDefinition[identifier[matches(text()[1],"token|erc20","i")]  or inheritanceSpecifier/userDefinedTypeName/identifier[matches(text()[1],"token|erc20","i")]]
-                    //functionDefinition[block/statement][identifier[matches(text()[1],"^transfer|transferFrom|approve$")]]
-                    [returnsParameters/parameterList/parameter/typeName/elementaryTypeName[matches(text()[1],"bool")]]
-                    [not(block/statement//returnStatement)]
-                    [count(returnsParameters/parameterList/parameter)=1]
-                    [returnsParameters/parameterList/parameter/identifier[not(text()[1]=(ancestor::functionDefinition/block//expression[matches(text()[1],"=")]/expression[1]//identifier))] or returnsParameters/parameterList/parameter[not(identifier)]]
+                    //contractDefinition
+                        [
+                            identifier[matches(text()[1], "token|erc20", "i")]
+                            or inheritanceSpecifier/userDefinedTypeName/identifier[matches(text()[1], "token|erc20", "i")]
+                        ]
+                    //functionDefinition
+                        [block/statement]
+                        [identifier[matches(text()[1], "^transfer$|^transferFrom$|^approve$")]]
+                        [returnsParameters/parameterList/parameter/typeName/elementaryTypeName[matches(text()[1], "bool")]]
+                        [not(block/statement//returnStatement)]
+                        [count(returnsParameters/parameterList/parameter) = 1]
+                        [
+                            returnsParameters/parameterList/parameter/identifier
+                                [not(text()[1]
+                                    = ancestor::functionDefinition/block//expression
+                                        [matches(text()[1], "=")]/expression[1]//identifier)
+                                ]
+                            or returnsParameters/parameterList/parameter[not(identifier)]
+                        ]
                 </XPath>
             </Pattern>
         </Patterns>
@@ -420,13 +532,17 @@
                     <!-- looks for Transfer and Aproval events -->
                     //eventDefinition[identifier[text()[1] = "Transfer" or text()[1] = "Approval"]]
                     <!-- with unindexed address parameter -->
-                        [indexedParameterList/indexedParameter[typeName/elementaryTypeName[text()[1] = "address"]][not(text()[1] = "indexed")]]
+                        [
+                            indexedParameterList/indexedParameter
+                                [typeName/elementaryTypeName[text()[1] = "address"]]
+                                [not(text()[1] = "indexed")]
+                        ]
                     <!-- check that event has three parameters -->
-                        [indexedParameterList[count(child::indexedParameter)=3]
+                        [indexedParameterList[count(child::indexedParameter) = 3]
                     <!-- check that there are two address parameters in the event -->
-                        [count(child::indexedParameter//elementaryTypeName[text()[1]="address"])=2]
+                        [count(child::indexedParameter//elementaryTypeName[text()[1] = "address"]) = 2]
                     <!-- check that there is one uint256 parameter in the event -->
-                        [count(child::indexedParameter//elementaryTypeName[text()[1]="uint256"])=1]]
+                        [count(child::indexedParameter//elementaryTypeName[text()[1] = "uint256"]) = 1]]
                 </XPath>
             </Pattern>
         </Patterns>
@@ -445,11 +561,18 @@
                 </Categories>
                 <Severity>1</Severity>
                 <XPath>
-                    //contractDefinition[identifier[matches(text()[1],"token|erc20","i")] or inheritanceSpecifier/userDefinedTypeName/identifier[matches(text()[1],"token|erc20","i")]]
-                    //functionDefinition[block/statement]
-                    [identifier[matches(text()[1],"^transfer(From)?$")]]
-                    [returnsParameters/parameterList/parameter/typeName/elementaryTypeName[matches(text()[1],"bool")]]
-                    [count(descendant-or-self::*[functionCall] | descendant-or-self::*[statement/throwRevertStatement])=0]
+                    //contractDefinition
+                    [
+                        identifier[matches(text()[1], "token|erc20", "i")]
+                        or inheritanceSpecifier/userDefinedTypeName/identifier[matches(text()[1], "token|erc20", "i")]
+                    ]
+                    //functionDefinition
+                        [block/statement]
+                        [identifier[matches(text()[1], "^transfer(From)?$")]]
+                        [returnsParameters/parameterList/parameter/typeName/elementaryTypeName[matches(text()[1], "bool")]]
+                        [count(descendant-or-self::*[functionCall]
+                            | descendant-or-self::*[statement/throwRevertStatement]) = 0
+                        ]
                 </XPath>
             </Pattern>
         </Patterns>
@@ -468,7 +591,7 @@
                     //expression
                         [comparison]
                         [expression//environmentalVariable
-                            [matches(text()[1],"^block.timestamp|now$")]
+                            [matches(text()[1], "^block\.timestamp|now$")]
                             [not(ancestor::*[4][self::functionCall])]]
                 </XPath>
             </Pattern>
@@ -477,8 +600,8 @@
     <Rule>
         <RuleId>SOLIDITY_EXTRA_GAS_IN_LOOPS</RuleId>
         <Patterns>
-            <!-- Looks for "for" cycle, which accesses contract's state variables, ".balance" or ".length" in second or third statement. -->
-            <!-- Фиксирует циклы for, в которых во 2 или 3 стейтменте есть стейт переменные контракта или ".balance", ".length". -->
+            <!-- Looks for "for" loop, which accesses contract's state variables. -->
+            <!-- Фиксирует циклы for, в которых во 2 или 3 стейтменте есть стейт переменные контракта.-->
             <Pattern patternId="d3j11j">
                 <Categories>
                     <Category>Solidity</Category>
@@ -486,14 +609,65 @@
                 <Severity>1</Severity>
                 <XPath>
                     //forStatement
-                        [condition//expression[matches(text()[1],"^.balance$|^.length$")]
-                        or expression[2]//expression[matches(text()[1],"^.balance$|^.length$")]
-                        or condition//identifier[text()[1]=(ancestor::contractDefinition//stateVariableDeclaration/identifier)]
-                        or expression[2]//identifier[text()[1]=(ancestor::contractDefinition//stateVariableDeclaration/identifier)]]
+                        [
+                            (condition | expression[2])/expression/expression[not(matches(text()[1], "^\.balance$|^\.length$"))]//identifier
+                                = ancestor::contractDefinition//stateVariableDeclaration[not(constantType)]/identifier
+                        ]
                 </XPath>
             </Pattern>
-            <!-- Looks for "while" cycle, which condition accesses contract's state variables, ".balance" or ".length". -->
-            <!-- Фиксирует циклы while, в которых в условии есть стейт переменные контракта или ".balance", ".length". -->
+            <!-- Looks for "for" loop, which accesses ".balance" in second or third statement. -->
+            <!-- Фиксирует циклы for, в которых во 2 или 3 стейтменте есть ".balance". -->
+            <Pattern patternId="5f8g1j">
+                <Categories>
+                    <Category>Solidity</Category>
+                </Categories>
+                <Severity>1</Severity>
+                <XPath>
+                    //forStatement[(condition | expression[2])//expression[matches(text()[1], "^\.balance$")]]
+                </XPath>
+            </Pattern>
+            <!-- Looks for "for" loop, which accesses ".length" in second or third statement. -->
+            <!-- Фиксирует циклы for, в которых во 2 или 3 стейтменте есть ".length". -->
+            <Pattern patternId="v843m7">
+                <Categories>
+                    <Category>Solidity</Category>
+                </Categories>
+                <Severity>1</Severity>
+                <XPath>
+                    //forStatement
+                        [   <!-- 2nd or 3rd part contains '.length' expression -->
+                            (condition | expression[2])//expression
+                                [matches(text()[1], "^\.length$")]
+                                <!-- and array is neither public function argument -->
+                                [
+                                    not(expression//text()[1]
+                                        = ancestor::functionDefinition
+                                            [
+                                                visibleType[matches(text()[1], "^public$")]
+                                                or not(visibleType)
+                                            ]//parameter/identifier/text()
+                                    )
+                                ]
+                                <!-- nor internal or private function argument with memory visibility modifier -->
+                                [
+                                    not(expression//text()[1]
+                                        = ancestor::functionDefinition
+                                            [visibleType[matches(text()[1], "^private$|^internal$")]]
+                                            //parameter[storageLocation/text() = "memory"]/identifier/text()
+                                    )
+                                ]
+                                <!-- nor copied to local variable with memory visibility modifier -->
+                                [
+                                    not(expression//text()[1]
+                                        = ancestor::functionDefinition
+                                            //variableDeclaration[storageLocation/text() = "memory"]/identifier/text()
+                                    )
+                                ]
+                        ]
+                </XPath>
+            </Pattern>
+            <!-- Looks for "while" loop, which condition accesses contract's state variables. -->
+            <!-- Фиксирует циклы while, в которых в условии есть стейт переменные контракта. -->
             <Pattern patternId="k4o1l4">
                 <Categories>
                     <Category>Solidity</Category>
@@ -501,8 +675,62 @@
                 <Severity>1</Severity>
                 <XPath>
                     //whileStatement
-                        [condition//expression[matches(text()[1],"^.balance$|^.length$")]
-                        or condition//identifier[text()[1]=(ancestor::contractDefinition//stateVariableDeclaration/identifier)] ]
+                        [
+                            condition/expression/expression
+                                [not(matches(text()[1], "^\.balance$|^\.length$"))]//identifier
+                                = ancestor::contractDefinition//stateVariableDeclaration[not(constantType)]/identifier
+                        ]
+                </XPath>
+            </Pattern>
+            <!-- Looks for "while" loop, which condition accesses ".balance". -->
+            <!-- Фиксирует циклы while, в которых в условии есть ".balance". -->
+            <Pattern patternId="1f6n9l">
+                <Categories>
+                    <Category>Solidity</Category>
+                </Categories>
+                <Severity>1</Severity>
+                <XPath>
+                    //whileStatement[condition//expression[matches(text()[1], "^\.balance$")]]
+                </XPath>
+            </Pattern>
+            <!-- Looks for "while" loop, which condition accesses ".length". -->
+            <!-- Фиксирует циклы while, в которых в условии есть ".length". -->
+            <Pattern patternId="v94c8j">
+                <Categories>
+                    <Category>Solidity</Category>
+                </Categories>
+                <Severity>1</Severity>
+                <XPath>
+                    //whileStatement
+                        [   <!-- condition contains '.length' expression -->
+                            condition//expression
+                                [matches(text()[1], "^\.length$")]
+                                <!-- and array is neither public function argument -->
+                                [
+                                    not(expression//text()[1]
+                                        = ancestor::functionDefinition
+                                            [
+                                                visibleType[matches(text()[1], "^public$")]
+                                                or not(visibleType)
+                                            ]//parameter/identifier/text()
+                                    )
+                                ]
+                                <!-- nor internal or private function argument with memory visibility modifier -->
+                                [
+                                    not(expression//text()[1]
+                                        = ancestor::functionDefinition
+                                            [visibleType[matches(text()[1], "^private$|^internal$")]]
+                                            //parameter[storageLocation/text() = "memory"]/identifier/text()
+                                    )
+                                ]
+                                <!-- nor copied to local variable with memory visibility modifier -->
+                                [
+                                    not(expression//text()[1]
+                                        = ancestor::functionDefinition
+                                            //variableDeclaration[storageLocation/text() = "memory"]/identifier/text()
+                                    )
+                                ]
+                        ]
                 </XPath>
             </Pattern>
         </Patterns>
@@ -519,9 +747,12 @@
             <Severity>1</Severity>
             <XPath>
                 //functionDefinition
-                [block]
-                [not(block/statement//returnStatement)]
-                [returnsParameters/parameterList/parameter[not(identifier)]]
+                    [block]
+                    [returnsParameters/parameterList/parameter[not(identifier)]]
+                    [
+                        not(block/statement//returnStatement)
+                        and not(block//assemblyCall[matches(text()[1], "^return\(")])
+                    ]
             </XPath>
         </Pattern>
         <!-- Looks for construction: "function(...) ... returns (type name) {...}" and there are no assignment "name=" and no return. -->
@@ -533,9 +764,21 @@
             <Severity>1</Severity>
             <XPath>
                 //functionDefinition
-                [block]
-                [not(block/statement//returnStatement)]
-                [returnsParameters/parameterList/parameter/identifier[not(text()[1]=(ancestor::functionDefinition/block//expression[matches(text()[1],"=")]/expression[1]//identifier))]]
+                    [block]
+                    [
+                        not(block/statement//returnStatement)
+                        and not(block//assemblyCall[matches(text()[1], "^return\(")])
+                    ]
+                    [returnsParameters/parameterList/parameter/identifier
+                        [
+                            not(text()[1]
+                                = (ancestor::functionDefinition/block//expression
+                                    [matches(text()[1], "=")]/expression[1]//identifier/text()[1]))
+                            and not(text()[1]
+                                = ancestor::functionDefinition/block
+                                    //assemblyAssignment/assemblyIdentifierOrList//identifier/text()[1])
+                        ]
+                    ]
             </XPath>
         </Pattern>
     </Patterns>
@@ -543,8 +786,8 @@
     <Rule>
         <RuleId>SOLIDITY_GAS_LIMIT_IN_LOOPS</RuleId>
         <Patterns>
-            <!-- Looks for construction: "for (<counter is initialized as zero>; <counter is lower than name.length>; ...)". -->
-            <!-- Фиксирует конструкцию: "for (<инициализация счетчика нулём>; <счетчик меньше чем name.length>; ...)". -->
+            <!-- Looks for construction: "for (<counter is initialized as zero>; <counter is lower than name.length>; ...)", name is not in memory. -->
+            <!-- Фиксирует конструкцию: "for (<инициализация счетчика нулём>; <счетчик меньше чем name.length>; ...)", name не находится в memory. -->
             <Pattern patternId="f6f853">
                 <Categories>
                     <Category>Solidity</Category>
@@ -552,19 +795,102 @@
                 <Severity>2</Severity>
                 <XPath>
                     //forStatement
-                    [expression[1][text()[1]="="]/expression[2]//numberLiteral/decimalNumber[text()[1]="0"]
-                        or expression[1]/variableDeclaration[text()[1]="="]/expression//numberLiteral/decimalNumber[text()[1]="0"]
-                        or expression[1]/variableDeclaration[not(text()[1]="=")]]
-                    [condition/expression[matches(text()[1],"&lt;|&lt; =")]
-                        /expression[2]
-                            [text()[1]=".length"
-                            or primaryExpression/identifier
-                                [text()[1]=(ancestor::functionDefinition//variableDeclaration[text()[1]="="][expression[text()[1]=".length"]]/identifier)
-                                or text()[1]=(ancestor::functionDefinition//expression[text()[1]="="][expression[2][text()[1]=".length"]]/expression[1]//identifier)]]]
+                        [   <!-- i = 0; -->
+                            expression[1][text()[1] = "="]/expression[2]//numberLiteral/decimalNumber[text()[1] = "0"]
+                            <!-- uint i = 0; -->
+                            or expression[1]/variableDeclaration[text()[1] = "="]/expression//numberLiteral/decimalNumber[text()[1] = "0"]
+                            <!-- uint i; -->
+                            or expression[1]/variableDeclaration[not(text()[1] = "=")]
+                        ]
+                        [   <!-- ".length" in condition and base is not in memory -->
+                            condition/expression[matches(text()[1], "&lt;|&lt;=")]/expression[2][text()[1] = ".length"]/expression/primaryExpression/identifier
+                                <!-- and array is neither public or external function argument -->
+                                [not(text()[1] = ancestor::functionDefinition[visibleType[matches(text()[1], "^public$|^external$")] or not(visibleType)]//parameter/identifier/text())]
+                                <!-- nor internal or private function argument with memory visibility modifier -->
+                                [not(text()[1] = ancestor::functionDefinition[visibleType[matches(text()[1], "^private$|^internal$")]]//parameter[storageLocation/text() = "memory"]/identifier/text())]
+                                <!-- nor copied to local variable with memory visibility modifier -->
+                                [not(text()[1] = ancestor::functionDefinition//variableDeclaration[storageLocation/text() = "memory"]/identifier/text())]
+                            <!-- may be a variable in condition and it is ... -->
+                            or condition/expression[matches(text()[1], "&lt;|&lt; =")]/expression[2]/primaryExpression/identifier
+                                [   <!-- new variable with non-memory array length -->
+                                    text()[1] = (ancestor::functionDefinition//variableDeclaration[text()[1] = "="]
+                                        [expression[text()[1] = ".length"]/expression/primaryExpression/identifier
+                                            <!-- and array is neither public or external function argument -->
+                                            [not(text()[1] = ancestor::functionDefinition[visibleType[matches(text()[1], "^public$|^external$")] or not(visibleType)]//parameter/identifier/text())]
+                                            <!-- nor internal or private function argument with memory visibility modifier -->
+                                            [not(text()[1] = ancestor::functionDefinition[visibleType[matches(text()[1], "^private$|^internal$")]]//parameter[storageLocation/text() = "memory"]/identifier/text())]
+                                            <!-- nor copied to local variable with memory visibility modifier -->
+                                            [not(text()[1] = ancestor::functionDefinition//variableDeclaration[storageLocation/text() = "memory"]/identifier/text())]
+                                        ]/identifier/text()[1])
+                                    <!-- or reused variable with non-memory array length -->
+                                    or text()[1] = (ancestor::functionDefinition//expression[text()[1] = "="]
+                                        [expression[2][text()[1] = ".length"]/expression/primaryExpression/identifier
+                                            <!-- and array is neither public or external function argument -->
+                                            [not(text()[1] = ancestor::functionDefinition[visibleType[matches(text()[1], "^public$|^external$")] or not(visibleType)]//parameter/identifier/text())]
+                                            <!-- nor internal or private function argument with memory visibility modifier -->
+                                            [not(text()[1] = ancestor::functionDefinition[visibleType[matches(text()[1], "^private$|^internal$")]]//parameter[storageLocation/text() = "memory"]/identifier/text())]
+                                            <!-- nor copied to local variable with memory visibility modifier -->
+                                            [not(text()[1] = ancestor::functionDefinition//variableDeclaration[storageLocation/text() = "memory"]/identifier/text())]
+                                        ]/expression[1]//identifier/text()[1])
+                                ]
+                        ]
                 </XPath>
             </Pattern>
-            <!-- Looks for construction: "for (<counter is initialized as name.length>; <counter is bigger than anything>; ...)". -->
-            <!-- Фиксирует конструкцию: "for (<инициализация счетчика name.length>; <счетчик больше чем что угодно>; ...)". -->
+            <!-- Looks for construction: "for (<counter is initialized as zero>; <counter is lower than name.length>; ...)", name in memory. -->
+            <!-- Фиксирует конструкцию: "for (<инициализация счетчика нулём>; <счетчик меньше чем name.length>; ...)" name находится в memory. -->
+            <Pattern patternId="4b7do5">
+                <Categories>
+                    <Category>Solidity</Category>
+                </Categories>
+                <Severity>1</Severity>
+                <XPath>
+                    //forStatement
+                        [   <!-- i = 0; -->
+                            expression[1][text()[1] = "="]/expression[2]//numberLiteral/decimalNumber[text()[1] = "0"]
+                            <!-- uint i = 0; -->
+                            or expression[1]/variableDeclaration[text()[1] = "="]/expression//numberLiteral/decimalNumber[text()[1] = "0"]
+                            <!-- uint i; -->
+                            or expression[1]/variableDeclaration[not(text()[1] = "=")]
+                        ]
+                        [   <!-- ".length" in condition and base is in memory -->
+                            condition/expression[matches(text()[1], "&lt;|&lt;=")]/expression[2][text()[1] = ".length"]/expression/primaryExpression/identifier
+                                [   <!-- and array is either public or external function argument -->
+                                    text()[1] = ancestor::functionDefinition[visibleType[matches(text()[1], "^public$|^external$")] or not(visibleType)]//parameter/identifier/text()
+                                    <!-- or internal or private function argument with memory visibility modifier -->
+                                    or text()[1] = ancestor::functionDefinition[visibleType[matches(text()[1], "^private$|^internal$")]]//parameter[storageLocation/text() = "memory"]/identifier/text()
+                                    <!-- or copied to local variable with memory visibility modifier -->
+                                    or text()[1] = ancestor::functionDefinition//variableDeclaration[storageLocation/text() = "memory"]/identifier/text()
+                                ]
+                            <!-- may be a variable in condition and it is ... -->
+                            or condition/expression[matches(text()[1], "&lt;|&lt;=")]/expression[2]/primaryExpression/identifier
+                                [   <!-- new variable with memory array length -->
+                                    text()[1] = (ancestor::functionDefinition//variableDeclaration[text()[1] = "="]
+                                        [expression[text()[1] = ".length"]/expression/primaryExpression/identifier
+                                            [   <!-- and array is either public or external function argument -->
+                                                text()[1] = ancestor::functionDefinition[visibleType[matches(text()[1], "^public$|^external$")] or not(visibleType)]//parameter/identifier/text()
+                                                <!-- or internal or private function argument with memory visibility modifier -->
+                                                or text()[1] = ancestor::functionDefinition[visibleType[matches(text()[1], "^private$|^internal$")]]//parameter[storageLocation/text() = "memory"]/identifier/text()
+                                                <!-- or copied to local variable with memory visibility modifier -->
+                                                or text()[1] = ancestor::functionDefinition//variableDeclaration[storageLocation/text() = "memory"]/identifier/text()
+                                            ]
+                                        ]/identifier/text()[1])
+                                    <!-- or reused variable with memory array length -->
+                                    or text()[1] = (ancestor::functionDefinition//expression[text()[1] = "="]
+                                        [expression[2][text()[1] = ".length"]/expression/primaryExpression/identifier
+                                            [   <!-- and array is either public or external function argument -->
+                                                text()[1] = ancestor::functionDefinition[visibleType[matches(text()[1], "^public$|^external$")] or not(visibleType)]//parameter/identifier/text()
+                                                <!-- or internal or private function argument with memory visibility modifier -->
+                                                or text()[1] = ancestor::functionDefinition[visibleType[matches(text()[1], "^private$|^internal$")]]//parameter[storageLocation/text() = "memory"]/identifier/text()
+                                                <!-- or copied to local variable with memory visibility modifier -->
+                                                or text()[1] = ancestor::functionDefinition//variableDeclaration[storageLocation/text() = "memory"]/identifier/text()
+                                            ]
+                                        ]/expression[1]//identifier/text()[1])
+                                ]
+                        ]
+                </XPath>
+            </Pattern>
+            <!-- Looks for construction: "for (<counter is initialized as name.length>; <counter is bigger than anything>; ...)", name is not in memory. -->
+            <!-- Фиксирует конструкцию: "for (<инициализация счетчика name.length>; <счетчик больше чем что угодно>; ...)", name не находится в memory. -->
             <Pattern patternId="12cf32">
                 <Categories>
                     <Category>Solidity</Category>
@@ -572,9 +898,46 @@
                 <Severity>2</Severity>
                 <XPath>
                     //forStatement
-                    [expression[1][text()[1]="="]/expression[2][text()[1]=".length"]
-                        or expression[1]/variableDeclaration[text()[1]="="]/expression[text()[1]=".length"]]
-                    [condition/expression[matches(text()[1],"&gt;|&gt; =")]]
+                        [
+                            (   <!-- either reused variable with .length in pre-condition -->
+                                expression[1][text()[1] = "="]/expression[2][text()[1] = ".length"]/expression/primaryExpression/identifier
+                                <!-- or new variable with .length in pre-condition -->
+                                | expression[1]/variableDeclaration[text()[1] = "="]/expression[text()[1] = ".length"]/expression/primaryExpression/identifier
+                            )
+                            <!-- and array is neither public or external function argument -->
+                            [not(text()[1] = ancestor::functionDefinition[visibleType[matches(text()[1], "^public$|^external$")] or not(visibleType)]//parameter/identifier/text())]
+                            <!-- nor internal or private function argument with memory visibility modifier -->
+                            [not(text()[1] = ancestor::functionDefinition[visibleType[matches(text()[1], "^private$|^internal$")]]//parameter[storageLocation/text() = "memory"]/identifier/text())]
+                            <!-- nor copied to local variable with memory visibility modifier -->
+                            [not(text()[1] = ancestor::functionDefinition//variableDeclaration[storageLocation/text() = "memory"]/identifier/text())]
+                        ]
+                        [condition/expression[matches(text()[1], "&gt;|&gt;=")]]
+                </XPath>
+            </Pattern>
+            <!-- Looks for construction: "for (<counter is initialized as name.length>; <counter is bigger than anything>; ...)", name is in memory. -->
+            <!-- Фиксирует конструкцию: "for (<инициализация счетчика name.length>; <счетчик больше чем что угодно>; ...)", name находится в memory. -->
+            <Pattern patternId="v5j3d9">
+                <Categories>
+                    <Category>Solidity</Category>
+                </Categories>
+                <Severity>1</Severity>
+                <XPath>
+                    //forStatement
+                    [
+                        (   <!-- either reused variable with .length in pre-condition -->
+                            expression[1][text()[1] = "="]/expression[2][text()[1] = ".length"]/expression/primaryExpression/identifier
+                            <!-- or new variable with .length in pre-condition -->
+                            | expression[1]/variableDeclaration[text()[1] = "="]/expression[text()[1] = ".length"]/expression/primaryExpression/identifier
+                        )
+                        [   <!-- and array is either public or external function argument -->
+                            text()[1] = ancestor::functionDefinition[visibleType[matches(text()[1], "^public$|^external$")] or not(visibleType)]//parameter/identifier/text()
+                            <!-- or internal or private function argument with memory visibility modifier -->
+                            or text()[1] = ancestor::functionDefinition[visibleType[matches(text()[1], "^private$|^internal$")]]//parameter[storageLocation/text() = "memory"]/identifier/text()
+                            <!-- or copied to local variable with memory visibility modifier -->
+                            or text()[1] = ancestor::functionDefinition//variableDeclaration[storageLocation/text() = "memory"]/identifier/text()
+                        ]
+                    ]
+                    [condition/expression[matches(text()[1], "&gt;|&gt;=")]]
                 </XPath>
             </Pattern>
             <!-- Looks for construction: "while (<condition>)" where <condition> doesn't include function call or specific expression with number. -->
@@ -585,7 +948,11 @@
                 </Categories>
                 <Severity>1</Severity>
                 <XPath>
-                    //whileStatement/condition[not(descendant-or-self::functionCall) and not(expression/expression/primaryExpression/numberLiteral/decimalNumber)]
+                    //whileStatement/condition
+                        [
+                            not(descendant-or-self::functionCall)
+                            and not(expression/expression/primaryExpression/numberLiteral/decimalNumber)
+                        ]
                 </XPath>
             </Pattern>
             <!-- Looks for construction: "while (<function call>)".-->
@@ -604,7 +971,7 @@
     <Rule>
         <RuleId>SOLIDITY_INCORRECT_BLOCKHASH</RuleId>
         <Patterns>
-            <!-- Looks for incorrect use of blockhash: blockhash(<number>), bloblockhash(block.number). -->
+            <!-- Looks for incorrect use of blockhash: blockhash(<number>), blockhash(block.number). -->
             <!-- Фиксирует неправильное использование blockhash: blockhash(число), blockhash(block.number) - не известен хэш текущего блока, blockhash(block.number минус число больше 256) - храняться хэши только последних 256 блоков. -->
             <Pattern patternId="b629ad">
                 <Categories>
@@ -613,14 +980,18 @@
                 <Severity>2</Severity>
                 <XPath>
                     //environmentalVariable
-                        [matches(text()[1],"block.blockhash")]
+                        [matches(text()[1], "^block\.blockhash\($|^blockhash\($")]
                     /expression
-                        [primaryExpression/numberLiteral/decimalNumber 
-                        or environmentalVariable[text()[1]="block.number"] 
-                        or (expression[1]/environmentalVariable[text()[1]="block.number"] 
-                            and plusminusOperator 
-                            and expression[2]/primaryExpression/numberLiteral/decimalNumber
-                                [text()[1] > 256])]
+                        [
+                            primaryExpression/numberLiteral/decimalNumber
+                            or environmentalVariable[text()[1] = "block.number"]
+                            or (
+                                expression[1]/environmentalVariable[text()[1] = "block.number"]
+                                and plusminusOperator
+                                and expression[2]/primaryExpression/numberLiteral/decimalNumber
+                                    [text()[1] > 256]
+                            )
+                        ]
                 </XPath>
             </Pattern>
         </Patterns>
@@ -628,18 +999,28 @@
     <Rule>
         <RuleId>SOLIDITY_LOCKED_MONEY</RuleId>
         <Patterns>
-            <!-- Looks for situations, where there is a payable function in the contract, however there is no "suicide", "selfdestruct", "transfer", "send", or ".value". -->
-            <!-- Фиксируются ситуации, когда в контракте имеется функция типа payable, но нет функций "suicide", "selfdestruct", "transfer", "send", ".value". -->
+            <!-- Looks for situations, where there is a payable function in the contract, however there is no "suicide", "selfdestruct", "delegatecall", "transfer", "send", or ".value". -->
+            <!-- Фиксируются ситуации, когда в контракте имеется функция типа payable, но нет функций "suicide", "selfdestruct", "delegatecall", "transfer", "send", ".value". -->
             <Pattern patternId="30281d">
                 <Categories>
                     <Category>Solidity</Category>
                 </Categories>
                 <Severity>3</Severity>
                 <XPath>
-                    //contractDefinition[contractPartDefinition[functionDefinition/stateMutability/payableType or functionFallBackDefinition/stateMutability/payableType]]
-                    [not(contractPartDefinition/functionDefinition/block//functionCall/functionName//identifier[matches(text()[1],"^suicide|selfdestruct$")])]
-                    [not(contractPartDefinition/functionDefinition/block//functionCall/functionName//identifier[matches(text()[1],"^transfer|send$")])]
-                    [not(contractPartDefinition/functionDefinition/block//functionCall/value)]
+                    //contractDefinition
+                        [contractPartDefinition
+                            [
+                                functionDefinition/stateMutability/payableType
+                                or functionFallBackDefinition/stateMutability/payableType
+                            ]
+                        ]
+                        [not(contractPartDefinition/functionDefinition/block//functionCall/functionName//identifier
+                            [matches(text()[1], "^suicide$|^selfdestruct$")])]
+                        [not(contractPartDefinition/functionDefinition/block//functionCall/functionName//identifier
+                            [matches(text()[1], "^transfer$|^send$")])]
+                        [not(contractPartDefinition/functionDefinition/block//functionCall/functionName//identifier
+                            [matches(text()[1], "^delegatecall$")])]
+                        [not(contractPartDefinition/functionDefinition/block//functionCall/value)]
                 </XPath>
             </Pattern>
         </Patterns>
@@ -656,11 +1037,13 @@
                 <Severity>1</Severity>
                 <XPath>
                     //expression
-                        [expression[1]/environmentalVariable[text()[1]="msg.value"]]
-                        [comparison[text()[1]="=="]]
-                        [expression[2]/primaryExpression//decimalNumber[text()[1]="0"]]
-                        [not(ancestor::functionDefinition[text()[1]="constructor"])]
-                        [not(ancestor::functionDefinition/identifier[text()[1]=(ancestor::contractDefinition/identifier)])]
+                        [expression[1]/environmentalVariable[text()[1] = "msg.value"]]
+                        [comparison[text()[1] = "=="]]
+                        [expression[2]/primaryExpression//decimalNumber[text()[1] = "0"]]
+                        [not(ancestor::functionDefinition[text()[1] = "constructor"])]
+                        [not(ancestor::functionDefinition/identifier[text()[1]
+                            = (ancestor::contractDefinition/identifier)])
+                        ]
                 </XPath>
             </Pattern>
         </Patterns>
@@ -678,12 +1061,20 @@
                 <XPath>
                     //functionDefinition
                         [parameterList/parameter]
-                        [identifier[text()[1]="onlyOwner"] or identifier[text()[1]="onlyOwner()"] or
-                         descendant::expression[comparison[text()[1]="=="]]
-                                [expression/environmentalVariable[text()[1]="msg.sender"]]
-                                [expression/primaryExpression/identifier[text()[1]=(ancestor::contractDefinition
-                                //stateVariableDeclaration[typeName/elementaryTypeName[text()[1]="address"]]/identifier)]]]
-                        [identifier[matches(text()[1],"^set|^init")]]
+                        [
+                            identifier[text()[1] = "onlyOwner"]
+                            or identifier[text()[1] = "onlyOwner()"]
+                            or descendant::expression
+                                [comparison[text()[1] = "=="]]
+                                [expression/environmentalVariable[text()[1] = "msg.sender"]]
+                                [expression/primaryExpression/identifier
+                                    [text()[1] =
+                                        ancestor::contractDefinition//stateVariableDeclaration
+                                            [typeName/elementaryTypeName[text()[1] = "address"]]/identifier/text()[1]
+                                    ]
+                                ]
+                        ]
+                        [identifier[matches(text()[1], "^set|^init")]]
                 </XPath>
             </Pattern>
         </Patterns>
@@ -698,7 +1089,9 @@
                     <Category>Solidity</Category>
                 </Categories>
                 <Severity>1</Severity>
-                <XPath>//pragmaDirective/pragmaSolidity//versionOperator</XPath>
+                <XPath>
+                    //pragmaDirective/pragmaSolidity//versionOperator
+                </XPath>
             </Pattern>
         </Patterns>
     </Rule>
@@ -712,7 +1105,9 @@
                     <Category>Solidity</Category>
                 </Categories>
                 <Severity>1</Severity>
-                <XPath>//stateVariableDeclaration/visibleType[text()[1]="private"]</XPath>
+                <XPath>
+                    //stateVariableDeclaration/visibleType[text()[1] = "private"]
+                </XPath>
             </Pattern>
         </Patterns>
     </Rule>
@@ -727,8 +1122,11 @@
                 </Categories>
                 <Severity>1</Severity>
                 <XPath>
-                    //sourceUnit[pragmaDirective/pragmaSolidity/version[versionLiteral &gt;= "0.4.0"]]/contractDefinition/contractPartDefinition/functionFallBackDefinition/block[count(descendant-or-self::statement)=1]
-                    [statement/throwRevertStatement]
+                    //sourceUnit
+                        [pragmaDirective/pragmaSolidity/version[versionLiteral &gt;= "0.4.0"]]
+                        /contractDefinition/contractPartDefinition/functionFallBackDefinition/block
+                            [count(descendant-or-self::statement) = 1]
+                            [statement/throwRevertStatement]
                 </XPath>
             </Pattern>
         </Patterns>
@@ -743,9 +1141,37 @@
                     <Category>Solidity</Category>
                 </Categories>
                 <Severity>1</Severity>
-                <TruePositiveRate>3</TruePositiveRate>
                 <XPath>
                     //ifStatement[statement[not(descendant::ifStatement)]//throwRevertStatement]
+                </XPath>
+            </Pattern>
+        </Patterns>
+    </Rule>
+    <Rule>
+        <RuleId>SOLIDITY_REWRITE_ON_ASSEMBLY_CALL</RuleId>
+        <Patterns>
+            <!-- Looks for assembly CALL family instruction, which rewrites the input with the output. -->
+            <!-- Фиксирует вызов инструкции семейства CALL, которая перезаписывает входные данные возвращаемыми. -->
+            <Pattern patternId="f34j6k">
+                <Categories>
+                    <Category>Solidity</Category>
+                </Categories>
+                <Severity>2</Severity>
+                <XPath>
+                    //assemblyItem
+                        [
+                            assemblyLocalDefinition/assemblyExpression/assemblyCall
+                                [
+                                    count(assemblyExpression) = 6
+                                    and assemblyExpression[3]/assemblyCall/identifier/text()[1]
+                                        = assemblyExpression[5]/assemblyCall/identifier/text()[1]
+                                    or count(assemblyExpression) = 7
+                                    and assemblyExpression[4]/assemblyCall/identifier/text()[1]
+                                        = assemblyExpression[6]/assemblyCall/identifier/text()[1]
+                                ]
+                            /identifier
+                                [matches(text()[1], "^call$|^staticcall$|^callcode$|^delegatecall$")]
+                        ]
                 </XPath>
             </Pattern>
         </Patterns>
@@ -761,7 +1187,7 @@
                 </Categories>
                 <Severity>1</Severity>
                 <XPath>
-                    //usingForDeclaration[identifier[matches(text()[1],"^SafeMath$","i")]]
+                    //usingForDeclaration[identifier[matches(text()[1], "^SafeMath$", "i")]]
                 </XPath>
             </Pattern>
         </Patterns>
@@ -769,18 +1195,54 @@
     <Rule>
         <RuleId>SOLIDITY_SEND</RuleId>
         <Patterns>
-            <!-- Looks for using of send function in the following cases: if (<addr>.send()){revert() or throw}, and require or assert with send as an argument. -->
-            <!-- Фиксируется использование функции send, в случаях: if (..send()){revert() или throw}, и require или assert от send. -->
+            <!-- Looks for using of send function in the following cases: if (<addr>.send(value)){revert() or throw}, and require or assert with send as an argument. -->
+            <!-- Фиксируется использование функции send, в случаях: if (<addr>.send(value)){revert() или throw}, и require или assert от send. -->
             <Pattern patternId="430636">
                 <Categories>
                     <Category>Solidity</Category>
                 </Categories>
                 <Severity>1</Severity>
                 <XPath>
-                    //functionCall
-                        [functionName/identifier[text()[1]="send"]]
-                        [ancestor::ifStatement/statement/block/statement/throwRevertStatement or
-                         ancestor::functionCall/functionName/identifier[matches(text()[1],"require|assert")]]
+                    //expression
+                        [text()[1] = "."]
+                        [not(expression[1]/typeConversion/typeName/elementaryTypeName[matches(text()[1], "^address$|^address payable$")])]
+                        /functionCall
+                            [functionName/identifier[text()[1] = "send"]]
+                            [callArguments/tupleExpression[count(expression) = 1]]
+                            [
+                                ancestor::condition
+                                    [expression/text()[1] = "!"]
+                                    /parent::ifStatement/statement/block/statement/throwRevertStatement
+                                or ancestor::functionCall
+                                    [not(callArguments/tupleExpression/expression/text()[1] = "!")]
+                                    /functionName/identifier
+                                        [matches(text()[1], "^require$|^assert$")]
+                            ]
+                </XPath>
+            </Pattern>
+            <!-- Looks for using of send function in the following cases: if (address[ payable](<addr>).send(value)){revert() or throw}, and require or assert with send as an argument. -->
+            <!-- Фиксируется использование функции send, в случаях: if (address[ payable](<addr>).send(value)){revert() или throw}, и require или assert от send. -->
+            <Pattern patternId="we5gu5">
+                <Categories>
+                    <Category>Solidity</Category>
+                </Categories>
+                <Severity>1</Severity>
+                <XPath>
+                    //expression
+                        [text()[1] = "."]
+                        [expression[1]/typeConversion/typeName/elementaryTypeName[matches(text()[1], "^address$|^address payable$")]]
+                        /functionCall
+                            [functionName/identifier[text()[1] = "send"]]
+                            [callArguments/tupleExpression[count(expression) = 1]]
+                            [
+                                ancestor::condition
+                                    [expression/text()[1] = "!"]
+                                    /parent::ifStatement/statement/block/statement/throwRevertStatement
+                                or ancestor::functionCall
+                                    [not(callArguments/tupleExpression/expression/text()[1] = "!")]
+                                    /functionName/identifier
+                                        [matches(text()[1], "^require$|^assert$")]
+                            ]
                 </XPath>
             </Pattern>
         </Patterns>
@@ -794,21 +1256,24 @@
                 </Categories>
                 <Severity>1</Severity>
                 <XPath>
-                    //functionDefinition[stateMutability/pureType and block/descendant-or-self::*[
-                    <!--Accessing <address>.balance: using .balance-->
-                    expression[matches(text()[1],".balance")]
-                    <!--Accessing any of the members of block, tx, msg (with the exception of msg.sig and msg.data)-->
-                    or environmentalVariable[matches(text()[1],"msg.value|msg.gas|msg.sender|block.timestamp|tx.origin|block.blockhash|block.coinbase|block.difficulty|block.gaslimit|block.number|block.blockhash|block.coinbase|tx.gasprice")]
-                    <!--Using selfdestruct and it's alias suicide:-->
-                    or functionCall/functionName//identifier[matches(text()[1],"^selfdestruct|suicide$")]
-                    <!--Sending Ether via calls:-->
-                    or functionCall/functionName//identifier[matches(text()[1],"^send|transfer$")]
-                    <!--Using low-level calls:-->
-                    or functionCall/functionName//identifier[matches(text()[1],"^call|delegatecall|callcode$")]
-                    <!--Using inline assembly that contains certain opcodes:-->
-                    or inlineAssemblyStatement
-                    ]
-                    ]
+                    //functionDefinition
+                        [
+                            stateMutability/pureType
+                            and block/descendant-or-self::*
+                                [   <!--Accessing <address>.balance: using .balance-->
+                                    expression[matches(text()[1], "\.balance")]
+                                    <!--Accessing any of the members of block, tx, msg (with the exception of msg.sig and msg.data)-->
+                                    or environmentalVariable[matches(text()[1], "msg\.value|msg\.gas|msg\.sender|block\.timestamp|tx\.origin|block\.blockhash|block\.coinbase|block\.difficulty|block\.gaslimit|block\.number|block\.blockhash|block\.coinbase|tx\.gasprice")]
+                                    <!--Using selfdestruct and it's alias suicide:-->
+                                    or functionCall/functionName//identifier[matches(text()[1], "^selfdestruct$|^suicide$")]
+                                    <!--Sending Ether via calls:-->
+                                    or functionCall/functionName//identifier[matches(text()[1], "^send$|^transfer$")]
+                                    <!--Using low-level calls:-->
+                                    or functionCall/functionName//identifier[matches(text()[1], "^call$|^delegatecall$|^callcode$")]
+                                    <!--Using inline assembly that contains certain opcodes:-->
+                                    or inlineAssemblyStatement
+                                ]
+                        ]
                 </XPath>
             </Pattern>
         </Patterns>
@@ -826,17 +1291,20 @@
                 <!--Creating other contracts - лучше сделать через флаги-->
                 <!--Calling any function not marked view or pure:- лучше сделать через флаги-->
                 <XPath>
-                    //functionDefinition[stateMutability/viewType and block/descendant-or-self::*[
-                        <!--Using selfdestruct and it's alias suicide:-->
-                        functionCall/functionName//identifier[matches(text()[1],"^selfdestruct|suicide$")]
-                        <!--Sending Ether via calls:-->
-                        or functionCall/functionName//identifier[matches(text()[1],"^send|transfer$")]
-                        <!--Using low-level calls:-->
-                        or functionCall/functionName//identifier[matches(text()[1],"^call|delegatecall|callcode$")]
-                        <!--Using inline assembly that contains certain opcodes:-->
-                        or inlineAssemblyStatement
-                    ]
-                    ]
+                    //functionDefinition
+                        [
+                            stateMutability/viewType
+                            and block/descendant-or-self::*
+                                [   <!--Using selfdestruct and it's alias suicide:-->
+                                    functionCall/functionName//identifier[matches(text()[1], "^selfdestruct$|^suicide$")]
+                                    <!--Sending Ether via calls:-->
+                                    or functionCall/functionName//identifier[matches(text()[1], "^send$|^transfer$")]
+                                    <!--Using low-level calls:-->
+                                    or functionCall/functionName//identifier[matches(text()[1], "^call$|^delegatecall$|^callcode$")]
+                                    <!--Using inline assembly that contains certain opcodes:-->
+                                    or inlineAssemblyStatement
+                                ]
+                        ]
                 </XPath>
             </Pattern>
         </Patterns>
@@ -844,31 +1312,54 @@
     <Rule>
         <RuleId>SOLIDITY_SHOULD_RETURN_STRUCT</RuleId>
         <Patterns>
-            <!-- Looks for internal and private functions with more than one input parameter (Solidity version prior to 0.5.0). -->
-            <!-- Фиксируются internal или private функции, у которых больше одного выходного параметра (pragma < 0.5.0). -->
+            <!-- Looks for internal and private functions with more than 3 input parameters (Solidity version prior to 0.5.0). -->
+            <!-- Фиксируются internal или private функции, у которых больше 3 выходных параметров (pragma < 0.5.0). -->
             <Pattern patternId="7d54ca">
                 <Categories>
                     <Category>Solidity</Category>
                 </Categories>
                 <Severity>1</Severity>
                 <XPath>
-                    /sourceUnit[not(pragmaDirective//versionLiteral[matches(text()[1],"\.[5-9]\.|^[1-9]")]
-                                 or pragmaDirective/pragmaExperimental//stringLiteral[text()[1]="ABIEncoderV2"])]
-                    //functionDefinition[visibleType[matches(text()[1],"internal|private")]]
-                    /returnsParameters/parameterList[count(parameter)>1]
+                    /sourceUnit
+                        [
+                            not(pragmaDirective//versionLiteral
+                                [matches(text()[1], "^0\.\s*[5-9]\s*\.|^0\.\s*[0-9]{2,}\s*\.|^[1-9]")])
+                            and not(pragmaDirective/pragmaExperimental//stringLiteral
+                                [text()[1] = "ABIEncoderV2"])
+                        ]
+                        //functionDefinition[visibleType[matches(text()[1], "internal|private")]]
+                        /returnsParameters/parameterList[count(parameter) > 3]
                 </XPath>
             </Pattern>
-            <!-- Looks for functions with more than one output parameter (only in files with Solidity version 0.5.0 and newer or pragma experimental). -->
-            <!-- Фиксируются функции, у которых больше одного выходного параметра (pragma >= 0.5.0 или pragma experimental). -->
+            <!-- Looks for functions with more than 3 output parameters (only in files with Solidity version 0.5.0 and newer or pragma experimental). -->
+            <!-- Фиксируются функции, у которых больше 3 выходных параметров (pragma >= 0.5.0 или pragma experimental). -->
             <Pattern patternId="83hf3l">
                 <Categories>
                     <Category>Solidity</Category>
                 </Categories>
                 <Severity>1</Severity>
                 <XPath>
-                    /sourceUnit[pragmaDirective//versionLiteral[matches(text()[1],"\.[5-9]\.|^[1-9]")]
-                                 or pragmaDirective/pragmaExperimental//stringLiteral[text()[1]="ABIEncoderV2"]]
-                    //functionDefinition/returnsParameters/parameterList[count(parameter)>1]
+                    /sourceUnit
+                        [
+                            pragmaDirective//versionLiteral
+                                [matches(text()[1], "^0\.\s*[5-9]\s*\.|^0\.\s*[0-9]{2,}\s*\.|^[1-9]")]
+                            or pragmaDirective/pragmaExperimental//stringLiteral
+                                [text()[1] = "ABIEncoderV2"]
+                        ]
+                        //functionDefinition/returnsParameters/parameterList[count(parameter) > 3]
+                </XPath>
+            </Pattern>
+            <!-- Looks for function calls with multiple assignment. -->
+            <!-- Фиксируются вызовы функций с множественным присваиванием. -->
+            <Pattern patternId="e5gh7l">
+                <Categories>
+                    <Category>Solidity</Category>
+                </Categories>
+                <Severity>1</Severity>
+                <XPath>
+                    //expression[text()[1] = "="]
+                        [expression[1]/tupleExpression[count(expression) > 3]]
+                        [expression[2]/functionCall]
                 </XPath>
             </Pattern>
         </Patterns>
@@ -887,8 +1378,8 @@
                     //statement
                         [forStatement or whileStatement or doWhileStatement]
                         [descendant::functionCall
-                            [functionName/identifier[text()[1]='transfer']]
-                            [callArguments/tupleExpression[count(expression)=1]]
+                            [functionName/identifier[text()[1] = "transfer"]]
+                            [callArguments/tupleExpression[count(expression) = 1]]
                         ]
                 </XPath>
             </Pattern>
@@ -904,7 +1395,16 @@
                     <Category>Solidity</Category>
                 </Categories>
                 <Severity>2</Severity>
-                <XPath>//environmentalVariable[matches(text()[1],"^tx.origin$")]/parent::*[parent::*[not(comparison and expression/environmentalVariable[matches(text()[1],"^msg.sender$")])]]</XPath>
+                <XPath>
+                    //environmentalVariable
+                        [matches(text()[1], "^tx\.origin$")]
+                        /parent::*
+                            [parent::*
+                                [not(comparison
+                                    and expression/environmentalVariable[matches(text()[1], "^msg\.sender$")])
+                                ]
+                            ]
+                </XPath>
             </Pattern>
         </Patterns>
     </Rule>
@@ -918,14 +1418,18 @@
                     <Category>Solidity</Category>
                 </Categories>
                 <Severity>3</Severity>
-                <TruePositiveRate>3</TruePositiveRate>
                 <XPath>
-                    //statement/(forStatement|whileStatement|doWhileStatement)/condition
-                    /expression[text()[1]=">="]
-                    [expression[2]/primaryExpression//decimalNumber[text()[1]="0"]]
-                    [expression[1]/primaryExpression/identifier
-                    [text()[1]=(ancestor::functionDefinition//variableDeclaration
-                    [typeName/elementaryTypeName[matches(text()[1],"uint")]]/identifier)]]
+                    //(forStatement | whileStatement | doWhileStatement)
+                        /condition/expression
+                            [text()[1] = ">="]
+                            [expression[2]/primaryExpression//decimalNumber[text()[1] = "0"]]
+                            [expression[1]/primaryExpression/identifier
+                                [text()[1]
+                                    = ancestor::functionDefinition//variableDeclaration
+                                        [typeName/elementaryTypeName[matches(text()[1], "uint")]]
+                                        /identifier/text()[1]
+                                ]
+                            ]
                 </XPath>
             </Pattern>
             <!-- Looks for construction: "...>=0" for uint variables and structure's members of uint type-->
@@ -935,23 +1439,22 @@
                     <Category>Solidity</Category>
                 </Categories>
                 <Severity>2</Severity>
-                <TruePositiveRate>3</TruePositiveRate>
                 <XPath>
-                    //expression[text()[1]=">="]
-                    [expression[2]/primaryExpression//decimalNumber[text()[1]="0"]]
-                    [expression[1]/primaryExpression/identifier
-                    [text()[1]=(ancestor::functionDefinition//variableDeclaration
-                    [typeName/elementaryTypeName[matches(text()[1],"uint")]]/identifier)
-                    or text()[1]=(ancestor::contractDefinition//stateVariableDeclaration
-                    [typeName/elementaryTypeName[matches(text()[1],"uint")]]/identifier)
-                    or text()[1]=(ancestor::contractDefinition//structDefinition/variableDeclaration
-                    [typeName/elementaryTypeName[matches(text()[1],"uint")]]/identifier)]]
-                    |
-                    //expression[text()[1]=">="]
-                    [expression[2]/primaryExpression//decimalNumber[text()[1]="0"]]
-                    [expression[1]/identifier
-                    [text()[1]=(ancestor::contractDefinition//structDefinition/variableDeclaration
-                    [typeName/elementaryTypeName[matches(text()[1],"uint")]]/identifier)]]
+                    //expression
+                        [text()[1] = ">="]
+                        [expression[2]/primaryExpression//decimalNumber[text()[1] = "0"]]
+                        [expression[1]/(primaryExpression/identifier | identifier)
+                            [
+                                text()[1]
+                                    = ancestor::functionDefinition//variableDeclaration
+                                        [typeName/elementaryTypeName[matches(text()[1], "uint")]]
+                                        /identifier/text()[1]
+                                or text()[1]
+                                    = ancestor::contractDefinition//(structDefinition/variableDeclaration | stateVariableDeclaration)
+                                        [typeName/elementaryTypeName[matches(text()[1], "uint")]]
+                                        /identifier/text()[1]
+                            ]
+                        ]
                 </XPath>
             </Pattern>
             <!-- Looks for construction: "...>=0" only for mappings of type: (...=>uint). -->
@@ -961,14 +1464,17 @@
                     <Category>Solidity</Category>
                 </Categories>
                 <Severity>2</Severity>
-                <TruePositiveRate>3</TruePositiveRate>
                 <XPath>
-                    //expression[text()[1]=">="]
-                    [expression[2]//decimalNumber[text()[1]="0"]]
-                    [expression[1]/expression[1]//identifier
-                    [text()[1]=(ancestor::contractDefinition//stateVariableDeclaration
-                    [typeName/mappingSt/typeName[2]/elementaryTypeName[matches(text()[1],"uint")]]
-                    /identifier)]]
+                    //expression
+                        [text()[1]=">="]
+                        [expression[2]//decimalNumber[text()[1] = "0"]]
+                        [expression[1]/expression[1]//identifier
+                            [text()[1]
+                                = ancestor::contractDefinition//stateVariableDeclaration
+                                    [typeName/mappingSt/typeName[2]/elementaryTypeName[matches(text()[1],"uint")]]
+                                    /identifier/text()[1]
+                            ]
+                        ]
                 </XPath>
             </Pattern>
         </Patterns>
@@ -985,17 +1491,43 @@
                 <Severity>3</Severity>
                 <XPath>
                     //functionCall
-                        [functionName//identifier[matches(text()[1],"call|delegatecall|send|callcode")]
-                        and not(ancestor::ifStatement)
-                        and not(ancestor::returnStatement)
-                        and not(ancestor::functionCall)
-                        and not(ancestor::variableDeclarationStatement)
-                        and not(ancestor::expression and ancestor::expression[text()[1] = "=" or lvalueOperator])
-                    ]
+                        [
+                            functionName//identifier
+                                [matches(text()[1], "^call$|^delegatecall$|^send$|^callcode$")]
+                            and not(ancestor::ifStatement)
+                            and not(ancestor::returnStatement)
+                            and not(ancestor::functionCall)
+                            and not(ancestor::variableDeclarationStatement)
+                            and not(ancestor::expression and ancestor::expression[text()[1] = "=" or lvalueOperator])
+                        ]
                 </XPath>
             </Pattern>
         </Patterns>
-    </Rule>﻿
+    </Rule>
+    <Rule>
+        <RuleId>SOLIDITY_UNUSED_FUNCTION_SHOULD_BE_EXTERNAL</RuleId>
+        <Patterns>
+            <!-- Looks for functions with public visibility, which are not used in contract. -->
+            <!-- Фиксирует public функции, неиспользуемые в контракте. -->
+            <Pattern patternId="73ufc1">
+                <Categories>
+                    <Category>Solidity</Category>
+                </Categories>
+                <Severity>1</Severity>
+                <XPath>
+                    //(contractDefinition | libraryDefinition)//functionDefinition
+                        <!-- Looks for public visibility -->
+                        [visibleType[text()[1] = "public"]]
+                        <!-- check that there are no function calls in contract -->
+                        [identifier
+                            [not(text()[1]
+                                = ancestor::sourceUnit//functionCall/functionName/identifier/text()[1])
+                            ]
+                        ]
+                </XPath>
+            </Pattern>
+        </Patterns>
+    </Rule>
     <Rule>
         <RuleId>SOLIDITY_UPGRADE_TO_050</RuleId>
         <Patterns>
@@ -1047,10 +1579,15 @@
                     //functionDefinition
                         [not(visibleType) or visibleType[text()[1] != "external"]]
                         //parameter
-                            [typeName[text()[1]="[]"] 
-                            or typeName/elementaryTypeName[text()[1] = "bytes"
-                                                            or text()[1] = "string"]
-                            or typeName//identifier[text()[1] = (ancestor::contractDefinition//structDefinition/identifier)]]
+                            [
+                                typeName[text()[1] = "[]"]
+                                or typeName/elementaryTypeName
+                                    [text()[1] = "bytes" or text()[1] = "string"]
+                                or typeName//identifier
+                                    [text()[1]
+                                        = ancestor::contractDefinition//structDefinition/identifier/text()[1]
+                                    ]
+                            ]
                             [not(storageLocation)]
                 </XPath>
             </Pattern>
@@ -1064,10 +1601,15 @@
                 <XPath>
                     //functionDefinition
                         //variableDeclaration
-                            [typeName[text()[1]="[]"] 
-                            or typeName/elementaryTypeName[text()[1] = "bytes"
-                                                            or text()[1] = "string"]
-                            or typeName//identifier[text()[1] = (ancestor::contractDefinition//structDefinition/identifier)]]
+                            [
+                                typeName[text()[1] = "[]"]
+                                or typeName/elementaryTypeName
+                                    [text()[1] = "bytes" or text()[1] = "string"]
+                                or typeName//identifier
+                                    [text()[1]
+                                        = ancestor::contractDefinition//structDefinition/identifier/text()[1]
+                                    ]
+                            ]
                             [not(storageLocation)]
                 </XPath>
             </Pattern>
@@ -1085,8 +1627,12 @@
                 <Severity>1</Severity>
                 <XPath>
                     //statement/inlineAssemblyStatement/inlineAssemblyBlock
-                        [not(assemblyItem/assemblyAssignment[assemblyExpression/assemblyCall/identifier[matches(text()[1],"^extcodesize$")]])]
-                    /ancestor::inlineAssemblyStatement
+                        [not(assemblyItem/assemblyAssignment
+                            [assemblyExpression/assemblyCall/identifier
+                                [matches(text()[1], "^extcodesize$")]
+                            ])
+                        ]
+                        /ancestor::inlineAssemblyStatement
                 </XPath>
             </Pattern>
         </Patterns>
@@ -1101,7 +1647,10 @@
                     <Category>Solidity</Category>
                 </Categories>
                 <Severity>2</Severity>
-                <XPath>//varDeclaration[expression//primaryExpression/numberLiteral/decimalNumber[matches(text()[1],"^[0-9]+$")]]</XPath>
+                <XPath>
+                    //varDeclaration
+                        [expression//primaryExpression/numberLiteral/decimalNumber]
+                </XPath>
             </Pattern>
             <!-- Looks for variable declaration using "var". -->
             <!-- Фиксируется случаи определения переменных, как var имя переменной. -->
@@ -1110,7 +1659,9 @@
                     <Category>Solidity</Category>
                 </Categories>
                 <Severity>1</Severity>
-                <XPath>//varDeclaration[expression/primaryExpression/identifier]</XPath>
+                <XPath>
+                    //varDeclaration[expression/primaryExpression/identifier]
+                </XPath>
             </Pattern>
         </Patterns>
     </Rule>
@@ -1124,8 +1675,16 @@
                     <Category>Solidity</Category>
                 </Categories>
                 <Severity>2</Severity>
-                <TruePositiveRate>3</TruePositiveRate>
-                <XPath>//forStatement[expression[1]/varDeclaration][condition/expression/expression/primaryExpression[numberLiteral/decimalNumber[matches(text()[1],"^[0-9]+$")]&gt; 255]][expression[2]/twoPlusMinusOperator/incrementOperator]
+                <XPath>
+                    //forStatement
+                        [expression[1]/varDeclaration]
+                        [condition/expression/expression/primaryExpression
+                            [numberLiteral/decimalNumber
+                                [matches(text()[1], "^[0-9]+$")]
+                                &gt; 255
+                            ]
+                        ]
+                        [expression[2]/twoPlusMinusOperator/incrementOperator]
                 </XPath>
             </Pattern>
         </Patterns>
@@ -1140,7 +1699,10 @@
                     <Category>Solidity</Category>
                 </Categories>
                 <Severity>1</Severity>
-                <XPath>//interfaceDefinition/contractPartDefinition/(functionDefinition|functionFallBackDefinition)/visibleType[not(matches(text()[1],"^external$"))]
+                <XPath>
+                    //interfaceDefinition/contractPartDefinition
+                        /(functionDefinition | functionFallBackDefinition)
+                        /visibleType[not(matches(text()[1], "^external$"))]
                 </XPath>
             </Pattern>
             <!-- Looks for fallback function without explicit visibility declaration. -->
@@ -1150,7 +1712,9 @@
                     <Category>Solidity</Category>
                 </Categories>
                 <Severity>1</Severity>
-                <XPath>//(functionDefinition|functionFallBackDefinition)[not(visibleType)]</XPath>
+                <XPath>
+                    //(functionDefinition | functionFallBackDefinition)[not(visibleType)]
+                </XPath>
             </Pattern>
             <!-- Looks for fallback function that is neither external nor public. -->
             <!-- Фиксирует ситуацию, когда в контракте для fallback функции видимость не external или public. -->
@@ -1159,7 +1723,10 @@
                     <Category>Solidity</Category>
                 </Categories>
                 <Severity>1</Severity>
-                <XPath>//contractDefinition/contractPartDefinition/functionFallBackDefinition/visibleType[not(matches(text()[1],"^external|public$"))]</XPath>
+                <XPath>
+                    //contractDefinition/contractPartDefinition/functionFallBackDefinition/visibleType
+                        [not(matches(text()[1], "^external$|^public$"))]
+                </XPath>
             </Pattern>
             <!-- Looks for state variables without explicit visibility declaration. -->
             <!-- Фиксирует ситуацию, когда для переменной состояния не определена видимость. -->
@@ -1168,7 +1735,9 @@
                     <Category>Solidity</Category>
                 </Categories>
                 <Severity>1</Severity>
-                <XPath>//stateVariableDeclaration[not(visibleType)]</XPath>
+                <XPath>
+                    //stateVariableDeclaration[not(visibleType)]
+                </XPath>
             </Pattern>
             <!-- Looks for constructor with external or private visibility. -->
             <!-- Фиксирует ситуацию, когда у конструктора видимость external или private. -->
@@ -1178,7 +1747,9 @@
                 </Categories>
                 <Severity>1</Severity>
                 <XPath>
-                    //functionDefinition[text()[1]="constructor"][visibleType[text()[1]="external" or text()[1]="private"]]
+                    //functionDefinition
+                        [text()[1] = "constructor"]
+                        [visibleType[matches(text()[1], "^external$|^private$")]]
                 </XPath>
             </Pattern>
         </Patterns>
@@ -1194,11 +1765,21 @@
                 </Categories>
                 <Severity>2</Severity>
                 <XPath>
-                    //functionCall[callArguments//primaryExpression[contains(stringLiteral, "uint,")
-                        or contains(stringLiteral, "int,") or contains(stringLiteral, "uint)") or contains(stringLiteral, "int)")
-                            or contains(stringLiteral, "uint[") or contains(stringLiteral, "int[")]]
-                        [callArguments/tupleExpression/expression[1][typeConversion[typeName/elementaryTypeName[text()[1]="bytes4"]]
-                            [//functionCall[functionName/identifier[text()[1]="sha3" or text()[1]="keccak256"]]]]]
+                    //functionCall
+                        [callArguments//primaryExpression
+                            [
+                                contains(stringLiteral, "uint,")
+                                or contains(stringLiteral, "int,")
+                                or contains(stringLiteral, "uint)")
+                                or contains(stringLiteral, "int)")
+                                or contains(stringLiteral, "uint[")
+                                or contains(stringLiteral, "int[")
+                            ]
+                        ]
+                        [callArguments/tupleExpression/expression[1]
+                            [typeConversion[typeName/elementaryTypeName[text()[1] = "bytes4"]]]
+                            [//functionCall/functionName/identifier[matches(text()[1], "^sha3$|^keccak256$")]]
+                        ]
 
                 </XPath>
             </Pattern>
@@ -1210,12 +1791,22 @@
                 </Categories>
                 <Severity>2</Severity>
                 <XPath>
-                    //functionCall/callArguments[tupleExpression/expression[expression/primaryExpression/identifier[text()[1]="abi"]]
-                                   [functionCall/functionName/identifier[text()[1]="encodeWithSignature"]]
-                                    [functionCall//primaryExpression[contains(stringLiteral, 'uint)') or
-                                    contains(stringLiteral, 'int)') or contains(stringLiteral, 'uint,') or contains(stringLiteral, 'int,')
-                                    or contains(stringLiteral, "uint[") or contains(stringLiteral, "int[")]]
-                    ]
+                    //functionCall/callArguments
+                        [tupleExpression/expression
+                            [expression/primaryExpression/identifier[text()[1] = "abi"]]
+                            [functionCall/functionName/identifier[text()[1] = "encodeWithSignature"]]
+                            [
+                                functionCall//primaryExpression
+                                    [
+                                        contains(stringLiteral, "uint)")
+                                        or contains(stringLiteral, "int)")
+                                        or contains(stringLiteral, "uint,")
+                                        or contains(stringLiteral, "int,")
+                                        or contains(stringLiteral, "uint[")
+                                        or contains(stringLiteral, "int[")
+                                    ]
+                            ]
+                        ]
                 </XPath>
             </Pattern>
         </Patterns>
