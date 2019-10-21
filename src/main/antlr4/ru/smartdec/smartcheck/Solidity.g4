@@ -232,7 +232,7 @@ enumValue : identifier ;
 
 indexedParameterList : '(' (indexedParameter (',' indexedParameter)*)? ')' ;
 
-indexedParameter : typeName 'indexed'? identifier?;
+indexedParameter : typeName 'indexed'* identifier?;
 
 parameterList : '(' (parameter (',' parameter)*)? ')' ;
 

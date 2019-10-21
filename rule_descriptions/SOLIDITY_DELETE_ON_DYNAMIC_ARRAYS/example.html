@@ -1,0 +1,32 @@
+<p>
+В следующем контракте к динамическому массиву применяется <code>delete</code>:
+</p>
+<pre>
+<code>
+pragma solidity 0.5.8;
+
+contract C {
+    uint[] amounts;
+    address payable[] addresses;
+
+    function collect(address payable to) external payable {
+        amounts.push(msg.value);
+        addresses.push(to);
+    }
+
+    function pay() external {
+        uint length = amounts.length;
+
+        for (uint i = 0; i < length; i++) {
+            addresses[i].transfer(amounts[i]);
+        }
+
+        delete amounts;
+        delete addresses;
+    }
+}
+</code>
+</pre>
+<p>
+    При очень большом количестве элементов в массивах <code>amounts</code> и <code>addresses</code> работа контракта будет прекращена.
+</p>

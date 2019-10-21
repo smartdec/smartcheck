@@ -1,0 +1,1 @@
+Deletion of dynamically-sized storage array

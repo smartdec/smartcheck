@@ -1,0 +1,28 @@
+<p>
+    В следующем примере используются функции с уровнями видимости <code>public</code> и <code>external</code>:
+</p>
+<pre>
+<code>
+contract Token {
+
+    mapping (address => uint256) internal _balances;
+
+    function transfer_public(address to, uint256 value) public {
+        require(value <= _balances[msg.sender]);
+
+        _balances[msg.sender] -= value;
+        _balances[to] += value;
+    }
+
+    function transfer_external(address to, uint256 value) external {
+        require(value <= _balances[msg.sender]);
+
+        _balances[msg.sender] -= value;
+        _balances[to] += value;
+    }
+}
+</code>
+</pre>
+<p>
+    Вторая функция потребляет меньше газа при внешнем вызове.
+</p>
