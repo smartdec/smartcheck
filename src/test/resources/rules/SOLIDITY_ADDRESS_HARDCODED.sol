@@ -17,13 +17,9 @@ contract C {
         x = 0x123;
         // <yes> <report> SOLIDITY_ADDRESS_HARDCODED  f32db1
         x = address(342);
-        // <yes> <report> SOLIDITY_ADDRESS_HARDCODED  a91b18
         x = address(0);        
-        // <yes> <report> SOLIDITY_ADDRESS_HARDCODED  a91b18
         x = g(address(0));
-        // <yes> <report> SOLIDITY_ADDRESS_HARDCODED  c67a09
         x = 0x0;
-        // <yes> <report> SOLIDITY_ADDRESS_HARDCODED c67a09
         x = g(0x0);
     }
     
