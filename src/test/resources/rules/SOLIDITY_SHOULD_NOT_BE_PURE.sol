@@ -27,10 +27,8 @@ contract C {
     function returnsenderbalance() pure returns (uint){
         return t;
     }
-    function returnsenderbalance() returns (uint){
-        y=msg.value;
-        o=block.timestamp;
-        return t;
+    function test() pure public returns (string memory name) {
+        name = type(Math).name;
     }
 }
 contract Math {
