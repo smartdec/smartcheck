@@ -170,6 +170,8 @@ callArguments
 
 typeConversion : typeName '(' expression ')' ;
 
+typeExpression : 'type' '(' expression ')' '.' ('name' | 'creationCode' | 'runtimeCode');
+
 expression
     : expression twoPlusMinusOperator
     | expression '[' expression ']'
@@ -180,6 +182,7 @@ expression
     | expression '.' functionCall
     | expression '.' identifier
     | tupleExpression
+    | typeExpression
     | functionCall
     | expression callArguments
     | primaryExpression
@@ -374,10 +377,10 @@ comparison : '==' | '!=' ;
 
 //items after Identifier are listed for lexer to understand that these words can be used as identifier
 identifier
-    : Identifier | placeholderStatement | 'value' | 'from' | 'this' | 'balance' | 'sender'
-    | 'msg' | 'gas' | 'length' | 'block' | 'timestamp' | 'tx' | 'origin' | 'blockhash'
-    | 'coinbase' | 'difficulty' | 'gaslimit' | 'number' | 'data' | 'sig' | 'now' | 'gasprice'
-    | 'emit' | 'constructor' | 'revert' | 'solidity' | 'experimental' | 'calldata' ;
+    : Identifier | placeholderStatement | 'value' | 'from' | 'this' | 'balance' | 'sender' | 'msg'
+    | 'gas' | 'length' | 'block' | 'timestamp' | 'tx' | 'origin' | 'blockhash' | 'coinbase' | 'difficulty'
+    | 'gaslimit' | 'number' | 'data' | 'sig' | 'now' | 'gasprice' | 'emit' | 'constructor' | 'revert'
+    | 'solidity' | 'experimental' | 'calldata' | 'name' | 'creationCode' | 'runtimeCode';
 
 elementaryTypeName : 'address' | 'address payable' | 'bool' | 'string' | 'int' | 'int8' | 'int16' | 'int24' | 'int32' | 'int40' | 'int48' | 'int56' | 'int64' | 'int72'
     | 'int80' | 'int88' | 'int96' | 'int104' | 'int112' | 'int120' | 'int128' | 'int136' | 'int144' | 'int152' | 'int160' | 'int168'
