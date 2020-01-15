@@ -1,8 +1,8 @@
-pragma solidity 0.4.24;
+pragma solidity 0.6.0;
 
 contract C {
 
-    function badPrictice(address addr) {
+    function badPrictice(address addr) public {
         // <yes> <report> SOLIDITY_BALANCE_EQUALITY 5094ad
         if (this.balance == 100 wei) {
         }
@@ -20,11 +20,14 @@ contract C {
         }
     }
 
-    function myFoo(uint) returns(uint) {
-        return 0;
+    function myFoo(uint[] memory a) public returns(uint) {
+        a[1];
+        a[1:];
+        a[:2];
+        return a[1:2];
     }
 
-    function goodPrictice(address addr) public {  
+    function goodPrictice(address addr) public {
         if(myFoo(addr.balance) == 0) {
         }
         if (this.balance > 100 wei) {

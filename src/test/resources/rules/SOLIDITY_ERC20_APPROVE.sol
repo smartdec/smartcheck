@@ -11,7 +11,20 @@ contract Token {
     	return true;
     }
 }
-contract TestERC20new{
+
+contract TokenSafe {
+    // <yes> <report> SOLIDITY_ERC20_APPROVE lsd05g
+    function approve(address _spender, uint _value) returns (bool success) {
+        require(_value > 10 wei);
+        return true;
+    }
+    function increaseAllowance(address spender, uint256 addedValue) public returns (bool) {
+        _approve(_msgSender(), spender, _allowances[_msgSender()][spender].add(addedValue));
+        return true;
+    }
+}
+
+contract TestERC20new {
      // <yes> <report> SOLIDITY_ERC20_APPROVE af782c
     function approve(address _spender, uint _value) returns (bool success) {
         require(_value > 10 wei);
