@@ -1,21 +1,21 @@
 pragma solidity 0.4.24;
 
-contract GoodMarketPlace {
 
+contract GoodMarketPlace {
     function kill() public {
         suicide(msg.sender);
     }
 }
 
-contract GoodMarketPlace1 {
 
+contract GoodMarketPlace1 {
     function kill() payable {
         selfdestruct(msg.sender);
     }
 }
 
-contract GoodMarketPlace2 {
 
+contract GoodMarketPlace2 {
     address x;
     address myAddress;
     function someComp() payable{
@@ -23,8 +23,8 @@ contract GoodMarketPlace2 {
     }
 }
 
-contract GoodMarketPlace3 {
 
+contract GoodMarketPlace3 {
     uint a;
     function deposit(address w){
         w.transfer(9);
@@ -33,15 +33,15 @@ contract GoodMarketPlace3 {
     function foo() {a=0;}
 }
 
-// <yes> <report> SOLIDITY_LOCKED_MONEY 30281d
-contract GoodMarketPlace5 {
 
+// <yes> <report> SOLIDITY_LOCKED_MONEY 30281d
+contract BadMarketPlace1 {
     function deposit() payable {}
     function foo() {}
 }
 
-contract GoodMarketPlace6 {
 
+contract GoodMarketPlace6 {
     address s;
     function deposit() payable {}
     function foo(uint amount) payable {
@@ -50,18 +50,24 @@ contract GoodMarketPlace6 {
 }
 
 // <yes> <report> SOLIDITY_LOCKED_MONEY 30281d
-contract GoodMarketPlace7 {
-
+contract BadMarketPlace2 {
      function() payable {}
 }
 
 // <yes> <report> SOLIDITY_LOCKED_MONEY 30281d
-contract GoodMarketPlace8 {
-
+contract BadMarketPlace3 {
     function() payable {}
 }
 
-library BadMarketPlace1 {
 
+contract GoodMarketPlace9 {
+    function() payable external{}
+    function foo(address a, bytes calldata data) payable external {
+        a.delegatecall(data);
+    }
+}
+
+
+library BadMarketPlaceLibrary {
     function foo() {}
 }

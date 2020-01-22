@@ -1,6 +1,10 @@
-pragma solidity 0.5.0;
+pragma solidity 0.6.0;
 
-contract Test {
+abstract contract T {
+    function f0(uint256 a) pure external virtual returns (uint256);
+}
+
+contract Test is T {
 
     // <yes> <report> SOLIDITY_UNUSED_FUNCTION_SHOULD_BE_EXTERNAL 73ufc1
     function badf1() public pure returns (uint256){
@@ -18,7 +22,7 @@ contract Test {
         return 5;
     }
 
-    function f0(uint256 a) pure external returns (uint256){
+    function f0(uint256 a) pure external override returns (uint256){
         require(a > 7);
         return 5;
     }

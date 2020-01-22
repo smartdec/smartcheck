@@ -33,16 +33,25 @@ contract UpgradeTo050_2 {
     // <yes> <report> SOLIDITY_UPGRADE_TO_050 341gim
     function numberTwo(uint[] a) public {
     }
+    // <yes> <report> SOLIDITY_UPGRADE_TO_050 341gim
+    function numberTwo_1(uint[] a) {
+    }
     // <yes> <report> SOLIDITY_UPGRADE_TO_050 341gim <yes> <report> SOLIDITY_UPGRADE_TO_050 341gim
     function numberTwo0(bytes a, string b) public {
     }
     // <yes> <report> SOLIDITY_UPGRADE_TO_050 341gim
     function numberTwo1() public returns(uint[] a) {
     }
+    // <yes> <report> SOLIDITY_UPGRADE_TO_050 341gim
+    function numberTwo1_1() returns(uint[] a) {
+    }
     function numberTwo2(User memory a) internal {
     }
     // <yes> <report> SOLIDITY_UPGRADE_TO_050 341gim
     function numberTwo3(User a) internal {
+    }
+    // <yes> <report> SOLIDITY_UPGRADE_TO_050 341gim
+    function numberTwo3_1(User a) {
     }
     function numberThree(uint[] a) external {
     }
@@ -58,7 +67,7 @@ contract UpgradeTo050_3 {
         uint[] a;
         uint[] storage b = intArray;
         uint[] memory c = intArray;
-        
+
     }
     function () external {
     }
@@ -75,7 +84,7 @@ contract UpgradeTo050_4 {
         User a;
         User storage b = userStruct;
         User memory c = userStruct;
-        
+
     }
     // <yes> <report> SOLIDITY_UPGRADE_TO_050 91h3sa
     function () public {

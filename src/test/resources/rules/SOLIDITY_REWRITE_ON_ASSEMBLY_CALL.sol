@@ -1,9 +1,5 @@
 pragma solidity 0.4.24;
 
-interface IWallet {
-    function isValidSignature(bytes32, bytes) external;
-}
-
 contract MixinSignatureValidator {
 
     function isValidWalletSignature(
@@ -11,43 +7,43 @@ contract MixinSignatureValidator {
         address walletAddress,
         bytes signature
     )
-    internal
-    view
-    returns (bool isValid)
+        internal
+        view
+        returns (bool isValid)
     {
-    bytes memory calldata = abi.encodeWithSelector(
-        IWallet(walletAddress).isValidSignature.selector,
-        hash,
-        signature
+        bytes memory calldata = abi.encodeWithSelector(
+            IWallet(walletAddress).isValidSignature.selector,
+            hash,
+            signature
         );
         assembly {
-        let cdStart := add(calldata, 32)
-        // <yes> <report> SOLIDITY_REWRITE_ON_ASSEMBLY_CALL f34j6k
-        let success := staticcall(
-        gas,              // forward all gas
-        walletAddress,    // address of Wallet contract
-        cdStart,          // pointer to start of input
-        mload(calldata),  // length of input
-        cdStart,          // write output over input
-        32                // output size is 32 bytes
-        )
+            let cdStart := add(calldata, 32)
+            // <yes> <report> SOLIDITY_REWRITE_ON_ASSEMBLY_CALL f34j6k
+            let success := staticcall(
+                gas,              // forward all gas
+                walletAddress,    // address of Wallet contract
+                cdStart,          // pointer to start of input
+                mload(calldata),  // length of input
+                cdStart,          // write output over input
+                32                // output size is 32 bytes
+            )
 
-        switch success
-        case 0 {
-        // Revert with `Error("WALLET_ERROR")`
-        /* snip */
-        revert(0, 100)
+            switch success
+            case 0 {
+                // Revert with `Error("WALLET_ERROR")`
+                /* snip */
+                revert(0, 100)
+            }
+            case 1 {
+                // Signature is valid if call did not revert and returned true
+                isValid := mload(cdStart)
+            }
         }
-        case 1 {
-        // Signature is valid if call did not revert and returned true
-        isValid := mload(cdStart)
-        }
-        }
-    return isValid;
+        return isValid;
     }
 
     function () payable public {
-        address target;
+        address target = logic_contract;
         assembly {
             let ptr := mload(0x40)
             calldatacopy(ptr, 0, calldatasize)

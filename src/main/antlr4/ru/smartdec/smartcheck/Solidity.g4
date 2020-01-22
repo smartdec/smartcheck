@@ -6,6 +6,8 @@ sourceUnit :
     | contractDefinition
     | libraryDefinition
     | interfaceDefinition
+    | structDefinition
+    | enumDefinition
     )*
     EOF ;
 
@@ -27,7 +29,7 @@ importDirective
 
 importDeclaration : identifier ('as' identifier)? ;
 
-contractDefinition : 'contract' identifier
+contractDefinition : 'abstract'? 'contract' identifier
     ('is' inheritanceSpecifier (',' inheritanceSpecifier)*)?
     '{' contractPartDefinition* '}' ;
 
@@ -60,7 +62,7 @@ structDefinition : 'struct' identifier '{' (variableDeclaration ';')* '}' ;
 modifierDefinition : 'modifier' identifier parameterList? block ;
 
 functionDefinition : ('function' identifier | 'constructor') parameterList
-    (stateMutability | visibleType | functionCall | identifier)*
+    (stateMutability | visibleType | inheritance | functionCall | identifier)*
     returnsParameters? (block | ';') ;
 
 returnsParameters : 'returns' parameterList ;
@@ -71,9 +73,11 @@ variableDeclaration
 stateVariableDeclaration : typeName (visibleType | constantType)*
     identifier ('=' expression)? ';' ;
 
-functionFallBackDefinition : 'function' parameterList
-    (stateMutability | visibleType | functionCall | identifier)*
+functionFallBackDefinition : ('function' | 'fallback' | 'receive') parameterList
+    (stateMutability | visibleType | inheritance | functionCall | identifier)*
     returnsParameters? (block | ';') ; // returnsParameters? added for compatibility with old compiler versions
+
+inheritance: 'virtual' | 'override' '(' userDefinedTypeName (',' userDefinedTypeName)* ')' ;
 
 eventDefinition : 'event' identifier indexedParameterList 'anonymous'? ';' ;
 
@@ -174,7 +178,7 @@ typeExpression : 'type' '(' expression ')' '.' ('name' | 'creationCode' | 'runti
 
 expression
     : expression twoPlusMinusOperator
-    | expression '[' expression ']'
+    | expression '[' arrayRange ']'
     | newDynamicArray
     | environmentalVariable
     | expression '.' 'length'
@@ -206,6 +210,13 @@ expression
     | expression ('=' | lvalueOperator) expression
     | varDeclaration
     | variableDeclaration
+    ;
+
+arrayRange
+    : expression
+    | expression ':'
+    | ':' expression
+    | expression ':' expression
     ;
 
 newDynamicArray : 'new' (typeName '[' ']' | 'string' | 'bytes') ('(' expression ')')? ;
@@ -252,6 +263,7 @@ statement
     | ifStatement
     | whileStatement
     | forStatement
+    | tryCatchStatement
     | inlineAssemblyStatement
     | doWhileStatement ';'
     | placeholderStatement ';'? // semicolon is not necessary in old compiler versions
@@ -262,6 +274,10 @@ statement
     | throwRevertStatement ';'
     | emitEventStatement ';'
     | expressionStatement ';'
+    ;
+
+tryCatchStatement
+    : 'try' expression returnsParameters? block ('catch' (identifier? parameterList)? block)*
     ;
 
 emitEventStatement : 'emit' (identifier '.' identifier callArguments | identifier callArguments) ; // emit BaseContract.EventName() is allowed
@@ -312,6 +328,7 @@ assemblyItem
     | assemblyIf
     | 'break'
     | 'continue'
+    | 'leave'
     | subAssembly
     ;
 
@@ -380,15 +397,46 @@ identifier
     : Identifier | placeholderStatement | 'value' | 'from' | 'this' | 'balance' | 'sender' | 'msg'
     | 'gas' | 'length' | 'block' | 'timestamp' | 'tx' | 'origin' | 'blockhash' | 'coinbase' | 'difficulty'
     | 'gaslimit' | 'number' | 'data' | 'sig' | 'now' | 'gasprice' | 'emit' | 'constructor' | 'revert'
-    | 'solidity' | 'experimental' | 'calldata' | 'name' | 'creationCode' | 'runtimeCode';
+    | 'solidity' | 'experimental' | 'calldata' | 'name' | 'creationCode' | 'runtimeCode'
+    | 'abstract' | 'virtual' | 'override' | 'fallback' | 'receive' | 'try' | 'catch' | 'leave' ;
+    // last line are keywords in 0.6.0 but added to identifier for compatibility
 
-elementaryTypeName : 'address' | 'address payable' | 'bool' | 'string' | 'int' | 'int8' | 'int16' | 'int24' | 'int32' | 'int40' | 'int48' | 'int56' | 'int64' | 'int72'
-    | 'int80' | 'int88' | 'int96' | 'int104' | 'int112' | 'int120' | 'int128' | 'int136' | 'int144' | 'int152' | 'int160' | 'int168'
-    | 'int176' | 'int184' | 'int192' | 'int200' | 'int208' | 'int216' | 'int224' | 'int232' | 'int240' | 'int248' | 'int256' |'uint'
-    | 'uint8' | 'uint16' | 'uint24' | 'uint32' | 'uint40' | 'uint48' | 'uint56' | 'uint64' | 'uint72' | 'uint80' | 'uint88' | 'uint96'
-    | 'uint104' | 'uint112' | 'uint120' | 'uint128' | 'uint136' | 'uint144' | 'uint152' | 'uint160' | 'uint168' | 'uint176'
-    | 'uint184' | 'uint192' | 'uint200' | 'uint208' | 'uint216' | 'uint224' | 'uint232' | 'uint240' | 'uint248' | 'uint256' | 'byte'
-    | 'bytes' | 'bytes1' | 'bytes2' | 'bytes3' | 'bytes4' | 'bytes5' | 'bytes6' | 'bytes7' | 'bytes8' | 'bytes9' | 'bytes10'
+elementaryTypeName
+    : 'address' | 'address payable' | 'bool' | 'string' | 'byte' | 'int' | 'uint' | 'bytes'
+    | 'int8'   | 'uint8'   | 'bytes1'
+    | 'int16'  | 'uint16'  | 'bytes2'
+    | 'int24'  | 'uint24'  | 'bytes3'
+    | 'int32'  | 'uint32'  | 'bytes4'
+    | 'int40'  | 'uint40'  | 'bytes5'
+    | 'int48'  | 'uint48'  | 'bytes6'
+    | 'int56'  | 'uint56'  | 'bytes7'
+    | 'int64'  | 'uint64'  | 'bytes8'
+    | 'int72'  | 'uint72'  | 'bytes9'
+    | 'int80'  | 'uint80'  | 'bytes10'
+    | 'int88'  | 'uint88'  | 'bytes11'
+    | 'int96'  | 'uint96'  | 'bytes12'
+    | 'int104' | 'uint104' | 'bytes13'
+    | 'int112' | 'uint112' | 'bytes14'
+    | 'int120' | 'uint120' | 'bytes15'
+    | 'int128' | 'uint128' | 'bytes16'
+    | 'int136' | 'uint136' | 'bytes17'
+    | 'int144' | 'uint144' | 'bytes18'
+    | 'int152' | 'uint152' | 'bytes19'
+    | 'int160' | 'uint160' | 'bytes20'
+    | 'int168' | 'uint168' | 'bytes21'
+    | 'int176' | 'uint176' | 'bytes22'
+    | 'int184' | 'uint184' | 'bytes23'
+    | 'int192' | 'uint192' | 'bytes24'
+    | 'int200' | 'uint200' | 'bytes25'
+    | 'int208' | 'uint208' | 'bytes26'
+    | 'int216' | 'uint216' | 'bytes27'
+    | 'int224' | 'uint224' | 'bytes28'
+    | 'int232' | 'uint232' | 'bytes29'
+    | 'int240' | 'uint240' | 'bytes30'
+    | 'int248' | 'uint248' | 'bytes31'
+    | 'int256' | 'uint256' | 'bytes32'
+
+    | 'bytes1' | 'bytes2' | 'bytes3' | 'bytes4' | 'bytes5' | 'bytes6' | 'bytes7' | 'bytes8' | 'bytes9' | 'bytes10'
     | 'bytes11' | 'bytes12' | 'bytes13' | 'bytes14' | 'bytes15' | 'bytes16' | 'bytes17' | 'bytes18' | 'bytes19' | 'bytes20'
     | 'bytes21' | 'bytes22' | 'bytes23' | 'bytes24' | 'bytes25' | 'bytes26' | 'bytes27' | 'bytes28' | 'bytes29' | 'bytes30'
     | 'bytes31' | 'bytes32' | 'fixed' | 'fixed0x8' | 'fixed0x16' | 'fixed0x24' | 'fixed0x32' | 'fixed0x40' | 'fixed0x48'
