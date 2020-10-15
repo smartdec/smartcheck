@@ -4,7 +4,7 @@ SmartCheck is an extensible static analysis tool for discovering vulnerabilities
 in Ethereum smart contracts written in the Solidity programming language.
 
 SmartCheck is described in the academic paper titled
-["SmartCheck: Static Analysis of Ethereum Smart Contracts"](https://orbilu.uni.lu/bitstream/10993/35862/1/smartcheck-paper.pdf)
+["SmartCheck: Static Analysis of Ethereum Smart Contracts"](https://hdl.handle.net/10993/35862)
 as released on May 27, 2018.
 
 An online version of SmartCheck is available on [our website](https://tool.smartdec.net/).
