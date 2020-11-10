@@ -1,2 +1,3 @@
 rule_descriptions/* linguist-documentation
 *.g4 linguist-generated
+*.sol linguist-language=Solidity
