@@ -10,7 +10,8 @@ as released on May 27, 2018.
 > :warning: **Warning**
 >
 > The project is deprecated since 2020. The analysis might work incorrectly for Solidity versions starting with 0.6.0.
-> Web version of SmartCheck that **was** earlier available [online](https://tool.smartdec.net/) is shut down.
+> 
+> Web version of SmartCheck that was available [online](https://tool.smartdec.net/) earlier is shut down.
 
 ## Using NPM package
 ### Install SmartCheck globally
