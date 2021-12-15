@@ -7,6 +7,11 @@ SmartCheck is described in the academic paper titled
 ["SmartCheck: Static Analysis of Ethereum Smart Contracts"](https://hdl.handle.net/10993/35862)
 as released on May 27, 2018.
 
+> :warning: **Warning**
+>
+> The project is deprecated since 2020. The analysis might work incorrectly for Solidity versions starting with 0.6.0. 
+
+
 An online version of SmartCheck is available on [our website](https://tool.smartdec.net/).
 ## Using NPM package
 ### Install SmartCheck globally
