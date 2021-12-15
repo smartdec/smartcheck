@@ -35,6 +35,12 @@ Optional argument: `-r <path to .xml-file with rules>`; by default it uses the b
 
 ## Using source code of SmartCheck
 
+> ⚠️ **Warning**
+>
+> SmartCheck works only with older java8 versions, e.g. 8u102.
+> You can download version for Windows from the [archive](https://www.oracle.com/ru/java/technologies/javase/javase8-archive-downloads.html).
+
+
 ### Building the project
 The project uses Maven. To build it, execute in the project directory:
 
